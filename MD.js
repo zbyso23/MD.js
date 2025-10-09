@@ -1,39 +1,12 @@
 // MD.js, copyright (c) by Zbigniew Lipka
 // Distributed under an MIT License: https://github.com/zbyso23/MD/blob/master/LICENSE
 
-let MD, MD_ADDONS;
-MD = function(config)
-{
-	/*
-	config:
-	{
-		mode: 'basic' /* extended - with all new code highlighters and simple table
-	}
-	*/
-	const sanitizeConfig = function(config)
-	{
-		config          = (config !== "object" || config === null || Array.isArray(config)) ? {} : config;
-		var configNew   = {};
-		var modeAllowed = ['basic', 'extended']; // , custom @todo :)
-		var mode        = modeAllowed[0];
-		if(typeof config === "object" && Object.prototype.hasOwnProperty.call(config, 'mode'))
-		{
-			var modeNew = (typeof config['mode'] === "string") ? config['mode'] : mode;
-			mode        = (modeAllowed.indexOf(modeNew) === -1) ? mode : modeNew;
-		}
-		configNew.mode  = mode;
-		return configNew;
-	}
-	config = sanitizeConfig(config);
+let MDOLD, MD_ADDONS;
 
-	const getModeLanguage = function(language)
-	{
-		var allowedHighlights = ['general', 'javascript', 'python'];
-		language = (config.mode === 'basic' && allowedHighlights.indexOf(language) === -1) ? 'general' : language;
-		return language;
-	}
-
-	const configUI = {
+class MD {
+	modesAllowed = ['basic', 'extended']; // , custom @todo :)
+	allowedHighlights = ['general', 'javascript', 'python'];
+	configUI = {
 		strong: {
 			'html': 'strong',
 			'class': 'md-strong',
@@ -61,10 +34,47 @@ MD = function(config)
 			'class': 'table md-table table-striped table-hover'
 		}
 	};
+	registeredCodeHighlight = {	
+		general: codeHighlighterGeneral,
+		javascript: codeHighlighterJavascript,
+		python: codeHighlighterPython,
+		html: codeHighlighterHTML,
+		css: codeHighlighterCSS,
+		bash: codeHighlighterBash,
+		ini: codeHighlighterIni,
+		php: codeHighlighterPHP
+	};
 
-	const unHTML = function(string)
-	{
-		string = string.replace(/[<>{};:]/g, function(m) {
+	constructor(config) {
+		this.config = sanitizeConfig(config);
+		this.reset();
+	}
+
+	reset() {
+		this.formatNonBreak = [];
+		this.formatCode     = [];
+	}
+
+	sanitizeConfig(config) {
+		config          = (config !== "object" || config === null || Array.isArray(config)) ? {} : config;
+		const configNew = {};
+		let mode        = this.modesAllowed[0];
+		if(typeof config === "object" && Object.prototype.hasOwnProperty.call(config, 'mode'))
+		{
+			const modeNew = (typeof config['mode'] === "string") ? config['mode'] : mode;
+			mode          = (this.modesAllowed.includes(modeNew)) ? mode : modeNew;
+		}
+		configNew.mode  = mode;
+		return configNew;
+	}
+
+	getModeLanguage(language) {
+		language = (config.mode === 'basic' && this.allowedHighlights.includes(language)) ? 'general' : language;
+		return language;
+	}
+
+	unHTML(string) {
+		return string.replace(/[<>{};:]/g, function(m) {
 			return {
 				'<': '&lt;',
 				'>': '&gt;',
@@ -79,8 +89,133 @@ MD = function(config)
 				':': '&#58;'
 			}[m];
 		});
-		return string;
 	}
+
+	isRegisteredCodeHighlight(language)
+	{
+		return (this.registeredCodeHighlight.hasOwnProperty(language));
+	}
+
+	formatBreaks(lines)
+	{
+		for(let i in lines)
+		{
+			if(this.formatCode.indexOf(i) !== -1)
+			{
+				continue;
+			}
+			if(this.formatNonBreak.indexOf(i) !== -1)
+			{
+				continue;
+			}
+			lines[i] += '<br>';
+		}
+		return lines;
+	}
+
+	/*@todo Perpare for modular code highlight*/
+	registerCodeHighlight(language, processFunction)
+	{
+		if(typeof language !== "string")
+		{
+			throw new Error('MD registerCodeHighlight Error: invalid language!');
+		}
+		if(typeof processFunction !== "function")
+		{
+			throw new Error('MD registerCodeHighlight Error: invalid process function!');
+		}
+		if(true === this.isRegisteredCodeHighlight(language))
+		{
+			throw new Error('MD registerCodeHighlight Error: language allready registered!');
+		}
+		if(language !== this.getModeLanguage(language))
+		{
+			throw new Error(`MD registerCodeHighlight Error: language not allowed by selected mode "${config.mode}"!`);	
+		}
+		this.registeredCodeHighlight[language] = processFunction;
+	}
+}
+
+
+MDOLD = function(config)
+{
+	/*
+	config:
+	{
+		mode: 'basic' /* extended - with all new code highlighters and simple table
+	}
+	*/
+	// const sanitizeConfig = function(config)
+	// {
+	// 	config          = (config !== "object" || config === null || Array.isArray(config)) ? {} : config;
+	// 	var configNew   = {};
+	// 	var modeAllowed = ['basic', 'extended']; // , custom @todo :)
+	// 	var mode        = modeAllowed[0];
+	// 	if(typeof config === "object" && Object.prototype.hasOwnProperty.call(config, 'mode'))
+	// 	{
+	// 		var modeNew = (typeof config['mode'] === "string") ? config['mode'] : mode;
+	// 		mode        = (modeAllowed.indexOf(modeNew) === -1) ? mode : modeNew;
+	// 	}
+	// 	configNew.mode  = mode;
+	// 	return configNew;
+	// }
+	// config = sanitizeConfig(config);
+
+	// const getModeLanguage = function(language)
+	// {
+	// 	var allowedHighlights = ['general', 'javascript', 'python'];
+	// 	language = (config.mode === 'basic' && allowedHighlights.indexOf(language) === -1) ? 'general' : language;
+	// 	return language;
+	// }
+
+	// const configUI = {
+	// 	strong: {
+	// 		'html': 'strong',
+	// 		'class': 'md-strong',
+	// 	},
+	// 	em: {
+	// 		'html': 'em',
+	// 		'class': 'md-em',
+	// 	},
+	// 	header: {
+	// 		'class': 'md-header'
+	// 	},
+	// 	code: {
+	// 		'class': 'md-code'
+	// 	},
+	// 	listOrdered: {
+	// 		'class': 'md-list-ordered'
+	// 	},
+	// 	list: {
+	// 		'class': 'md-list'
+	// 	},
+	// 	image: {
+	// 		'class': 'md-image'
+	// 	},
+	// 	table: {
+	// 		'class': 'table md-table table-striped table-hover'
+	// 	}
+	// };
+
+	// const unHTML = function(string)
+	// {
+	// 	string = string.replace(/[<>{};:]/g, function(m) {
+	// 		return {
+	// 			'<': '&lt;',
+	// 			'>': '&gt;',
+	// 			'{': '&#123;',
+	// 			'}': '&#125;',
+	// 			'[': '&#123;',
+	// 			']': '&#125;',
+	// 			'(': '&#40;',
+	// 			')': '&#41;',
+	// 			'$': '&#36;',
+	// 			';': '&#59;',
+	// 			':': '&#58;'
+	// 		}[m];
+	// 	});
+	// 	return string;
+	// }
 
 
 	const codeHighlighterJavascript = function(language, lines, addTags, parseCodeFunction)
@@ -432,19 +567,19 @@ MD = function(config)
 		return lines;
 	}
 
-	const registeredCodeHighlight = {	
-		general: codeHighlighterGeneral,
-		javascript: codeHighlighterJavascript,
-		python: codeHighlighterPython,
-		html: codeHighlighterHTML,
-		css: codeHighlighterCSS,
-		bash: codeHighlighterBash,
-		ini: codeHighlighterIni,
-		php: codeHighlighterPHP
-	};
+	// const registeredCodeHighlight = {	
+	// 	general: codeHighlighterGeneral,
+	// 	javascript: codeHighlighterJavascript,
+	// 	python: codeHighlighterPython,
+	// 	html: codeHighlighterHTML,
+	// 	css: codeHighlighterCSS,
+	// 	bash: codeHighlighterBash,
+	// 	ini: codeHighlighterIni,
+	// 	php: codeHighlighterPHP
+	// };
 
-	var formatNonBreak = [];
-	var formatCode     = [];
+	// var formatNonBreak = [];
+	// var formatCode     = [];
 
 	const parseEmpty = function(lines)
 	{
@@ -907,7 +1042,7 @@ MD = function(config)
 		var isTableWaitingAlign = false;
 		var isTableStarted      = false;
 
-		var processRow = function(line)
+		var processTableRow = function(line)
 		{
 			var cols = line.split('|');
 			var row  = [];
@@ -1017,7 +1152,7 @@ MD = function(config)
         	}
         	else
         	{
-				var row  = processRow(line);
+				var row  = processTableRow(line);
 				if(false === isTableHeader)
 				{
 					table.header        = row;
@@ -1036,30 +1171,30 @@ MD = function(config)
 		{
 			processTable();
 		}
-        return linesOutput;
+		return linesOutput;
 	}
 
-	const formatBreaks = function(lines)
-	{
-		for(var i in lines)
-		{
-			if(formatCode.indexOf(i) !== -1)
-			{
-				continue;
-			}
-			if(formatNonBreak.indexOf(i) !== -1)
-			{
-				continue;
-			}
-			lines[i] += '<br>';
-		}
-		return lines;
-	}
+	// const formatBreaks = function(lines)
+	// {
+	// 	for(var i in lines)
+	// 	{
+	// 		if(formatCode.indexOf(i) !== -1)
+	// 		{
+	// 			continue;
+	// 		}
+	// 		if(formatNonBreak.indexOf(i) !== -1)
+	// 		{
+	// 			continue;
+	// 		}
+	// 		lines[i] += '<br>';
+	// 	}
+	// 	return lines;
+	// }
 
-	const isRegisteredCodeHighlight = function(language)
-	{
-		return (registeredCodeHighlight.hasOwnProperty(language));
-	}
+	// const isRegisteredCodeHighlight = function(language)
+	// {
+	// 	return (registeredCodeHighlight.hasOwnProperty(language));
+	// }
 
 	const _parse = function(string)
 	{
@@ -1085,27 +1220,27 @@ MD = function(config)
 
 
 
-	/*@todo Perpare for modular code highlight*/
-	const _registerCodeHighlight = function(language, processFunction)
-	{
-		if(typeof language !== "string")
-		{
-			throw new Error('MD registerCodeHighlight Error: invalid language!');
-		}
-		if(false === typeof processFunction === "function")
-		{
-			throw new Error('MD registerCodeHighlight Error: invalid process function!');
-		}
-		if(true === isRegisteredCodeHighlight(language))
-		{
-			throw new Error('MD registerCodeHighlight Error: language allready registered!');
-		}
-		if(language !== getModeLanguage(language))
-		{
-			throw new Error('MD registerCodeHighlight Error: language not allowed by selected mode "' + config.mode + '"!');	
-		}
-		registeredCodeHighlight[language] = processFunction;
-	}
+	// /*@todo Perpare for modular code highlight*/
+	// const _registerCodeHighlight = function(language, processFunction)
+	// {
+	// 	if(typeof language !== "string")
+	// 	{
+	// 		throw new Error('MD registerCodeHighlight Error: invalid language!');
+	// 	}
+	// 	if(false === typeof processFunction === "function")
+	// 	{
+	// 		throw new Error('MD registerCodeHighlight Error: invalid process function!');
+	// 	}
+	// 	if(true === isRegisteredCodeHighlight(language))
+	// 	{
+	// 		throw new Error('MD registerCodeHighlight Error: language allready registered!');
+	// 	}
+	// 	if(language !== getModeLanguage(language))
+	// 	{
+	// 		throw new Error('MD registerCodeHighlight Error: language not allowed by selected mode "' + config.mode + '"!');	
+	// 	}
+	// 	registeredCodeHighlight[language] = processFunction;
+	// }
 
 	return {
 		'parse': _parse,
