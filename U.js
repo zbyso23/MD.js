@@ -8,22 +8,6 @@ var U =
 	{
 		return (this.isObject(input) === true && input.hasOwnProperty(property) === true);
 	},
-	isArray: function(input)
-	{
-		return (typeof input === "object" && Object.prototype.toString.call(input) === '[object Array]');
-	},
-	isFunction: function(input)
-	{
-		return (typeof input === "function");
-	},
-	isNumber: function(input)
-	{
-		return (typeof input === "number");
-	},
-	isString: function(input)
-	{
-		return (typeof input === "string");
-	},
 	isBool: function(input)
 	{
 		return (typeof input === "boolean");

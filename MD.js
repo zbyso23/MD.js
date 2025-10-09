@@ -18,7 +18,7 @@ MD = function(config)
 		var mode        = modeAllowed[0];
 		if(U.has(config, 'mode'))
 		{
-			var modeNew = (U.isString(config['mode'])) ? config['mode'] : mode;
+			var modeNew = (typeof config['mode'] === "string") ? config['mode'] : mode;
 			mode        = (modeAllowed.indexOf(modeNew) === -1) ? mode : modeNew;
 		}
 		configNew.mode  = mode;
@@ -235,7 +235,7 @@ MD = function(config)
 				{
 					return '<span class="md-code-syntax md-code-syntax-controls">&#36;</span><span class="md-code-syntax md-code-syntax-symbol">' + unHTML(arguments[2].substring(1)) + '</span>' + arguments[0].substring(arguments[2].length);
 				}
-				if(U.isString(arguments[3]))
+				if(typeof arguments[3] === "string")
 				{
 					return '<span class="md-code-syntax md-code-syntax-controls">' + arguments[3] + '</span>' + arguments[0].substring(arguments[3].length);
 				}
@@ -678,7 +678,7 @@ MD = function(config)
 
 			var output = parseCodeLinesByLanguage(language, linesCode);
 			//error in other than general (built-in) codeHighlighter have fallback to switch to try general codeHighlighter
-			if(false === U.isArray(output))
+			if(false === Array.isArray(output))
 			{
 				if(language === 'general')
 				{
@@ -686,7 +686,7 @@ MD = function(config)
 					return;
 				}
 				output = parseCodeLinesByLanguage('general', linesCode);
-				if(false === U.isArray(output))
+				if(false === Array.isArray(output))
 				{
 					linesCode = [];
 					return;
@@ -1088,11 +1088,11 @@ MD = function(config)
 	/*@todo Perpare for modular code highlight*/
 	var _registerCodeHighlight = function(language, processFunction)
 	{
-		if(false === U.isString(language))
+		if(typeof language !== "string")
 		{
 			throw new Error('MD registerCodeHighlight Error: invalid language!');
 		}
-		if(false === U.isFunction(processFunction))
+		if(false === typeof processFunction === "function")
 		{
 			throw new Error('MD registerCodeHighlight Error: invalid process function!');
 		}
