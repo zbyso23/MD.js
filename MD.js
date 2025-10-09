@@ -1,7 +1,7 @@
 // MD.js, copyright (c) by Zbigniew Lipka
-// Distributed under an GNU GENERAL PUBLIC LICENSE version 3: https://github.com/zbyso23/MD/blob/master/LICENSE
+// Distributed under an MIT License: https://github.com/zbyso23/MD/blob/master/LICENSE
 
-var MD, MD_ADDONS;
+let MD, MD_ADDONS;
 MD = function(config)
 {
 	/*
@@ -10,13 +10,13 @@ MD = function(config)
 		mode: 'basic' /* extended - with all new code highlighters and simple table
 	}
 	*/
-	var sanitizeConfig = function(config)
+	const sanitizeConfig = function(config)
 	{
-		config          = (false === U.isObject(config)) ? {} : config;
+		config          = (config !== "object" || config === null || Array.isArray(config)) ? {} : config;
 		var configNew   = {};
 		var modeAllowed = ['basic', 'extended']; // , custom @todo :)
 		var mode        = modeAllowed[0];
-		if(U.has(config, 'mode'))
+		if(typeof config === "object" && Object.prototype.hasOwnProperty.call(config, 'mode'))
 		{
 			var modeNew = (typeof config['mode'] === "string") ? config['mode'] : mode;
 			mode        = (modeAllowed.indexOf(modeNew) === -1) ? mode : modeNew;
@@ -26,14 +26,14 @@ MD = function(config)
 	}
 	config = sanitizeConfig(config);
 
-	var getModeLanguage = function(language)
+	const getModeLanguage = function(language)
 	{
 		var allowedHighlights = ['general', 'javascript', 'python'];
 		language = (config.mode === 'basic' && allowedHighlights.indexOf(language) === -1) ? 'general' : language;
 		return language;
 	}
 
-	var configUI = {
+	const configUI = {
 		strong: {
 			'html': 'strong',
 			'class': 'md-strong',
@@ -62,7 +62,7 @@ MD = function(config)
 		}
 	};
 
-	var unHTML = function(string)
+	const unHTML = function(string)
 	{
 		string = string.replace(/[<>{};:]/g, function(m) {
 			return {
@@ -83,7 +83,7 @@ MD = function(config)
 	}
 
 
-	var codeHighlighterJavascript = function(language, lines, addTags, parseCodeFunction)
+	const codeHighlighterJavascript = function(language, lines, addTags, parseCodeFunction)
 	{
 		for(var i in lines)
 		{
@@ -118,7 +118,7 @@ MD = function(config)
 		return lines;
 	};
 
-	var codeHighlighterPython = function(language, lines, addTags, parseCodeFunction) 
+	const codeHighlighterPython = function(language, lines, addTags, parseCodeFunction) 
 	{
 		for(var i in lines)
 		{
@@ -165,7 +165,7 @@ MD = function(config)
 
 	};
 
-	var codeHighlighterBash = function(language, lines, addTags, parseCodeFunction) 
+	const codeHighlighterBash = function(language, lines, addTags, parseCodeFunction) 
 	{
 		for(var i in lines)
 		{
@@ -188,7 +188,7 @@ MD = function(config)
 	};
 
 
-	var codeHighlighterIni = function(language, lines, addTags, parseCodeFunction) 
+	const codeHighlighterIni = function(language, lines, addTags, parseCodeFunction) 
 	{
 		for(var i in lines)
 		{
@@ -218,7 +218,7 @@ MD = function(config)
 	};
 
 
-	var codeHighlighterPHP = function(language, lines, addTags, parseCodeFunction) 
+	const codeHighlighterPHP = function(language, lines, addTags, parseCodeFunction) 
 	{
 		for(var i in lines)
 		{
@@ -261,7 +261,7 @@ MD = function(config)
 	}
 
 
-	var codeHighlighterHTML = function(language, lines, addTags, parseCodeFunction) 
+	const codeHighlighterHTML = function(language, lines, addTags, parseCodeFunction) 
 	{
 		var isCodeJs         = false;
 		var isCodeJsStarted  = false;
@@ -351,7 +351,7 @@ MD = function(config)
 		return lines;
 	};
 
-	var codeHighlighterCSS = function(language, lines, addTags, parseCodeFunction) 
+	const codeHighlighterCSS = function(language, lines, addTags, parseCodeFunction) 
 	{
 		var isCSSStarted = false;
 		var replaceSymbols = function(symbol) 
@@ -423,7 +423,7 @@ MD = function(config)
 		return lines;
 	};
 
-	var codeHighlighterGeneral = function(language, lines, addTags, parseCodeFunction)
+	const codeHighlighterGeneral = function(language, lines, addTags, parseCodeFunction)
 	{
 		for(var i in lines)
 		{
@@ -432,7 +432,7 @@ MD = function(config)
 		return lines;
 	}
 
-	var registeredCodeHighlight = {	
+	const registeredCodeHighlight = {	
 		general: codeHighlighterGeneral,
 		javascript: codeHighlighterJavascript,
 		python: codeHighlighterPython,
@@ -446,7 +446,7 @@ MD = function(config)
 	var formatNonBreak = [];
 	var formatCode     = [];
 
-	var parseEmpty = function(lines)
+	const parseEmpty = function(lines)
 	{
 		var linesOutput = [];
 		for (var i in lines) 
@@ -469,7 +469,7 @@ MD = function(config)
 	}
 
 
-	var parseHeaders = function(lines)
+	const parseHeaders = function(lines)
 	{
 		var linesOutput = [];
 		for (var i in lines) 
@@ -509,7 +509,7 @@ MD = function(config)
 		return linesOutput;
 	}
 
-	var processInlineItem = function(line)
+	const processInlineItem = function(line)
 	{
 		var lineResult = /(?:([\*]{1,3}))([^\*\n]+[^\*\s])\1/.exec(line);
 		if (lineResult === null) 
@@ -537,7 +537,7 @@ MD = function(config)
 		return processInlineItem(line);
 	}
 
-	var parseInline = function(lines)
+	const parseInline = function(lines)
 	{
 		var linesOutput = [];
 		for (var i in lines) 
@@ -552,7 +552,7 @@ MD = function(config)
         return linesOutput;
 	}
 
-	var processImagesItem = function(line)
+	const processImagesItem = function(line)
 	{
 		var lineResult = /([\!]{1,1})(([\[]{1,1}([^\]]{1,})[\]]{1,1}){0,1})([\(]{1,1}([^\)]{4,})[\)]{1,1}\s{0,})/.exec(line);
     	if (lineResult === null) 
@@ -571,7 +571,7 @@ MD = function(config)
 	/*
 	[![Foo](http://www.google.com.au/images/nav_logo7.png)](http://google.com.au/)
 	*/
-	var parseImages = function(lines)
+	const parseImages = function(lines)
 	{
 		var linesOutput = [];
 		for (var i in lines) 
@@ -586,7 +586,7 @@ MD = function(config)
         return linesOutput;
 	}
 
-	var processLinksItem = function(line)
+	const processLinksItem = function(line)
 	{
 		var lineTitleResult = /([\[]{1,1})([^\]]{1,})([\]]{1,1})([\(]{1,1})([^\)]{1,})([\)]{1,1})/.exec(line); //[zde](http://www.x4u.cz)
     	if (lineTitleResult === null)
@@ -599,7 +599,7 @@ MD = function(config)
     	return processLinksItem(line);
 	}
 
-	var parseLinks = function(lines)
+	const parseLinks = function(lines)
 	{
 		var linesOutput = [];
 		for (var i in lines) 
@@ -609,14 +609,14 @@ MD = function(config)
         return linesOutput;
 	}
 
-	var parseCodeLinesByLanguage = function(language, lines)
+	const parseCodeLinesByLanguage = function(language, lines)
 	{
 		language = getModeLanguage(language);
 		language = (isRegisteredCodeHighlight(language)) ? language : 'general';
 		return registeredCodeHighlight[language](language, lines, false, parseCodeLinesByLanguage);
 	}
 
-	var parseCodeInline = function(lines)
+	const parseCodeInline = function(lines)
 	{
 		var language    = 'general';
 		var linesOutput = [];
@@ -661,7 +661,7 @@ MD = function(config)
         return linesOutput;
 	}
 
-	var parseCode = function(lines)
+	const parseCode = function(lines)
 	{
 		var language         = 'general';
 		var linesOutput      = [];
@@ -771,7 +771,7 @@ MD = function(config)
         return linesOutput;
 	}
 
-	var parseLists = function(lines)
+	const parseLists = function(lines)
 	{
 		var linesOutput = [];
 		var isListStarted = false;
@@ -833,7 +833,7 @@ MD = function(config)
         return linesOutput;
 	}
 
-	var parseTableSimple = function(lines)
+	const parseTableSimple = function(lines)
 	{
 		var linesOutput = [];
 		var isTableStarted = false;
@@ -895,7 +895,7 @@ MD = function(config)
         return linesOutput;
 	}
 
-	var parseTable = function(lines)
+	const parseTable = function(lines)
 	{
 		var linesOutput = [];
 		var table = {
@@ -1039,7 +1039,7 @@ MD = function(config)
         return linesOutput;
 	}
 
-	var formatBreaks = function(lines)
+	const formatBreaks = function(lines)
 	{
 		for(var i in lines)
 		{
@@ -1056,14 +1056,14 @@ MD = function(config)
 		return lines;
 	}
 
-	var isRegisteredCodeHighlight = function(language)
+	const isRegisteredCodeHighlight = function(language)
 	{
 		return (registeredCodeHighlight.hasOwnProperty(language));
 	}
 
-	var _parse = function(string)
+	const _parse = function(string)
 	{
-		var lines = string.split('\n');
+		let lines = string.split('\n');
 		lines = parseCode(lines);
 		lines = parseEmpty(lines);
 		lines = parseImages(lines);
@@ -1086,7 +1086,7 @@ MD = function(config)
 
 
 	/*@todo Perpare for modular code highlight*/
-	var _registerCodeHighlight = function(language, processFunction)
+	const _registerCodeHighlight = function(language, processFunction)
 	{
 		if(typeof language !== "string")
 		{
