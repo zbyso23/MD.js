@@ -2,105 +2,28 @@
 // Distributed under an MIT License: https://github.com/zbyso23/MD/blob/master/LICENSE
 
 const LANGUAGE_GENERAL = 'general';
+const HTML_SANITIZE_TABLE = {
+	'<': '&lt;',
+	'>': '&gt;',
+	'{': '&#123;',
+	'}': '&#125;',
+	'[': '&#123;',
+	']': '&#125;',
+	'(': '&#40;',
+	')': '&#41;',
+	'$': '&#36;',
+	';': '&#59;',
+	':': '&#58;'
+};
+const RE = {
+	link: /([\[]{1,1})([^\]]{1,})([\]]{1,1})([\(]{1,1})([^\)]{1,})([\)]{1,1})/,
+	image: /([\!]{1,1})(([\[]{1,1}([^\]]{1,})[\]]{1,1}){0,1})([\(]{1,1}([^\)]{4,})[\)]{1,1}\s{0,})/,
+	list: /^((\*|\-){1,1})([^\*\-]{1,})/,
+	lang: /^([a-zA-Z0-9]{2,}[\s]{1,})/g,
+	codeInline: /([\`]{1,1})([^\`]{1,})([\`]{1,1})/g,
 
-let MDOLD, MD_ADDONS;
-
-class MDUtils {
-	static unHTML(string) {
-		return string.replace(/[<>{};:]/g, function (m) {
-			return {
-				'<': '&lt;',
-				'>': '&gt;',
-				'{': '&#123;',
-				'}': '&#125;',
-				'[': '&#123;',
-				']': '&#125;',
-				'(': '&#40;',
-				')': '&#41;',
-				'$': '&#36;',
-				';': '&#59;',
-				':': '&#58;'
-			}[m];
-		});
-	}
-
-	static processInlineItem(line) {
-		const lineResult = /(?:([\*]{1,3}))([^\*\n]+[^\*\s])\1/.exec(line);
-		if (lineResult === null) {
-			return line;
-		}
-		var formatType;
-		var className = '';
-		switch (lineResult[1]) {
-			case '*':
-				formatType = 'em';
-				className = configUI.em['class'];
-				break;
-			case '**':
-				formatType = 'strong';
-				className = configUI.strong['class'];
-				break;
-			default:
-				formatType = 'strong';
-				break;
-		}
-		const lineInline = `<${formatType} class="${className}">${lineResult[2]}</${formatType}>`;
-		line = line.replace(lineResult[0], lineInline);
-		return this.processInlineItem(line);
-	}
-
-	static formatBreaks(lines) {
-		for (let i in lines) {
-			if (this.formatCode.indexOf(i) !== -1) {
-				continue;
-			}
-			if (this.formatNonBreak.indexOf(i) !== -1) {
-				continue;
-			}
-			lines[i] += '<br>';
-		}
-		return lines;
-	}
-
-	static processLinksItem(line) {
-		const lineTitleResult = /([\[]{1,1})([^\]]{1,})([\]]{1,1})([\(]{1,1})([^\)]{1,})([\)]{1,1})/.exec(line); //[zde](http://www.x4u.cz)
-		if (lineTitleResult === null) return line;
-		const name = lineTitleResult[2];
-		const lineLink = `<a href="${lineTitleResult[5]}" target="_blank">${name}</a>`;
-		line = line.replace(lineTitleResult[0], lineLink);
-		return this.processLinksItem(line);
-	}
-
-	static parseLinks(lines) {
-		var linesOutput = [];
-		for (var i in lines) {
-			linesOutput.push(this.processLinksItem(lines[i]));
-		}
-		return linesOutput;
-	}
-
-	static processImagesItem(line, imageClass) {
-		const lineResult = /([\!]{1,1})(([\[]{1,1}([^\]]{1,})[\]]{1,1}){0,1})([\(]{1,1}([^\)]{4,})[\)]{1,1}\s{0,})/.exec(line);
-		if (lineResult === null) {
-			return line;
-		}
-		const lineImage = `<img src="${lineResult[6]}"  class="${imageClass}" />`;
-		line = line.replace(lineResult[0], lineImage);
-		return this.processImagesItem(line);
-	}
-
-	static codeHighlighterGeneral(_language, lines, _addTags, _parseCodeFunction) {
-		for (const i in lines) {
-			lines[i] = this.unHTML(lines[i]);
-		}
-		return lines;
-	}
-}
-
-class MD {
-	modesAllowed = ['basic', 'extended']; // , custom @todo :)
-	allowedHighlights = [LANGUAGE_GENERAL, 'javascript', 'python'];
-	configUI = {
+};
+const UI_CONFIG_DEFAULT = configUI = {
 		strong: {
 			'html': 'strong',
 			'class': 'md-strong',
@@ -128,29 +51,90 @@ class MD {
 			'class': 'table md-table table-striped table-hover'
 		}
 	};
-	registeredCodeHighlight = {
-		general: codeHighlighterGeneral,
-		javascript: codeHighlighterJavascript,
-		python: codeHighlighterPython,
-		html: codeHighlighterHTML,
-		css: codeHighlighterCSS,
-		bash: codeHighlighterBash,
-		ini: codeHighlighterIni,
-		php: codeHighlighterPHP
-	};
+
+let MDOLD, MD_ADDONS;
+
+export class MDUtils {
+	static unHTML(string) {
+		return string.replace(/[<>{};:$]/g, (m) => HTML_SANITIZE_TABLE[m]);
+	}
+
+	static processLinksItem(line) {
+		const lineTitleResult = RE.link.exec(line); //[zde](http://www.x4u.cz)
+		if (lineTitleResult === null) return line;
+		const name = lineTitleResult[2];
+		const lineLink = `<a href="${lineTitleResult[5]}" target="_blank">${name}</a>`;
+		line = line.replace(lineTitleResult[0], lineLink);
+		return this.processLinksItem(line);
+	}
+
+	static parseLinks(lines) {
+		var linesOutput = [];
+		for (var i in lines) {
+			linesOutput.push(this.processLinksItem(lines[i]));
+		}
+		return linesOutput;
+	}
+
+	static processImagesItem(line, imageClass) {
+		const lineResult = RE.image.exec(line);
+		if (lineResult === null) {
+			return line;
+		}
+		console.log(`IMG`, line, lineResult);
+		const lineImage = `<img src="${lineResult[6]}" alt="${lineResult[4]}" class="${imageClass}" />`;
+		line = line.replace(lineResult[0], lineImage);
+		return this.processImagesItem(line);
+	}
+
+	static codeHighlighterGeneral(_language, lines, _addTags, _parseCodeFunction) {
+		for (const i in lines) {
+			lines[i] = this.unHTML(lines[i]);
+		}
+		return lines;
+	}
+}
+
+export class MD {
+	modesAllowed = ['basic', 'extended']; // , custom @todo :)
+	allowedHighlights = [LANGUAGE_GENERAL, 'javascript', 'python'];
+	configUI = { ...UI_CONFIG_DEFAULT };
 
 	constructor(config) {
-		this.config = sanitizeConfig(config);
+		this.config = this.sanitizeConfig(config);
+		this.registeredCodeHighlight = {
+			general: this.codeHighlighterGeneral,
+			// javascript: codeHighlighterJavascript,
+			// python: codeHighlighterPython,
+			// html: codeHighlighterHTML,
+			// css: codeHighlighterCSS,
+			// bash: codeHighlighterBash,
+			// ini: codeHighlighterIni,
+			// php: codeHighlighterPHP
+		};
 		this.reset();
 	}
 
-	reset() {
-		this.formatNonBreak = [];
-		this.formatCode = [];
+	parse(string) {
+		let lines = string.split('\n');
+		lines = this.parseCode(lines);
+		lines = this.parseEmpty(lines);
+		lines = this.parseImages(lines);
+		lines = this.parseHeaders(lines);
+		lines = this.parseInline(lines);
+		lines = this.parseLinks(lines);
+		if (this.config.mode === 'extended') {
+			// lines = parseTableSimple(lines);
+		}
+		// lines = parseTable(lines);
+		lines = this.parseLists(lines);
+		lines = this.formatBreaks(lines);
+		lines = this.parseCodeInline(lines);
+		return lines.join('\n');
 	}
 
 	sanitizeConfig(config) {
-		config = (config !== "object" || config === null || Array.isArray(config)) ? {} : config;
+		config = (typeof config !== "object" || config === null || Array.isArray(config)) ? {} : config;
 		const configNew = {};
 		let mode = this.modesAllowed[0];
 		if (typeof config === "object" && Object.prototype.hasOwnProperty.call(config, 'mode')) {
@@ -161,7 +145,12 @@ class MD {
 		return configNew;
 	}
 
-	codeHighlighterGeneral(_language, lines, _addTags, _parseCodeFunction) {
+	reset() {
+		this.formatNonBreak = [];
+		this.formatCode = [];
+	}
+
+	codeHighlighterGeneral = (_language, lines, _addTags, _parseCodeFunction) => {
 		return MDUtils.codeHighlighterGeneral(_language, lines, _addTags, _parseCodeFunction);
 	}
 
@@ -169,14 +158,15 @@ class MD {
 		const linesOutput = [];
 		let isListStarted = false;
 		let isListOrdered = false;
+		const configUI = this.configUI;
 		for (const i in lines) {
-			if (formatCode.indexOf(i) !== -1) {
+			let line = lines[i];
+			if (this.formatCode.indexOf(+i) !== -1) {
 				linesOutput.push(lines[i]);
 				continue;
 			}
-			var lineResult = /^((\*|\-){1,1})([^\*\-]{1,})/.exec(lines[i]);
+			var lineResult = RE.list.exec(lines[i]);
 			if (lineResult === null) {
-				var line = lines[i];
 				if (isListStarted) {
 					line = ((isListOrdered) ? '</ol>' : '</ul>') + line;
 					isListStarted = false;
@@ -186,10 +176,10 @@ class MD {
 			}
 
 			if (isListStarted) {
-				var line = '';
-				isListOrderedCurrent = (lineResult[1] === '-') ? true : false;
+				let line = '';
+				let isListOrderedCurrent = (lineResult[1] === '-') ? true : false;
 				if (isListOrderedCurrent !== isListOrdered) {
-					line += (false === isListOrderedCurrent) ? '</ol><ul class="' + this.configUI.list['class'] + '">' : '</ul><ol class="' + this.configUI.listOrdered['class'] + '">';
+					line += (false === isListOrderedCurrent) ? '</ol><ul class="' + configUI.list['class'] + '">' : '</ul><ol class="' + configUI.listOrdered['class'] + '">';
 					isListOrdered = isListOrderedCurrent;
 				}
 				line += '<li>' + lineResult[3].trim() + '</li>';
@@ -197,77 +187,77 @@ class MD {
 			else {
 				isListOrdered = (lineResult[1] === '-') ? true : false;
 				if (isListOrdered) {
-					var line = '<ol class="' + configUI.listOrdered['class'] + '">';
+					line = '<ol class="' + configUI.listOrdered['class'] + '">';
 				}
 				else {
-					var line = '<ul class="' + configUI.list['class'] + '">';
+					line = '<ul class="' + configUI.list['class'] + '">';
 				}
 				isListStarted = true;
 				line += '<li>' + lineResult[3].trim() + '</li>';
 			}
-			formatNonBreak.push(i);
+			this.formatNonBreak.push(i);
 			linesOutput.push(line);
 		}
 
-		if (isListStarted) {
-			var line = (isListOrdered) ? '</ol>' : '</ul>';
-			linesOutput[i] += line;
+		if (isListStarted && linesOutput.length > 0) {
+			linesOutput[linesOutput.length - 1] += (isListOrdered) ? '</ol>' : '</ul>';
 		}
 		return linesOutput;
 	}
 
 	parseCodeLinesByLanguage(language, lines) {
 		let languageInternal = this.getModeLanguage(language);
-		languageInternal = (isRegisteredCodeHighlight(languageInternal)) ? languageInternal : LANGUAGE_GENERAL;
-		return this.registeredCodeHighlight[languageInternal](languageInternal, lines, false, this.parseCodeLinesByLanguage);
+		languageInternal = (this.isRegisteredCodeHighlight(languageInternal)) ? languageInternal : LANGUAGE_GENERAL;
+		return this.registeredCodeHighlight[languageInternal](languageInternal, lines, false, this.parseCodeLinesByLanguage.bind(this));
 	}
 
 	parseCodeInline(lines) {
 		var language = LANGUAGE_GENERAL;
 		var linesOutput = [];
 
-		const replaceCode = function (symbol) {
-			const input = arguments[5];
+		const replaceCode = (...args) => {
+			const input = args[5];
 			const language = LANGUAGE_GENERAL;
-			const langResult = /^([a-zA-Z0-9]{2,}[\s]{1,})/g.exec(arguments[2]);
+			const langResult = (typeof args[2] === 'string') ? RE.lang.exec(args[2]) : null;
 			let codeIndex = 0;
 			if (langResult !== null) {
 				var languageNew = langResult[1].trim();
 				codeIndex = langResult[1].length;
 				language = (this.isRegisteredCodeHighlight(languageNew)) ? this.getModeLanguage(languageNew) : LANGUAGE_GENERAL;
 			}
-			let code = (language === LANGUAGE_GENERAL) ? arguments[2] : arguments[2].substring(codeIndex);//.replace('[\s]');
+			let code = (language === LANGUAGE_GENERAL) ? args[2] : args[2].substring(codeIndex);//.replace('[\s]');
 			code = this.parseCodeLinesByLanguage(language, [code]).join('');
 			const output = '<pre class="inline ' + this.configUI.code['class'] + ' md-code-syntax-lang-' + language + '" title="' + ((language === LANGUAGE_GENERAL) ? 'code' : 'code: ' + language) + '">' + code + '</pre>';
 			return output;
 		}
 
-		for (var i in lines) {
-			if (formatCode.indexOf(i) !== -1) {
+		for (const i in lines) {
+			if (this.formatCode.indexOf(+i) !== -1) {
 				linesOutput.push(lines[i]);
 				continue;
 			}
 
-			const lineResult = /([\`]{1,1})([^\`]{1,})([\`]{1,1})/g.exec(lines[i]);
+			const lineResult = RE.codeInline.exec(lines[i]);
 			if (lineResult === null) {
 				linesOutput.push(lines[i]);
 				continue;
 			}
 
 			const re = new RegExp('([\`]{1,1})([^\`]{1,})([\`]{1,1})', 'g');
-			lines[i] = lines[i].replace(re, replaceCode);
+			lines[i] = lines[i].replace(re, (...args) => replaceCode(...args));
 			linesOutput.push(lines[i]);
 		}
 		return linesOutput;
 	}
 
 	parseCode(lines) {
+		const configUI = this.configUI;
 		var language = LANGUAGE_GENERAL;
 		var linesOutput = [];
 		var linesCode = [];
 		var isCodeStarted = false;
 
-		const processCodeLines = function () {
+		const processCodeLines = () => {
 			if (linesCode.length === 0) {
 				return;
 			}
@@ -328,7 +318,7 @@ class MD {
 			if (false === isCodeStarted) {
 				linesCode = [];
 				var languageNew = lineResult[2].trim();
-				language = (isRegisteredCodeHighlight(languageNew)) ? getModeLanguage(languageNew) : 'general';
+				language = (this.isRegisteredCodeHighlight(languageNew)) ? this.getModeLanguage(languageNew) : LANGUAGE_GENERAL;
 				linesCode.push(lineResult[2]);
 				if (lineResult[3] === '') {
 					isCodeStarted = true;
@@ -342,8 +332,8 @@ class MD {
 				}
 			}
 
-			formatCode.push(i);
-			formatNonBreak.push(i);
+			this.formatCode.push(i);
+			this.formatNonBreak.push(i);
 		}
 		if (true === isCodeStarted) {
 			isCodeStarted = false;
@@ -355,7 +345,7 @@ class MD {
 	parseEmpty(lines) {
 		const linesOutput = [];
 		for (const i in lines) {
-			if (this.formatCode.indexOf(i) !== -1) {
+			if (this.formatCode.indexOf(+i) !== -1) {
 				linesOutput.push(lines[i]);
 				continue;
 			}
@@ -364,7 +354,7 @@ class MD {
 				linesOutput.push(lines[i]);
 				continue;
 			}
-			formatNonBreak.push(i);
+			this.formatNonBreak.push(i);
 			linesOutput.push(`<br />`);
 		}
 		return linesOutput;
@@ -375,18 +365,18 @@ class MD {
 
 	parseHeaders(lines) {
 		const linesOutput = [];
+		const configUI = this.configUI;
 		for (const i in lines) {
-			if (this.formatCode.indexOf(i) !== -1) {
+			if (this.formatCode.indexOf(+i) !== -1) {
 				linesOutput.push(lines[i]);
 				continue;
 			}
-			var lineResult = /^((\#{1,4})([^\n]+))/.exec(lines[i]);
+			const lineResult = /^((\#{1,4})([^\n]+))/.exec(lines[i]);
 			if (lineResult === null) {
 				linesOutput.push(lines[i]);
 				continue;
 			}
-			var headerType;
-			var className = configUI.header.class;
+			let headerType;
 			switch (lineResult[2]) {
 				case '#':
 					headerType = 'h1';
@@ -401,33 +391,53 @@ class MD {
 					headerType = 'h4';
 					break;
 			}
-			var line = '<' + headerType + ' class="' + configUI.header['class'] + '">' + lineResult[3] + '</' + headerType + '>';
+			const line = `<${headerType} class="${configUI.header['class']}">${lineResult[3]}</${headerType}>`;
 			linesOutput.push(line);
-			formatNonBreak.push(i);
+			this.formatNonBreak.push(i);
 		}
 		return linesOutput;
 	}
 
-
-
 	processInlineItem(line) {
-		return MDUtils.processInlineItem(line);
+		const configUI = this.configUI;
+		const lineResult = /(?:([\*]{1,3}))([^\*\n]+[^\*\s])\1/.exec(line);
+		if (lineResult === null) {
+			return line;
+		}
+		var formatType;
+		var className = '';
+		switch (lineResult[1]) {
+			case '*':
+				formatType = 'em';
+				className = configUI.em['class'];
+				break;
+			case '**':
+				formatType = 'strong';
+				className = configUI.strong['class'];
+				break;
+			default:
+				formatType = 'strong';
+				break;
+		}
+		const lineInline = `<${formatType} class="${className}">${lineResult[2]}</${formatType}>`;
+		line = line.replace(lineResult[0], lineInline);
+		return this.processInlineItem(line);
 	}
 
 	parseInline(lines) {
 		const linesOutput = [];
 		for (const i in lines) {
-			if (this.formatCode.indexOf(i) !== -1) {
+			if (this.formatCode.indexOf(+i) !== -1) {
 				linesOutput.push(lines[i]);
 				continue;
 			}
-			linesOutput.push(processInlineItem(lines[i]));
+			linesOutput.push(this.processInlineItem(lines[i]));
 		}
 		return linesOutput;
 	}
 
 	processImagesItem(line) {
-		MDUtils.processImagesItem(line, this.configUI.image['class'])
+		return MDUtils.processImagesItem(line, this.configUI.image['class'])
 	}
 
 	//http://meta.stackexchange.com/questions/38915/creating-an-image-link-in-markdown-format - with links
@@ -437,11 +447,11 @@ class MD {
 	parseImages(lines) {
 		var linesOutput = [];
 		for (var i in lines) {
-			if (this.formatCode.indexOf(i) !== -1) {
+			if (this.formatCode.indexOf(+i) !== -1) {
 				linesOutput.push(lines[i]);
 				continue;
 			}
-			linesOutput.push(MDUtils.processImagesItem(lines[i]));
+			linesOutput.push(MDUtils.processImagesItem(lines[i], this.configUI.image['class']));
 		}
 		return linesOutput;
 	}
@@ -455,7 +465,7 @@ class MD {
 	}
 
 	getModeLanguage(language) {
-		language = (config.mode === 'basic' && this.allowedHighlights.includes(language)) ? 'general' : language;
+		language = (this.config.mode === 'basic' && this.allowedHighlights.includes(language)) ? 'general' : language;
 		return language;
 	}
 
@@ -468,7 +478,16 @@ class MD {
 	}
 
 	formatBreaks(lines) {
-		return MDUtils.formatBreaks(lines);
+		for (const i in lines) {
+			if (this.formatCode.indexOf(+i) !== -1) {
+				continue;
+			}
+			if (this.formatNonBreak.indexOf(+i) !== -1) {
+				continue;
+			}
+			lines[i] += '<br>';
+		}
+		return lines;
 	}
 
 	/*@todo Perpare for modular code highlight*/
@@ -483,7 +502,7 @@ class MD {
 			throw new Error('MD registerCodeHighlight Error: language allready registered!');
 		}
 		if (language !== this.getModeLanguage(language)) {
-			throw new Error(`MD registerCodeHighlight Error: language not allowed by selected mode "${config.mode}"!`);
+			throw new Error(`MD registerCodeHighlight Error: language not allowed by selected mode "${this.config.mode}"!`);
 		}
 		this.registeredCodeHighlight[language] = processFunction;
 	}
