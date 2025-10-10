@@ -1,7 +1,5 @@
 // MD.js, copyright (c) by Zbigniew Lipka
 // Distributed under an MIT License: https://github.com/zbyso23/MD/blob/master/LICENSE
-const log = console.log;
-
 const LANGUAGE_GENERAL = 'general';
 const HTML_SANITIZE_TABLE = {
 	'<': '&lt;',
@@ -140,7 +138,7 @@ export class MD {
 		let mode = this.modesAllowed[0];
 		if (typeof config === "object" && Object.prototype.hasOwnProperty.call(config, 'mode')) {
 			const modeNew = (typeof config['mode'] === "string") ? config['mode'] : mode;
-			mode = (this.modesAllowed.includes(modeNew)) ? mode : modeNew;
+			mode = (this.modesAllowed.includes(modeNew)) ? modeNew : mode;
 		}
 		configNew.mode = mode;
 		return configNew;
@@ -470,10 +468,10 @@ export class MD {
 				continue;
 			}
 			if (isTableStarted) {
-				var lineResult = /^([^\]]+)(([\]]{1,1}){0,1})/.exec(lines[i]);
+				var lineResult = /^([^\]]+)\]?$/.exec(lines[i]);
 			}
 			else {
-				var lineResult = /^([\[]{1,1})([^\]]+)$/.exec(lines[i]);
+				var lineResult = /^\[([^\]]+)\]?$/.exec(lines[i]);
 			}
 			if (lineResult === null) {
 				if (isTableStarted) {
@@ -498,7 +496,7 @@ export class MD {
 			}
 			else {
 				isTableStarted = true;
-				var rows = lineResult[2].split(';');
+				var rows = lineResult[1].split(';');
 				var line = '<table class="' + this.configUI.table['class'] + '"><tr>';
 				for (var r in rows) {
 					line += '<th>' + rows[r].trim() + '</th>';
