@@ -1,5 +1,6 @@
 // MD.js, copyright (c) by Zbigniew Lipka
 // Distributed under an MIT License: https://github.com/zbyso23/MD/blob/master/LICENSE
+const log = console.log;
 
 const LANGUAGE_GENERAL = 'general';
 const HTML_SANITIZE_TABLE = {
@@ -15,6 +16,7 @@ const HTML_SANITIZE_TABLE = {
 	';': '&#59;',
 	':': '&#58;'
 };
+
 const RE = {
 	link: /([\[]{1,1})([^\]]{1,})([\]]{1,1})([\(]{1,1})([^\)]{1,})([\)]{1,1})/,
 	image: /([\!]{1,1})(([\[]{1,1}([^\]]{1,})[\]]{1,1}){0,1})([\(]{1,1}([^\)]{4,})[\)]{1,1}\s{0,})/,
@@ -23,34 +25,34 @@ const RE = {
 	codeInline: /([\`]{1,1})([^\`]{1,})([\`]{1,1})/g,
 
 };
-const UI_CONFIG_DEFAULT = configUI = {
-		strong: {
-			'html': 'strong',
-			'class': 'md-strong',
-		},
-		em: {
-			'html': 'em',
-			'class': 'md-em',
-		},
-		header: {
-			'class': 'md-header'
-		},
-		code: {
-			'class': 'md-code'
-		},
-		listOrdered: {
-			'class': 'md-list-ordered'
-		},
-		list: {
-			'class': 'md-list'
-		},
-		image: {
-			'class': 'md-image'
-		},
-		table: {
-			'class': 'table md-table table-striped table-hover'
-		}
-	};
+const UI_CONFIG_DEFAULT = {
+	strong: {
+		'html': 'strong',
+		'class': 'md-strong',
+	},
+	em: {
+		'html': 'em',
+		'class': 'md-em',
+	},
+	header: {
+		'class': 'md-header'
+	},
+	code: {
+		'class': 'md-code'
+	},
+	listOrdered: {
+		'class': 'md-list-ordered'
+	},
+	list: {
+		'class': 'md-list'
+	},
+	image: {
+		'class': 'md-image'
+	},
+	table: {
+		'class': 'table md-table table-striped table-hover'
+	}
+};
 
 let MDOLD, MD_ADDONS;
 
@@ -81,7 +83,6 @@ export class MDUtils {
 		if (lineResult === null) {
 			return line;
 		}
-		console.log(`IMG`, line, lineResult);
 		const lineImage = `<img src="${lineResult[6]}" alt="${lineResult[4]}" class="${imageClass}" />`;
 		line = line.replace(lineResult[0], lineImage);
 		return this.processImagesItem(line);
@@ -124,9 +125,9 @@ export class MD {
 		lines = this.parseInline(lines);
 		lines = this.parseLinks(lines);
 		if (this.config.mode === 'extended') {
-			// lines = parseTableSimple(lines);
+			lines = this.parseTableSimple(lines);
 		}
-		// lines = parseTable(lines);
+		lines = this.parseTable(lines);
 		lines = this.parseLists(lines);
 		lines = this.formatBreaks(lines);
 		lines = this.parseCodeInline(lines);
@@ -214,7 +215,7 @@ export class MD {
 	parseCodeInline(lines) {
 		var language = LANGUAGE_GENERAL;
 		var linesOutput = [];
-
+		
 		const replaceCode = (...args) => {
 			const input = args[5];
 			const language = LANGUAGE_GENERAL;
@@ -227,7 +228,7 @@ export class MD {
 			}
 			let code = (language === LANGUAGE_GENERAL) ? args[2] : args[2].substring(codeIndex);//.replace('[\s]');
 			code = this.parseCodeLinesByLanguage(language, [code]).join('');
-			const output = '<pre class="inline ' + this.configUI.code['class'] + ' md-code-syntax-lang-' + language + '" title="' + ((language === LANGUAGE_GENERAL) ? 'code' : 'code: ' + language) + '">' + code + '</pre>';
+			const output = `<pre class="inline ${this.configUI.code['class']} md-code-syntax-lang-${language}" title="${((language === LANGUAGE_GENERAL) ? 'code' : 'code: ' + language)}">${code}</pre>`;
 			return output;
 		}
 
@@ -263,7 +264,7 @@ export class MD {
 			}
 			language = (this.isRegisteredCodeHighlight(language)) ? language : LANGUAGE_GENERAL;
 
-			var output = this.parseCodeLinesByLanguage(language, linesCode);
+			let output = this.parseCodeLinesByLanguage(language, linesCode);
 			//error in other than general (built-in) codeHighlighter have fallback to switch to try general codeHighlighter
 			if (false === Array.isArray(output)) {
 				if (language === LANGUAGE_GENERAL) {
@@ -282,12 +283,11 @@ export class MD {
 			for (; i <= iLast; i++) {
 				if (i === 0) {
 					var useLabel = (language === LANGUAGE_GENERAL) ? false : true;
-					var lineTag = '<pre';
-					lineTag += ' class="' + configUI.code['class'];
-					lineTag += (useLabel) ? ' lang-label' : '';
-					lineTag += ' md-code-syntax-lang-' + language + '">';
-					lineTag += (useLabel) ? '<span class="md-code-syntax-lang-label">' + (language.toUpperCase()) + '</span>' : '';
-					output[i] = lineTag;
+					const lineTagParts = [];
+					lineTagParts.push('<pre');
+					lineTagParts.push(` class="${configUI.code['class']} md-code-syntax-lang-${language} ${(useLabel) ? 'lang-label' : ''}"`);
+					if (useLabel) lineTagParts.push(`<span class="md-code-syntax-lang-label">${language.toUpperCase()}</span>`);
+					output[i] = lineTagParts.join('');
 				}
 				if (i === iLast) {
 					output[i] = output[i] + '</pre>';
@@ -302,7 +302,7 @@ export class MD {
 				var lineResult = /^([^`]{0,})(([\`]{3,3}){0,1})/.exec(lines[i]);
 			}
 			else {
-				var lineResult = /^([\`]{3,3})([^`]+)(([\`]{3,3}){0,1})/.exec(lines[i]);
+				var lineResult = /^([\`]{3,3})([^`]*)(([\`]{3,3}){0,1})/.exec(lines[i]);
 			}
 
 			if (lineResult === null) {
@@ -359,9 +359,6 @@ export class MD {
 		}
 		return linesOutput;
 	}
-
-
-
 
 	parseHeaders(lines) {
 		const linesOutput = [];
@@ -462,6 +459,176 @@ export class MD {
 
 	processLinksItem(line) {
 		return MDUtils.processLinksItem(line);
+	}
+
+	parseTableSimple(lines) {
+		const linesOutput = [];
+		let isTableStarted = false;
+		for (const i in lines) {
+			if (this.formatCode.indexOf(i) !== -1) {
+				linesOutput.push(lines[i]);
+				continue;
+			}
+			if (isTableStarted) {
+				var lineResult = /^([^\]]+)(([\]]{1,1}){0,1})/.exec(lines[i]);
+			}
+			else {
+				var lineResult = /^([\[]{1,1})([^\]]+)$/.exec(lines[i]);
+			}
+			if (lineResult === null) {
+				if (isTableStarted) {
+					linesOutput.push('</table>');
+					isTableStarted = false;
+				}
+				linesOutput.push(lines[i]);
+				continue;
+			}
+
+			if (isTableStarted) {
+				var rows = lineResult[1].split(';');
+				var line = '<tr>';
+				for (var r in rows) {
+					line += '<td>' + rows[r].trim() + '</td>';
+				}
+				line += '</tr>';
+				if (lineResult[2] !== '') {
+					isTableStarted = false;
+					line += '</table>';
+				}
+			}
+			else {
+				isTableStarted = true;
+				var rows = lineResult[2].split(';');
+				var line = '<table class="' + this.configUI.table['class'] + '"><tr>';
+				for (var r in rows) {
+					line += '<th>' + rows[r].trim() + '</th>';
+				}
+				line += '</tr>';
+			}
+			this.formatNonBreak.push(i);
+			linesOutput.push(line);
+		}
+		return linesOutput;
+	}
+
+	parseTable(lines) {
+		const linesOutput = [];
+		const table = {
+			'header': [],
+			'rows': [],
+			'align': []
+		};
+		let isTableHeader = false;
+		let isTableWaitingAlign = false;
+		let isTableStarted = false;
+
+		const processTableRow = (line) => {
+			var cols = line.split('|');
+			var row = [];
+			for (var c in cols) {
+				row.push(cols[c].trim());
+			}
+			return row;
+		}
+
+		const processTable = () => {
+			var line = '<table class="' + this.configUI.table['class'] + '"><tr>';
+			for (var c in table.header) {
+				var i = parseInt(c);
+				var align = table.align[i];
+				line += '<th align="' + align + '" class="text-' + align + '">' + table.header[c] + '</th>';
+			}
+			line += '</tr>';
+			linesOutput.push(line);
+			for (var r in table.rows) {
+				var row = table.rows[r];
+				var line = '<tr>';
+				for (var c in row) {
+					var i = parseInt(c);
+					var align = table.align[i];
+					line += '<td align="' + align + '" class="text-' + align + '">' + row[c] + '</td>';
+				}
+				line += '</tr>';
+				linesOutput.push(line);
+			}
+			linesOutput[(linesOutput.length - 1)] += '</table>';
+			table.header.length = 0;
+			table.rows.length = 0;
+			table.align.length = 0;
+		}
+
+		for (const i in lines) {
+			if (this.formatCode.indexOf(i) !== -1) {
+				linesOutput.push(lines[i]);
+				continue;
+			}
+
+			var line = lines[i].replace(/^([\|]{1,1})/, '');
+			line = line.replace(/([\|]{1,1})$/, '');
+			if (isTableWaitingAlign) {
+				var lineResult = /([\|]{0,1}[\s\:]{0,1}[\-]{1,})/.exec(line);
+			}
+			else {
+				var lineResult = /([\|]{1,1}[^\|]{1,})/.exec(line);
+			}
+
+			if (lineResult === null) {
+				if (isTableStarted) {
+					processTable();
+					isTableStarted = false;
+					isTableWaitingAlign = false;
+					isTableHeader = false;
+				}
+				linesOutput.push(lines[i]);
+				continue;
+			}
+			if (isTableWaitingAlign) {
+				var cols = line.split('|');
+				if (cols.length !== table.header.length) {
+					throw new Error('align cols not match!');
+				}
+				for (var c in cols) {
+					var colResult = /(([\:]{0,1})[\-]{1,}[\s]{0,}([\:]{0,1}))/.exec(cols[c]); //[":--- :", ":--- :", ":", ":", index: 0, input: ":--- :"]
+					var align = 'left';
+					if (colResult === null) {
+						table.align.push(align);
+						continue;
+					}
+					var alignText = colResult[2] + '-' + colResult[3];
+
+					switch (alignText) {
+						case ':-:':
+							align = 'center';
+							break;
+
+						case '-:':
+							align = 'right';
+							break;
+					}
+					table.align.push(align);
+				}
+				isTableWaitingAlign = false;
+				isTableStarted = true;
+				continue;
+			}
+			else {
+				var row = processTableRow(line);
+				if (false === isTableHeader) {
+					table.header = row;
+					isTableHeader = true;
+					isTableWaitingAlign = true;
+				}
+				else {
+					table.rows.push(row);
+				}
+			}
+			this.formatNonBreak.push(i);
+		}
+
+		if (isTableStarted) {
+			processTable();
+		}
+		return linesOutput;
 	}
 
 	getModeLanguage(language) {

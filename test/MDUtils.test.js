@@ -35,7 +35,7 @@ describe("MDUtils", () => {
   it("processImagesItem() should replace markdown image with <img>", () => {
     const input = "![Alt text](pic.png)";
     const result = MDUtils.processImagesItem(input, "img-cls");
-    expect(result).toContain('<img src="pic.png" class="img-cls" />');
+    expect(result).toContain('<img src="pic.png" alt="Alt text" class="img-cls" />');
   });
 
   it("processImagesItem() should ignore lines without image syntax", () => {
