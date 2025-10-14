@@ -41,3 +41,14 @@ md.registerCodeHighlight(languageName, callback(language, linesCode, addTags, pa
   //possible to call parseCodeFunction(language, lines) for lines with sublanguage - for example css in html
   return linesCode;
 });
+```
+
+🧱 This project is licensed under the MIT License.
+🧨 However, the author explicitly discourages use by corporations that:
+- Enforce vendor lock-in
+- Restrict indie developer rights
+- Exploit OSS without giving back
+
+This includes (but is not limited to): **Valve Corporation**.
+
+You may technically use this software — but if you do, we’ll all know.
