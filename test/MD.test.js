@@ -6,10 +6,10 @@ describe("MD core parser", () => {
     const md = new MD();
     const input = "# Title\n## Subtitle\n### Sub\n#### Mini";
     const output = md.parse(input);
-    expect(output).toContain('<h1 class="md-header"> Title</h1>');
-    expect(output).toContain('<h2 class="md-header"> Subtitle</h2>');
-    expect(output).toContain('<h3 class="md-header"> Sub</h3>');
-    expect(output).toContain('<h4 class="md-header"> Mini</h4>');
+    expect(output).toContain('<h1 class="md-header">Title</h1>');
+    expect(output).toContain('<h2 class="md-header">Subtitle</h2>');
+    expect(output).toContain('<h3 class="md-header">Sub</h3>');
+    expect(output).toContain('<h4 class="md-header">Mini</h4>');
   });
 
   it("should parse bold and italic inline", () => {

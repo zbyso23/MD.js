@@ -19,9 +19,12 @@ const RE = {
 	link: /([\[]{1,1})([^\]]{1,})([\]]{1,1})([\(]{1,1})([^\)]{1,})([\)]{1,1})/,
 	image: /([\!]{1,1})(([\[]{1,1}([^\]]{1,})[\]]{1,1}){0,1})([\(]{1,1}([^\)]{4,})[\)]{1,1}\s{0,})/,
 	list: /^((\*|\-){1,1})([^\*\-]{1,})/,
+	header: /^((\#{1,4})([^\n]+))/,
+	inline: /(?:([\*]{1,3}))([^\*\n]+[^\*\s])\1/,
 	lang: /^([a-zA-Z0-9]{2,}[\s]{1,})/g,
 	codeInline: /([\`]{1,1})([^\`]{1,})([\`]{1,1})/g,
 	tableRow: /^[^\[]*;[^\s;]+/,
+	tableSimpleAlign: /(([\:]{0,1})[\-]{1,}[\s]{0,}([\:]{0,1}))/,
 
 };
 const UI_CONFIG_DEFAULT = {
@@ -95,13 +98,51 @@ export class MDUtils {
 	}
 }
 
+export class MDFormatter {
+	static headersMap = new Map([['#', 'h1'], ['##', 'h2'], ['###', 'h3'], ['####', 'h4']]);
+	static inlineMap = new Map([['*', 'em'], ['**', 'strong']]);
+
+	static header(line, configUI) {
+		let detected = false;
+		if (!line) return { line, detected };
+		const lineResult = RE.header.exec(line);
+		if (lineResult === null || !lineResult[2] || !lineResult[3] || !this.headersMap.has(lineResult[2])) return { line, detected };
+		detected = true;
+		const headerType = this.headersMap.get(lineResult[2]);
+		return { line: `<${headerType} class="${configUI.header['class']}">${lineResult[3].trim()}</${headerType}>`, detected };
+	}
+
+	static inline(line, configUI) {
+		let detected = false;
+		const lineResult = RE.inline.exec(line);
+		if (lineResult === null || lineResult.length < 3) {
+			return { line, detected };
+		}
+		detected = true;
+		const formatType = this.inlineMap.has(lineResult[1]) ? this.inlineMap.get(lineResult[1]) : 'strong';
+		let className = '';
+		switch (lineResult[1]) {
+			case '*':
+				className = configUI.em['class'];
+				break;
+			case '**':
+				className = configUI.strong['class'];
+				break;
+		}
+		const lineInline = `<${formatType} class="${className}">${lineResult[2]}</${formatType}>`;
+		const lineNew = line.replace(lineResult[0], lineInline);
+		return { line: lineNew, detected };
+	}
+}
+
 export class MD {
 	modesAllowed = ['basic', 'extended']; // , custom @todo :)
 	allowedHighlights = [LANGUAGE_GENERAL, 'javascript', 'python'];
 	configUI = { ...UI_CONFIG_DEFAULT };
 
-	constructor(config) {
+	constructor(config, skipErrors = true) {
 		this.config = this.sanitizeConfig(config);
+		this.skipErrors = skipErrors;
 		this.registeredCodeHighlight = {
 			general: this.codeHighlighterGeneral,
 			// javascript: codeHighlighterJavascript,
@@ -214,7 +255,7 @@ export class MD {
 	parseCodeInline(lines) {
 		var language = LANGUAGE_GENERAL;
 		var linesOutput = [];
-		
+
 		const replaceCode = (...args) => {
 			const input = args[5];
 			const language = LANGUAGE_GENERAL;
@@ -295,7 +336,7 @@ export class MD {
 			linesCode = [];
 		}
 
-		for (var i in lines) {			
+		for (var i in lines) {
 			let lineResult;
 			if (isCodeStarted) {
 				lineResult = /^([^`]{0,})(([\`]{3,3}){0,1})/.exec(lines[i]);
@@ -367,56 +408,17 @@ export class MD {
 				linesOutput.push(lines[i]);
 				continue;
 			}
-			const lineResult = /^((\#{1,4})([^\n]+))/.exec(lines[i]);
-			if (lineResult === null) {
-				linesOutput.push(lines[i]);
-				continue;
-			}
-			let headerType;
-			switch (lineResult[2]) {
-				case '#':
-					headerType = 'h1';
-					break;
-				case '##':
-					headerType = 'h2';
-					break;
-				case '###':
-					headerType = 'h3';
-					break;
-				case '####':
-					headerType = 'h4';
-					break;
-			}
-			const line = `<${headerType} class="${configUI.header['class']}">${lineResult[3]}</${headerType}>`;
+			const { line, detected } = MDFormatter.header(lines[i], configUI);
 			linesOutput.push(line);
-			this.formatNonBreak.push(i);
+			if (detected) this.formatNonBreak.push(i);
 		}
 		return linesOutput;
 	}
 
-	processInlineItem(line) {
+	processInlineItem(lineRaw) {
 		const configUI = this.configUI;
-		const lineResult = /(?:([\*]{1,3}))([^\*\n]+[^\*\s])\1/.exec(line);
-		if (lineResult === null) {
-			return line;
-		}
-		var formatType;
-		var className = '';
-		switch (lineResult[1]) {
-			case '*':
-				formatType = 'em';
-				className = configUI.em['class'];
-				break;
-			case '**':
-				formatType = 'strong';
-				className = configUI.strong['class'];
-				break;
-			default:
-				formatType = 'strong';
-				break;
-		}
-		const lineInline = `<${formatType} class="${className}">${lineResult[2]}</${formatType}>`;
-		line = line.replace(lineResult[0], lineInline);
+		const { line, detected } = MDFormatter.inline(lineRaw, configUI);
+		if (!detected) return line;
 		return this.processInlineItem(line);
 	}
 
@@ -463,7 +465,6 @@ export class MD {
 	parseTableSimple(lines) {
 		const linesOutput = [];
 		let isTableStarted = false;
-		// const isTableRow = (line) => /^[^\[]*;[^\s;]+/.test(line.trim());
 		const isTableRow = (line) => !line.trim().startsWith('[') && line.includes(';');
 		const terminateTable = () => {
 			if (isTableStarted) {
@@ -524,35 +525,31 @@ export class MD {
 		let isTableStarted = false;
 
 		const processTableRow = (line) => {
-			var cols = line.split('|');
-			var row = [];
-			for (var c in cols) {
-				row.push(cols[c].trim());
-			}
+			const cols = line.split('|');
+			const row = [];
+			cols.map(v => v.trim()).forEach(v => row.push(v));
 			return row;
 		}
 
 		const processTable = () => {
-			var line = '<table class="' + this.configUI.table['class'] + '"><tr>';
-			for (var c in table.header) {
-				var i = parseInt(c);
-				var align = table.align[i];
-				line += '<th align="' + align + '" class="text-' + align + '">' + table.header[c] + '</th>';
+			let line = '<table class="' + this.configUI.table['class'] + '"><tr>';
+			for (let i = 0, len = table.header.length; i < len; i++) {
+				const align = table.align[i];
+				line += `<th align="${align}" class="text-${align}">${table.header[i]}</th>`;
 			}
 			line += '</tr>';
 			linesOutput.push(line);
-			for (var r in table.rows) {
-				var row = table.rows[r];
-				var line = '<tr>';
-				for (var c in row) {
-					var i = parseInt(c);
-					var align = table.align[i];
-					line += '<td align="' + align + '" class="text-' + align + '">' + row[c] + '</td>';
+			for (let i = 0, len = table.rows.length; i < len; i++) {
+				const row = table.rows[i];
+				let line = '<tr>';
+				for (let j = 0, len = row.length; j < len; j++) {
+					const align = table.align[j];
+					line += `<td align="${table.align[j]}" class="text-${align}">${row[j]}</td>`;
 				}
 				line += '</tr>';
 				linesOutput.push(line);
 			}
-			linesOutput[(linesOutput.length - 1)] += '</table>';
+			linesOutput[(linesOutput.length - 1)] += `</table>`;
 			table.header.length = 0;
 			table.rows.length = 0;
 			table.align.length = 0;
@@ -564,13 +561,14 @@ export class MD {
 				continue;
 			}
 
-			var line = lines[i].replace(/^([\|]{1,1})/, '');
+			let line = lines[i].replace(/^([\|]{1,1})/, '');
 			line = line.replace(/([\|]{1,1})$/, '');
+			let lineResult;
 			if (isTableWaitingAlign) {
-				var lineResult = /([\|]{0,1}[\s\:]{0,1}[\-]{1,})/.exec(line);
+				lineResult = /([\|]{0,1}[\s\:]{0,1}[\-]{1,})/.exec(line);
 			}
 			else {
-				var lineResult = /([\|]{1,1}[^\|]{1,})/.exec(line);
+				lineResult = /([\|]{1,1}[^\|]{1,})/.exec(line);
 			}
 
 			if (lineResult === null) {
@@ -584,19 +582,24 @@ export class MD {
 				continue;
 			}
 			if (isTableWaitingAlign) {
-				var cols = line.split('|');
+				const cols = line.split('|');
 				if (cols.length !== table.header.length) {
-					throw new Error('align cols not match!');
+					errorMsg = 'align cols not match!';
+					if (this.skipErrors) {
+						console.log(`Error skipped: ${errorMsg}`);
+					} else {
+						throw new Error(errorMsg);
+					}
 				}
-				for (var c in cols) {
-					var colResult = /(([\:]{0,1})[\-]{1,}[\s]{0,}([\:]{0,1}))/.exec(cols[c]); //[":--- :", ":--- :", ":", ":", index: 0, input: ":--- :"]
-					var align = 'left';
-					if (colResult === null) {
+
+				for (let j = 0, len = cols.length; j < len; j++) {
+					const colsAlignResult = RE.tableSimpleAlign.exec(cols[j]); //[":--- :", ":--- :", ":", ":", index: 0, input: ":--- :"]
+					let align = 'left';
+					if (colsAlignResult === null) {
 						table.align.push(align);
 						continue;
 					}
-					var alignText = colResult[2] + '-' + colResult[3];
-
+					const alignText = colsAlignResult[2] + '-' + colsAlignResult[3];
 					switch (alignText) {
 						case ':-:':
 							align = 'center';
@@ -613,7 +616,7 @@ export class MD {
 				continue;
 			}
 			else {
-				var row = processTableRow(line);
+				const row = processTableRow(line);
 				if (false === isTableHeader) {
 					table.header = row;
 					isTableHeader = true;
@@ -660,17 +663,25 @@ export class MD {
 
 	/*@todo Perpare for modular code highlight*/
 	registerCodeHighlight(language, processFunction) {
+		let errorMsg = null;
 		if (typeof language !== "string") {
-			throw new Error('MD registerCodeHighlight Error: invalid language!');
+			errorMsg = 'MD registerCodeHighlight Error: invalid language!';
 		}
-		if (typeof processFunction !== "function") {
-			throw new Error('MD registerCodeHighlight Error: invalid process function!');
+		if (!errorMsg && typeof processFunction !== "function") {
+			errorMsg = 'MD registerCodeHighlight Error: invalid process function!';
 		}
-		if (true === this.isRegisteredCodeHighlight(language)) {
-			throw new Error('MD registerCodeHighlight Error: language allready registered!');
+		if (!errorMsg && true === this.isRegisteredCodeHighlight(language)) {
+			errorMsg = 'MD registerCodeHighlight Error: language allready registered!';
 		}
-		if (language !== this.getModeLanguage(language)) {
-			throw new Error(`MD registerCodeHighlight Error: language not allowed by selected mode "${this.config.mode}"!`);
+		if (!errorMsg && language !== this.getModeLanguage(language)) {
+			errorMsg = `MD registerCodeHighlight Error: language not allowed by selected mode "${this.config.mode}"!`;
+		}
+		if (errorMsg) {
+			if (this.skipErrors) {
+				console.log(`Error skipped: ${errorMsg}`);
+			} else {
+				throw new Error(errorMsg);
+			}
 		}
 		this.registeredCodeHighlight[language] = processFunction;
 	}
