@@ -71,28 +71,88 @@ describe("MD core parser", () => {
     expect(output).toContain("<pre"); // at least some pre tag
   });
 
-  it("should parse GitHub-style markdown tables", () => {
-    const md = new MD();
-    const input = [
-      "| A | B | C |",
-      "|:-:|--:|---|",
-      "| x | y | z |"
-    ].join("\n");
-    const output = md.parse(input);
-    expect(output).toContain("<table");
-    expect(output).toContain("<th align=\"center\"");
-    expect(output).toContain("<td align=\"center\"");
-  });
+it("should correctly parse GitHub-style markdown tables with alignment and classes", () => {
+  const md = new MD();
 
-  it("should parse bracket-style extended tables", () => {
+  const input = [
+    "| Name | Age | Country |",
+    "|:-----|:---:|----:|",
+    "| Ali | 32 | Turkey |",
+    "| Sara | 28 | Egypt |",
+  ].join("\n");
+
+  const output = md.parse(input);
+
+  expect(output).toContain(`<table class="table md-table table-striped table-hover"><tr><th align="left" class="text-left">Name</th><th align="center" class="text-center">Age</th><th align="right" class="text-right">Country</th></tr><br />
+<tr><td align="left" class="text-left">Ali</td><td align="center" class="text-center">32</td><td align="right" class="text-right">Turkey</td></tr><br />
+<tr><td align="left" class="text-left">Sara</td><td align="center" class="text-center">28</td><td align="right" class="text-right">Egypt</td></tr></table><br />`);
+
+  // 🔹 základní struktura
+  expect(output).toContain('<table class="table md-table table-striped table-hover">');
+  expect(output).toContain("</table>");
+  expect(output).toMatch(/<tr>/);
+  expect(output).toMatch(/<\/tr>/);
+
+  // 🔹 hlavičky a zarovnání
+  expect(output).toContain('<th align="left" class="text-left">Name</th>');
+  expect(output).toContain('<th align="center" class="text-center">Age</th>');
+  expect(output).toContain('<th align="right" class="text-right">Country</th>');
+
+  // 🔹 datové buňky
+  expect(output).toMatch(/<td [^>]+>Ali<\/td>/g);
+
+  // 🔹 počty buněk
+  const thCount = (output.match(/<th /g) || []).length;
+  const tdCount = (output.match(/<td [^>]+>/g) || []).length;
+  expect(thCount).toBe(3);
+  expect(tdCount).toBe(6);
+
+  // 🔹 uzavření tabulky na konci
+  expect(output.trim().endsWith("</table><br />")).toBe(true);
+});
+
+
+  it("should parse extended bracket tables (both closed and open variants)", () => {
     const md = new MD({ mode: "extended" });
-    const input = [
-      "[One;Two;Three]",
-      "1;2;3]"
+
+    const inputClosed = [
+      "[Name; Age; Country]",
+      "Ali; 32; Turkey]",
+      "Sara; 28; Egypt]",
     ].join("\n");
-    const output = md.parse(input);
-    expect(output).toContain("<table");
-    expect(output).toContain("<th>One</th>");
-    expect(output).toContain("<td>1</td>");
+
+    const inputOpen = [
+      "[Product; Price; In stock",
+      "Apples; 12.5; Yes",
+      "Bananas; 8.99; No",
+    ].join("\n");
+
+    const outputClosed = md.parse(inputClosed);
+    const outputOpen = md.parse(inputOpen);
+
+    expect(outputClosed).toContain(`<table class="table md-table table-striped table-hover"><tr><th>Name</th><th>Age</th><th>Country</th></tr><br />
+<tr><td>Ali</td><td>32</td><td>Turkey</td></tr><br />
+<tr><td>Sara</td><td>28</td><td>Egypt</td></tr><br />
+</table><br />`);
+    expect(outputOpen).toContain(`<table class="table md-table table-striped table-hover"><tr><th>Product</th><th>Price</th><th>In stock</th></tr><br />
+<tr><td>Apples</td><td>12.5</td><td>Yes</td></tr><br />
+<tr><td>Bananas</td><td>8.99</td><td>No</td></tr><br />
+</table><br />`);
+
+    expect(outputClosed).toContain("<table");
+    expect(outputClosed).toContain("<th>Name</th>");
+    expect(outputClosed).toContain("<td>Turkey</td>");
+
+    expect(outputOpen).toContain("<table");
+    expect(outputOpen).toContain("<th>Product</th>");
+    expect(outputOpen).toContain("<td>Apples</td>");
+
+    const tdCountClosed = (outputClosed.match(/<td/g) || []).length;
+    const tdCountOpen = (outputOpen.match(/<td/g) || []).length;
+    expect(tdCountClosed).toBe(6);
+    expect(tdCountOpen).toBe(6);
+
+    expect(outputClosed).toContain("</table>");
+    expect(outputOpen).toContain("</table>");
   });
 });

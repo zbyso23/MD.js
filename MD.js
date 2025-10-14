@@ -21,6 +21,7 @@ const RE = {
 	list: /^((\*|\-){1,1})([^\*\-]{1,})/,
 	lang: /^([a-zA-Z0-9]{2,}[\s]{1,})/g,
 	codeInline: /([\`]{1,1})([^\`]{1,})([\`]{1,1})/g,
+	tableRow: /^[^\[]*;[^\s;]+/,
 
 };
 const UI_CONFIG_DEFAULT = {
@@ -224,7 +225,7 @@ export class MD {
 				codeIndex = langResult[1].length;
 				language = (this.isRegisteredCodeHighlight(languageNew)) ? this.getModeLanguage(languageNew) : LANGUAGE_GENERAL;
 			}
-			let code = (language === LANGUAGE_GENERAL) ? args[2] : args[2].substring(codeIndex);//.replace('[\s]');
+			let code = (language === LANGUAGE_GENERAL) ? args[2] : args[2].substring(codeIndex);
 			code = this.parseCodeLinesByLanguage(language, [code]).join('');
 			const output = `<pre class="inline ${this.configUI.code['class']} md-code-syntax-lang-${language}" title="${((language === LANGUAGE_GENERAL) ? 'code' : 'code: ' + language)}">${code}</pre>`;
 			return output;
@@ -242,8 +243,7 @@ export class MD {
 				continue;
 			}
 
-			const re = new RegExp('([\`]{1,1})([^\`]{1,})([\`]{1,1})', 'g');
-			lines[i] = lines[i].replace(re, (...args) => replaceCode(...args));
+			lines[i] = lines[i].replace(RE.codeInline, (...args) => replaceCode(...args));
 			linesOutput.push(lines[i]);
 		}
 		return linesOutput;
@@ -295,12 +295,13 @@ export class MD {
 			linesCode = [];
 		}
 
-		for (var i in lines) {
+		for (var i in lines) {			
+			let lineResult;
 			if (isCodeStarted) {
-				var lineResult = /^([^`]{0,})(([\`]{3,3}){0,1})/.exec(lines[i]);
+				lineResult = /^([^`]{0,})(([\`]{3,3}){0,1})/.exec(lines[i]);
 			}
 			else {
-				var lineResult = /^([\`]{3,3})([^`]*)(([\`]{3,3}){0,1})/.exec(lines[i]);
+				lineResult = /^([\`]{3,3})([^`]*)(([\`]{3,3}){0,1})/.exec(lines[i]);
 			}
 
 			if (lineResult === null) {
@@ -462,43 +463,44 @@ export class MD {
 	parseTableSimple(lines) {
 		const linesOutput = [];
 		let isTableStarted = false;
+		// const isTableRow = (line) => /^[^\[]*;[^\s;]+/.test(line.trim());
+		const isTableRow = (line) => !line.trim().startsWith('[') && line.includes(';');
+		const terminateTable = () => {
+			if (isTableStarted) {
+				linesOutput.push('</table>');
+				isTableStarted = false;
+			}
+		}
 		for (const i in lines) {
+			let lineResult;
 			if (this.formatCode.indexOf(i) !== -1) {
 				linesOutput.push(lines[i]);
 				continue;
 			}
 			if (isTableStarted) {
-				var lineResult = /^([^\]]+)\]?$/.exec(lines[i]);
-			}
-			else {
-				var lineResult = /^\[([^\]]+)\]?$/.exec(lines[i]);
-			}
-			if (lineResult === null) {
-				if (isTableStarted) {
-					linesOutput.push('</table>');
-					isTableStarted = false;
+				if (!isTableRow(lines[i])) {
+					terminateTable();
+					linesOutput.push(lines[i]);
+					continue;
 				}
-				linesOutput.push(lines[i]);
-				continue;
+				lineResult = /^([^\]]+)\]?$/.exec(lines[i]);
+			} else {
+				lineResult = /^\[([^\]]+)\]?$/.exec(lines[i]);
 			}
-
+			let line = '';
 			if (isTableStarted) {
 				var rows = lineResult[1].split(';');
-				var line = '<tr>';
+				line = '<tr>';
 				for (var r in rows) {
 					line += '<td>' + rows[r].trim() + '</td>';
 				}
 				line += '</tr>';
-				if (lineResult[2] !== '') {
-					isTableStarted = false;
-					line += '</table>';
-				}
 			}
 			else {
 				isTableStarted = true;
-				var rows = lineResult[1].split(';');
-				var line = '<table class="' + this.configUI.table['class'] + '"><tr>';
-				for (var r in rows) {
+				const rows = lineResult[1].split(';');
+				line = '<table class="' + this.configUI.table['class'] + '"><tr>';
+				for (const r in rows) {
 					line += '<th>' + rows[r].trim() + '</th>';
 				}
 				line += '</tr>';
@@ -506,6 +508,7 @@ export class MD {
 			this.formatNonBreak.push(i);
 			linesOutput.push(line);
 		}
+		terminateTable();
 		return linesOutput;
 	}
 
@@ -650,7 +653,7 @@ export class MD {
 			if (this.formatNonBreak.indexOf(+i) !== -1) {
 				continue;
 			}
-			lines[i] += '<br>';
+			lines[i] += '<br />';
 		}
 		return lines;
 	}
