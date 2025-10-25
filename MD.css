@@ -314,6 +314,620 @@ pre span.md-code-syntax-percent {
   color: #2a4bb1;
 }
 
+pre.md-code-syntax-lang-json,
+pre.md-code-syntax-lang-jsonl {
+  background-color: #f5f5f5;
+  color: #383a42;
+}
+
+pre.md-code-syntax-lang-json span,
+pre.md-code-syntax-lang-jsonl span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-json span.md-code-syntax-command,
+pre.md-code-syntax-lang-jsonl span.md-code-syntax-command {
+  color: #0184bc;
+}
+
+pre.md-code-syntax-lang-json span.md-code-syntax-controls,
+pre.md-code-syntax-lang-jsonl span.md-code-syntax-controls {
+  color: #50a14f;
+}
+
+pre.md-code-syntax-lang-json span.md-code-syntax-symbol,
+pre.md-code-syntax-lang-jsonl span.md-code-syntax-symbol {
+  color: #a626a4;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-json span.md-code-syntax-comment,
+pre.md-code-syntax-lang-jsonl span.md-code-syntax-comment {
+  color: #a0a1a7;
+}
+
+pre.md-code-syntax-lang-xml {
+  background-color: #fff8e1;
+  color: #5c6166;
+}
+
+pre.md-code-syntax-lang-xml span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-xml span.md-code-syntax-command {
+  color: #d73a49;
+}
+
+pre.md-code-syntax-lang-xml span.md-code-syntax-controls {
+  color: #005cc5;
+}
+
+pre.md-code-syntax-lang-xml span.md-code-syntax-symbol {
+  color: #6f42c1;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-xml span.md-code-syntax-comment {
+  color: #6a737d;
+}
+
+pre.md-code-syntax-lang-yaml,
+pre.md-code-syntax-lang-yml {
+  background-color: #fef9f3;
+  color: #24292e;
+}
+
+pre.md-code-syntax-lang-yaml span,
+pre.md-code-syntax-lang-yml span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-yaml span.md-code-syntax-command,
+pre.md-code-syntax-lang-yml span.md-code-syntax-command {
+  color: #d73a49;
+}
+
+pre.md-code-syntax-lang-yaml span.md-code-syntax-controls,
+pre.md-code-syntax-lang-yml span.md-code-syntax-controls {
+  color: #005cc5;
+}
+
+pre.md-code-syntax-lang-yaml span.md-code-syntax-symbol,
+pre.md-code-syntax-lang-yml span.md-code-syntax-symbol {
+  color: #e36209;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-yaml span.md-code-syntax-comment,
+pre.md-code-syntax-lang-yml span.md-code-syntax-comment {
+  color: #6a737d;
+}
+
+pre.md-code-syntax-lang-toml {
+  background-color: #f6f8fa;
+  color: #24292e;
+}
+
+pre.md-code-syntax-lang-toml span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-toml span.md-code-syntax-command {
+  color: #6f42c1;
+}
+
+pre.md-code-syntax-lang-toml span.md-code-syntax-controls {
+  color: #005cc5;
+}
+
+pre.md-code-syntax-lang-toml span.md-code-syntax-symbol {
+  color: #d73a49;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-toml span.md-code-syntax-comment {
+  color: #6a737d;
+}
+
+pre.md-code-syntax-lang-csv {
+  background-color: #f0f9ff;
+  color: #1e293b;
+}
+
+pre.md-code-syntax-lang-csv span {
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-csv span.md-code-syntax-command {
+  color: #0369a1;
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-csv span.md-code-syntax-controls {
+  color: #334155;
+}
+
+pre.md-code-syntax-lang-csv span.md-code-syntax-symbol {
+  color: #64748b;
+  background-color: transparent;
+}
+
+pre.md-code-syntax-lang-csv span.md-code-syntax-comment {
+  color: #94a3b8;
+}
+
+pre.md-code-syntax-lang-sql {
+  background-color: #e6f3ff;
+  color: #003d5c;
+}
+
+pre.md-code-syntax-lang-sql span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-sql span.md-code-syntax-command {
+  color: #0066cc;
+}
+
+pre.md-code-syntax-lang-sql span.md-code-syntax-controls {
+  color: #cc0066;
+}
+
+pre.md-code-syntax-lang-sql span.md-code-syntax-symbol {
+  color: #8b4513;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-sql span.md-code-syntax-comment {
+  color: #7a7a7a;
+}
+
+css/* PowerShell */
+pre.md-code-syntax-lang-powershell,
+pre.md-code-syntax-lang-ps1 {
+  background-color: #012456;
+  color: #eee;
+}
+
+pre.md-code-syntax-lang-powershell span,
+pre.md-code-syntax-lang-ps1 span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-powershell span.md-code-syntax-command,
+pre.md-code-syntax-lang-ps1 span.md-code-syntax-command {
+  color: #00d4ff;
+}
+
+pre.md-code-syntax-lang-powershell span.md-code-syntax-controls,
+pre.md-code-syntax-lang-ps1 span.md-code-syntax-controls {
+  color: #c586c0;
+}
+
+pre.md-code-syntax-lang-powershell span.md-code-syntax-symbol,
+pre.md-code-syntax-lang-ps1 span.md-code-syntax-symbol {
+  color: #ffd700;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-powershell span.md-code-syntax-comment,
+pre.md-code-syntax-lang-ps1 span.md-code-syntax-comment {
+  color: #6a9955;
+}
+
+/* Dockerfile */
+pre.md-code-syntax-lang-dockerfile,
+pre.md-code-syntax-lang-docker {
+  background-color: #0db7ed;
+  color: #ffffff;
+}
+
+pre.md-code-syntax-lang-dockerfile span,
+pre.md-code-syntax-lang-docker span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-dockerfile span.md-code-syntax-command,
+pre.md-code-syntax-lang-docker span.md-code-syntax-command {
+  color: #fff000;
+}
+
+pre.md-code-syntax-lang-dockerfile span.md-code-syntax-controls,
+pre.md-code-syntax-lang-docker span.md-code-syntax-controls {
+  color: #ffb3ff;
+}
+
+pre.md-code-syntax-lang-dockerfile span.md-code-syntax-symbol,
+pre.md-code-syntax-lang-docker span.md-code-syntax-symbol {
+  color: #ccffff;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-dockerfile span.md-code-syntax-comment,
+pre.md-code-syntax-lang-docker span.md-code-syntax-comment {
+  color: #004d66;
+}
+
+pre.md-code-syntax-lang-latex,
+pre.md-code-syntax-lang-tex {
+  background-color: #f5f5dc;
+  color: #2e1a0a;
+}
+
+pre.md-code-syntax-lang-latex span,
+pre.md-code-syntax-lang-tex span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-latex span.md-code-syntax-command,
+pre.md-code-syntax-lang-tex span.md-code-syntax-command {
+  color: #8b4513;
+}
+
+pre.md-code-syntax-lang-latex span.md-code-syntax-controls,
+pre.md-code-syntax-lang-tex span.md-code-syntax-controls {
+  color: #d2691e;
+}
+
+pre.md-code-syntax-lang-latex span.md-code-syntax-symbol,
+pre.md-code-syntax-lang-tex span.md-code-syntax-symbol {
+  color: #a0522d;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-latex span.md-code-syntax-comment,
+pre.md-code-syntax-lang-tex span.md-code-syntax-comment {
+  color: #999999;
+}
+
+pre.md-code-syntax-lang-graphql,
+pre.md-code-syntax-lang-gql {
+  background-color: #f5f5f5;
+  color: #e10098;
+}
+
+pre.md-code-syntax-lang-graphql span,
+pre.md-code-syntax-lang-gql span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-graphql span.md-code-syntax-command,
+pre.md-code-syntax-lang-gql span.md-code-syntax-command {
+  color: #e10098;
+}
+
+pre.md-code-syntax-lang-graphql span.md-code-syntax-controls,
+pre.md-code-syntax-lang-gql span.md-code-syntax-controls {
+  color: #2a5599;
+}
+
+pre.md-code-syntax-lang-graphql span.md-code-syntax-symbol,
+pre.md-code-syntax-lang-gql span.md-code-syntax-symbol {
+  color: #b146c2;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-graphql span.md-code-syntax-comment,
+pre.md-code-syntax-lang-gql span.md-code-syntax-comment {
+  color: #999999;
+}
+
+pre.md-code-syntax-lang-makefile,
+pre.md-code-syntax-lang-make {
+  background-color: #2d2d2d;
+  color: #f8f8f2;
+}
+
+pre.md-code-syntax-lang-makefile span,
+pre.md-code-syntax-lang-make span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-makefile span.md-code-syntax-command,
+pre.md-code-syntax-lang-make span.md-code-syntax-command {
+  color: #66d9ef;
+}
+
+pre.md-code-syntax-lang-makefile span.md-code-syntax-controls,
+pre.md-code-syntax-lang-make span.md-code-syntax-controls {
+  color: #a6e22e;
+}
+
+pre.md-code-syntax-lang-makefile span.md-code-syntax-symbol,
+pre.md-code-syntax-lang-make span.md-code-syntax-symbol {
+  color: #f92672;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-makefile span.md-code-syntax-comment,
+pre.md-code-syntax-lang-make span.md-code-syntax-comment {
+  color: #75715e;
+}
+
+pre.md-code-syntax-lang-git,
+pre.md-code-syntax-lang-diff {
+  background-color: #282c34;
+  color: #abb2bf;
+}
+
+pre.md-code-syntax-lang-git span,
+pre.md-code-syntax-lang-diff span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-git span.md-code-syntax-command,
+pre.md-code-syntax-lang-diff span.md-code-syntax-command {
+  color: #56b6c2;
+}
+
+pre.md-code-syntax-lang-git span.md-code-syntax-controls,
+pre.md-code-syntax-lang-diff span.md-code-syntax-controls {
+  color: #98c379;
+}
+
+pre.md-code-syntax-lang-git span.md-code-syntax-symbol,
+pre.md-code-syntax-lang-diff span.md-code-syntax-symbol {
+  color: #c678dd;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-git span.md-code-syntax-comment,
+pre.md-code-syntax-lang-diff span.md-code-syntax-comment {
+  color: #5c6370;
+}
+
+pre.md-code-syntax-lang-http,
+pre.md-code-syntax-lang-https {
+  background-color: #f0f7ff;
+  color: #1a1a1a;
+}
+
+pre.md-code-syntax-lang-http span,
+pre.md-code-syntax-lang-https span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-http span.md-code-syntax-command,
+pre.md-code-syntax-lang-https span.md-code-syntax-command {
+  color: #0066cc;
+}
+
+pre.md-code-syntax-lang-http span.md-code-syntax-controls,
+pre.md-code-syntax-lang-https span.md-code-syntax-controls {
+  color: #009933;
+}
+
+pre.md-code-syntax-lang-http span.md-code-syntax-symbol,
+pre.md-code-syntax-lang-https span.md-code-syntax-symbol {
+  color: #666666;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-http span.md-code-syntax-comment,
+pre.md-code-syntax-lang-https span.md-code-syntax-comment {
+  color: #999999;
+}
+
+pre.md-code-syntax-lang-c {
+  background-color: #f4f4f4;
+  color: #555555;
+}
+
+pre.md-code-syntax-lang-c span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-c span.md-code-syntax-command {
+  color: #0000ff;
+}
+
+pre.md-code-syntax-lang-c span.md-code-syntax-controls {
+  color: #af00db;
+}
+
+pre.md-code-syntax-lang-c span.md-code-syntax-symbol {
+  color: #008000;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-c span.md-code-syntax-comment {
+  color: #008000;
+}
+
+pre.md-code-syntax-lang-cpp {
+  background-color: #f0f0f0;
+  color: #00599c;
+}
+
+pre.md-code-syntax-lang-cpp span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-cpp span.md-code-syntax-command {
+  color: #0000ff;
+}
+
+pre.md-code-syntax-lang-cpp span.md-code-syntax-controls {
+  color: #af00db;
+}
+
+pre.md-code-syntax-lang-cpp span.md-code-syntax-symbol {
+  color: #d14;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-cpp span.md-code-syntax-comment {
+  color: #008000;
+}
+
+pre.md-code-syntax-lang-java {
+  background-color: #f8f8f8;
+  color: #5382a1;
+}
+
+pre.md-code-syntax-lang-java span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-java span.md-code-syntax-command {
+  color: #7f0055;
+}
+
+pre.md-code-syntax-lang-java span.md-code-syntax-controls {
+  color: #7f0055;
+}
+
+pre.md-code-syntax-lang-java span.md-code-syntax-symbol {
+  color: #000000;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-java span.md-code-syntax-comment {
+  color: #3f7f5f;
+}
+
+pre.md-code-syntax-lang-go,
+pre.md-code-syntax-lang-golang {
+  background-color: #e0ebf5;
+  color: #2c3e50;
+}
+
+pre.md-code-syntax-lang-go span,
+pre.md-code-syntax-lang-golang span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-go span.md-code-syntax-command,
+pre.md-code-syntax-lang-golang span.md-code-syntax-command {
+  color: #00add8;
+}
+
+pre.md-code-syntax-lang-go span.md-code-syntax-controls,
+pre.md-code-syntax-lang-golang span.md-code-syntax-controls {
+  color: #ce3262;
+}
+
+pre.md-code-syntax-lang-go span.md-code-syntax-symbol,
+pre.md-code-syntax-lang-golang span.md-code-syntax-symbol {
+  color: #5dc9e2;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-go span.md-code-syntax-comment,
+pre.md-code-syntax-lang-golang span.md-code-syntax-comment {
+  color: #6c757d;
+}
+
+pre.md-code-syntax-lang-rust,
+pre.md-code-syntax-lang-rs {
+  background-color: #1e1e1e;
+  color: #dcdcdc;
+}
+
+pre.md-code-syntax-lang-rust span,
+pre.md-code-syntax-lang-rs span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-rust span.md-code-syntax-command,
+pre.md-code-syntax-lang-rs span.md-code-syntax-command {
+  color: #ce9178;
+}
+
+pre.md-code-syntax-lang-rust span.md-code-syntax-controls,
+pre.md-code-syntax-lang-rs span.md-code-syntax-controls {
+  color: #569cd6;
+}
+
+pre.md-code-syntax-lang-rust span.md-code-syntax-symbol,
+pre.md-code-syntax-lang-rs span.md-code-syntax-symbol {
+  color: #da70d6;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-rust span.md-code-syntax-comment,
+pre.md-code-syntax-lang-rs span.md-code-syntax-comment {
+  color: #6a9955;
+}
+
+pre.md-code-syntax-lang-ruby,
+pre.md-code-syntax-lang-rb {
+  background-color: #fff5f5;
+  color: #701516;
+}
+
+pre.md-code-syntax-lang-ruby span,
+pre.md-code-syntax-lang-rb span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-ruby span.md-code-syntax-command,
+pre.md-code-syntax-lang-rb span.md-code-syntax-command {
+  color: #cc342d;
+}
+
+pre.md-code-syntax-lang-ruby span.md-code-syntax-controls,
+pre.md-code-syntax-lang-rb span.md-code-syntax-controls {
+  color: #d73a49;
+}
+
+pre.md-code-syntax-lang-ruby span.md-code-syntax-symbol,
+pre.md-code-syntax-lang-rb span.md-code-syntax-symbol {
+  color: #e3116c;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-ruby span.md-code-syntax-comment,
+pre.md-code-syntax-lang-rb span.md-code-syntax-comment {
+  color: #998;
+}
+
+pre.md-code-syntax-lang-r {
+  background-color: #e8f4f8;
+  color: #1e3a8a;
+}
+
+pre.md-code-syntax-lang-r span {
+  font-weight: bold;
+}
+
+pre.md-code-syntax-lang-r span.md-code-syntax-command {
+  color: #2563eb;
+}
+
+pre.md-code-syntax-lang-r span.md-code-syntax-controls {
+  color: #7c3aed;
+}
+
+pre.md-code-syntax-lang-r span.md-code-syntax-symbol {
+  color: #0891b2;
+  background-color: transparent;
+  font-weight: normal;
+}
+
+pre.md-code-syntax-lang-r span.md-code-syntax-comment {
+  color: #64748b;
+}
+
 img {
   max-width: 100%;
 }

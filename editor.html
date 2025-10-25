@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MD.js Live Editor</title>
+  <link rel="stylesheet" href="MD.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+
+    .editor-panel,
+    .preview-panel {
+      width: 50%;
+      height: 100%;
+      overflow: auto;
+    }
+
+    .editor-panel {
+      border-right: 2px solid #ddd;
+      background-color: #2d2d2d;
+    }
+
+    .panel-header {
+      padding: 15px 20px;
+      background-color: #252526;
+      color: #fff;
+      font-weight: bold;
+      border-bottom: 1px solid #333;
+    }
+
+    #editor {
+      width: 100%;
+      height: calc(100% - 50px);
+      padding: 20px;
+      border: none;
+      outline: none;
+      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      resize: none;
+      background-color: #1e1e1e;
+      color: #d4d4d4;
+    }
+
+    .preview-panel {
+      background-color: #fff;
+    }
+
+    #preview {
+      padding: 20px;
+      min-height: calc(100% - 50px);
+    }
+
+    #editor::-webkit-scrollbar,
+    .preview-panel::-webkit-scrollbar {
+      width: 10px;
+    }
+
+    #editor::-webkit-scrollbar-track {
+      background: #2d2d2d;
+    }
+
+    #editor::-webkit-scrollbar-thumb {
+      background: #555;
+      border-radius: 5px;
+    }
+
+    #editor::-webkit-scrollbar-thumb:hover {
+      background: #777;
+    }
+
+    .preview-panel::-webkit-scrollbar-track {
+      background: #f1f1f1;
+    }
+
+    .preview-panel::-webkit-scrollbar-thumb {
+      background: #888;
+      border-radius: 5px;
+    }
+
+    .preview-panel::-webkit-scrollbar-thumb:hover {
+      background: #555;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="editor-panel">
+      <div class="panel-header">Markdown Editor</div>
+      <textarea id="editor" placeholder="Markdown source here..."></textarea>
+    </div>
+    <div class="preview-panel">
+      <div class="panel-header">Preview</div>
+      <div id="preview"></div>
+    </div>
+  </div>
+
+<script type="module">
+    import { MD } from './MD.mjs';
+    
+    const mdConfig = { mode: 'basic' };
+    const md = new MD(mdConfig);
+
+    const editor = document.getElementById('editor');
+    const preview = document.getElementById('preview');
+
+    function updatePreview() {
+      console.log(`editor.value`, `"${editor.value}"`);
+      const result = md.parse(editor.value);
+      console.log(`result`, `"${result}"`);
+      preview.innerHTML = result;
+    }
+    editor.addEventListener('input', updatePreview);
+    editor.addEventListener('keydown', function (e) {
+      if (e.key !== 'Tab') return;
+      e.preventDefault();
+      const start = this.selectionStart;
+      const end = this.selectionEnd;
+      this.value = this.value.substring(0, start) + '  ' + this.value.substring(end);
+      this.selectionStart = this.selectionEnd = start + 2;
+    });
+
+    updatePreview();
+
+  
+  </script>
+</body>
+
+</html>

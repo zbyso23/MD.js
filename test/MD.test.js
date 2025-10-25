@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { MD } from "../MD.js";
+import { MD } from "../MD.mjs";
 
 describe("MD core parser", () => {
   it("should parse headers (#, ##, ###, ####)", () => {

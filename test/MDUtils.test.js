@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { MDUtils } from "../MD.js";
+import { MDUtils } from "../MD.mjs";
 
 describe("MDUtils", () => {
   it("unHTML() should replace HTML-sensitive characters", () => {

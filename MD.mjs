@@ -26,8 +26,11 @@ const RE = {
 	codeInline: /([\`]{1,1})([^\`]{1,})([\`]{1,1})/g,
 	tableRow: /^[^\[]*;[^\s;]+/,
 	tableSimpleAlign: /(([\:]{0,1})[\-]{1,}[\s]{0,}([\:]{0,1}))/,
-
 };
+const RE_HIGHLIGHT = {
+
+}
+
 const UI_CONFIG_DEFAULT = {
 	strong: {
 		'html': 'strong',
@@ -166,7 +169,44 @@ export class MD {
 			css: this.codeHighlighterCSS,
 			bash: this.codeHighlighterBash,
 			ini: this.codeHighlighterIni,
-			php: this.codeHighlighterPHP
+			php: this.codeHighlighterPHP,
+			json: this.codeHighlighterJSON,
+			jsonl: this.codeHighlighterJSON,
+			xml: this.codeHighlighterXML,
+			yaml: this.codeHighlighterYAML,
+			toml: this.codeHighlighterTOML,
+			csv: this.codeHighlighterCSV,
+			sql: this.codeHighlighterSQL,
+			powershell: this.codeHighlighterPowerShell,
+			ps1: this.codeHighlighterPowerShell,
+			docker: this.codeHighlighterDockerfile,
+			dockerfile: this.codeHighlighterDockerfile,
+			latex: this.codeHighlighterLaTeX,
+			tex: this.codeHighlighterLaTeX,
+			gql: this.codeHighlighterGraphQL,
+			graphql: this.codeHighlighterGraphQL,
+			makefile: this.codeHighlighterMakefile,
+			make: this.codeHighlighterMakefile,
+			git: this.codeHighlighterGit,
+			diff: this.codeHighlighterGit,
+			http: this.codeHighlighterHTTP,
+			https: this.codeHighlighterHTTP,
+			cpp: this.codeHighlighterCpp,
+			c: this.codeHighlighterCpp,
+			java: this.codeHighlighterJava,
+			go: this.codeHighlighterGo,
+			golang: this.codeHighlighterGo,
+			rust: this.codeHighlighterRust,
+			rs: this.codeHighlighterRust,
+			ruby: this.codeHighlighterRuby,
+			rb: this.codeHighlighterRuby,
+			r: this.codeHighlighterR,
+			csharp: this.codeHighlighterCSharp,
+			dotnet: this.codeHighlighterCSharp,
+			cs: this.codeHighlighterCSharp,
+			kotlin: this.codeHighlighterKotlin,
+			kt: this.codeHighlighterKotlin,
+			swift: this.codeHighlighterSwift,
 		};
 		this.reset();
 	}
@@ -217,20 +257,42 @@ export class MD {
 		return lines;
 	}
 
-	codeHighlighterJavascript = (language, lines, addTags, parseCodeFunction) => {
+	#codeHighlighterLanguage = (lines, reCommands, reSymbols, comment) => {
 		const replaceSymbols = (symbol) => MDTags.span(symbol, 'md-code-syntax md-code-syntax-symbol');
-		const replaceCommands = (value) => MDTags.span(value, `md-code-syntax md-code-syntax-${(value.length === 1) ? 'controls' : 'command'}`);
-		const replaceComments = (line, from) => `${(from > 0) ? line.substring(0, from - 1) : ''}${MDTags.span(line.substring(from), `md-code-syntax md-code-syntax-comment`)}`;
-		const reCommands = /(([\=\;\{\}\(\)\[\]\"\.]){1,1}|(join[\.]{1,1})|(console\.log)|break|case|catch|class[^a-z0-9]{1,}|continue|default|delete|(do[^a-z0-9]{1,})|(else[^a-z0-9]{1,})|(enum[^a-z0-9]{1,})|(export[s]{0,1})|module|extends|false|(for[^a-z0-9]{1,1})|from|(as[^a-z0-9]{1,1})|([\s]{1,}in[\s]{1,})|function|if|implements|import|instanceof|interface|let|new[^a-z0-9]{1,}|null|package|private|protected|static|return|super|switch|this|throw|true|try|(typeof[\s]{1,1})|var|while|with|yield){1,1}/g;
-		const reSymbols = /([\']{1,1}[^\']{0,}[\']{1,1}){1,1}/g;
-		const getResult = (lineInput) => {
-			let line = lineInput.replace(reCommands, replaceCommands).replace(reSymbols, replaceSymbols);
-			if (line.indexOf('//') > -1) {
-				line = replaceComments(line, line.indexOf('//'));
+		const replaceCommands = function () {
+			if (typeof arguments[3] === "string") {
+				return MDTags.span(arguments[3], `md-code-syntax md-code-syntax-controls`);
+			}
+			return MDTags.span(arguments[2], `md-code-syntax md-code-syntax-command`);
+		};
+		const replaceComments = (line, from) => [
+			(from > 0) ? line.substring(0, from) : '',
+			MDTags.span(line.substring(from), `md-code-syntax md-code-syntax-comment`),
+		].join('');
+		const getResult = (line) => {
+			line = line.replace(reCommands, replaceCommands)
+			if(reSymbols) line = line.replace(reSymbols, replaceSymbols);
+			if (comment && line.indexOf(comment) > -1) {
+				line = replaceComments(line, line.indexOf(comment));
 			}
 			return line;
-		}
+		};
 		return this.#codeHighlighter(lines, getResult);
+	};
+
+	#codeHighlighterJavaTypeScript = (language, lines, reCommands) => {
+		const reSymbols = /([\']{1,1}[^\']{0,}[\']{1,1}){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '//');
+	}
+
+	codeHighlighterJavascript = (language, lines, addTags, parseCodeFunction) => {
+		const reCommandsES6 = /(([\=\;\{\}\(\)\[\]\"\.]){1,1}|(console\.(log|error|warn|info|debug))|(Array\.(from|of|isArray))|(Object\.(keys|values|entries|assign|freeze|seal))|(String\.(raw|fromCharCode))|(Promise\.(all|race|resolve|reject))|(Math\.(max|min|random|floor|ceil))|(JSON\.(parse|stringify))|(Set|Map|WeakSet|WeakMap)|(Proxy|Reflect)|(async|await)|(break|case|catch|class[^a-z0-9]{1,}|const|continue|debugger|default|delete|do|else|enum|export|extends|false|finally|for|from|function|if|import|in|instanceof|let|new|null|of|return|static|super|switch|this|throw|true|try|typeof|var|void|while|with|yield)|(=>))/g;
+		return this.#codeHighlighterJavaTypeScript(language, lines, reCommandsES6);
+	}
+
+	codeHighlighterTypescript = (language, lines, addTags, parseCodeFunction) => {
+		const reCommandsTS = /(([\=\;\{\}\(\)\[\]\"\.]){1,1}|(console\.(log|error|warn|info|debug))|(Array\.(from|of|isArray))|(Object\.(keys|values|entries|assign|freeze|seal))|(String\.(raw|fromCharCode))|(Promise\.(all|race|resolve|reject))|(Math\.(max|min|random|floor|ceil))|(JSON\.(parse|stringify))|(Set|Map|WeakSet|WeakMap|Proxy|Reflect)|(break|case|catch|class[^a-z0-9]{1,}|const|continue|debugger|default|delete|do|else|enum|export|extends|false|finally|for|from|function|if|import|in|instanceof|let|new|null|of|return|static|super|switch|this|throw|true|try|typeof|var|void|while|with|yield)|(=>)|(as|implements|interface|namespace|type|declare|module|any|boolean|bigint|never|number|object|string|symbol|undefined|void)|(abstract|accessor|asserts|constructor|override|readonly|require|satisfies|private|protected|public)|(is[^a-z0-9]{1,})|(keyof|typeof))/g;
+		return this.#codeHighlighterJavaTypeScript(language, lines, reCommandsTS);
 	}
 
 	codeHighlighterPython = (language, lines, addTags, parseCodeFunction) => {
@@ -243,7 +305,32 @@ export class MD {
 		}
 		const replaceComments = (line, from) => `${(from > 0) ? line.substring(0, from - 1) : ''}${MDTags.span(line.substring(from), `md-code-syntax md-code-syntax-comment`)}`;
 		const replaceHelper = () => MDTags.span('&#37;', `md-code-syntax md-code-syntax-percent`);
-		const reCommands = new RegExp('(([\(\)]){1,1}|True|False|class|finally|return|None|print|continue|lambda|from|nonlocal|while|global|with|elif|yield|assert|else|import|pass|break|except|raise|(def[\s\:]{1,})|in|if|(or[\s]{1,})|(is[\s]{1,})|(def[^a-zA-Z0-9]{1,})|try|not|as[\s]{1,}){1,1}', 'g');
+		// const reCommands = new RegExp('(([\(\)]){1,1}|True|False|class|finally|return|None|print|continue|lambda|from|nonlocal|while|global|with|elif|yield|assert|else|import|pass|break|except|raise|(def[\s\:]{1,})|in|if|(or[\s]{1,})|(is[\s]{1,})|(def[^a-zA-Z0-9]{1,})|try|not|as[\s]{1,}){1,1}', 'g');
+		const reCommands = new RegExp(
+			'(' +
+			// Literals
+			'True|False|None|' +
+			// Keywords
+			'and|as|assert|async|await|break|class|continue|def|del|elif|else|except|finally|for|from|global|if|import|in|is|lambda|nonlocal|not|or|pass|raise|return|try|while|with|yield|match|case|_|' +
+			// Standard functions / Decorators / Anotation
+			'print|len|range|open|input|super|type|isinstance|@[a-zA-Z_][a-zA-Z0-9_]*|->|' +
+			// Special cases
+			'(def\\s)|(async\\s+def)|(async\\s+with)|(with\\s+[a-zA-Z_][a-zA-Z0-9_]*\\s+as)|(class\\s)|(elif\\s)|(except\\s)|(finally\\s)' +
+
+			// lib NumPy
+			'numpy\\.(array|zeros|ones|empty|arange|linspace|reshape|flatten|transpose|dot|matmul|sum|mean|std|var|max|min|argmax|argmin|' +
+			'sin|cos|tan|exp|log|sqrt|loadtxt|savetxt|random\\.(rand|randn|randint|shuffle|seed))|np\\.[a-zA-Z_]+|' +
+
+			// lib FastAPI
+			'@(app\\.)?(get|post|put|delete|patch|head|options)|FastAPI|APIRouter|Depends|Query|Path|Body|Header|Cookie|Request|Response|status|HTTPException|' +
+			'BackgroundTasks|File|UploadFile|Form|JSONResponse|PlainTextResponse|RedirectResponse|' +
+
+			// lib PyTorch
+			'torch\\.(tensor|zeros|ones|rand|randn|from_numpy|to|reshape|view|squeeze|unsqueeze|mm|matmul|dot|sum|mean|std|var|max|min|argmax|argmin|' +
+			'sin|cos|tan|exp|log|sqrt|nn\\.(Module|Linear|Conv2d|Conv1d|Conv3d|ReLU|Sigmoid|Tanh|Softmax|BatchNorm2d|Dropout|Sequential)|' +
+			'optim\\.(Adam|SGD|RMSprop)|Tensor|Device|save|load|no_grad|cuda|autograd\\.Variable)|torch\\.[a-zA-Z_]+|' +
+			'){1,1}', 'g'
+		);
 		const reSymbols = /([\']{1,1}[^\']{0,}[\']{1,1}){1,1}/g;
 		const reHelper = /([\:]{3,3}){1,1}/g;
 		const getResult = function (lineInput) {
@@ -259,8 +346,8 @@ export class MD {
 		return this.#codeHighlighter(lines, getResult);
 	}
 
-	codeHighlighterBash = (language, lines, addTags, parseCodeFunction) =>  {
-		const replaceCommands = function(x, y) {
+	codeHighlighterBash = (language, lines, addTags, parseCodeFunction) => {
+		const replaceCommands = function (x, y) {
 			const className = (x.length === 1) ? 'controls' : 'command';
 			return [
 				MDTags.span(y, `md-code-syntax md-code-syntax-${className}`),
@@ -268,22 +355,22 @@ export class MD {
 			].join('');
 		}
 		const reCommands = new RegExp('(([#]{1,1}[^#]{1,})|(\!#.*)|echo[^a-zA-Z0-9]{1,}|tar[^a-zA-Z0-9]{1,}|print[^a-zA-Z0-9]{1,})', 'g')
-		for(let i in lines) {
+		for (let i in lines) {
 			lines[+i] = lines[+i].replace(reCommands, replaceCommands);
 		}
 		return lines;
 	}
+	// function replacer(match, p1, p2, /* …, */ pN, offset, string, groups) {
+	// 	return replacement;
+	// }
 
 	codeHighlighterIni = (language, lines, addTags, parseCodeFunction) => {
-		// function replacer(match, p1, p2, /* …, */ pN, offset, string, groups) {
-		// 	return replacement;
-		// }
-		const replaceCommands = function(x, y) {
+		const replaceCommands = function () {
 			console.log('>> INI <<', arguments);
-			if(arguments[3] === ';') {
+			if (arguments[3] === ';') {
 				return MDTags.span(`&#59;${arguments[4]}`, 'md-code-syntax md-code-syntax-comments');
 			}
-			if(arguments[7] === '=') {
+			if (arguments[7] === '=') {
 				return [
 					MDTags.span(arguments[6], `md-code-syntax md-code-syntax-attribute-name`),
 					MDTags.span('=', `md-code-syntax md-code-syntax-attribute-control`),
@@ -297,22 +384,95 @@ export class MD {
 			].join('');
 		}
 		const reCommands = new RegExp('((([;]{1,1})(.*))|(^([a-zA-Z0-9]{1,})([\=]{1,1})([^;]{1,}))|([\[]{1,1}([^\]]{1,})[\]]{1,1}))', 'g');
-		for(let i in lines) {
+		for (let i in lines) {
 			lines[+i] = lines[+i].replace(reCommands, replaceCommands);
 		}
 		return lines;
 	}
 
+	codeHighlighterJSON = (language, lines, addTags, parseCodeFunction) => {
+		const replaceCommands = function () {
+			if (arguments[1] && arguments[1].startsWith('"')) {
+				return MDTags.span(arguments[1], 'md-code-syntax md-code-syntax-attribute-name');
+			} else if (arguments[2] && arguments[2].startsWith('"')) {
+				return MDTags.span(arguments[2], 'md-code-syntax md-code-syntax-string');
+			} else if (arguments[3] && /^-?\d+\.?\d*$/.test(arguments[3])) {
+				return MDTags.span(arguments[3], 'md-code-syntax md-code-syntax-number');
+			} else if (arguments[4] && ['true', 'false', 'null'].includes(arguments[4].toLowerCase())) {
+				return MDTags.span(arguments[4], 'md-code-syntax md-code-syntax-keyword');
+			} else if (arguments[5]) {
+				return MDTags.span(arguments[5], 'md-code-syntax md-code-syntax-controls');
+			}
+			return arguments[0];
+		};
+		// Regex for JSON: keys, strings, numbers, keywords, symbols
+		const reCommands = new RegExp(
+			'("([^"]*)"|' + // Keys or strings
+			'(-?\\d+\\.?\\d*)|(true|false|null)|' + // Numbers / Keywords
+			'([\\{\\}\\[\\]:,])' + // Symbols
+			')',
+			'g'
+		);
+		for (let i in lines) {
+			lines[+i] = lines[+i].replace(reCommands, replaceCommands);
+		}
+		return lines;
+	};
+
+	codeHighlighterXML = (language, lines, addTags, parseCodeFunction) => {
+		const replaceCommands = function () {
+			if (arguments[1]) {
+				return [
+					MDTags.span('&lt;', 'md-code-syntax md-code-syntax-controls'),
+					MDTags.span(arguments[2], 'md-code-syntax md-code-syntax-command'),
+					MDTags.span('&gt;', 'md-code-syntax md-code-syntax-controls'),
+				].join('');
+			} else if (arguments[3]) {
+				return [
+					MDTags.span('&lt;/', 'md-code-syntax md-code-syntax-controls'),
+					MDTags.span(arguments[4], 'md-code-syntax md-code-syntax-command'),
+					MDTags.span('&gt;', 'md-code-syntax md-code-syntax-controls'),
+				].join('');
+			} else if (arguments[5]) {
+				return [
+					MDTags.span(arguments[6], 'md-code-syntax md-code-syntax-attribute-name'),
+					MDTags.span('=', 'md-code-syntax md-code-syntax-attribute-control'),
+					MDTags.span(arguments[7], 'md-code-syntax md-code-syntax-string'),
+				].join('');
+			} else if (arguments[8]) {
+				return MDTags.span(`&lt;!--${arguments[9]}--&gt;`, 'md-code-syntax md-code-syntax-comments');
+			} else if (arguments[10]) {
+				return MDTags.span(arguments[10], 'md-code-syntax md-code-syntax-text');
+			}
+			return arguments[0];
+		};
+		// Regex for XML: tags, attributes, comments, text
+		const reCommands = new RegExp(
+			'(<([a-zA-Z0-9]+)[^>]*>|' +  // Opening tags
+			'</([a-zA-Z0-9]+)>|' +  // Closing tags
+			'([a-zA-Z0-9]+)=("[^"]*")|' +  // Attributes
+			'(<!--([^>]*)-->)|' +  // Comments
+			'([^<]+)' +  // Text content
+			')',
+			'g'
+		);
+		for (let i in lines) {
+			lines[+i] = lines[+i].replace(reCommands, replaceCommands);
+		}
+		return lines;
+	};
+
+
 	codeHighlighterPHP = (language, lines, addTags, parseCodeFunction) => {
-		const replaceCommands = function(x, y) {
-			if(arguments[5] === '$') {
+		const replaceCommands = function (x, y) {
+			if (arguments[5] === '$') {
 				return [
 					MDTags.span('&#36;', `md-code-syntax md-code-syntax-controls`),
 					MDTags.span(unHTML(arguments[2].substring(1)), `md-code-syntax md-code-syntax-symbol`),
 					arguments[0].substring(arguments[2].length),
 				].join('');
 			}
-			if(typeof arguments[3] === "string") {
+			if (typeof arguments[3] === "string") {
 				return [
 					MDTags.span(arguments[3], `md-code-syntax md-code-syntax-controls`),
 					arguments[0].substring(arguments[3].length),
@@ -331,7 +491,7 @@ export class MD {
 		const reCommands = new RegExp('((([\=\(\)\{\}]{1,1})|(([$]{1,1})[a-zA-Z0-9_\-]{1,})|halt_compiler|endforeach|abstract|callable|case|catch|class|clone|const|continue|declare|default|elseif|empty|enddeclare|endfor|endif|endswitch|endwhile|exit|extends|final|finally|foreach|function|global|goto|implements|include|include_once|instanceof|insteadof|interface|isset|list|namespace|print|private|protected|public|require_once|require|return|static|switch|array|break|throw|trait|unset|while|yield|eval|echo|else|die|for|try|use|var|new|xor|and|as|do|if|or){1,1}[^a-zA-Z0-9$\(\)]{0,}){1,1}', 'gi');
 		const getResult = (line) => {
 			line = line.replace(reCommands, replaceCommands);
-			if(line.indexOf('//') > -1) {
+			if (line.indexOf('//') > -1) {
 				line = replaceComments(line, line.indexOf('//'));
 			}
 			return line;
@@ -339,18 +499,177 @@ export class MD {
 		return this.#codeHighlighter(lines, getResult);
 	}
 
+	codeHighlighterCpp = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('((alignas|alignof|and|and_eq|asm|auto|bitand|bitor|bool|break|case|catch|char|char8_t|char16_t|char32_t|class|compl|concept|const|consteval|constexpr|const_cast|continue|co_await|co_return|co_yield|decltype|default|delete|do|double|dynamic_cast|else|enum|explicit|export|extern|false|float|for|friend|goto|if|inline|int|long|mutable|namespace|new|noexcept|not|not_eq|nullptr|operator|or|or_eq|private|protected|public|register|reinterpret_cast|requires|return|short|signed|sizeof|static|static_assert|static_cast|struct|switch|template|this|thread_local|throw|true|try|typedef|typeid|typename|union|unsigned|using|virtual|void|volatile|wchar_t|while|xor){1,1}[^a-zA-Z0-9_]{0,}){1,1}', 'gi');
+		const reSymbols = /([\=\\(\\)\{\}\[\]\;\,\.]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '//');
+	};
+
+	codeHighlighterJava = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('((abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|enum|extends|final|finally|float|for|if|goto|implements|import|instanceof|int|interface|long|native|new|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|throw|throws|transient|try|void|volatile|while){1,1}[^a-zA-Z0-9_]{0,}){1,1}', 'gi');
+		const reSymbols = /([\=\\(\\)\{\}\[\]\;\,\.]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '//');
+	};
+
+	codeHighlighterGo = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('((break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go|goto|if|import|interface|map|package|range|return|select|struct|switch|type|var){1,1}[^a-zA-Z0-9_]{0,}){1,1}', 'gi');
+		const reSymbols = /([\=\\(\\)\{\}\[\]\;\,\.]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '//');
+	};
+
+	codeHighlighterRust = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('((as|async|await|break|const|continue|crate|dyn|else|enum|extern|false|fn|for|if|impl|in|let|loop|match|mod|move|mut|pub|ref|return|self|Self|static|struct|super|trait|true|type|union|unsafe|use|where|while|abstract|become|box|do|final|macro|override|priv|try|typeof|unsized|virtual|yield){1,1}[^a-zA-Z0-9_]{0,}){1,1}', 'gi');
+		const reSymbols = /([\=\\(\\)\{\}\[\]\;\,\.]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '//');
+	};
+
+	codeHighlighterRuby = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('(' +
+			'BEGIN|END|alias|and|begin|break|case|class|def|defined|do|else|elsif|end|ensure|false|for|if|in|module|next|nil|not|or|redo|rescue|retry|return|self|super|then|true|undef|unless|until|when|while|yield|' +
+			'Array|Hash|String|Symbol|Integer|Float|Boolean|NilClass|Object|Kernel|Math|File|Dir|IO|Time|Date|DateTime|JSON|URI|Net::HTTP|' +
+			'puts|print|gets|require|load|include|extend|attr_reader|attr_writer|attr_accessor|public|private|protected|new|raise|' +
+			'each|map|select|reject|find|find_all|inject|reduce|sort|sort_by|group_by|count|first|last|take|drop|uniq|reverse|join|split|' +
+			'gsub|sub|match|scan|to_s|to_i|to_f|to_a|to_h|to_sym|empty\\?|any\\?|all\\?|none\\?|one\\?|' +
+			'Rails|ActiveRecord|ActionController|ActionView|Sinatra|RSpec|describe|it|expect|before|after|let|subject|' +
+			'=~|!~|' +
+			'){1,1}[^a-zA-Z0-9_:\\.]{0,}', 'gi');
+		const reSymbols = /([\=\\(\\)\{\}\[\]\;\,\.\|\:\@\$\%\&\*\+\-\/\<\>]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '#');
+	}
+
+	codeHighlighterSQL = (language, lines, addTags, parseCodeFunction) => {
+	const reCommands = new RegExp('(' +
+		'SELECT|FROM|WHERE|GROUP BY|HAVING|ORDER BY|LIMIT|OFFSET|JOIN|INNER JOIN|LEFT JOIN|RIGHT JOIN|FULL JOIN|CROSS JOIN|' +
+		'INSERT INTO|VALUES|UPDATE|SET|DELETE|CREATE|ALTER|DROP|TABLE|VIEW|INDEX|TRIGGER|FUNCTION|PROCEDURE|' +
+		'AS|DISTINCT|UNION|UNION ALL|INTERSECT|EXCEPT|EXISTS|NOT EXISTS|IN|NOT IN|BETWEEN|LIKE|ILIKE|IS NULL|IS NOT NULL|' +
+		'AND|OR|NOT|CASE|WHEN|THEN|ELSE|END|' +
+		'COUNT|SUM|AVG|MIN|MAX|ROUND|TRUNC|CEIL|FLOOR|ABS|SQRT|POW|LOG|LN|EXP|' +
+		'UPPER|LOWER|SUBSTRING|CONCAT|TRIM|LENGTH|REPLACE|CAST|COALESCE|NULLIF|' +
+		'NOW|CURRENT_TIMESTAMP|CURRENT_DATE|EXTRACT|DATE_PART|DATE_TRUNC|INTERVAL|' +
+		'INT|INTEGER|VARCHAR|CHAR|TEXT|BOOLEAN|DATE|TIME|TIMESTAMP|DECIMAL|NUMERIC|FLOAT|DOUBLE|BLOB|' +
+		'SERIAL|AUTO_INCREMENT|ON CONFLICT|RETURNING|WITH|WITH RECURSIVE|' +
+		'){1,1}[^a-zA-Z0-9_]{0,}', 'gi');
+		const reSymbols = /([\=\\(\\)\;\,\.\*\+\-\/\<\>]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '-- ');
+	}
+
+	codeHighlighterR = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('(' +
+			'if|else|for|while|repeat|break|next|in|function|return|TRUE|FALSE|NULL|NA|Inf|NaN|' +
+			'%>%|%>%|%<%|%in%|%like%|' +
+			'library|require|attach|detach|source|sink|' +
+			'print|cat|summary|str|head|tail|names|colnames|rownames|dim|length|nrow|ncol|' +
+			'c|cbind|rbind|merge|subset|transform|aggregate|melt|cast|' +
+			'mean|median|sd|var|quantile|range|min|max|sum|prod|diff|cumsum|cumprod|' +
+			'plot|hist|boxplot|barplot|points|lines|text|title|axis|legend|par|' +
+			'lm|glm|predict|resid|fitted|coef|anova|summary|' +
+			't.test|wilcox.test|chisq.test|cor.test|' +
+			'read.csv|read.table|write.csv|write.table|readRDS|saveRDS|' +
+			'data.frame|factor|as.numeric|as.character|as.factor|as.Date|' +
+			'ggplot|aes|geom_point|geom_line|geom_bar|geom_histogram|' +
+			'dplyr::select|dplyr::filter|dplyr::mutate|dplyr::group_by|dplyr::summarize|' +
+			'tidyr::gather|tidyr::spread|stringr::str_split|stringr::str_replace|purrr::map|purrr::walk|' +
+			'){1,1}[^a-zA-Z0-9_\.\:]{0,}', 'gi');
+		const reSymbols = /([\=\\(\\)\{\}\[\]\;\,\.\$\@\*\+\-\/\<\>\|\&]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '#');
+	}
+
+	codeHighlighterYAML = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('(^[\\s]*([a-zA-Z0-9_\\-\\.]+):|true|false|yes|no|on|off|null|~|%YAML|%TAG|!<tag>|&[a-zA-Z0-9_]+|\\*[a-zA-Z0-9_]+|---|\\.\\.\\.|){1,1}', 'g');
+		const reSymbols = /([\:\-\|\[\]\{\}\>\&\!\%\@\`]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '#');
+	}
+
+	codeHighlighterTOML = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('(^\\[([a-zA-Z0-9_\\-\\.]+)\\]|^[\\s]*([a-zA-Z0-9_\\-\\.]+)\\s*\\=|true|false|\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[\\+\\-]\\d{2}:\\d{2})?)?|){1,1}', 'g');
+		const reSymbols = /([\=\[\]\.\-]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '#');
+	}
+
+	codeHighlighterCSV = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('(^[^,\"]+|^\"\"|NULL|N\\/A|){1,1}', 'g');
+		const reSymbols = /([\,]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols);
+	}
+
+	codeHighlighterPowerShell = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('(' + 
+			'if|else|elseif|foreach|for|while|do|switch|case|default|break|continue|' +
+			'function|filter|param|begin|process|end|return|try|catch|finally|throw|' +
+			'Get-ChildItem|Select-Object|Where-Object|ForEach-Object|Sort-Object|' +
+			'Get-Content|Set-Content|Out-File|Write-Output|Write-Host|Get-Help|Measure-Object|Group-Object|' +
+			'Invoke-Command|Start-Process|Stop-Process|Import-Csv|Export-Csv|ConvertTo-Json|ConvertFrom-Json|' +
+			'\\$[a-zA-Z0-9_]+|-eq|-ne|-gt|-lt|-ge|-le|-like|-notlike|-match|-notmatch|-contains|-notcontains|' +
+			'-and|-or|-not|\\.[a-zA-Z0-9_]+|){1,1}[^a-zA-Z0-9_\-]{0,}', 'gi');
+		const reSymbols = /([\=\\(\\)\{\}\[\]\;\|\$\@\<\>\&\-\+]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '#');
+	}
+
+	codeHighlighterDockerfile = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('((FROM|RUN|COPY|ADD|WORKDIR|CMD|ENTRYPOINT|ENV|ARG|EXPOSE|VOLUME|USER|LABEL|ONBUILD|STOPSIGNAL|HEALTHCHECK|SHELL){1,1}[^a-zA-Z]{0,}){1,1}', 'gi');
+		return this.#codeHighlighterLanguage(lines, reCommands, false, '#');
+	}
+
+	codeHighlighterLaTeX = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('(\\[[a-zA-Z]+\*?\\]|\\\\begin\{[a-zA-Z]+\}|\\\\end\{[a-zA-Z]+\}|\\\\[a-zA-Z]+(\*|\[.*\])?|\\\\.{1,1}){1,1}', 'g');
+		const reSymbols = /([\$\&\#\%\_\{\}]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols);
+	}
+
+	codeHighlighterGraphQL = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('((query|mutation|subscription|fragment|on|type|interface|implements|enum|union|input|scalar|schema|extend){1,1}[^a-zA-Z]{0,}){1,1}', 'gi');
+		const reSymbols = /([\$\:\!\=\{\}\[\]\@]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols);
+	}
+	
+	codeHighlighterMakefile = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('(([a-zA-Z0-9_\-]+)\s*:|(CC|CXX|LD|CFLAGS|LDFLAGS|TARGET|all|clean|install){1,1}[^a-zA-Z0-9_\-]{0,}){1,1}', 'g');
+		const reSymbols = /([\=\:\$\@\^]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '#');
+	}
+
+	codeHighlighterGit = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('(\\[[a-zA-Z]+\]|(user|core|remote|branch|merge|alias)\.{0,1}[a-zA-Z]+){1,1}', 'g');
+		const reSymbols = /([\=\[\]]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '#');
+	}
+
+	codeHighlighterHTTP = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('((GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS|TRACE|CONNECT){1,1}|HTTP\/1\.1|Host|Authorization|Content-Type|Accept|User-Agent){1,1}[^a-zA-Z\-]{0,}){1,1}', 'gi');
+		const reSymbols = /([\:]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols);
+	}
+
+	codeHighlighterSwift = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('((class|struct|enum|protocol|extension|func|var|let|init|deinit|subscript|typealias|associatedtype|if|else|switch|case|default|for|in|while|repeat|break|continue|return|throw|throws|rethrows|try|catch|guard|defer|where|as|is|self|Self|super|nil|true|false|import|public|private|internal|fileprivate|open|static|final|lazy|mutating|nonmutating|optional|required|convenience|dynamic|inout|weak|unowned|async|await|actor|isolated|nonisolated|Array|Dictionary|Set|String|Int|Double|Float|Bool|Optional|Result|Error|Codable|Encodable|Decodable){1,1}[^a-zA-Z0-9_]{0,}){1,1}', 'gi');
+		const reSymbols = /([\=\(\)\{\}\[\]\;\,\.\:\?\!]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '//');
+	};
+
+	codeHighlighterKotlin = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('((abstract|annotation|as|break|by|catch|class|companion|const|constructor|continue|crossinline|data|do|else|enum|external|false|final|finally|for|fun|get|if|import|in|infix|init|inline|inner|interface|internal|is|lateinit|noinline|null|object|open|operator|out|override|package|private|protected|public|reified|return|sealed|set|super|suspend|tailrec|this|throw|true|try|typealias|val|var|vararg|when|where|while|String|Int|Long|Double|Float|Boolean|Char|Byte|Short|Array|List|Map|Set|MutableList|MutableMap|MutableSet|Pair|Triple|Unit|Any|Nothing){1,1}[^a-zA-Z0-9_]{0,}){1,1}', 'gi');
+		const reSymbols = /([\=\(\)\{\}\[\]\;\,\.\:\?\!]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '//');
+	};
+
+	codeHighlighterCSharp = (language, lines, addTags, parseCodeFunction) => {
+		const reCommands = new RegExp('((abstract|as|base|bool|break|byte|case|catch|char|checked|class|const|continue|decimal|default|delegate|do|double|else|enum|event|explicit|extern|false|finally|fixed|float|for|foreach|goto|if|implicit|in|int|interface|internal|is|lock|long|namespace|new|null|object|operator|out|override|params|private|protected|public|readonly|ref|return|sbyte|sealed|short|sizeof|stackalloc|static|string|struct|switch|this|throw|true|try|typeof|uint|ulong|unchecked|unsafe|ushort|using|virtual|void|volatile|while|async|await|var|dynamic|String|Int32|Int64|Double|Single|Boolean|Char|Byte|Decimal|Object|List|Dictionary|Array|IEnumerable|Task|Action|Func|Nullable){1,1}[^a-zA-Z0-9_]{0,}){1,1}', 'gi');
+		const reSymbols = /([\=\(\)\{\}\[\]\;\,\.\:\?\!]){1,1}/g;
+		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '//');
+	};
+
 	codeHighlighterHTML = (language, lines, addTags, parseCodeFunction) => {
-		let isCodeJs         = false;
-		let isCodeJsStarted  = false;
-		let isCodeJsEnded    = false;
-		let isCodeCss        = false;
+		let isCodeJs = false;
+		let isCodeJsStarted = false;
+		let isCodeJsEnded = false;
+		let isCodeCss = false;
 		let isCodeCssStarted = false;
-		let isCodeCssEnded   = false;
-		let codeJs           = [];
-		let codeCss          = [];
+		let isCodeCssEnded = false;
+		let codeJs = [];
+		let codeCss = [];
 		const reSymbols = new RegExp('(([a-zA-Z0-9]{1,})([\=]{1,1})([\"]{1,1})([^\"]{0,})([\"]{1,1}))', 'g');
 		const reCommands = new RegExp('(([<]{1,1}[/]{0,1})(([\!]{1,1}DOCTYPE)|html|head|body|title|meta|link|style|a|h1|h2|h3|h4|h5|h6|p|img|audio|video|script|ul|ol|li|div|span|table|thead|tbody|tr|th|td|col|form|input|select|option|button|header|footer){1,1}([^>]{0,})([>]{1,1}))', 'g');
-		const replaceSymbols = function() {
+		const replaceSymbols = function () {
 			return [
 				MDTags.span(arguments[2].trim(), `md-code-syntax md-code-syntax-attribute-name`),
 				MDTags.span('&#61;', `md-code-syntax md-code-syntax-attribute-control`),
@@ -359,10 +678,10 @@ export class MD {
 				MDTags.span(arguments[5], `md-code-syntax md-code-syntax-attribute-value`),
 			].join('');
 		}
-		const replaceCommands = function() {
-			if(isCodeJs === false) {
+		const replaceCommands = function () {
+			if (isCodeJs === false) {
 				isCodeJs = (arguments[2] === '<' && arguments[3] === 'script' && (/(src)/g.exec(arguments[1]) === null)) ? true : false;
-				if(isCodeJs) {
+				if (isCodeJs) {
 					isCodeJsStarted = true;
 					return [
 						MDTags.span('&lt;', `md-code-syntax md-code-syntax-controls`),
@@ -377,8 +696,7 @@ export class MD {
 			//if(isCodeJs === true)
 			{
 				isCodeJs = (arguments[2] === '</' && arguments[3] === 'script') ? false : true;
-				if(false === isCodeJs)
-				{
+				if (false === isCodeJs) {
 					isCodeJsEnded = true;
 					return [
 						`</pre>${arguments[8].substring(0, arguments[7])}`,
@@ -390,9 +708,9 @@ export class MD {
 				}
 			}
 
-			if(isCodeCss === false) {
+			if (isCodeCss === false) {
 				isCodeCss = (arguments[2] === '<' && arguments[3] === 'style' && (/(src)/g.exec(arguments[1]) === null)) ? true : false;
-				if(isCodeCss) {
+				if (isCodeCss) {
 					isCodeCssStarted = true;
 					return [
 						MDTags.span('&lt;', `md-code-syntax md-code-syntax-controls`),
@@ -405,7 +723,7 @@ export class MD {
 				}
 			} else {
 				isCodeCss = (arguments[2] === '</' && arguments[3] === 'style') ? false : true;
-				if(false === isCodeCss) {
+				if (false === isCodeCss) {
 					isCodeCssEnded = true;
 					return [
 						`</pre>${arguments[8].substring(0, arguments[7])}`,
@@ -419,31 +737,31 @@ export class MD {
 			}
 			const attributes = (arguments[5] === '') ? '' : arguments[5].replace(reSymbols, replaceSymbols);
 			return [
-				MDTags.span(`&lt;${(arguments[2] === '</' ? '/' : '' )}`, `md-code-syntax md-code-syntax-controls`),
+				MDTags.span(`&lt;${(arguments[2] === '</' ? '/' : '')}`, `md-code-syntax md-code-syntax-controls`),
 				MDTags.span(arguments[3], `md-code-syntax md-code-syntax-command`),
 				attributes,
 				MDTags.span('&gt;', `md-code-syntax md-code-syntax-controls`),
 
 			].join('');
 		}
-		for(let i in lines) {
-			if(lines[+i].length === 0) continue;
+		for (let i in lines) {
+			if (lines[+i].length === 0) continue;
 			let line = lines[+i];
 			line = line.replace(reCommands, replaceCommands);
-			if(isCodeJs && false === isCodeJsStarted && false === isCodeJsEnded) {
+			if (isCodeJs && false === isCodeJsStarted && false === isCodeJsEnded) {
 				line = line.replace(line, this.parseCodeLinesByLanguage('javascript', [line]).join(''));
 			}
-			if(isCodeCss && false === isCodeCssStarted && false === isCodeCssEnded) {
+			if (isCodeCss && false === isCodeCssStarted && false === isCodeCssEnded) {
 				line = line.replace(line, this.parseCodeLinesByLanguage('css', [line]).join(''));
 			}
 			lines[i] = line;
-			if(true === isCodeJsStarted || true === isCodeJsEnded) {
+			if (true === isCodeJsStarted || true === isCodeJsEnded) {
 				isCodeJsStarted = false;
-				isCodeJsEnded   = false;
+				isCodeJsEnded = false;
 			}
-			if(true === isCodeCssStarted || true === isCodeCssEnded) {
+			if (true === isCodeCssStarted || true === isCodeCssEnded) {
 				isCodeCssStarted = false;
-				isCodeCssEnded   = false;
+				isCodeCssEnded = false;
 			}
 		}
 		return lines;
@@ -454,7 +772,7 @@ export class MD {
 		const replaceSymbols = (symbol) => {
 			symbol = symbol.trim();
 			let className = (symbol.length === 1 && notSymbol.indexOf(symbol) === -1) ? 'controls' : 'command';
-			if(symbol.length === 1 && (symbol === '<' || symbol === '>')) {
+			if (symbol.length === 1 && (symbol === '<' || symbol === '>')) {
 				symbol = (symbol === '<' ? '&lt;' : '&gt;');
 			}
 			return MDTags.span(symbol, `md-code-syntax md-code-syntax-${className}`);
@@ -464,9 +782,9 @@ export class MD {
 			const isElements = (parts.length > 1);
 			let parts = rule.split('{');
 			let isColon = false;
-			if(false === isElements) {
+			if (false === isElements) {
 				const colonResult = /[,]{1,1}[\s]{0,}$/.exec(rule);
-				if(colonResult !== null) {
+				if (colonResult !== null) {
 					isElements = true;
 					parts = [rule.substring(0, colonResult.index), ''];
 				}
@@ -474,28 +792,28 @@ export class MD {
 				isColon = true;
 			}
 			const definition = (isElements) ? parts[1] : parts[0];
-			if(isElements) {
+			if (isElements) {
 				parts[0] = parts[0].replace(reSymbols, replaceSymbols);
 			}
 			const definitionParts = definition.split(';');
-			for(let d in definitionParts) {
+			for (let d in definitionParts) {
 				const definitionPart = definitionParts[d].split(':');
-				if(definitionPart.length === 1) continue; //@todo
+				if (definitionPart.length === 1) continue; //@todo
 				definitionPart[0] = `${MDTags.span(definitionPart[0], `md-code-syntax md-code-syntax-attribute-name`)}<span class="md-code-syntax md-code-syntax-controls">`;
-				definitionPart[1] = `</span>${MDTags.span(definitionPart[1], `md-code-syntax md-code-syntax-attribute-value`)}`;				
+				definitionPart[1] = `</span>${MDTags.span(definitionPart[1], `md-code-syntax md-code-syntax-attribute-value`)}`;
 				definitionParts[+d] = definitionPart.join(MDTags.span('&#58;', `md-code-syntax md-code-syntax-attribute-control`));  //:
 			}
 			definition = definitionParts.join(MDTags.span('&#59;', `md-code-syntax md-code-syntax-controls`)); //;
-			if(isElements) {
+			if (isElements) {
 				parts[1] = definition;
 			} else {
-				parts[0] = definition;	
+				parts[0] = definition;
 			}
 			return parts.join(MDTags.span((isColon) ? ',' : '&#123;', `md-code-syntax md-code-syntax-symbol`)); //{
 		}
 		const getResult = (line) => {
 			const rules = line.split('}');
-			for(let j in rules) {
+			for (let j in rules) {
 				rules[+j] = processRule(rules[+j]);
 			}
 			return rules.join(MDTags.span('&#125;', `md-code-syntax md-code-syntax-symbol`)); //}
@@ -627,7 +945,7 @@ export class MD {
 					const useLabel = (language === LANGUAGE_GENERAL) ? false : true;
 					const lineTagParts = [];
 					lineTagParts.push('<pre');
-					lineTagParts.push(` class="${configUI.code['class']} md-code-syntax-lang-${language} ${(useLabel) ? 'lang-label' : ''}"`);					
+					lineTagParts.push(` class="${configUI.code['class']} md-code-syntax-lang-${language} ${(useLabel) ? 'lang-label' : ''}"`);
 					if (useLabel) lineTagParts.push(MDTags.span(language.toUpperCase(), configUI.codeLabel['class']));
 					output[i] = lineTagParts.join('');
 				}
@@ -788,24 +1106,26 @@ export class MD {
 				lineResult = /^\[([^\]]+)\]?$/.exec(lines[i]);
 			}
 			let line = '';
-			if (isTableStarted) {
-				const rows = lineResult[1].split(';');
-				line = '<tr>';
-				for (const r in rows) {
-					line += `<td>${rows[+r].trim()}</td>`;
+			if(lineResult) {
+				if (isTableStarted) {
+					const rows = lineResult[1].split(';');
+					line = '<tr>';
+					for (const r in rows) {
+						line += `<td>${rows[+r].trim()}</td>`;
+					}
+					line += '</tr>';
 				}
-				line += '</tr>';
-			}
-			else {
-				isTableStarted = true;
-				const rows = lineResult[1].split(';');
-				line = `<table class="${this.configUI.table['class']}"><tr>`;
-				for (const r in rows) {
-					line += `<th>${rows[r].trim()}</th>`;
+				else {
+					isTableStarted = true;
+					const rows = lineResult[1].split(';');
+					line = `<table class="${this.configUI.table['class']}"><tr>`;
+					for (const r in rows) {
+						line += `<th>${rows[r].trim()}</th>`;
+					}
+					line += '</tr>';
 				}
-				line += '</tr>';
+				this.formatNonBreak.push(i);
 			}
-			this.formatNonBreak.push(i);
 			linesOutput.push(line);
 		}
 		terminateTable();
