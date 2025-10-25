@@ -164,7 +164,9 @@ export class MD {
 		this.registeredCodeHighlight = {
 			general: this.codeHighlighterGeneral,
 			javascript: this.codeHighlighterJavascript,
+			js: this.codeHighlighterJavascript,
 			typescript: this.codeHighlighterTypescript,
+			ts: this.codeHighlighterTypescript,
 			python: this.codeHighlighterPython,
 			html: this.codeHighlighterHTML,
 			css: this.codeHighlighterCSS,
@@ -489,7 +491,20 @@ export class MD {
 	}
 
 	codeHighlighterTypescript = (language, lines) => {
-		const reCommandsTS = /(([\=\;\{\}\(\)\[\]\"\.]){1,1}|(console\.(log|error|warn|info|debug))|(Array\.(from|of|isArray))|(Object\.(keys|values|entries|assign|freeze|seal))|(String\.(raw|fromCharCode))|(Promise\.(all|race|resolve|reject))|(Math\.(max|min|random|floor|ceil))|(JSON\.(parse|stringify))|(Set|Map|WeakSet|WeakMap|Proxy|Reflect)|(break|case|catch|class[^a-z0-9]{1,}|const|continue|debugger|default|delete|do|else|enum|export|extends|false|finally|for|from|function|if|import|in|instanceof|let|new|null|of|return|static|super|switch|this|throw|true|try|typeof|var|void|while|with|yield)|(=>)|(as|implements|interface|namespace|type|declare|module|any|boolean|bigint|never|number|object|string|symbol|undefined|void)|(abstract|accessor|asserts|constructor|override|readonly|require|satisfies|private|protected|public)|(is[^a-z0-9]{1,})|(keyof|typeof))/g;
+		const reCommandsTS = new RegExp(
+			'(?<![\\w$])(' +
+				'console\\.(?:log|error|warn|info|debug)|Array\\.(?:from|of|isArray)' +
+				'|Object\\.(?:keys|values|entries|assign|freeze|seal)|String\\.(?:raw|fromCharCode)|Promise\\.(?:all|race|resolve|reject)' +
+				'|Math\\.(?:max|min|random|floor|ceil)|JSON\\.(?:parse|stringify)|Set|Map|WeakSet|WeakMap|Proxy|Reflect' +
+				'|async|await|break|case|catch|class(?![\\w$])|const|continue|debugger|default|delete|do|else|enum' +
+				'|export|extends|false|finally|for|from|function|if|import|in|instanceof|let|new|null|of|return' +
+				'|static|super|switch|this|throw|true|try|typeof|var|void|while|with|yield|=>' +
+				'|abstract|as|asserts|any|bigint|boolean|constructor|declare|get|infer|interface|implements' +
+				'|intrinsic|is|keyof|module|namespace|never|number|object|readonly|required|public|private|protected' +
+				'|override|satisfies|string|symbol|type|unique|unknown|undefined' +
+			')(?![\\w$])',
+			'g'
+		);
 		return this.#codeHighlighterJavaTypeScript(language, lines, reCommandsTS);
 	}
 
