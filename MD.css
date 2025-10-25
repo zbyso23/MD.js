@@ -48,6 +48,7 @@ pre span {
   font-weight: bold;
 }
 
+/*   LANG DEFINITIONS    */
 pre.md-code {
   padding-bottom: 15px;
   margin: 5px 0;
@@ -88,9 +89,6 @@ pre.md-code-syntax-lang-php span.md-code-syntax-lang-label {
     background-color: #515d95;
     color: #99a4d6;
 }
-
-
-/*   LANG DEFINITIONS    */
 
 pre.md-code-syntax-lang-javascript {
   background-color: #ffedc5;
@@ -310,7 +308,6 @@ pre.md-code-syntax-lang-php span.md-code-syntax-attribute-quote {
 pre.md-code-syntax-lang-php span.md-code-syntax-attribute-value {
   color: #599242;
 }
-
 
 pre span.md-code-syntax-percent {
   content: '%';
