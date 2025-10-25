@@ -164,6 +164,7 @@ export class MD {
 		this.registeredCodeHighlight = {
 			general: this.codeHighlighterGeneral,
 			javascript: this.codeHighlighterJavascript,
+			typescript: this.codeHighlighterTypescript,
 			python: this.codeHighlighterPython,
 			html: this.codeHighlighterHTML,
 			css: this.codeHighlighterCSS,
@@ -257,42 +258,34 @@ export class MD {
 		return lines;
 	}
 
-	#codeHighlighterLanguage = (lines, reCommands, reSymbols, comment) => {
+	#codeHighlighterLanguage = (lines, options) => {
+		const { reCommands, reSymbols, comment, postCommand, postSymbol } = options;
 		const replaceSymbols = (symbol) => MDTags.span(symbol, 'md-code-syntax md-code-syntax-symbol');
-		const replaceCommands = function () {
-			if (typeof arguments[3] === "string") {
-				return MDTags.span(arguments[3], `md-code-syntax md-code-syntax-controls`);
-			}
-			return MDTags.span(arguments[2], `md-code-syntax md-code-syntax-command`);
+		const replaceCommands = function (value) {
+			const type = (value.length === 1) ? 'controls' : 'command';
+			return MDTags.span(value, `md-code-syntax md-code-syntax-${type}`);
 		};
 		const replaceComments = (line, from) => [
 			(from > 0) ? line.substring(0, from) : '',
 			MDTags.span(line.substring(from), `md-code-syntax md-code-syntax-comment`),
 		].join('');
 		const getResult = (line) => {
-			line = line.replace(reCommands, replaceCommands)
+			line = line.replace(/(`)/g, "&#96;");
+			if (reCommands) line = line.replace(reCommands, replaceCommands)
+			if (postCommand) line = postCommand(line);
 			if (reSymbols) line = line.replace(reSymbols, replaceSymbols);
+			if (postSymbol) line = postSymbol(line);
 			if (comment && line.indexOf(comment) > -1) {
 				line = replaceComments(line, line.indexOf(comment));
 			}
 			return line;
 		};
 		return this.#codeHighlighter(lines, getResult);
-	};
+	}
 
 	#codeHighlighterJavaTypeScript = (language, lines, reCommands) => {
 		const reSymbols = /([\']{1,1}[^\']{0,}[\']{1,1}){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '//');
-	}
-
-	codeHighlighterJavascript = (language, lines) => {
-		const reCommandsES6 = /(([\=\;\{\}\(\)\[\]\"\.]){1,1}|(console\.(log|error|warn|info|debug))|(Array\.(from|of|isArray))|(Object\.(keys|values|entries|assign|freeze|seal))|(String\.(raw|fromCharCode))|(Promise\.(all|race|resolve|reject))|(Math\.(max|min|random|floor|ceil))|(JSON\.(parse|stringify))|(Set|Map|WeakSet|WeakMap)|(Proxy|Reflect)|(async|await)|(break|case|catch|class[^a-z0-9]{1,}|const|continue|debugger|default|delete|do|else|enum|export|extends|false|finally|for|from|function|if|import|in|instanceof|let|new|null|of|return|static|super|switch|this|throw|true|try|typeof|var|void|while|with|yield)|(=>))/g;
-		return this.#codeHighlighterJavaTypeScript(language, lines, reCommandsES6);
-	}
-
-	codeHighlighterTypescript = (language, lines) => {
-		const reCommandsTS = /(([\=\;\{\}\(\)\[\]\"\.]){1,1}|(console\.(log|error|warn|info|debug))|(Array\.(from|of|isArray))|(Object\.(keys|values|entries|assign|freeze|seal))|(String\.(raw|fromCharCode))|(Promise\.(all|race|resolve|reject))|(Math\.(max|min|random|floor|ceil))|(JSON\.(parse|stringify))|(Set|Map|WeakSet|WeakMap|Proxy|Reflect)|(break|case|catch|class[^a-z0-9]{1,}|const|continue|debugger|default|delete|do|else|enum|export|extends|false|finally|for|from|function|if|import|in|instanceof|let|new|null|of|return|static|super|switch|this|throw|true|try|typeof|var|void|while|with|yield)|(=>)|(as|implements|interface|namespace|type|declare|module|any|boolean|bigint|never|number|object|string|symbol|undefined|void)|(abstract|accessor|asserts|constructor|override|readonly|require|satisfies|private|protected|public)|(is[^a-z0-9]{1,})|(keyof|typeof))/g;
-		return this.#codeHighlighterJavaTypeScript(language, lines, reCommandsTS);
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols, comment: '//' });
 	}
 
 	codeHighlighterPython = (language, lines) => {
@@ -481,28 +474,52 @@ export class MD {
 		return this.#codeHighlighter(lines, getResult);
 	}
 
+	codeHighlighterJavascript = (language, lines) => {
+		const reCommandsES6 = new RegExp(
+			'(?<![\\w$])(console\\.(?:log|error|warn|info|debug)|Array\\.(?:from|of|isArray)' +
+			'|Object\\.(?:keys|values|entries|assign|freeze|seal)|String\\.(?:raw|fromCharCode)|Promise\\.(?:all|race|resolve|reject)' +
+			'|Math\\.(?:max|min|random|floor|ceil)|JSON\\.(?:parse|stringify)|Set|Map|WeakSet|WeakMap|Proxy|Reflect' +
+			'|async|await|break|case|catch|class(?![\\w$])|const|continue|debugger|default|delete|do|else|enum' +
+			'|export|extends|false|finally|for|from|function|if|import|in|instanceof|let|new|null|of|return' +
+			'|static|super|switch|this|throw|true|try|typeof|var|void|while|with|yield|=>' +
+			')(?![\\w$])',
+			'g'
+		);
+		return this.#codeHighlighterJavaTypeScript(language, lines, reCommandsES6);
+	}
+
+	codeHighlighterTypescript = (language, lines) => {
+		const reCommandsTS = /(([\=\;\{\}\(\)\[\]\"\.]){1,1}|(console\.(log|error|warn|info|debug))|(Array\.(from|of|isArray))|(Object\.(keys|values|entries|assign|freeze|seal))|(String\.(raw|fromCharCode))|(Promise\.(all|race|resolve|reject))|(Math\.(max|min|random|floor|ceil))|(JSON\.(parse|stringify))|(Set|Map|WeakSet|WeakMap|Proxy|Reflect)|(break|case|catch|class[^a-z0-9]{1,}|const|continue|debugger|default|delete|do|else|enum|export|extends|false|finally|for|from|function|if|import|in|instanceof|let|new|null|of|return|static|super|switch|this|throw|true|try|typeof|var|void|while|with|yield)|(=>)|(as|implements|interface|namespace|type|declare|module|any|boolean|bigint|never|number|object|string|symbol|undefined|void)|(abstract|accessor|asserts|constructor|override|readonly|require|satisfies|private|protected|public)|(is[^a-z0-9]{1,})|(keyof|typeof))/g;
+		return this.#codeHighlighterJavaTypeScript(language, lines, reCommandsTS);
+	}
+
 	codeHighlighterCpp = (language, lines) => {
 		const reCommands = new RegExp('((alignas|alignof|and|and_eq|asm|auto|bitand|bitor|bool|break|case|catch|char|char8_t|char16_t|char32_t|class|compl|concept|const|consteval|constexpr|const_cast|continue|co_await|co_return|co_yield|decltype|default|delete|do|double|dynamic_cast|else|enum|explicit|export|extern|false|float|for|friend|goto|if|inline|int|long|mutable|namespace|new|noexcept|not|not_eq|nullptr|operator|or|or_eq|private|protected|public|register|reinterpret_cast|requires|return|short|signed|sizeof|static|static_assert|static_cast|struct|switch|template|this|thread_local|throw|true|try|typedef|typeid|typename|union|unsigned|using|virtual|void|volatile|wchar_t|while|xor){1,1}[^a-zA-Z0-9_]{0,}){1,1}', 'gi');
 		const reSymbols = /([\=\\(\\)\{\}\[\]\;\,\.]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '//');
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols, comment: '//' });
 	};
 
 	codeHighlighterJava = (language, lines) => {
-		const reCommands = new RegExp('((abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|enum|extends|final|finally|float|for|if|goto|implements|import|instanceof|int|interface|long|native|new|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|throw|throws|transient|try|void|volatile|while){1,1}[^a-zA-Z0-9_]{0,}){1,1}', 'gi');
+		// const reCommands = new RegExp('((abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|enum|extends|final|finally|float|for|if|goto|implements|import|instanceof|int|interface|long|native|new|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|throw|throws|transient|try|void|volatile|while){1,1}[^a-zA-Z0-9_]{0,}){1,1}', 'gi');
+		const reCommands = new RegExp(
+			'\\b(abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|enum|extends|final|finally|float|for|if|goto|implements|import|instanceof|int|interface|long|native|new|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|throw|throws|transient|try|void|volatile|while)\\b',
+			'gi'
+		);
+
 		const reSymbols = /([\=\\(\\)\{\}\[\]\;\,\.]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '//');
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols, comment: '//' });
 	};
 
 	codeHighlighterGo = (language, lines) => {
 		const reCommands = new RegExp('((break|case|chan|const|continue|default|defer|else|fallthrough|for|func|go|goto|if|import|interface|map|package|range|return|select|struct|switch|type|var){1,1}[^a-zA-Z0-9_]{0,}){1,1}', 'gi');
 		const reSymbols = /([\=\\(\\)\{\}\[\]\;\,\.]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '//');
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols, comment: '//' });
 	};
 
 	codeHighlighterRust = (language, lines) => {
 		const reCommands = new RegExp('((as|async|await|break|const|continue|crate|dyn|else|enum|extern|false|fn|for|if|impl|in|let|loop|match|mod|move|mut|pub|ref|return|self|Self|static|struct|super|trait|true|type|union|unsafe|use|where|while|abstract|become|box|do|final|macro|override|priv|try|typeof|unsized|virtual|yield){1,1}[^a-zA-Z0-9_]{0,}){1,1}', 'gi');
 		const reSymbols = /([\=\\(\\)\{\}\[\]\;\,\.]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '//');
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols, comment: '//' });
 	};
 
 	codeHighlighterRuby = (language, lines) => {
@@ -516,7 +533,7 @@ export class MD {
 			'=~|!~|' +
 			'){1,1}[^a-zA-Z0-9_:\\.]{0,}', 'gi');
 		const reSymbols = /([\=\\(\\)\{\}\[\]\;\,\.\|\:\@\$\%\&\*\+\-\/\<\>]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '#');
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols, comment: '#' });
 	}
 
 	codeHighlighterSQL = (language, lines) => {
@@ -532,7 +549,7 @@ export class MD {
 			'SERIAL|AUTO_INCREMENT|ON CONFLICT|RETURNING|WITH|WITH RECURSIVE|' +
 			'){1,1}[^a-zA-Z0-9_]{0,}', 'gi');
 		const reSymbols = /([\=\\(\\)\;\,\.\*\+\-\/\<\>]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '-- ');
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols, comment: '-- ' });
 	}
 
 	codeHighlighterR = (language, lines) => {
@@ -553,25 +570,25 @@ export class MD {
 			'tidyr::gather|tidyr::spread|stringr::str_split|stringr::str_replace|purrr::map|purrr::walk|' +
 			'){1,1}[^a-zA-Z0-9_\.\:]{0,}', 'gi');
 		const reSymbols = /([\=\\(\\)\{\}\[\]\;\,\.\$\@\*\+\-\/\<\>\|\&]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '#');
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols, comment: '#' });
 	}
 
 	codeHighlighterYAML = (language, lines) => {
 		const reCommands = new RegExp('(^[\\s]*([a-zA-Z0-9_\\-\\.]+):|true|false|yes|no|on|off|null|~|%YAML|%TAG|!<tag>|&[a-zA-Z0-9_]+|\\*[a-zA-Z0-9_]+|---|\\.\\.\\.|){1,1}', 'g');
 		const reSymbols = /([\:\-\|\[\]\{\}\>\&\!\%\@\`]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '#');
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols, comment: '#' });
 	}
 
 	codeHighlighterTOML = (language, lines) => {
 		const reCommands = new RegExp('(^\\[([a-zA-Z0-9_\\-\\.]+)\\]|^[\\s]*([a-zA-Z0-9_\\-\\.]+)\\s*\\=|true|false|\\d{4}-\\d{2}-\\d{2}(T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?(Z|[\\+\\-]\\d{2}:\\d{2})?)?|){1,1}', 'g');
 		const reSymbols = /([\=\[\]\.\-]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '#');
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols, comment: '#' });
 	}
 
 	codeHighlighterCSV = (language, lines) => {
-		const reCommands = new RegExp('(^[^,\"]+|^\"\"|NULL|N\\/A|){1,1}', 'g');
-		const reSymbols = /([\,]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols);
+		console.log(`CSV`, lines);
+		const reSymbols = /([,"])/g;
+		return this.#codeHighlighterLanguage(lines, { reSymbols });
 	}
 
 	codeHighlighterPowerShell = (language, lines) => {
@@ -584,60 +601,60 @@ export class MD {
 			'\\$[a-zA-Z0-9_]+|-eq|-ne|-gt|-lt|-ge|-le|-like|-notlike|-match|-notmatch|-contains|-notcontains|' +
 			'-and|-or|-not|\\.[a-zA-Z0-9_]+|){1,1}[^a-zA-Z0-9_\-]{0,}', 'gi');
 		const reSymbols = /([\=\\(\\)\{\}\[\]\;\|\$\@\<\>\&\-\+]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '#');
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols, comment: '#' });
 	}
 
 	codeHighlighterDockerfile = (language, lines) => {
 		const reCommands = new RegExp('((FROM|RUN|COPY|ADD|WORKDIR|CMD|ENTRYPOINT|ENV|ARG|EXPOSE|VOLUME|USER|LABEL|ONBUILD|STOPSIGNAL|HEALTHCHECK|SHELL){1,1}[^a-zA-Z]{0,}){1,1}', 'gi');
-		return this.#codeHighlighterLanguage(lines, reCommands, false, '#');
+		return this.#codeHighlighterLanguage(lines, { reCommands, comment: '#' });
 	}
 
 	codeHighlighterLaTeX = (language, lines) => {
 		const reCommands = new RegExp('(\\[[a-zA-Z]+\*?\\]|\\\\begin\{[a-zA-Z]+\}|\\\\end\{[a-zA-Z]+\}|\\\\[a-zA-Z]+(\*|\[.*\])?|\\\\.{1,1}){1,1}', 'g');
 		const reSymbols = /([\$\&\#\%\_\{\}]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols);
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols });
 	}
 
 	codeHighlighterGraphQL = (language, lines) => {
 		const reCommands = new RegExp('((query|mutation|subscription|fragment|on|type|interface|implements|enum|union|input|scalar|schema|extend){1,1}[^a-zA-Z]{0,}){1,1}', 'gi');
 		const reSymbols = /([\$\:\!\=\{\}\[\]\@]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols);
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols });
 	}
 
 	codeHighlighterMakefile = (language, lines) => {
 		const reCommands = new RegExp('(([a-zA-Z0-9_\-]+)\s*:|(CC|CXX|LD|CFLAGS|LDFLAGS|TARGET|all|clean|install){1,1}[^a-zA-Z0-9_\-]{0,}){1,1}', 'g');
 		const reSymbols = /([\=\:\$\@\^]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '#');
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols, comment: '#' });
 	}
 
 	codeHighlighterGit = (language, lines) => {
 		const reCommands = new RegExp('(\\[[a-zA-Z]+\]|(user|core|remote|branch|merge|alias)\.{0,1}[a-zA-Z]+){1,1}', 'g');
 		const reSymbols = /([\=\[\]]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '#');
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols, comment: '#' });
 	}
 
 	codeHighlighterHTTP = (language, lines) => {
 		const reCommands = new RegExp('((GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS|TRACE|CONNECT){1,1}|HTTP\/1\.1|Host|Authorization|Content-Type|Accept|User-Agent){1,1}[^a-zA-Z\-]{0,}){1,1}', 'gi');
 		const reSymbols = /([\:]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols);
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols });
 	}
 
 	codeHighlighterSwift = (language, lines) => {
 		const reCommands = new RegExp('((class|struct|enum|protocol|extension|func|var|let|init|deinit|subscript|typealias|associatedtype|if|else|switch|case|default|for|in|while|repeat|break|continue|return|throw|throws|rethrows|try|catch|guard|defer|where|as|is|self|Self|super|nil|true|false|import|public|private|internal|fileprivate|open|static|final|lazy|mutating|nonmutating|optional|required|convenience|dynamic|inout|weak|unowned|async|await|actor|isolated|nonisolated|Array|Dictionary|Set|String|Int|Double|Float|Bool|Optional|Result|Error|Codable|Encodable|Decodable){1,1}[^a-zA-Z0-9_]{0,}){1,1}', 'gi');
 		const reSymbols = /([\=\(\)\{\}\[\]\;\,\.\:\?\!]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '//');
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols, comment: '//' });
 	};
 
 	codeHighlighterKotlin = (language, lines) => {
 		const reCommands = new RegExp('((abstract|annotation|as|break|by|catch|class|companion|const|constructor|continue|crossinline|data|do|else|enum|external|false|final|finally|for|fun|get|if|import|in|infix|init|inline|inner|interface|internal|is|lateinit|noinline|null|object|open|operator|out|override|package|private|protected|public|reified|return|sealed|set|super|suspend|tailrec|this|throw|true|try|typealias|val|var|vararg|when|where|while|String|Int|Long|Double|Float|Boolean|Char|Byte|Short|Array|List|Map|Set|MutableList|MutableMap|MutableSet|Pair|Triple|Unit|Any|Nothing){1,1}[^a-zA-Z0-9_]{0,}){1,1}', 'gi');
 		const reSymbols = /([\=\(\)\{\}\[\]\;\,\.\:\?\!]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '//');
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols, comment: '//' });
 	};
 
 	codeHighlighterCSharp = (language, lines) => {
 		const reCommands = new RegExp('((abstract|as|base|bool|break|byte|case|catch|char|checked|class|const|continue|decimal|default|delegate|do|double|else|enum|event|explicit|extern|false|finally|fixed|float|for|foreach|goto|if|implicit|in|int|interface|internal|is|lock|long|namespace|new|null|object|operator|out|override|params|private|protected|public|readonly|ref|return|sbyte|sealed|short|sizeof|stackalloc|static|string|struct|switch|this|throw|true|try|typeof|uint|ulong|unchecked|unsafe|ushort|using|virtual|void|volatile|while|async|await|var|dynamic|String|Int32|Int64|Double|Single|Boolean|Char|Byte|Decimal|Object|List|Dictionary|Array|IEnumerable|Task|Action|Func|Nullable){1,1}[^a-zA-Z0-9_]{0,}){1,1}', 'gi');
 		const reSymbols = /([\=\(\)\{\}\[\]\;\,\.\:\?\!]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, reCommands, reSymbols, '//');
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols, comment: '//' });
 	};
 
 	codeHighlighterHTML = (language, lines) => {
@@ -927,10 +944,9 @@ export class MD {
 				if (i === 0) {
 					const useLabel = (language === LANGUAGE_GENERAL) ? false : true;
 					const lineTagParts = [];
-					lineTagParts.push('<pre');
-					lineTagParts.push(` class="${configUI.code['class']} md-code-syntax-lang-${language} ${(useLabel) ? 'lang-label' : ''}"`);
+					lineTagParts.push(`<pre class="${configUI.code['class']} md-code-syntax-lang-${language} ${(useLabel) ? 'lang-label' : ''}">`);
 					if (useLabel) lineTagParts.push(MDTags.span(language.toUpperCase(), configUI.codeLabel['class']));
-					output[i] = lineTagParts.join('');
+					output[i] = lineTagParts.join('') + output[i];
 				}
 				if (i === iLast) {
 					output[i] = `${output[i]}</pre>`;
@@ -941,12 +957,11 @@ export class MD {
 		}
 
 		for (const i in lines) {
-			console.log(`Lines [${i}]`, lines[i], language);
 			let lineResult;
 			if (isCodeStarted) {
 				lineResult = /^([^`]{0,})(([\`]{3,3}){0,1})/.exec(lines[i]);
 			} else {
-				lineResult = /^([\`]{3,3})([^`]*)(([\`]{3,3}){0,1})/.exec(lines[i]);
+				lineResult = /^([\`]{3,3})([^`]+)(([\`]{3,3}){0,1})/.exec(lines[i]);
 			}
 			if (lineResult === null) {
 				if (false === isCodeStarted) {
@@ -961,8 +976,6 @@ export class MD {
 				linesCode = [];
 				const languageNew = lineResult[2].trim();
 				language = (this.isRegisteredCodeHighlight(languageNew)) ? this.getModeLanguage(languageNew) : LANGUAGE_GENERAL;
-				console.log(`Language Detect`, language, languageNew);
-				linesCode.push(lineResult[2]);
 				if (lineResult[3] === '') {
 					isCodeStarted = true;
 				}
@@ -974,9 +987,8 @@ export class MD {
 					isCodeStarted = false;
 				}
 			}
-			console.log(`Language`, language);
 			this.formatCode.push(i);
-			this.formatNonBreak.push(i);
+			this.formatNonBreak.push(+i);
 		}
 		if (true === isCodeStarted) {
 			isCodeStarted = false;
@@ -996,7 +1008,7 @@ export class MD {
 				linesOutput.push(lines[i]);
 				continue;
 			}
-			this.formatNonBreak.push(i);
+			this.formatNonBreak.push(+i);
 			linesOutput.push(MDTags.break());
 		}
 		return linesOutput;
@@ -1253,6 +1265,7 @@ export class MD {
 	}
 
 	formatBreaks(lines) {
+		// return lines;
 		for (const i in lines) {
 			if (this.formatCode.indexOf(+i) !== -1) {
 				continue;
@@ -1260,6 +1273,7 @@ export class MD {
 			if (this.formatNonBreak.indexOf(+i) !== -1) {
 				continue;
 			}
+
 			lines[i] += MDTags.break();
 		}
 		return lines;
