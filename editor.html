@@ -122,9 +122,7 @@
     const preview = document.getElementById('preview');
 
     function updatePreview() {
-      console.log(`editor.value`, `"${editor.value}"`);
       const result = md.parse(editor.value);
-      console.log(`result`, `"${result}"`);
       preview.innerHTML = result;
     }
     editor.addEventListener('input', updatePreview);

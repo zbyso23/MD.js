@@ -871,7 +871,7 @@ pre.md-code-syntax-lang-rs span.md-code-syntax-comment {
 pre.md-code-syntax-lang-ruby,
 pre.md-code-syntax-lang-rb {
   background-color: #fff5f5;
-  color: #701516;
+  color: #2d3748;
 }
 
 pre.md-code-syntax-lang-ruby span,
@@ -881,24 +881,26 @@ pre.md-code-syntax-lang-rb span {
 
 pre.md-code-syntax-lang-ruby span.md-code-syntax-command,
 pre.md-code-syntax-lang-rb span.md-code-syntax-command {
-  color: #cc342d;
+  color: #c53030;
 }
 
 pre.md-code-syntax-lang-ruby span.md-code-syntax-controls,
 pre.md-code-syntax-lang-rb span.md-code-syntax-controls {
-  color: #d73a49;
+  color: #2b6cb0;
 }
 
 pre.md-code-syntax-lang-ruby span.md-code-syntax-symbol,
 pre.md-code-syntax-lang-rb span.md-code-syntax-symbol {
-  color: #e3116c;
+  color: #d53f8c;
   background-color: transparent;
   font-weight: normal;
 }
 
 pre.md-code-syntax-lang-ruby span.md-code-syntax-comment,
 pre.md-code-syntax-lang-rb span.md-code-syntax-comment {
-  color: #998;
+  color: #718096;
+  font-style: italic;
+  font-weight: normal;
 }
 
 pre.md-code-syntax-lang-r {

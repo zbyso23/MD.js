@@ -63,6 +63,14 @@ const UI_CONFIG_DEFAULT = {
 	}
 };
 
+const UI_CONFIG_SYNTAX_DEFAULT = {
+	general: `md-code-syntax`,
+	comment: `md-code-syntax-comment`,
+	symbol: `md-code-syntax-symbol`,
+	controls: `md-code-syntax-controls`,
+	command: `md-code-syntax-command`,
+}
+
 let MDOLD, MD_ADDONS;
 
 export class MDTags {
@@ -153,13 +161,49 @@ export class MDFormatter {
 	}
 }
 
+export class MDSyntax {
+	#classes = {
+		symbol: ``,
+		controls: ``,
+		command: ``,
+		comment: ``,
+	}
+	constructor(configSyntaxUI) {
+		const general = ('general' in configSyntaxUI) ? configSyntaxUI.general : '';
+		if('comment' in configSyntaxUI) this.#classes['comment'] = [general, configSyntaxUI.comment].join(' ');
+		if('symbol' in configSyntaxUI) this.#classes['symbol'] = [general, configSyntaxUI.symbol].join(' ');
+		if('controls' in configSyntaxUI) this.#classes['controls'] = [general, configSyntaxUI.controls].join(' ');
+		if('command' in configSyntaxUI) this.#classes['command'] = [general, configSyntaxUI.command].join(' ');
+	}
+
+	replaceSymbols = (symbol) => MDTags.span(symbol, this.#classes.symbol);
+
+	replaceComments = (line, from) => {
+		return [
+			from > 0 ? line.substring(0, from) : '',
+			MDTags.span(line.substring(from), this.#classes.comment),
+		].join('');
+	}
+
+	replaceControls = (value) => {
+		return MDTags.span(value, this.#classes.controls);
+	}
+
+	replaceCommands = (value) => {
+		const cssClasses = (value.length === 1) ? this.#classes.controls : this.#classes.command;
+		return MDTags.span(value, cssClasses);
+	}
+}
+
 export class MD {
+	#mdSyntax;
 	modesAllowed = ['basic', 'extended']; // , custom @todo :)
 	allowedHighlights = [LANGUAGE_GENERAL, 'javascript', 'python'];
 	configUI = { ...UI_CONFIG_DEFAULT };
 
 	constructor(config, skipErrors = true) {
 		this.config = this.sanitizeConfig(config);
+		this.#mdSyntax = new MDSyntax(UI_CONFIG_SYNTAX_DEFAULT);
 		this.skipErrors = skipErrors;
 		this.registeredCodeHighlight = {
 			general: this.codeHighlighterGeneral,
@@ -260,8 +304,8 @@ export class MD {
 		return lines;
 	}
 
-	#codeHighlighterLanguage = (lines, options) => {
-		const { reCommands, reSymbols, comment, postCommand, postSymbol } = options;
+	#codeHighlighterLanguageOLD = (lines, options) => {
+		const { reCommands, reSymbols, comment, preCommand, postCommand, preSymbols, postSymbols, exceptionPatterns = [] } = options;
 		const replaceSymbols = (symbol) => MDTags.span(symbol, 'md-code-syntax md-code-syntax-symbol');
 		const replaceCommands = function (value) {
 			const type = (value.length === 1) ? 'controls' : 'command';
@@ -273,15 +317,58 @@ export class MD {
 		].join('');
 		const getResult = (line) => {
 			line = line.replace(/(`)/g, "&#96;");
+			if (preCommand) line = preCommand(line);
 			if (reCommands) line = line.replace(reCommands, replaceCommands)
 			if (postCommand) line = postCommand(line);
+			if (preSymbols) line = preSymbols(line);
 			if (reSymbols) line = line.replace(reSymbols, replaceSymbols);
-			if (postSymbol) line = postSymbol(line);
+			if (postSymbols) line = postSymbols(line);
 			if (comment && line.indexOf(comment) > -1) {
 				line = replaceComments(line, line.indexOf(comment));
 			}
 			return line;
 		};
+		return this.#codeHighlighter(lines, getResult);
+	}
+
+	#codeHighlighterLanguage = (lines, options) => {
+		const {
+			reCommands,
+			reSymbols,
+			comment,
+			postCommand,
+			preSymbols,
+			postSymbols,
+			exceptionPatterns = [],
+		} = options;
+		
+		const isExceptionLine = (line) =>
+			exceptionPatterns.some((pattern) => pattern.test(line));
+
+		const getResult = (line) => {
+			line = line.replace(/(`)/g, '&#96;');
+
+			if (isExceptionLine(line)) {
+				if (comment && line.includes(comment)) {
+					line = this.#mdSyntax.replaceComments(line, line.indexOf(comment));
+				}
+				return line;
+			}
+
+			if (preSymbols) line = preSymbols(line);
+			if (reSymbols) line = line.replace(reSymbols, this.#mdSyntax.replaceSymbols);
+			if (postSymbols) line = postSymbols(line);
+
+			if (reCommands) line = line.replace(reCommands, this.#mdSyntax.replaceCommands);
+			if (postCommand) line = postCommand(line);
+
+			if (comment && line.indexOf(comment) > -1) {
+				line = this.#mdSyntax.replaceComments(line, line.indexOf(comment));
+			}
+
+			return line;
+		};
+
 		return this.#codeHighlighter(lines, getResult);
 	}
 
@@ -343,7 +430,6 @@ export class MD {
 
 	codeHighlighterIni = (language, lines) => {
 		const replaceCommands = function () {
-			console.log('>> INI <<', arguments);
 			if (arguments[3] === ';') {
 				return MDTags.span(`&#59;${arguments[4]}`, 'md-code-syntax md-code-syntax-comments');
 			}
@@ -538,17 +624,39 @@ export class MD {
 	};
 
 	codeHighlighterRuby = (language, lines) => {
-		const reCommands = new RegExp('(' +
+		const reCommands = new RegExp(
+			'(?<![\\w$])(' +
 			'BEGIN|END|alias|and|begin|break|case|class|def|defined|do|else|elsif|end|ensure|false|for|if|in|module|next|nil|not|or|redo|rescue|retry|return|self|super|then|true|undef|unless|until|when|while|yield|' +
 			'Array|Hash|String|Symbol|Integer|Float|Boolean|NilClass|Object|Kernel|Math|File|Dir|IO|Time|Date|DateTime|JSON|URI|Net::HTTP|' +
 			'puts|print|gets|require|load|include|extend|attr_reader|attr_writer|attr_accessor|public|private|protected|new|raise|' +
 			'each|map|select|reject|find|find_all|inject|reduce|sort|sort_by|group_by|count|first|last|take|drop|uniq|reverse|join|split|' +
 			'gsub|sub|match|scan|to_s|to_i|to_f|to_a|to_h|to_sym|empty\\?|any\\?|all\\?|none\\?|one\\?|' +
-			'Rails|ActiveRecord|ActionController|ActionView|Sinatra|RSpec|describe|it|expect|before|after|let|subject|' +
-			'=~|!~|' +
-			'){1,1}[^a-zA-Z0-9_:\\.]{0,}', 'gi');
-		const reSymbols = /([\=\\(\\)\{\}\[\]\;\,\.\|\:\@\$\%\&\*\+\-\/\<\>]){1,1}/g;
-		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols, comment: '#' });
+			'Rails|ActiveRecord|ActionController|ActionView|Sinatra|RSpec|describe|it|expect|before|after|let|subject' +
+			')(?![\\w$])',
+			'g'
+		);
+		const reSymbols = /(?<![<>=])(['"`])(?:\\.|(?!\1).)*\1(?![>])/g;
+		const rePostCommands = [
+			/(?:[A-Z][A-Za-z0-9_]*::)+[A-Z][A-Za-z0-9_]*\.\w+/g,
+			/(?:[A-Z][A-Za-z0-9_]*::)+[A-Z][A-Za-z0-9_]*/g,
+			/@\w+/g
+		];
+		const rePostSymbols = [
+			/(property|validates|step)\s+/g,
+			/((\w+\.)?\w+[?!]{1,1})/g,
+			/(\s?:\w+)/g
+		];
+		const preCommand = (line) => line.replace(`<`, `&lt;`);
+		const postCommand = (line) => {
+			for(let i in rePostCommands) {
+				line = line.replace(rePostCommands[i], this.#mdSyntax.replaceCommands);
+			}
+			for(let i in rePostSymbols) {
+				line = line.replace(rePostSymbols[i], this.#mdSyntax.replaceSymbols);
+			}
+			return line;
+		}
+		return this.#codeHighlighterLanguage(lines, { reCommands, reSymbols, preCommand, postCommand, comment: '#' });
 	}
 
 	codeHighlighterSQL = (language, lines) => {
@@ -601,7 +709,6 @@ export class MD {
 	}
 
 	codeHighlighterCSV = (language, lines) => {
-		console.log(`CSV`, lines);
 		const reSymbols = /([,"])/g;
 		return this.#codeHighlighterLanguage(lines, { reSymbols });
 	}
