@@ -1,0 +1,12 @@
+{
+  "name": "mdjs-reborn",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Vanilla ES6 Markdown renderer rebuilt from 2016 MD.js. Zero dependencies.",
+  "scripts": {
+    "test": "node --test test/md.test.js",
+    "bench": "node test/performance.js"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

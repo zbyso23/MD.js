@@ -1,1114 +1,481 @@
-// MD.js, copyright (c) by Zbigniew Lipka
-// Distributed under an GNU GENERAL PUBLIC LICENSE version 3: https://github.com/zbyso23/MD/blob/master/LICENSE
+/*
+ * MD.js Reborn — standalone, safe-by-default Markdown renderer.
+ * Derived from the user's MD.js (2016); modern ES6 rewrite (2026).
+ * ZERO runtime dependencies, no imports, no eval or DOM required.
+ * The output is an HTML string: use it only in an HTML context.
+ * This is a pragmatic Markdown subset, NOT a full CommonMark implementation.
+ */
+(function (root) {
+  'use strict';
 
-var MD, MD_ADDONS;
-MD = function(config)
-{
-	/*
-	config:
-	{
-		mode: 'basic' /* extended - with all new code highlighters and simple table
-	}
-	*/
-	var sanitizeConfig = function(config)
-	{
-		config          = (false === U.isObject(config)) ? {} : config;
-		var configNew   = {};
-		var modeAllowed = ['basic', 'extended']; // , custom @todo :)
-		var mode        = modeAllowed[0];
-		if(U.has(config, 'mode'))
-		{
-			var modeNew = (U.isString(config['mode'])) ? config['mode'] : mode;
-			mode        = (modeAllowed.indexOf(modeNew) === -1) ? mode : modeNew;
-		}
-		configNew.mode  = mode;
-		return configNew;
-	}
-	config = sanitizeConfig(config);
+  const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[char]);
 
-	var getModeLanguage = function(language)
-	{
-		var allowedHighlights = ['general', 'javascript', 'python'];
-		language = (config.mode === 'basic' && allowedHighlights.indexOf(language) === -1) ? 'general' : language;
-		return language;
-	}
+  const LANG = /^[a-z][a-z0-9_-]{0,31}$/;
+  const HIGHLIGHT_TYPES = new Set(['command', 'controls', 'symbol', 'comment', 'attribute-name', 'attribute-value']);
+  const MAX_NESTING = 12;
+  const MAX_INLINE_NESTING = 12;
+  const EXTENDED_LANGUAGES = new Set(['general', 'javascript', 'js', 'python', 'py', 'html', 'css', 'bash', 'sh', 'ini', 'php', 'json']);
 
-	var configUI = {
-		strong: {
-			'html': 'strong',
-			'class': 'md-strong',
-		},
-		em: {
-			'html': 'em',
-			'class': 'md-em',
-		},
-		header: {
-			'class': 'md-header'
-		},
-		code: {
-			'class': 'md-code'
-		},
-		listOrdered: {
-			'class': 'md-list-ordered'
-		},
-		list: {
-			'class': 'md-list'
-		},
-		image: {
-			'class': 'md-image'
-		},
-		table: {
-			'class': 'table md-table table-striped table-hover'
-		}
-	};
+  function safeURL(raw, image = false) {
+    const url = String(raw).trim();
+    // Never accept controls, whitespace, backslashes, encoded entity tricks in destinations.
+    if (!url || /[\u0000-\u0020\u007f\\]/.test(url) || url.length > 4096) return null;
+    if (url.startsWith('//')) return null; // explicit protocol required for external URLs
+    const match = /^([a-z][a-z0-9+.-]*):/i.exec(url);
+    if (match && (image ? ['http', 'https'] : ['http', 'https', 'mailto']).indexOf(match[1].toLowerCase()) === -1) return null;
+    // Relative URL can never contain a colon before the first path segment.
+    if (!match && !/^(?:\/|\.\/|\.\.\/|#|\?|[^/:?#]+(?:[/?#]|$))/.test(url)) return null;
+    // A scheme reconstructed from numeric HTML entities will not be accepted either.
+    if (/&(?:#(?:x[\da-f]+|\d+)|colon|tab|newline);/i.test(url)) return null;
+    try {
+      const parsed = new URL(url, 'https://mdjs.invalid/');
+      if (['http:', 'https:', ...(image ? [] : ['mailto:'])].indexOf(parsed.protocol) === -1) return null;
+    } catch (_) { return null; }
+    return url;
+  }
 
-	var unHTML = function(string)
-	{
-		string = string.replace(/[<>{};:]/g, function(m) {
-			return {
-				'<': '&lt;',
-				'>': '&gt;',
-				'{': '&#123;',
-				'}': '&#125;',
-				'[': '&#123;',
-				']': '&#125;',
-				'(': '&#40;',
-				')': '&#41;',
-				'$': '&#36;',
-				';': '&#59;',
-				':': '&#58;'
-			}[m];
-		});
-		return string;
-	}
+  function splitTableRow(line) {
+    let body = line.trim();
+    if (body.startsWith('|')) body = body.slice(1);
+    if (body.endsWith('|') && !body.endsWith('\\|')) body = body.slice(0, -1);
+    const cells = [];
+    let cell = '';
+    let escape = false;
+    let backticks = 0;
+    for (const char of body) {
+      if (escape) { cell += char; escape = false; continue; }
+      if (char === '\\') { escape = true; cell += char; continue; }
+      if (char === '`') { backticks = backticks ? 0 : 1; cell += char; continue; }
+      if (char === '|' && !backticks) { cells.push(cell.trim()); cell = ''; continue; }
+      cell += char;
+    }
+    if (escape) cell += '\\';
+    cells.push(cell.trim());
+    return cells;
+  }
 
+  function tableAlignment(line, expected) {
+    const parts = splitTableRow(line);
+    if (parts.length !== expected || expected < 2 || expected > 64) return null;
+    const aligns = [];
+    for (const part of parts) {
+      if (!/^:?-{3,}:?$/.test(part.replace(/[ \t]/g, ''))) return null;
+      const left = part.startsWith(':');
+      const right = part.endsWith(':');
+      aligns.push(left && right ? 'center' : right ? 'right' : 'left');
+    }
+    return aligns;
+  }
 
-	var codeHighlighterJavascript = function(language, lines, addTags, parseCodeFunction)
-	{
-		for(var i in lines)
-		{
-			var line = lines[i];
-			var keywords;
-			keywords = new RegExp("");
-			var replaceSymbols = function(symbol) 
-			{
-				return '<span class="md-code-syntax md-code-syntax-symbol">' + symbol + '</span>';
-			}
-			var replaceCommands = function(x) 
-			{
-				var className = (x.length === 1) ? 'controls' : 'command';
-				return '<span class="md-code-syntax md-code-syntax-' + className + '">' + x + '</span>';
-			}
-			var replaceComments = function(line, from) 
-			{
-				var newLine = '';
-				if(from > 0) newLine += line.substring(0, from - 1);
-				newLine += '<span class="md-code-syntax md-code-syntax-comment">' + line.substring(from) + '</span>';
-				return newLine;
-			}
-			line = line.replace(/(([\=\;\{\}\(\)\[\]\"\.]){1,1}|(join[\.]{1,1})|(console\.log)|break|case|catch|class[^a-z0-9]{1,}|continue|default|delete|(do[^a-z0-9]{1,})|(else[^a-z0-9]{1,})|(enum[^a-z0-9]{1,})|(export[s]{0,1})|module|extends|false|(for[^a-z0-9]{1,1})|from|(as[^a-z0-9]{1,1})|([\s]{1,}in[\s]{1,})|function|if|implements|import|instanceof|interface|let|new[^a-z0-9]{1,}|null|package|private|protected|static|return|super|switch|this|throw|true|try|(typeof[\s]{1,1})|var|while|with|yield){1,1}/g, replaceCommands); 
-			line = line.replace(/([\']{1,1}[^\']{0,}[\']{1,1}){1,1}/g, replaceSymbols);
-			//line = line.replace(/([\"]{1,1}[^\"]{0,}[\"]{1,1}){1,1}/g, replaceSymbols);
-			if(line.indexOf('//') > -1)
-			{
-				line = replaceComments(line, line.indexOf('//'));
-			}
-			lines[i] = line;
-		}
-		return lines;
-	};
+  function listMarker(line) {
+    const match = /^( {0,3})([-+*]|\d{1,9}[.)])(?:[ \t]+|$)(.*)$/.exec(line);
+    if (!match) return null;
+    return { indent: match[1].length, type: /^\d/.test(match[2]) ? 'ol' : 'ul',
+      start: /^\d/.test(match[2]) ? Math.min(parseInt(match[2], 10), 999999999) : 1,
+      text: match[3] };
+  }
 
-	var codeHighlighterPython = function(language, lines, addTags, parseCodeFunction) 
-	{
-		for(var i in lines)
-		{
-			var line = lines[i];
-			var keywords;
-			keywords = new RegExp("");
-			var replaceSymbols = function(symbol) 
-			{
-				return '<span class="md-code-syntax md-code-syntax-symbol">' + symbol + '</span>';
-			}
-			var replaceCommands = function(x, y)
-			{
-				var className = (x.length === 1) ? 'controls' : 'command';
-				return '<span class="md-code-syntax md-code-syntax-' + className + '">' + y + '</span>' + ((y.length !== x.length) ? x.substring(y.length) : '');
-			}
-			var replaceComments = function(line, from) 
-			{
-				var newLine = '';
-				if(from > 0) newLine += line.substring(0, from - 1);
-				newLine += '<span class="md-code-syntax md-code-syntax-comment">' + line.substring(from) + '</span>';
-				return newLine;
-			}
-			while(line.indexOf('%') >= 0)
-			{
-				line = line.replace('%', ':::');
-			}
-			if(line.indexOf('#') > -1)
-			{
-				line = replaceComments(line, line.indexOf('#'));
-			}
-			else
-			{
-				var re = new RegExp('(([\(\)]){1,1}|True|False|class|finally|return|None|print|continue|lambda|from|nonlocal|while|global|with|elif|yield|assert|else|import|pass|break|except|raise|(def[\s\:]{1,})|in|if|(or[\s]{1,})|(is[\s]{1,})|(def[^a-zA-Z0-9]{1,})|try|not|as[\s]{1,}){1,1}', 'g')
-				line = line.replace(re, replaceCommands);
-				line = line.replace(/([\']{1,1}[^\']{0,}[\']{1,1}){1,1}/g, replaceSymbols);
-				line = line.replace(/([\:]{3,3}){1,1}/g, function(x) {
-					return '<span class="md-code-syntax md-code-syntax-percent">&#37;</span>';
-				});
-			}
-			lines[i] = line;
+  function isFence(line) {
+    const match = /^ {0,3}(`{3,}|~{3,})([^`]*)$/.exec(line);
+    return match ? { marker: match[1][0], count: match[1].length,
+      lang: (match[2].trim().split(/\s+/)[0] || 'general').toLowerCase() } : null;
+  }
 
-		}
-		return lines;
+  function isHeading(line) { return /^ {0,3}(#{1,6})(?:[ \t]+|$)(.*)$/.exec(line); }
+  function isRule(line) { return /^ {0,3}(?:(?:\*\s*){3,}|(?:-\s*){3,}|(?:_\s*){3,})$/.test(line); }
+  function isQuote(line) { return /^ {0,3}>[ \t]?/.test(line); }
+  function isIndentedCode(line) { return /^ {4}|^\t/.test(line); }
+  function isSetext(line) { return /^ {0,3}(?:=+|-+)[ \t]*$/.test(line); }
 
-	};
+  function builtinHighlighter(source, language) {
+    // Dedicated lightweight lexers for the original 2016 HTML/CSS/INI modes.
+    // These produce *tokens*, never arbitrary HTML; the renderer escapes them.
+    const paint = (regex, classify) => {
+      const result = [];
+      let last = 0;
+      let match;
+    while ((match = regex.exec(source)) !== null) {
+        if (match.index > last) result.push({ text: source.slice(last, match.index) });
+        const type = classify(match[0]);
+        result.push({ text: match[0], ...(type ? { type } : {}) });
+        last = match.index + match[0].length;
+      }
+      if (last < source.length) result.push({ text: source.slice(last) });
+      return result;
+    };
+    if (language === 'html') return paint(
+      /<!--[\s\S]*?-->|<\/?[A-Za-z][\w:-]*|\b[\w:-]+(?=\s*=)|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[<>=/]/g,
+      token => token.startsWith('<!--') ? 'comment' : /^<\/?[A-Za-z]/.test(token) ? 'command'
+        : /^["']/.test(token) ? 'attribute-value' : /^[A-Za-z]/.test(token) ? 'attribute-name' : 'controls'
+    );
+    if (language === 'css') return paint(
+      /\/\*[\s\S]*?\*\/|(?:--)?[-A-Za-z_][\w-]*(?=\s*:)|@[\w-]+|#[\da-fA-F]{3,8}\b|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[{}:;(),]/g,
+      token => token.startsWith('/*') ? 'comment' : token.startsWith('@') ? 'command'
+        : /^[-A-Za-z_]/.test(token) ? 'attribute-name' : /^#[\da-fA-F]/.test(token) || /^["']/.test(token) ? 'attribute-value' : 'controls'
+    );
+    if (language === 'ini') return paint(
+      /^[ \t]*[;#][^\n]*|^\[[^\]\n]*\]|^[-\w.]+(?=\s*=)|[=]|"[^"\n]*"/gm,
+      token => /^[ \t]*[;#]/.test(token) ? 'comment' : token.startsWith('[') ? 'command'
+        : token === '=' ? 'controls' : token.startsWith('"') ? 'attribute-value' : 'attribute-name'
+    );
+    const js = /^(?:javascript|js)$/.test(language);
+    const py = /^(?:python|py)$/.test(language);
+    const shell = /^(?:bash|sh)$/.test(language);
+    const json = language === 'json';
+    if (!js && !py && !shell && !json && language !== 'php') return [{ text: source }];
+    const words = js
+      ? /^(?:async|await|break|case|catch|class|const|continue|debugger|default|delete|do|else|export|extends|false|finally|for|from|function|if|import|in|instanceof|let|new|null|of|return|static|super|switch|this|throw|true|try|typeof|undefined|var|void|while|yield)$/
+      : py ? /^(?:and|as|assert|async|await|break|class|continue|def|del|elif|else|except|False|finally|for|from|global|if|import|in|is|lambda|None|nonlocal|not|or|pass|raise|return|True|try|while|with|yield)$/
+        : shell ? /^(?:echo|export|if|then|else|fi|for|in|do|done|case|esac|function|read)$/
+          : /^(?:function|class|echo|return|if|else|new|true|false|null)$/;
+    const tokens = [];
+    // Finite lexer: regex alternatives always consume input; never insert unescaped code.
+    const tokenRE = /\/\/[^\n]*|\#[^\n]*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b[A-Za-z_$][\w$]*\b|\b\d+(?:\.\d+)?\b/g;
+    let previous = 0;
+    let match;
+    while ((match = tokenRE.exec(source)) !== null) {
+      if (match.index > previous) tokens.push({ text: source.slice(previous, match.index) });
+      const word = match[0];
+      const type = (!json && ((js && word.startsWith('//')) || ((py || shell) && word.startsWith('#')))) ? 'comment'
+        : /^["']/.test(word) ? 'symbol' : words.test(word) ? 'command'
+          : /^\d/.test(word) ? 'controls' : null;
+      tokens.push({ text: word, ...(type ? { type } : {}) });
+      previous = match.index + word.length;
+    }
+    if (previous < source.length) tokens.push({ text: source.slice(previous) });
+    return tokens;
+  }
 
-	var codeHighlighterBash = function(language, lines, addTags, parseCodeFunction) 
-	{
-		for(var i in lines)
-		{
-			var line = lines[i];
-			var replaceSymbols = function(symbol) 
-			{
-				return '<span class="md-code-syntax md-code-syntax-symbol">' + symbol + '</span>';
-			}
-			var replaceCommands = function(x, y)
-			{
-				var className = (x.length === 1) ? 'controls' : 'command';
-				return '<span class="md-code-syntax md-code-syntax-' + className + '">' + y + '</span>' + ((y.length !== x.length) ? x.substring(y.length) : '');
-			}
-			var re = new RegExp('(([#]{1,1}[^#]{1,})|(\!#.*)|echo[^a-zA-Z0-9]{1,}|tar[^a-zA-Z0-9]{1,}|print[^a-zA-Z0-9]{1,})', 'g')
-			line = line.replace(re, replaceCommands);
-			lines[i] = line;
-		}
-		return lines;
+  class MD {
+    constructor(config = {}) {
+      if (config === null || typeof config !== 'object' || Array.isArray(config)) {
+        throw new TypeError('MD configuration must be an object');
+      }
+      this.options = Object.freeze({
+        mode: config.mode === 'extended' ? 'extended' : 'basic',
+        maxInputLength: Math.min(Math.max(Number.isSafeInteger(config.maxInputLength) ? config.maxInputLength : 4 * 1024 * 1024, 1), 16 * 1024 * 1024),
+        highlight: config.highlight !== false,
+      });
+      this.highlighters = new Map();
+    }
 
-	};
+    // Safe extension contract: return [{text, type?}], NOT an HTML string.
+    // All token text is escaped, and CSS classes come from a hardcoded allowlist.
+    registerCodeHighlight(language, tokenizer) {
+      if (typeof language !== 'string' || !LANG.test(language) || typeof tokenizer !== 'function') {
+        throw new TypeError('Expected (lowercase language, tokenizer function)');
+      }
+      if (this.highlighters.has(language) || EXTENDED_LANGUAGES.has(language)) {
+        throw new Error(`Highlighter already registered: ${language}`);
+      }
+      this.highlighters.set(language, tokenizer);
+      return this;
+    }
 
+    parse(input) {
+      if (typeof input !== 'string') throw new TypeError('MD.parse expects a string');
+      if (input.length > this.options.maxInputLength) throw new RangeError('Markdown input exceeds maxInputLength');
+      const clean = input.replace(/\r\n?/g, '\n').replace(/\u0000/g, '\ufffd');
+      const lines = clean.split('\n');
+      if (lines.length > 150000 || lines.some(line => line.length > 65536)) {
+        throw new RangeError('Markdown exceeds line limits');
+      }
+      return this._blocks(lines, 0);
+    }
 
-	var codeHighlighterIni = function(language, lines, addTags, parseCodeFunction) 
-	{
-		for(var i in lines)
-		{
-			var line = lines[i];
-			var replaceSymbols = function(symbol) 
-			{
-				return '<span class="md-code-syntax md-code-syntax-symbol">' + symbol + '</span>';
-			}
-			var replaceCommands = function(x, y)
-			{
-				console.log('>> INI <<', arguments);
-				if(arguments[3] === ';')
-				{
-					return '<span class="md-code-syntax md-code-syntax-comments">&#59;' + arguments[4] + '</span>';
-				}
-				if(arguments[7] === '=')
-				{
-					return '<span class="md-code-syntax md-code-syntax-attribute-name">' + arguments[6] + '</span><span class="md-code-syntax md-code-syntax-attribute-control">=</span><span class="md-code-syntax md-code-syntax-attribute-value">' + arguments[8].trim() + '</span>';
-				}
-				return '<span class="md-code-syntax md-code-syntax-controls">[</span><span class="md-code-syntax md-code-syntax-command">' + arguments[10] + '</span><span class="md-code-syntax md-code-syntax-controls">]</span>';
-			}
-			var re = new RegExp('((([;]{1,1})(.*))|(^([a-zA-Z0-9]{1,})([\=]{1,1})([^;]{1,}))|([\[]{1,1}([^\]]{1,})[\]]{1,1}))', 'g');
-			line = line.replace(re, replaceCommands);
-			lines[i] = line;
-		}
-		return lines;
-	};
-
-
-	var codeHighlighterPHP = function(language, lines, addTags, parseCodeFunction) 
-	{
-		for(var i in lines)
-		{
-			var line = lines[i];
-			var keywords;
-			keywords = new RegExp("");
-			var replaceSymbols = function(symbol) 
-			{
-				return '<span class="md-code-syntax md-code-syntax-symbol">' + symbol + '</span>';
-			}
-			var replaceCommands = function(x, y)
-			{
-				if(arguments[5] === '$')
-				{
-					return '<span class="md-code-syntax md-code-syntax-controls">&#36;</span><span class="md-code-syntax md-code-syntax-symbol">' + unHTML(arguments[2].substring(1)) + '</span>' + arguments[0].substring(arguments[2].length);
-				}
-				if(U.isString(arguments[3]))
-				{
-					return '<span class="md-code-syntax md-code-syntax-controls">' + arguments[3] + '</span>' + arguments[0].substring(arguments[3].length);
-				}
-				var line = '<span class="md-code-syntax md-code-syntax-command">' + arguments[2] + '</span>' + arguments[0].substring(arguments[2].length);
-				return line;
-			}
-			var replaceComments = function(line, from) 
-			{
-				var newLine = '';
-				if(from > 0) newLine += line.substring(0, from - 1);
-				newLine += '<span class="md-code-syntax md-code-syntax-comment">' + line.substring(from) + '</span>';
-				return newLine;
-			}
-			var re = new RegExp('((([\=\(\)\{\}]{1,1})|(([$]{1,1})[a-zA-Z0-9_\-]{1,})|halt_compiler|endforeach|abstract|callable|case|catch|class|clone|const|continue|declare|default|elseif|empty|enddeclare|endfor|endif|endswitch|endwhile|exit|extends|final|finally|foreach|function|global|goto|implements|include|include_once|instanceof|insteadof|interface|isset|list|namespace|print|private|protected|public|require_once|require|return|static|switch|array|break|throw|trait|unset|while|yield|eval|echo|else|die|for|try|use|var|new|xor|and|as|do|if|or){1,1}[^a-zA-Z0-9$\(\)]{0,}){1,1}', 'gi')
-			line = line.replace(re, replaceCommands);
-			if(line.indexOf('//') > -1)
-			{
-				line = replaceComments(line, line.indexOf('//'));
-			}
-			lines[i] = line;
-		}
-		return lines;
-	}
-
-
-	var codeHighlighterHTML = function(language, lines, addTags, parseCodeFunction) 
-	{
-		var isCodeJs         = false;
-		var isCodeJsStarted  = false;
-		var isCodeJsEnded    = false;
-		var isCodeCss        = false;
-		var isCodeCssStarted = false;
-		var isCodeCssEnded   = false;
-		var codeJs           = [];
-		var codeCss          = [];
-		for(var i in lines)
-		{
-			var line = lines[i];
-			var replaceSymbols = function(symbol) 
-			{
-				return '<span class="md-code-syntax md-code-syntax-attribute-name">' + arguments[2].trim() + '</span><span class="md-code-syntax md-code-syntax-attribute-control">&#61;</span><span class="md-code-syntax md-code-syntax-attribute-quote">&#34;</span><span class="md-code-syntax md-code-syntax-attribute-value">' + arguments[5] + '</span><span class="md-code-syntax md-code-syntax-attribute-quote">&#34;</span>';
-			}
-			var replaceCommands = function()
-			{
-				if(isCodeJs === false)
-				{
-					isCodeJs = (arguments[2] === '<' && arguments[3] === 'script' && (/(src)/g.exec(arguments[1]) === null)) ? true : false;
-					if(isCodeJs)
-					{
-						isCodeJsStarted = true;
-						return '<span class="md-code-syntax md-code-syntax-controls">&lt;</span><span class="md-code-syntax md-code-syntax-command">script</span>' + arguments[5] + '<span class="md-code-syntax md-code-syntax-controls">&gt;</span><pre class="inline ' + configUI.code['class'] + ' md-code-syntax-lang-javascript"><span class="md-code-syntax-lang-label">JAVASCRIPT</span>';
-					}
-				}
-				else
-				//if(isCodeJs === true)
-				{
-					isCodeJs = (arguments[2] === '</' && arguments[3] === 'script') ? false : true;
-					if(false === isCodeJs)
-					{
-						isCodeJsEnded = true;
-						return '</pre>' + arguments[8].substring(0, arguments[7]) + '<span class="md-code-syntax md-code-syntax-controls">&lt;/</span><span class="md-code-syntax md-code-syntax-command">script</span>' + arguments[5] + '<span class="md-code-syntax md-code-syntax-controls">&gt;</span>';
-					}
-				}
-
-				if(isCodeCss === false)
-				{
-					isCodeCss = (arguments[2] === '<' && arguments[3] === 'style' && (/(src)/g.exec(arguments[1]) === null)) ? true : false;
-					if(isCodeCss)
-					{
-						isCodeCssStarted = true;
-						return '<span class="md-code-syntax md-code-syntax-controls">&lt;</span><span class="md-code-syntax md-code-syntax-command">style</span>' + arguments[5] + '<span class="md-code-syntax md-code-syntax-controls">&gt;</span><pre class="inline ' + configUI.code['class'] + ' md-code-syntax-lang-css"><span class="md-code-syntax-lang-label">CSS</span>';
-					}
-				}
-				else
-				{
-					isCodeCss = (arguments[2] === '</' && arguments[3] === 'style') ? false : true;
-					if(false === isCodeCss)
-					{
-						isCodeCssEnded = true;
-						return '</pre>' + arguments[8].substring(0, arguments[7]) + '<span class="md-code-syntax md-code-syntax-controls">&lt;/</span><span class="md-code-syntax md-code-syntax-command">style</span>' + arguments[5] + '<span class="md-code-syntax md-code-syntax-controls">&gt;</span>';
-					}
-				}
-
-				var attributes = (arguments[5] === '') ? '' : arguments[5];
-				var res = new RegExp('(([a-zA-Z0-9]{1,})([\=]{1,1})([\"]{1,1})([^\"]{0,})([\"]{1,1}))', 'g');
-				attributes = attributes.replace(res, replaceSymbols);
-				var result = '<span class="md-code-syntax md-code-syntax-controls">&lt;' + (arguments[2] === '</' ? '/' : '' ) + '</span><span class="md-code-syntax md-code-syntax-command">' + arguments[3] + '</span>' + attributes + '<span class="md-code-syntax md-code-syntax-controls">&gt;</span>';
-				return result;
-			}
-			var re = new RegExp('(([<]{1,1}[/]{0,1})(([\!]{1,1}DOCTYPE)|html|head|body|title|meta|link|style|a|h1|h2|h3|h4|h5|h6|p|img|audio|video|script|ul|ol|li|div|span|table|thead|tbody|tr|th|td|col|form|input|select|option|button|header|footer){1,1}([^>]{0,})([>]{1,1}))', 'g');
-			line = line.replace(re, replaceCommands);
-			if(isCodeJs && false === isCodeJsStarted && false === isCodeJsEnded)
-			{
-				line = (line.length > 1) ? line.replace(line, parseCodeLinesByLanguage('javascript', [line]).join('')) : line;
-			}
-			if(isCodeCss && false === isCodeCssStarted && false === isCodeCssEnded)
-			{
-				line = (line.length > 1) ? line.replace(line, parseCodeLinesByLanguage('css', [line]).join('')) : line;
-			}
-			lines[i] = line;
-
-			if(true === isCodeJsStarted || true === isCodeJsEnded)
-			{
-				isCodeJsStarted = false;
-				isCodeJsEnded   = false;
-			}
-			if(true === isCodeCssStarted || true === isCodeCssEnded)
-			{
-				isCodeCssStarted = false;
-				isCodeCssEnded   = false;
-			}
-		}
-		return lines;
-	};
-
-	var codeHighlighterCSS = function(language, lines, addTags, parseCodeFunction) 
-	{
-		var isCSSStarted = false;
-		var replaceSymbols = function(symbol) 
-		{
-			var notSymbol = ['p', 'i', 'b', 'a', '@', '.', '#'];
-			symbol = symbol.trim();
-			var className = (symbol.length === 1 && notSymbol.indexOf(symbol) === -1) ? 'controls' : 'command';
-			if(symbol.length === 1 && (symbol === '<' || symbol === '>'))
-			{
-				symbol = (symbol === '<' ? '&lt;' : '&gt;');
-			}
-			return '<span class="md-code-syntax md-code-syntax-' + className + '">' + symbol + '</span>';
-		}
-
-		for(var i in lines)
-		{
-			var line  = lines[i];
-			var rules = line.split('}');
-			for(var j in rules)
-			{
-				var rule = rules[j];
-				var parts = rule.split('{');
-				var isElements = (parts.length > 1);
-				var isColon = false;
-				if(false === isElements)
-				{
-					var colonResult = /[,]{1,1}[\s]{0,}$/.exec(rule);
-					if(colonResult !== null)
-					{
-						isElements = true;
-						parts = [rule.substring(0, colonResult.index), ''];
-					}
-					isElements = (colonResult !== null);
-					isColon    = true;
-				}
-				var definition = (isElements) ? parts[1] : parts[0];
-				if(isElements)
-				{
-					var re = new RegExp('(([\<\>\@\(\),]{1,})|([a-zA-Z0-9\-\.\#\:\=\",]{1,}))', 'g');
-					parts[0] = parts[0].replace(re, replaceSymbols);
-				}
-
-				var definitionParts = definition.split(';');
-				for(var d in definitionParts)
-				{
-					var definitionPart = definitionParts[d].split(':');
-					if(definitionPart.length === 1)
-					{
-						continue; //@todo
-					}
-					definitionPart[0] = '<span class="md-code-syntax md-code-syntax-attribute-name">' + definitionPart[0] + '</span><span class="md-code-syntax md-code-syntax-controls">';
-					definitionPart[1] = '</span><span class="md-code-syntax md-code-syntax-attribute-value">' + definitionPart[1] + '</span>';
-					definitionParts[d] = definitionPart.join('<span class="md-code-syntax md-code-syntax-attribute-control">&#58;</span>');  //:
-				}
-				definition = definitionParts.join('<span class="md-code-syntax md-code-syntax-controls">&#59;</span>'); //;
-				if(isElements)
-				{
-					parts[1] = definition;
-				}
-				else
-				{
-					parts[0] = definition;	
-				}
-				var symbolOpen = (isColon) ? ',' : '&#123;';
-				rules[j] = parts.join('<span class="md-code-syntax md-code-syntax-symbol">' + symbolOpen + '</span>'); //{
-			}
-			lines[i] = rules.join('<span class="md-code-syntax md-code-syntax-symbol">&#125;</span>'); //}
-		}
-		return lines;
-	};
-
-	var codeHighlighterGeneral = function(language, lines, addTags, parseCodeFunction)
-	{
-		for(var i in lines)
-		{
-			lines[i] = unHTML(lines[i]);
-		}
-		return lines;
-	}
-
-	var registeredCodeHighlight = {	
-		general: codeHighlighterGeneral,
-		javascript: codeHighlighterJavascript,
-		python: codeHighlighterPython,
-		html: codeHighlighterHTML,
-		css: codeHighlighterCSS,
-		bash: codeHighlighterBash,
-		ini: codeHighlighterIni,
-		php: codeHighlighterPHP
-	};
-
-	var formatNonBreak = [];
-	var formatCode     = [];
-
-	var parseEmpty = function(lines)
-	{
-		var linesOutput = [];
-		for (var i in lines) 
-		{
-			if(formatCode.indexOf(i) !== -1)
-			{
-				linesOutput.push(lines[i]);
-				continue;
-			}
-			var line = lines[i].trim();
-			if(line !== '')
-			{
-				linesOutput.push(lines[i]);
-				continue;
-			}
-			formatNonBreak.push(i);
-			linesOutput.push('<br>');
-		}
-		return linesOutput;
-	}
-
-
-	var parseHeaders = function(lines)
-	{
-		var linesOutput = [];
-		for (var i in lines) 
-		{
-			if(formatCode.indexOf(i) !== -1)
-			{
-				linesOutput.push(lines[i]);
-				continue;
-			}
-			var lineResult = /^((\#{1,4})([^\n]+))/.exec(lines[i]);
-        	if (lineResult === null) 
-        	{
-        		linesOutput.push(lines[i]);
-        		continue;
-        	}
-        	var headerType;
-        	var className  = configUI.header.class;
-        	switch(lineResult[2])
-        	{
-				case '#':
-					headerType = 'h1';
-					break;
-				case '##':
-					headerType = 'h2';
-					break;
-				case '###':
-					headerType = 'h3';
-					break;
-				case '####':
-					headerType = 'h4';
-					break;
-        	}
-        	var line = '<' + headerType + ' class="' + configUI.header['class'] + '">' + lineResult[3] + '</' + headerType + '>';
-        	linesOutput.push(line);
-        	formatNonBreak.push(i);
-		}
-		return linesOutput;
-	}
-
-	var processInlineItem = function(line)
-	{
-		var lineResult = /(?:([\*]{1,3}))([^\*\n]+[^\*\s])\1/.exec(line);
-		if (lineResult === null) 
-		{
-			return line;
-		}
-		var formatType;
-		var className = '';
-		switch(lineResult[1])
-		{
-			case '*':
-				formatType = 'em';
-				className  = configUI.em['class'];
-				break;
-			case '**':
-				formatType = 'strong';
-				className  = configUI.strong['class'];
-				break;
-			default:
-				formatType = 'strong';
-				break;
-		}
-		var lineInline = '<' + formatType + ' class="' + className + '">' + lineResult[2] + '</' + formatType + '>';
-		line = line.replace(lineResult[0], lineInline);
-		return processInlineItem(line);
-	}
-
-	var parseInline = function(lines)
-	{
-		var linesOutput = [];
-		for (var i in lines) 
-		{
-			if(formatCode.indexOf(i) !== -1)
-			{
-				linesOutput.push(lines[i]);
-				continue;
-			}
-        	linesOutput.push(processInlineItem(lines[i]));
+    _highlight(code, language) {
+      let lang = LANG.test(language) ? language : 'general';
+      if (this.options.mode === 'basic' && ['general', 'javascript', 'js', 'python', 'py'].indexOf(lang) === -1) lang = 'general';
+      const label = escapeHTML(lang);
+      let output;
+      if (!this.options.highlight || code.length > 128 * 1024) output = escapeHTML(code);
+      else {
+        let tokens;
+        try { tokens = this.highlighters.has(lang) ? this.highlighters.get(lang)(code, lang) : builtinHighlighter(code, lang); }
+        catch (_) { tokens = [{ text: code }]; }
+        if (!Array.isArray(tokens) || tokens.length > 100000 || tokens.some(token => !token || typeof token.text !== 'string' || (token.type !== undefined && !HIGHLIGHT_TYPES.has(token.type)))) {
+          tokens = [{ text: code }];
         }
-        return linesOutput;
-	}
+        output = tokens.map(token => {
+          const text = escapeHTML(token.text);
+          return token.type ? `<span class="md-code-syntax md-code-syntax-${token.type}">${text}</span>` : text;
+        }).join('');
+      }
+      return `<pre class="md-code md-code-syntax-lang-${label}"><code>${output}</code></pre>`;
+    }
 
-	var processImagesItem = function(line)
-	{
-		var lineResult = /([\!]{1,1})(([\[]{1,1}([^\]]{1,})[\]]{1,1}){0,1})([\(]{1,1}([^\)]{4,})[\)]{1,1}\s{0,})/.exec(line);
-    	if (lineResult === null) 
-    	{
-    		return line;
-    	}
-    	var lineImage = '<img src="' + lineResult[6] + '"';
-    	lineImage += ' class="' + configUI.image['class'] + '"';
-    	lineImage += '>';
-    	line = line.replace(lineResult[0], lineImage);
-    	return processImagesItem(line);
-	}
-
-
-	//http://meta.stackexchange.com/questions/38915/creating-an-image-link-in-markdown-format - with links
-	/*
-	[![Foo](http://www.google.com.au/images/nav_logo7.png)](http://google.com.au/)
-	*/
-	var parseImages = function(lines)
-	{
-		var linesOutput = [];
-		for (var i in lines) 
-		{
-			if(formatCode.indexOf(i) !== -1)
-			{
-				linesOutput.push(lines[i]);
-				continue;
-			}
-        	linesOutput.push(processImagesItem(lines[i]));
+    _inline(input, depth = 0) {
+      if (depth > MAX_INLINE_NESTING) return escapeHTML(input);
+      let out = '';
+      let plain = '';
+      const flush = () => { out += escapeHTML(plain); plain = ''; };
+      let i = 0;
+      while (i < input.length) {
+        const ch = input[i];
+        if (ch === '\\' && i + 1 < input.length && /[\\`*_{}\[\]()#+.!|>~\-]/.test(input[i + 1])) {
+          plain += input[i + 1]; i += 2; continue;
         }
-        return linesOutput;
-	}
-
-	var processLinksItem = function(line)
-	{
-		var lineTitleResult = /([\[]{1,1})([^\]]{1,})([\]]{1,1})([\(]{1,1})([^\)]{1,})([\)]{1,1})/.exec(line); //[zde](http://www.x4u.cz)
-    	if (lineTitleResult === null)
-    	{
-    		return line;
-    	}
-    	var name = lineTitleResult[2];
-    	var lineLink = '<a href="' + lineTitleResult[5] + '" target="_blank">' + name + '</a>';
-    	line = line.replace(lineTitleResult[0], lineLink);
-    	return processLinksItem(line);
-	}
-
-	var parseLinks = function(lines)
-	{
-		var linesOutput = [];
-		for (var i in lines) 
-		{
-        	linesOutput.push(processLinksItem(lines[i]));
+        if (ch === '`') {
+          let n = 1;
+          while (input[i + n] === '`') n++;
+          const delimiter = '`'.repeat(n);
+          let end = input.indexOf(delimiter, i + n);
+          if (end !== -1) {
+            flush();
+            let content = input.slice(i + n, end).replace(/\n/g, ' ');
+            if (content.length > 1 && content.startsWith(' ') && content.endsWith(' ') && content.trim()) content = content.slice(1, -1);
+            out += `<code class="md-inline-code">${escapeHTML(content)}</code>`;
+            i = end + n; continue;
+          }
+          plain += delimiter; i += n; continue;
         }
-        return linesOutput;
-	}
+        if (ch === '[' || (ch === '!' && input[i + 1] === '[')) {
+          const image = ch === '!';
+          const start = i + (image ? 1 : 0);
+          let cursor = start + 1;
+          let nesting = 1;
+          // A string containing thousands of unmatched '[' must not trigger
+          // repeated O(n²) scans. Reject unusually long link labels early.
+          const firstClose = input.indexOf(']', cursor);
+          if (firstClose === -1) { plain += input.slice(i); break; }
+          if (firstClose - cursor > 2048) { plain += ch; i++; continue; }
+          while (cursor < input.length && cursor < start + 4096 && nesting > 0) {
+            if (input[cursor] === '\\') { cursor += 2; continue; }
+            if (input[cursor] === '[') nesting++;
+            if (input[cursor] === ']') nesting--;
+            cursor++;
+          }
+          if (!nesting && input[cursor] === '(') {
+            const close = this._linkEnd(input, cursor);
+            if (close !== -1) {
+              const label = input.slice(start + 1, cursor - 1);
+              const rawDest = input.slice(cursor + 1, close).trim();
+              const match = /^(<[^<>\n]*>|[^\s]+?)(?:\s+["']([^"']*)["'])?$/.exec(rawDest);
+              const destination = match ? (match[1].startsWith('<') ? match[1].slice(1, -1) : match[1]) : '';
+              const safe = safeURL(destination, image);
+              if (safe) {
+                flush();
+                if (image) {
+                  const alt = label.replace(/\\([\\`*_{}\[\]()#+.!|>~\-])/g, '$1').replace(/[`*_~]/g, '');
+                  out += `<img class="md-image" src="${escapeHTML(safe)}" alt="${escapeHTML(alt)}" loading="lazy">`;
+                } else {
+                  const title = match && match[2] ? ` title="${escapeHTML(match[2])}"` : '';
+                  out += `<a href="${escapeHTML(safe)}"${title} rel="noopener noreferrer" target="_blank">${this._inline(label, depth + 1)}</a>`;
+                }
+                i = close + 1; continue;
+              }
+              // Dangerous destinations remain visible as TEXT (not clickable).
+              plain += input.slice(i, close + 1);
+              i = close + 1; continue;
+            }
+          }
+        }
+        if (ch === '<') {
+          const match = /^<((?:https?:\/\/|mailto:)[^\s<>]+)>/.exec(input.slice(i));
+          if (match && safeURL(match[1])) {
+            flush(); out += `<a href="${escapeHTML(match[1])}" rel="noopener noreferrer" target="_blank">${escapeHTML(match[1])}</a>`;
+            i += match[0].length; continue;
+          }
+        }
+        if (ch === '*' || ch === '_' || ch === '~') {
+          const markers = ch === '~' ? ['~~'] : [ch.repeat(3), ch.repeat(2), ch];
+          let matched = false;
+          for (const marker of markers) {
+            if (!input.startsWith(marker, i)) continue;
+            if (ch === '_' && i > 0 && /\w/.test(input[i - 1])) continue;
+            if (i + marker.length >= input.length || /\s/.test(input[i + marker.length])) continue;
+            const end = this._emphasisEnd(input, marker, i + marker.length);
+            if (end < 0 || /\s/.test(input[end - 1])) continue;
+            flush();
+            const middle = this._inline(input.slice(i + marker.length, end), depth + 1);
+            out += marker.length === 3 ? `<strong class="md-strong"><em class="md-em">${middle}</em></strong>`
+              : marker === '~~' ? `<del>${middle}</del>`
+                : marker.length === 2 ? `<strong class="md-strong">${middle}</strong>` : `<em class="md-em">${middle}</em>`;
+            i = end + marker.length; matched = true; break;
+          }
+          if (matched) continue;
+        }
+        if (ch === '\n' && plain.endsWith('  ')) {
+          plain = plain.slice(0, -2); flush(); out += '<br>'; i++; continue;
+        }
+        plain += ch;
+        i++;
+      }
+      flush();
+      return out;
+    }
 
-	var parseCodeLinesByLanguage = function(language, lines)
-	{
-		language = getModeLanguage(language);
-		language = (isRegisteredCodeHighlight(language)) ? language : 'general';
-		return registeredCodeHighlight[language](language, lines, false, parseCodeLinesByLanguage);
-	}
+    _linkEnd(s, open) {
+      let nesting = 1;
+      let quote = null;
+      for (let i = open + 1; i < s.length && i < open + 4096; i++) {
+        const ch = s[i];
+        if (ch === '\\') { i++; continue; }
+        if (quote) { if (ch === quote) quote = null; continue; }
+        if (ch === '"' || ch === "'") { quote = ch; continue; }
+        if (ch === '(') nesting++;
+        if (ch === ')') { nesting--; if (!nesting) return i; }
+      }
+      return -1;
+    }
 
-	var parseCodeInline = function(lines)
-	{
-		var language    = 'general';
-		var linesOutput = [];
+    _emphasisEnd(input, marker, start) {
+      let pos = start;
+      while (pos < input.length) {
+        const end = input.indexOf(marker, pos);
+        if (end < 0) return -1;
+        if (input[end - 1] !== '\\' && end > start) return end;
+        pos = end + marker.length;
+      }
+      return -1;
+    }
 
-		var replaceCode = function(symbol) 
-		{
-			var input      = arguments[5];
-			var language   = 'general';
-        	var langResult = /^([a-zA-Z0-9]{2,}[\s]{1,})/g.exec(arguments[2]);
-        	var codeIndex  = 0;
-        	if(langResult !== null)
-        	{
-        		var languageNew = langResult[1].trim();
-        		codeIndex       = langResult[1].length;
-        		language        = (isRegisteredCodeHighlight(languageNew)) ? getModeLanguage(languageNew) : 'general';
-        	}
-			var code     = (language === 'general') ? arguments[2] : arguments[2].substring(codeIndex);//.replace('[\s]');
-			code         = parseCodeLinesByLanguage(language, [code]).join('');
-			var output   = '<pre class="inline ' + configUI.code['class'] + ' md-code-syntax-lang-' + language + '" title="' + ((language === 'general') ? 'code' : 'code: ' + language ) + '">' + code + '</pre>';
-			return output;
-		}
+    _boundary(lines, index) {
+      const line = lines[index];
+      if (!line || !line.trim()) return true;
+      if (isFence(line) || isHeading(line) || isRule(line) || isQuote(line) || listMarker(line)) return true;
+      if (index + 1 < lines.length && line.includes('|') && tableAlignment(lines[index + 1], splitTableRow(line).length)) return true;
+      if (this.options.mode === 'extended' && /^\[[^\]]*;/.test(line.trim())) return true;
+      return false;
+    }
 
-		for(var i in lines)
-		{
-			if(formatCode.indexOf(i) !== -1)
-			{
-				linesOutput.push(lines[i]);
-				continue;
-			}
+    _blocks(lines, depth) {
+      if (depth > MAX_NESTING) return `<p>${this._inline(lines.join('\n'))}</p>`;
+      const result = [];
+      for (let i = 0; i < lines.length;) {
+        const line = lines[i];
+        if (!line.trim()) { i++; continue; }
 
-			var lineResult = /([\`]{1,1})([^\`]{1,})([\`]{1,1})/g.exec(lines[i]);
-        	if(lineResult === null)
-        	{
-				linesOutput.push(lines[i]);
-				continue;
-        	}
-
-			var re = new RegExp('([\`]{1,1})([^\`]{1,})([\`]{1,1})', 'g');
-			lines[i] = lines[i].replace(re, replaceCode);
-			linesOutput.push(lines[i]);
-        }	
-        return linesOutput;
-	}
-
-	var parseCode = function(lines)
-	{
-		var language         = 'general';
-		var linesOutput      = [];
-		var linesCode        = [];
-		var isCodeStarted    = false;
-
-		var processCodeLines = function()
-		{
-			if(linesCode.length === 0)
-			{
-				return;
-			}
-			language   = (isRegisteredCodeHighlight(language)) ? language : 'general';
-
-			var output = parseCodeLinesByLanguage(language, linesCode);
-			//error in other than general (built-in) codeHighlighter have fallback to switch to try general codeHighlighter
-			if(false === U.isArray(output))
-			{
-				if(language === 'general')
-				{
-					linesCode = [];
-					return;
-				}
-				output = parseCodeLinesByLanguage('general', linesCode);
-				if(false === U.isArray(output))
-				{
-					linesCode = [];
-					return;
-				}
-			}
-
-			var iLast = (output.length - 1);
-			var i     = 0;
-			for(;i <= iLast; i++)
-			{
-				if(i === 0)
-				{
-					var useLabel  = (language === 'general') ? false : true;
-					var lineTag   = '<pre';
-					lineTag      += ' class="' + configUI.code['class'];
-					lineTag      += (useLabel) ? ' lang-label' : '';
-					lineTag      += ' md-code-syntax-lang-' + language + '">';
-					lineTag      += (useLabel) ? '<span class="md-code-syntax-lang-label">' + (language.toUpperCase()) + '</span>' : '';
-					output[i]     = lineTag;
-				}
-				if(i === iLast)
-				{
-					output[i]     = output[i] + '</pre>';
-				}
-				linesOutput.push(output[i]);
-			}
-			linesCode = [];
-		}
-
-		for (var i in lines) 
-		{
-			if(isCodeStarted)
-			{
-				var lineResult = /^([^`]{0,})(([\`]{3,3}){0,1})/.exec(lines[i]);	
-			}
-			else
-			{
-				var lineResult = /^([\`]{3,3})([^`]+)(([\`]{3,3}){0,1})/.exec(lines[i]);
-			}
-
-        	if(lineResult === null)
-        	{
-        		if(false === isCodeStarted)
-        		{
-					var line  = '';
-					linesOutput.push(lines[i]);
-					continue;
-        		}
-        		linesCode.push(lines[i]);
-        		continue;
-        	}
-
-        	if(false === isCodeStarted)
-        	{
-        		linesCode = [];
-        		var languageNew = lineResult[2].trim();
-				language = (isRegisteredCodeHighlight(languageNew)) ? getModeLanguage(languageNew) : 'general';
-        		linesCode.push(lineResult[2]);
-        		if(lineResult[3] === '')
-        		{
-        			isCodeStarted = true;
-        		}
-        	}
-        	else
-        	{
-        		linesCode.push(lineResult[1]);
-        		if(lineResult[2] !== '')
-        		{
-        			processCodeLines();
-        			isCodeStarted = false;
-        		}
-        	}
-
-        	formatCode.push(i);
-        	formatNonBreak.push(i);
-        }	
-    	if(true === isCodeStarted)
-    	{
-    		isCodeStarted = false;
-    		processCodeLines();
-    	}
-        return linesOutput;
-	}
-
-	var parseLists = function(lines)
-	{
-		var linesOutput = [];
-		var isListStarted = false;
-		var isListOrdered = false;
-		for (var i in lines) 
-		{
-			if(formatCode.indexOf(i) !== -1)
-			{
-				linesOutput.push(lines[i]);
-				continue;
-			}
-			var lineResult = /^((\*|\-){1,1})([^\*\-]{1,})/.exec(lines[i]);
-        	if (lineResult === null) 
-        	{
-        		var line = lines[i];
-        		if(isListStarted)
-        		{
-        			line = ((isListOrdered) ? '</ol>' : '</ul>') + line;
-        			isListStarted = false;
-        		}
-        		linesOutput.push(line);
-        		continue;
-        	}
-        	
-        	if(isListStarted)
-        	{
-        		var line = '';
-        		isListOrderedCurrent = (lineResult[1] === '-') ? true : false;
-        		if(isListOrderedCurrent !== isListOrdered)
-        		{
-        			line += (false === isListOrderedCurrent) ? '</ol><ul class="' + configUI.list['class'] + '">' : '</ul><ol class="' + configUI.listOrdered['class'] + '">';
-        			isListOrdered = isListOrderedCurrent;
-        		}
-        		line += '<li>' + lineResult[3].trim() + '</li>';
-        	}
-        	else
-        	{
-        		isListOrdered = (lineResult[1] === '-') ? true : false;
-        		if(isListOrdered)
-        		{
-        			var line = '<ol class="' + configUI.listOrdered['class'] + '">';
-        		}
-        		else
-        		{
-        			var line = '<ul class="' + configUI.list['class'] + '">';
-        		}
-    			isListStarted = true;
-        		line += '<li>' + lineResult[3].trim() + '</li>';
-        	}
-        	formatNonBreak.push(i);
-        	linesOutput.push(line);
+        const fence = isFence(line);
+        if (fence) {
+          const code = [];
+          i++;
+          const closeRE = new RegExp(`^ {0,3}${fence.marker === '`' ? '`' : '~'}{${fence.count},}[ \\t]*$`);
+          while (i < lines.length && !closeRE.test(lines[i])) code.push(lines[i++]);
+          if (i < lines.length) i++;
+          // Reserved for phase 2: fenced ```mermaid is safely displayed as code today.
+          result.push(this._highlight(code.join('\n'), fence.lang));
+          continue;
         }
 
-		if(isListStarted)
-		{
-			var line = (isListOrdered) ? '</ol>' : '</ul>';
-			linesOutput[i] += line;
-		}
-        return linesOutput;
-	}
+        const heading = isHeading(line);
+        if (heading) {
+          const level = heading[1].length;
+          const content = heading[2].replace(/[ \t]+#+[ \t]*$/, '').trim();
+          result.push(`<h${level} class="md-header">${this._inline(content)}</h${level}>`);
+          i++; continue;
+        }
+        if (isRule(line)) { result.push('<hr>'); i++; continue; }
 
-	var parseTableSimple = function(lines)
-	{
-		var linesOutput = [];
-		var isTableStarted = false;
-		for (var i in lines) 
-		{
-			if(formatCode.indexOf(i) !== -1)
-			{
-				linesOutput.push(lines[i]);
-				continue;
-			}
-			if(isTableStarted)
-			{
-				var lineResult = /^([^\]]+)(([\]]{1,1}){0,1})/.exec(lines[i]);	
-			}
-			else
-			{
-				var lineResult = /^([\[]{1,1})([^\]]+)$/.exec(lines[i]);
-			}
-        	if (lineResult === null) 
-        	{
-        		if(isTableStarted)
-        		{
-        			linesOutput.push('</table>');
-        			isTableStarted = false;
-        		}
-        		linesOutput.push(lines[i]);
-        		continue;
-        	}
-
-        	if(isTableStarted)
-        	{
-        		var rows = lineResult[1].split(';');
-        		var line = '<tr>';
-        		for(var r in rows)
-        		{
-        			line += '<td>' + rows[r].trim() + '</td>';
-        		}
-    			line += '</tr>';
-    			if(lineResult[2] !== '')
-    			{
-    				isTableStarted = false;
-    				line += '</table>';
-    			}
-        	}
-        	else
-        	{
-        		isTableStarted = true;
-        		var rows = lineResult[2].split(';');
-        		var line = '<table class="' + configUI.table['class'] + '"><tr>';
-        		for(var r in rows)
-        		{
-        			line += '<th>' + rows[r].trim() + '</th>';
-        		}
-    			line += '</tr>';
-        	}
-			formatNonBreak.push(i);
-        	linesOutput.push(line);
-        }	
-        return linesOutput;
-	}
-
-	var parseTable = function(lines)
-	{
-		var linesOutput = [];
-		var table = {
-			'header': [],
-			'rows': [],
-			'align': []
-		};
-		var isTableHeader       = false;
-		var isTableWaitingAlign = false;
-		var isTableStarted      = false;
-
-		var processRow = function(line)
-		{
-			var cols = line.split('|');
-			var row  = [];
-			for(var c in cols)
-			{
-				row.push(cols[c].trim());
-			}
-			return row;
-		}
-
-		var processTable = function()
-		{
-    		var line = '<table class="' + configUI.table['class'] + '"><tr>';
-			for(var c in table.header)
-			{
-				var i     = parseInt(c);
-				var align = table.align[i];
-				line += '<th align="' + align + '" class="text-' + align + '">' + table.header[c] + '</th>';
-			}
-			line += '</tr>';
-			linesOutput.push(line);
-			for(var r in table.rows)
-			{
-				var row    = table.rows[r];
-				var line   = '<tr>';
-				for(var c in row)
-				{
-					var i     = parseInt(c);
-					var align = table.align[i];
-					line += '<td align="' + align + '" class="text-' + align + '">' + row[c] + '</td>';
-				}
-				line += '</tr>';
-				linesOutput.push(line);
-			}
-			linesOutput[(linesOutput.length - 1)] += '</table>';
-			table = {
-				'header': [],
-				'rows': [],
-				'align': []
-			};
-		}
-
-		for (var i in lines) 
-		{
-			if(formatCode.indexOf(i) !== -1)
-			{
-				linesOutput.push(lines[i]);
-				continue;
-			}
-
-			var line = lines[i].replace(/^([\|]{1,1})/, '');
-			line     = line.replace(/([\|]{1,1})$/, '');
-			if(isTableWaitingAlign)
-			{
-				var lineResult = /([\|]{0,1}[\s\:]{0,1}[\-]{1,})/.exec(line);
-			}
-			else
-			{
-				var lineResult = /([\|]{1,1}[^\|]{1,})/.exec(line);
-			}
-
-        	if (lineResult === null) 
-        	{
-        		if(isTableStarted)
-        		{
-        			processTable();
-        			isTableStarted = false;
-        			isTableWaitingAlign = false;
-        			isTableHeader = false;
-        		}
-        		linesOutput.push(lines[i]);
-        		continue;
-        	}
-        	if(isTableWaitingAlign)
-        	{
-        		var cols = line.split('|');
-        		if(cols.length !== table.header.length)
-        		{
-        			throw new Error('align cols not match!');
-        		}
-        		for(var c in cols)
-        		{
-        			var colResult = /(([\:]{0,1})[\-]{1,}[\s]{0,}([\:]{0,1}))/.exec(cols[c]); //[":--- :", ":--- :", ":", ":", index: 0, input: ":--- :"]
-        			var align     = 'left';
-        			if(colResult === null)
-        			{
-        				table.align.push(align);
-        				continue;
-        			}
-        			var alignText = colResult[2] + '-' + colResult[3];
-        			
-        			switch(alignText)
-        			{
-						case ':-:':
-							align = 'center';
-							break;
-
-						case '-:':
-							align = 'right';
-							break;
-        			}
-        			table.align.push(align);
-        		}
-        		isTableWaitingAlign = false;
-        		isTableStarted      = true;
-        		continue;
-        	}
-        	else
-        	{
-				var row  = processRow(line);
-				if(false === isTableHeader)
-				{
-					table.header        = row;
-		    		isTableHeader       = true;
-		    		isTableWaitingAlign = true;
-				}
-				else
-				{
-					table.rows.push(row);
-				}
-        	}
-			formatNonBreak.push(i);
+        if (isQuote(line)) {
+          const inner = [];
+          while (i < lines.length && (isQuote(lines[i]) || (lines[i].trim() === '' && i + 1 < lines.length && isQuote(lines[i + 1])))) {
+            inner.push(lines[i].replace(/^ {0,3}>[ \t]?/, '')); i++;
+          }
+          result.push(`<blockquote class="md-blockquote">${this._blocks(inner, depth + 1)}</blockquote>`);
+          continue;
         }
 
-		if(isTableStarted)
-		{
-			processTable();
-		}
-        return linesOutput;
-	}
+        const marker = listMarker(line);
+        if (marker) {
+          const type = marker.type;
+          const items = [];
+          const first = marker.start;
+          while (i < lines.length) {
+            const current = listMarker(lines[i]);
+            if (!current || current.indent !== marker.indent || current.type !== type) break;
+            const content = [current.text]; i++;
+            while (i < lines.length) {
+              const next = lines[i];
+              if (!next.trim()) {
+                if (i + 1 < lines.length && ((listMarker(lines[i + 1]) && listMarker(lines[i + 1]).indent === marker.indent) || /^\s{2,}\S/.test(lines[i + 1]))) { content.push(''); i++; continue; }
+                break;
+              }
+              if ((listMarker(next) && listMarker(next).indent === marker.indent)) break;
+              const indent = /^(\s*)/.exec(next)[1].replace(/\t/g, '    ').length;
+              if (indent < marker.indent + 2) break;
+              content.push(next.slice(marker.indent + 2)); i++;
+            }
+            const rendered = this._blocks(content, depth + 1);
+            // Tight-list paragraph (but preserve distinct nested blocks).
+            items.push(`<li>${rendered.replace(/^<p>([\s\S]*?)<\/p>(?=(?:<ul|<ol|$))/, '$1')}</li>`);
+            if (i < lines.length && !lines[i].trim()) {
+              const nextMarker = i + 1 < lines.length ? listMarker(lines[i + 1]) : null;
+              if (nextMarker && nextMarker.type === type && nextMarker.indent === marker.indent) i++;
+              else break;
+            }
+          }
+          result.push(`<${type} class="${type === 'ol' ? 'md-list-ordered' : 'md-list'}"${type === 'ol' && first !== 1 ? ` start="${first}"` : ''}>${items.join('')}</${type}>`);
+          continue;
+        }
 
-	var formatBreaks = function(lines)
-	{
-		for(var i in lines)
-		{
-			if(formatCode.indexOf(i) !== -1)
-			{
-				continue;
-			}
-			if(formatNonBreak.indexOf(i) !== -1)
-			{
-				continue;
-			}
-			lines[i] += '<br>';
-		}
-		return lines;
-	}
+        if (i + 1 < lines.length && line.includes('|')) {
+          const headers = splitTableRow(line);
+          const aligns = tableAlignment(lines[i + 1], headers.length);
+          if (aligns) {
+            const th = headers.map((cell, c) => `<th class="md-align-${aligns[c]}">${this._inline(cell)}</th>`).join('');
+            i += 2;
+            const rows = [];
+            while (i < lines.length && lines[i].trim() && lines[i].includes('|') && rows.length < 10000) {
+              const cells = splitTableRow(lines[i++]);
+              const td = headers.map((_, c) => `<td class="md-align-${aligns[c]}">${this._inline(cells[c] || '')}</td>`).join('');
+              rows.push(`<tr>${td}</tr>`);
+            }
+            result.push(`<table class="md-table"><thead><tr>${th}</tr></thead><tbody>${rows.join('')}</tbody></table>`);
+            continue;
+          }
+        }
 
-	var isRegisteredCodeHighlight = function(language)
-	{
-		return (registeredCodeHighlight.hasOwnProperty(language));
-	}
+        // Original MD.js extended shorthand: [Header; Header\nValue; Value]
+        if (this.options.mode === 'extended' && /^\[[^\]]*;/.test(line.trim())) {
+          const contents = [];
+          let finished = false;
+          let lookahead = i;
+          while (lookahead < lines.length && contents.length < 10000) {
+            const source = lines[lookahead];
+            const entry = lookahead === i ? source.trim().slice(1) : source.trim();
+            if (entry.includes(']')) {
+              const close = entry.indexOf(']');
+              if (entry.slice(close + 1).trim()) break;
+              contents.push(entry.slice(0, close)); finished = true; lookahead++; break;
+            }
+            contents.push(entry); lookahead++;
+          }
+          if (finished && contents.length && contents.every(item => item.includes(';'))) {
+            const cells = contents.map(entry => entry.split(';').slice(0, 64).map(cell => this._inline(cell.trim())));
+            const header = cells.shift().map(cell => `<th>${cell}</th>`).join('');
+            const rows = cells.map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('');
+            result.push(`<table class="md-table md-table-compact"><thead><tr>${header}</tr></thead><tbody>${rows}</tbody></table>`);
+            i = lookahead; continue;
+          }
+        }
 
-	var _parse = function(string)
-	{
-		var lines = string.split('\n');
-		lines = parseCode(lines);
-		lines = parseEmpty(lines);
-		lines = parseImages(lines);
-		lines = parseHeaders(lines);
-		lines = parseInline(lines);
-		lines = parseLinks(lines);
-		if(config.mode === 'extended')
-		{
-			lines = parseTableSimple(lines);
-		}
-		lines = parseTable(lines);
-		lines = parseLists(lines);
-		lines = formatBreaks(lines);
-		lines = parseCodeInline(lines);
-		//console.log('parseCodeInline', parseCodeInline(lines));
-		// console.log('MD RESULT:', lines.join('<br>'))
-		return lines.join('\n');
-	}
+        if (isIndentedCode(line)) {
+          const code = [];
+          while (i < lines.length && (isIndentedCode(lines[i]) || !lines[i].trim())) {
+            code.push(lines[i].replace(/^(?: {4}|\t)/, '')); i++;
+          }
+          result.push(this._highlight(code.join('\n').replace(/\n+$/, ''), 'general'));
+          continue;
+        }
 
+        const paragraph = [line.replace(/^[ \t]+/, '')]; i++;
+        if (i < lines.length && isSetext(lines[i])) {
+          const level = lines[i].trim()[0] === '=' ? 1 : 2;
+          result.push(`<h${level} class="md-header">${this._inline(paragraph[0])}</h${level}>`);
+          i++; continue;
+        }
+        while (i < lines.length && !this._boundary(lines, i) && !isIndentedCode(lines[i])) {
+          paragraph.push(lines[i]); i++;
+        }
+        result.push(`<p>${this._inline(paragraph.join('\n'))}</p>`);
+      }
+      return result.join('\n');
+    }
+  }
 
-
-	/*@todo Perpare for modular code highlight*/
-	var _registerCodeHighlight = function(language, processFunction)
-	{
-		if(false === U.isString(language))
-		{
-			throw new Error('MD registerCodeHighlight Error: invalid language!');
-		}
-		if(false === U.isFunction(processFunction))
-		{
-			throw new Error('MD registerCodeHighlight Error: invalid process function!');
-		}
-		if(true === isRegisteredCodeHighlight(language))
-		{
-			throw new Error('MD registerCodeHighlight Error: language allready registered!');
-		}
-		if(language !== getModeLanguage(language))
-		{
-			throw new Error('MD registerCodeHighlight Error: language not allowed by selected mode "' + config.mode + '"!');	
-		}
-		registeredCodeHighlight[language] = processFunction;
-	}
-
-	return {
-		'parse': _parse,
-		'registerCodeHighlight': _registerCodeHighlight
-	}
-}
+  root.MD = MD;
+  if (typeof module === 'object' && module.exports) module.exports = MD;
+})(typeof window !== 'undefined' ? window : (typeof global !== 'undefined' ? global : this));

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>MD.js Reborn browser security smoke test</title>
+<style>body{font:16px system-ui;padding:3rem;max-width:760px;margin:auto}#result{font-size:1.6rem;font-weight:bold}code{background:#eee;padding:3px}</style>
+</head>
+<body><h1>Browser smoke test</h1><p>Open locally. No network calls, dependencies, or build tools.</p><p id="result">Running…</p><pre id="details"></pre>
+<script src="../MD.js"></script>
+<script>
+  'use strict';
+  window.__mdjs_xss_fired = false;
+  const vectors = [
+    '<img src=x onerror="window.__mdjs_xss_fired=true">',
+    '<svg onload="window.__mdjs_xss_fired=true"></svg>',
+    '<iframe srcdoc="<script>window.__mdjs_xss_fired=true</script>"></iframe>',
+    '[click](javascript:window.__mdjs_xss_fired=true)',
+    '![image](data:image/svg+xml,<svg/onload=alert(1)>)',
+    '```html\n<img src=x onerror=alert(1)>\n```',
+    '```mermaid\nA[<svg onload=alert(1)>] --> B\n```',
+    '# <script>window.__mdjs_xss_fired=true</script>',
+    '| x | y |\n|---|---|\n| <img onerror=alert(1)> | safe |'
+  ];
+  const md = new MD({mode:'extended'});
+  const host = document.createElement('div');
+  document.body.append(host);
+  let failures = [];
+  vectors.forEach((vector, i) => {
+    host.innerHTML = md.parse(vector);
+    if (host.querySelector('script,svg,iframe,object,embed,form')) failures.push(`Vector ${i+1}: dangerous element`);
+    for (const el of host.querySelectorAll('*')) {
+      for (const attr of el.attributes) {
+        if (/^on/i.test(attr.name)) failures.push(`Vector ${i+1}: event attribute`);
+        if ((attr.name === 'href' || attr.name === 'src') && /^(javascript|data|vbscript):/i.test(attr.value)) failures.push(`Vector ${i+1}: URL scheme`);
+      }
+    }
+  });
+  host.remove();
+  if (window.__mdjs_xss_fired) failures.push('An XSS event fired');
+  document.getElementById('result').textContent = failures.length ? `FAIL (${failures.length})` : `PASS (${vectors.length} DOM probes)`;
+  document.getElementById('result').style.color = failures.length ? '#b91c1c' : '#15803d';
+  document.getElementById('details').textContent = failures.join('\n') || 'No forbidden HTML element, event handler or URL scheme observed.';
+</script>
+</body></html>

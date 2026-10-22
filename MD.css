@@ -1,327 +1,91 @@
-pre.lang-label {
-  padding: 4.5px 9.5px;
+/* MD.js Reborn — scoped styles. Apply .md-root to the output container. */
+.md-root {
+  --md-ink: #263247;
+  --md-muted: #64748b;
+  --md-line: #dbe3ed;
+  --md-panel: #f5f7fb;
+  --md-accent: #3759ac;
+  --md-code-bg: #111827;
+  --md-code-fg: #e5eaf4;
+  color: var(--md-ink);
+  font: 16px/1.7 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  overflow-wrap: anywhere;
 }
-
-pre span.md-code-syntax-lang-label {
-    display: block;
-    position: relative;
-    left: -10px;
-    top: -5px;
-    width: 8%;
-    min-width: 100px;
-    text-align: center;
-    border-radius: 0px 0px 7px 0px;
-    line-height: 18px;
-    padding: 4px 4px 3px;
-    background-color: #FFF;
-    color: #000;
-    opacity: 0.9;
+.md-root :where(h1, h2, h3, h4, h5, h6) {
+  color: var(--md-ink);
+  line-height: 1.25;
+  letter-spacing: -.018em;
+  margin: 1.55em 0 .6em;
+  font-weight: 700;
 }
-
-code, pre {
-  background-color: #dedede;
-  font-style: normal;
-  color: #45429e;
+.md-root h1 { font-size: 2.1rem; border-bottom: 1px solid var(--md-line); padding-bottom: .35em; }
+.md-root h2 { font-size: 1.68rem; border-bottom: 1px solid var(--md-line); padding-bottom: .28em; }
+.md-root h3 { font-size: 1.38rem; }
+.md-root h4 { font-size: 1.2rem; }
+.md-root h5 { font-size: 1.05rem; }
+.md-root h6 { font-size: .93rem; color: var(--md-muted); }
+.md-root :where(p, blockquote, pre, table, ul, ol) { margin: .75em 0 1.1em; }
+.md-root p { white-space: normal; }
+.md-root a { color: var(--md-accent); text-decoration: underline; text-underline-offset: 2px; }
+.md-root a:hover { text-decoration-thickness: 2px; }
+.md-root strong { font-weight: 700; }
+.md-root del { color: var(--md-muted); }
+.md-root :where(ul, ol) { padding-left: 1.7em; }
+.md-root li { margin: .18em 0; }
+.md-root li > p { margin: 0; }
+.md-root blockquote {
+  padding: .3em 1.2em;
+  margin-left: 0;
+  border-left: 4px solid #a5b5d3;
+  background: #f6f8fc;
+  color: #46566f;
 }
-
-pre.inline {
-  display: inline-block;
-  margin: 0;
-  padding: 2px 3px 0px;
-  border-radius: 4px;
-  border: 0;
-  font-size: 90%;
+.md-root blockquote > :first-child { margin-top: 0; }
+.md-root blockquote > :last-child { margin-bottom: 0; }
+.md-root hr { border: 0; border-top: 1px solid var(--md-line); margin: 1.7em 0; }
+.md-root img { max-width: 100%; height: auto; border-radius: 6px; }
+.md-root pre.md-code {
   position: relative;
-  top: 3px;
-  margin: 0px 2px;
+  background: var(--md-code-bg);
+  color: var(--md-code-fg);
+  border-radius: 10px;
+  border: 1px solid #25344a;
+  padding: 1.15em 1.35em;
+  overflow: auto;
+  font: 13px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: pre;
+  overflow-wrap: normal;
+  tab-size: 4;
 }
-
-h1 pre.inline, h2 pre.inline {
-  top: 12px;
+.md-root pre.md-code code { font: inherit; background: transparent; border: none; color: inherit; padding: 0; }
+.md-root code.md-inline-code {
+  font: .9em/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  padding: .12em .35em;
+  border-radius: 4px;
+  background: #edf1f7;
+  color: #8a325f;
 }
-
-h3 pre.inline, h4 pre.inline, h5 pre.inline {
-  top: 9px;
+.md-root .md-code-syntax-command { color: #c4a7fb; font-weight: 600; }
+.md-root .md-code-syntax-controls { color: #ffd580; }
+.md-root .md-code-syntax-symbol { color: #9de3ac; }
+.md-root .md-code-syntax-comment { color: #8794aa; font-style: italic; }
+.md-root .md-code-syntax-attribute-name { color: #94c8ff; }
+.md-root .md-code-syntax-attribute-value { color: #b8e3bb; }
+.md-root table.md-table { width: 100%; border-collapse: collapse; display: block; overflow-x: auto; }
+.md-root table.md-table th, .md-root table.md-table td {
+  border: 1px solid var(--md-line); padding: .45em .85em; vertical-align: top;
 }
-
-pre span {
-  font-weight: bold;
-}
-
-pre.md-code {
-  padding-bottom: 15px;
-  margin: 5px 0;
-}    
-
-pre.md-code-syntax-lang-general span.md-code-syntax-lang-label {
-    background-color: #be6662;
-    color: #ffedc5;
-}
-
-pre.md-code-syntax-lang-python span.md-code-syntax-lang-label {
-    background-color: #bf6f67;
-    color: #edffc5;
-}
-
-pre.md-code-syntax-lang-javascript span.md-code-syntax-lang-label {
-    background-color: #be6662;
-    color: #ffedc5;
-}
-
-pre.md-code-syntax-lang-html span.md-code-syntax-lang-label {
-    background-color: #c88f90;
-    color: #f5f6ff;
-}
-
-
-pre.md-code-syntax-lang-css span.md-code-syntax-lang-label {
-    background-color: #d8e7d8;
-    color: #6a709a;
-}
-
-pre.md-code-syntax-lang-ini span.md-code-syntax-lang-label {
-    background-color: #b1c1e6;
-    color: #11442c;
-}
-
-pre.md-code-syntax-lang-php span.md-code-syntax-lang-label {
-    background-color: #515d95;
-    color: #99a4d6;
-}
-
-
-/*   LANG DEFINITIONS    */
-
-pre.md-code-syntax-lang-javascript {
-  background-color: #ffedc5;
-
-}
-
-pre.md-code-syntax-lang-javascript span {
-  font-weight: bold;
-}
-
-pre.md-code-syntax-lang-javascript span.md-code-syntax-command {
-  color: #b75757;
-}
-
-pre.md-code-syntax-lang-javascript span.md-code-syntax-controls {
-  color: #3d6562;
-}
-
-pre.md-code-syntax-lang-javascript span.md-code-syntax-symbol {
-  color: #bd6767;
-  background-color: #ccfff8;
-}
-
-pre.md-code-syntax-lang-python {
-  background-color: #edffc5;
-  color: #4c3342;
-}
-
-pre.md-code-syntax-lang-python span {
-  font-weight: bold;
-}
-
-pre.md-code-syntax-lang-python span.md-code-syntax-command {
-  color: #b75757;
-}
-
-pre.md-code-syntax-lang-python span.md-code-syntax-controls {
-  color: #2a4bb1;
-}
-
-pre.md-code-syntax-lang-python span.md-code-syntax-symbol {
-  color: #bd6767;
-  background-color: #faffa3;
-  font-weight: normal;
-}
-
-pre.md-code-syntax-lang-python span.md-code-syntax-comment {
-  color: #aaaaaa;
-}
-
-pre.md-code-syntax-lang-html {
-  background-color: #f5f6ff;
-  color: #8c8b6c;
-}
-
-pre.md-code-syntax-lang-html span {
-  font-weight: bold;
-}
-
-pre.md-code-syntax-lang-html pre.md-code-syntax-lang-javascript,
-pre.md-code-syntax-lang-html pre.md-code-syntax-lang-css {
-    display: block;
-    margin: 2px 5px 5px;
-}
-
-pre.md-code-syntax-lang-html span.md-code-syntax-command {
-  color: #c38484;
-}
-
-pre.md-code-syntax-lang-html span.md-code-syntax-controls {
-  color: #6893e8;
-}
-
-pre.md-code-syntax-lang-html span.md-code-syntax-symbol {
-  color: #bd6767;
-  background-color: #faffa3;
-  font-weight: normal;
-}
-
-pre.md-code-syntax-lang-html span.md-code-syntax-attribute-name {
-  color: #847bf1;
-}
-
-pre.md-code-syntax-lang-html span.md-code-syntax-attribute-control {
-  color: #729272;
-}
-
-pre.md-code-syntax-lang-html span.md-code-syntax-attribute-quote {
-  color: #841212;
-}
-
-pre.md-code-syntax-lang-html span.md-code-syntax-attribute-value {
-  color: #599242;
-}
-
-pre.md-code-syntax-lang-css {
-  background-color: #6a709a;
-  color: #f0faff;
-}
-
-pre.md-code-syntax-lang-css span {
-  font-weight: bold;
-  margin-bottom: 2px;
-}
-
-pre.md-code-syntax-lang-css span.md-code-syntax-command {
-  color: #b3e209;
-  padding: 1px 2px;
-  background-color: #355794;
-  border-radius: 3px;
-}
-
-pre.md-code-syntax-lang-css span.md-code-syntax-controls {
-  color: #77d640;
-  padding: 0px 2px 0px 1px;
-}
-
-pre.md-code-syntax-lang-css span.md-code-syntax-symbol {
-  color: #ece1ff;
-}
-
-pre.md-code-syntax-lang-css span.md-code-syntax-attribute-name {
-  color: #f1df7b;
-}
-
-pre.md-code-syntax-lang-css span.md-code-syntax-attribute-control {
-  color: #a7d9ff;
-}
-
-pre.md-code-syntax-lang-css span.md-code-syntax-attribute-quote {
-  color: #841212;
-}
-
-pre.md-code-syntax-lang-css span.md-code-syntax-attribute-value {
-  color: #e5f5df;
-}
-
-pre.md-code-syntax-lang-bash {
-  background-color: #222;
-  color: #FFF;
-}
-
-pre.md-code-syntax-lang-bash span {
-  font-weight: bold;
-  margin-bottom: 2px;
-}
-
-
-pre.md-code-syntax-lang-ini {
-  background-color: #11442c;
-  color: #ff902a;
-}
-
-pre.md-code-syntax-lang-ini span {
-  font-weight: bold;
-  margin-bottom: 2px;
-}
-
-pre.md-code-syntax-lang-ini span.md-code-syntax-comments {
-  font-weight: normal;
-  font-style: italic;
-  color: #bfbbbb;
-}
-
-pre.md-code-syntax-lang-ini span.md-code-syntax-attribute-name {
-  font-weight: normal;
-  color: #eac1c1;
-}
-
-pre.md-code-syntax-lang-ini span.md-code-syntax-attribute-value {
-  font-weight: bold;
-  color: #b1c1e6;
-}
-
-pre.md-code-syntax-lang-ini span.md-code-syntax-attribute-control {
-  font-weight: normal;
-  color: #98ceff;
-}
-
-
-pre.md-code-syntax-lang-php {
-  background-color: #99a4d6;
-  color: #222530;
-}
-
-pre.md-code-syntax-lang-php span {
-  font-weight: bold;
-  margin-bottom: 2px;
-}
-
-pre.md-code-syntax-lang-php span.md-code-syntax-command {
-  color: #4f5b93;
-}
-
-pre.md-code-syntax-lang-php span.md-code-syntax-controls {
-  
-  color: #dffdfc;
-}
-
-pre.md-code-syntax-lang-php span.md-code-syntax-symbol {
-  color: #fdf2f7;
-  font-weight: normal;
-}
-
-pre.md-code-syntax-lang-php span.md-code-syntax-attribute-name {
-  color: #847bf1;
-}
-
-pre.md-code-syntax-lang-php span.md-code-syntax-attribute-control {
-  color: #729272;
-}
-
-pre.md-code-syntax-lang-php span.md-code-syntax-attribute-quote {
-  color: #841212;
-}
-
-pre.md-code-syntax-lang-php span.md-code-syntax-attribute-value {
-  color: #599242;
-}
-
-
-pre span.md-code-syntax-percent {
-  content: '%';
-  color: #2a4bb1;
-}
-
-img {
-  max-width: 100%;
-}
-
-br, img {
-  margin-top: 5px;
-  margin-bottom: 7px;
+.md-root table.md-table th { background: var(--md-panel); font-weight: 700; }
+.md-root table.md-table tr:nth-child(even) { background: #fbfcfe; }
+.md-root .md-align-left { text-align: left; }
+.md-root .md-align-center { text-align: center; }
+.md-root .md-align-right { text-align: right; }
+@media (prefers-color-scheme: dark) {
+  .md-root.md-dark {
+    --md-ink: #e7edf8; --md-muted: #a4b3c9; --md-line: #334155;
+    --md-panel: #1e293b; --md-accent: #9ebfff;
+  }
+  .md-root.md-dark blockquote { background: #172339; color: #c9d7ed; }
+  .md-root.md-dark code.md-inline-code { background: #263348; color: #f4b6d2; }
+  .md-root.md-dark table.md-table tr:nth-child(even) { background: #151f30; }
 }

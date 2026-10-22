@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>MD.js Reborn · Vanilla ES6</title>
+  <link rel="stylesheet" href="../MD.css">
+  <style>
+    :root{color-scheme:light;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+    *{box-sizing:border-box}body{margin:0;background:#eef2f8;color:#1e293b}
+    header{padding:16px 24px;background:#172438;color:#fff;display:flex;align-items:center;justify-content:space-between}
+    header small{color:#abc2e2}main{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 62px);gap:14px;padding:14px}
+    section{background:white;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 3px 12px #1c2e4b0e}
+    h2{font-size:13px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:0;padding:14px 18px;border-bottom:1px solid #dce3f0}
+    textarea{flex:1;width:100%;resize:none;min-height:500px;border:0;outline:0;padding:22px;background:#fbfcff;color:#25364c;font:14px/1.65 ui-monospace,monospace;tab-size:2}
+    #preview{padding:14px 26px 32px;overflow:auto;max-height:calc(100vh - 120px)}
+    .warning{margin:14px 24px;color:#9a3412;font-size:13px}
+    @media(max-width:830px){main{grid-template-columns:1fr}textarea{min-height:330px}#preview{max-height:none}}
+  </style>
+</head>
+<body>
+<header><strong>MD.js <span style="color:#89c3ff">Reborn</span></strong><small>Vanilla ES6 · 0 dependencies · safe HTML</small></header>
+<main>
+<section><h2>Markdown source</h2><textarea id="source" spellcheck="false"># MD.js Reborn 🚀
+
+###### A konečně H6!
+
+**Tučně**, *kurzívou*, ~~přeškrtnuté~~ a `inline <script>`.
+
+> Bezpečný Markdown parser v čistém ES6.
+> Žádné importy. Žádný framework.
+
+1. Číslované seznamy
+2. Standardní Markdown
+   - Vnořená položka
+   - Ještě jedna
+
+| Funkce | Výsledek |
+| :--- | ---: |
+| H1–H6 | ✅ |
+| Sanitizace výstupu | ✅ |
+| Bez závislostí | ✅ |
+
+```javascript
+const motto = "One Mother. Many Minds.";
+console.log(motto);
+```
+
+HTML injection (musí se ukázat jako text):
+
+<img src=x onerror=alert(1)>
+
+Nebezpečný link (musí zůstat text): [klikni](javascript:alert(1))
+
+**Příští fáze:** `mermaid` diagramy čistě ve VanillaJS.
+
+```mermaid
+flowchart LR
+  A[Pacient] --> B[Urgent]
+  B --> C{Diagnóza}
+```
+</textarea></section>
+<section><h2>Safe HTML preview</h2><div id="preview" class="md-root"></div></section>
+</main>
+<p id="error" class="warning" aria-live="polite"></p>
+<script src="../MD.js"></script>
+<script>
+  'use strict';
+  const md = new MD({ mode: 'extended' });
+  const source = document.getElementById('source');
+  const preview = document.getElementById('preview');
+  const error = document.getElementById('error');
+  function update() {
+    try { preview.innerHTML = md.parse(source.value); error.textContent = ''; }
+    catch (err) { error.textContent = `Parser error: ${err.message}`; }
+  }
+  source.addEventListener('input', update);
+  update();
+</script>
+</body>
+</html>
