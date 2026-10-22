@@ -185,12 +185,23 @@
       return this._blocks(lines, 0);
     }
 
+    // Render HTML fallback first; hydrate only if optional browser-side scripts are loaded.
+    // Repeated mount() calls preserve reader preferences on the container itself.
+    mount(container, markdown) {
+      if (!container || typeof container.innerHTML !== 'string') throw new TypeError('Expected an HTML container');
+      container.classList.add('md-root');
+      container.innerHTML = this.parse(markdown);
+      if (root.MDDiagrams && typeof root.MDDiagrams.enhance === 'function') root.MDDiagrams.enhance(container);
+      if (root.MDReader && typeof root.MDReader.enhance === 'function') root.MDReader.enhance(container);
+      return container;
+    }
+
     _highlight(code, language) {
       let lang = LANG.test(language) ? language : 'general';
       if (this.options.mode === 'basic' && ['general', 'javascript', 'js', 'python', 'py'].indexOf(lang) === -1) lang = 'general';
       const label = escapeHTML(lang);
       let output;
-      if (!this.options.highlight || code.length > 128 * 1024) output = escapeHTML(code);
+      if (language === 'mermaid' || !this.options.highlight || code.length > 128 * 1024) output = escapeHTML(code);
       else {
         let tokens;
         try { tokens = this.highlighters.has(lang) ? this.highlighters.get(lang)(code, lang) : builtinHighlighter(code, lang); }
@@ -203,7 +214,8 @@
           return token.type ? `<span class="md-code-syntax md-code-syntax-${token.type}">${text}</span>` : text;
         }).join('');
       }
-      return `<pre class="md-code md-code-syntax-lang-${label}"><code>${output}</code></pre>`;
+      const diagram = language.toLowerCase() === 'mermaid' ? ' data-md-diagram="mermaid"' : '';
+      return `<pre class="md-code md-code-syntax-lang-${label}"${diagram}><code>${output}</code></pre>`;
     }
 
     _inline(input, depth = 0) {

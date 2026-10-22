@@ -11,12 +11,12 @@
   const vectors = [
     '<img src=x onerror="window.__mdjs_xss_fired=true">',
     '<svg onload="window.__mdjs_xss_fired=true"></svg>',
-    '<iframe srcdoc="<script>window.__mdjs_xss_fired=true</script>"></iframe>',
+    '<iframe srcdoc="<script>window.__mdjs_xss_fired=true</scr' + 'ipt>"></iframe>',
     '[click](javascript:window.__mdjs_xss_fired=true)',
     '![image](data:image/svg+xml,<svg/onload=alert(1)>)',
     '```html\n<img src=x onerror=alert(1)>\n```',
     '```mermaid\nA[<svg onload=alert(1)>] --> B\n```',
-    '# <script>window.__mdjs_xss_fired=true</script>',
+    '# <script>window.__mdjs_xss_fired=true</scr' + 'ipt>',
     '| x | y |\n|---|---|\n| <img onerror=alert(1)> | safe |'
   ];
   const md = new MD({mode:'extended'});

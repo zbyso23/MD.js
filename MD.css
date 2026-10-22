@@ -89,3 +89,121 @@
   .md-root.md-dark code.md-inline-code { background: #263348; color: #f4b6d2; }
   .md-root.md-dark table.md-table tr:nth-child(even) { background: #151f30; }
 }
+
+/* Phases 2–3: explicit light / dark on the entire output, including diagrams. */
+.md-root {
+  --md-bg: #ffffff;
+  --md-reader-bg: #f4f7fb;
+  --md-surface: #f8faff;
+  --md-hover: #e8effb;
+  --md-shape-fill: #edf3ff;
+  --md-shape-stroke: #557db9;
+  --md-edge: #54719a;
+  --md-note-bg: #fff8e1;
+  --md-pie-0: #4477bb; --md-pie-1: #ed9656;
+  --md-pie-2: #499f85; --md-pie-3: #b17bb2;
+  --md-pie-4: #d8b347; --md-pie-5: #c96e7b;
+  --md-pie-6: #698bcd; --md-pie-7: #8cb482;
+  --md-font-scale: 1;
+  font-size: calc(16px * var(--md-font-scale));
+  background: var(--md-bg);
+  color: var(--md-ink);
+  transition: background-color .15s, color .15s;
+  padding-bottom: 1.5em;
+}
+.md-root[data-md-theme="dark"] {
+  color-scheme: dark;
+  --md-ink: #e4ebfa; --md-muted: #afbdd0; --md-line: #36445b;
+  --md-panel: #222f45; --md-accent: #a6c5ff; --md-bg: #101926;
+  --md-reader-bg: #1a293b; --md-surface: #1c2b3d;
+  --md-hover: #263b54; --md-shape-fill: #253852;
+  --md-shape-stroke: #9abef4; --md-edge: #b0c8ea;
+  --md-note-bg: #4a4029;
+  --md-pie-0: #83aaff; --md-pie-1: #ffb784;
+  --md-pie-2: #80d9b5; --md-pie-3: #d0a2dc;
+  --md-pie-4: #f1d475; --md-pie-5: #f6a5b5;
+  --md-pie-6: #96b6ff; --md-pie-7: #bbdb99;
+}
+.md-root[data-md-theme="dark"] blockquote { background: #202e41; color: #cbdaf1; }
+.md-root[data-md-theme="dark"] code.md-inline-code { background: #28374c; color: #ffd0eb; }
+.md-root[data-md-theme="dark"] table.md-table tr:nth-child(even) { background: #182638; }
+.md-root :where(h1) { font-size: 2.1em; }
+.md-root :where(h2) { font-size: 1.68em; }
+.md-root :where(h3) { font-size: 1.38em; }
+.md-root :where(h4) { font-size: 1.2em; }
+.md-root :where(h5) { font-size: 1.05em; }
+.md-root :where(h6) { font-size: .93em; }
+.md-root pre.md-code { font-size: .82em; }
+.md-root[data-md-theme="dark"] .md-reader-outline,
+.md-root[data-md-theme="dark"] .md-reader-toolbar { color: var(--md-ink); }
+.md-root .md-reader-toolbar {
+  background: var(--md-reader-bg);
+  border: 1px solid var(--md-line); border-radius: 12px;
+  padding: .55em .75em;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between;
+  gap: .5em; position: sticky; top: 0; z-index: 10;
+  box-shadow: 0 2px 9px #00000010;
+  font: 600 .82em/1.5 system-ui, sans-serif;
+}
+.md-root .md-reader-brand { letter-spacing: .02em; color: var(--md-muted); }
+.md-root .md-reader-controls { display: flex; gap: .3em; align-items: center; flex-wrap: wrap; }
+.md-root .md-reader-button, .md-root .md-diagram-button {
+  border: 1px solid var(--md-line); background: var(--md-bg); color: var(--md-ink);
+  border-radius: 7px; padding: .32em .72em; cursor: pointer;
+  font: 600 1em/1.5 system-ui, sans-serif;
+}
+.md-root .md-reader-button:hover, .md-root .md-diagram-button:hover { background: var(--md-hover); }
+.md-root :is(.md-reader-button,.md-diagram-button):focus-visible { outline: 3px solid var(--md-accent); outline-offset: 2px; }
+.md-root .md-reader-scale { min-width: 4em; text-align: center; font-variant-numeric: tabular-nums; }
+.md-root .md-reader-outline {
+  background: var(--md-reader-bg); border: 1px solid var(--md-line);
+  border-radius: 10px; padding: .5em 1em; margin: .85em 0 1.4em;
+  font-size: .88em;
+}
+.md-root .md-reader-outline summary { cursor: pointer; font-weight: 700; }
+.md-root .md-reader-outline ol { margin: .55em 0; list-style: none; padding-left: .5em; }
+.md-root .md-reader-outline li { margin: 0; }
+.md-root .md-reader-outline li.md-reader-level-h2 { padding-left: 1em; }
+.md-root .md-reader-outline li.md-reader-level-h3 { padding-left: 2em; }
+.md-root .md-reader-outline button { border: 0; text-align: left; background: transparent; color: var(--md-accent); cursor: pointer; font: inherit; padding: .18em .2em; }
+.md-root[data-md-wide="false"] > :not(.md-reader-toolbar):not(.md-reader-outline) { max-width: 850px; margin-left: auto; margin-right: auto; }
+.md-root :where(h1,h2,h3) { scroll-margin-top: 5em; }
+/* SVG images are deliberately made entirely of SVG DOM nodes, not HTML fragments. */
+.md-root figure.md-diagram {
+  border: 1px solid var(--md-line); border-radius: 12px;
+  background: var(--md-surface); margin: 1.2em 0; overflow: hidden;
+}
+.md-root .md-diagram-toolbar {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end;
+  gap: .35em; background: var(--md-reader-bg);
+  border-bottom: 1px solid var(--md-line); padding: .45em .6em;
+  font: 600 .78em system-ui, sans-serif;
+}
+.md-root .md-diagram-hint { margin-right: auto; color: var(--md-muted); }
+.md-root .md-diagram-viewport { overflow: auto; padding: 8px; max-height: 720px; }
+.md-root .md-diagram-viewport svg.md-svg { display: block; max-width: none; }
+.md-root .md-diagram-shape { fill: var(--md-shape-fill); stroke: var(--md-shape-stroke); stroke-width: 1.7; }
+.md-root .md-diagram-text, .md-root .md-diagram-legend { fill: var(--md-ink); font: 600 14px/1.5 system-ui, sans-serif; }
+.md-root .md-diagram-edge { fill: none; stroke: var(--md-edge); stroke-width: 2; }
+.md-root .md-dashed, .md-root .md-diagram-lifeline { stroke-dasharray: 6 6; }
+.md-root .md-bold-edge { stroke-width: 3.5; }
+.md-root .md-diagram-arrow { fill: var(--md-edge); }
+.md-root .md-diagram-edge-label { fill: var(--md-ink); font: 600 12px system-ui, sans-serif; paint-order: stroke; stroke: var(--md-surface); stroke-width: 5; stroke-linejoin: round; }
+.md-root .md-diagram-lifeline { stroke: var(--md-edge); stroke-width: 1.4; }
+.md-root .md-diagram-note { fill: var(--md-note-bg); stroke: var(--md-shape-stroke); }
+.md-root .md-diagram-note-text { fill: var(--md-ink); font: 500 12px system-ui, sans-serif; }
+.md-root .md-diagram-activation { fill: var(--md-shape-fill); stroke: var(--md-shape-stroke); }
+.md-root .md-diagram-group { fill: var(--md-reader-bg); stroke: var(--md-shape-stroke); stroke-width: 1.3; stroke-dasharray: 8 5; }
+.md-root .md-diagram-group-title { fill: var(--md-muted); font: bold 12px system-ui, sans-serif; }
+.md-root .md-diagram-sector { stroke: var(--md-bg); stroke-width: 1.5; }
+.md-root .md-diagram-pie-title { fill: var(--md-ink); font: bold 17px system-ui, sans-serif; }
+.md-root .md-diagram-fallback { border: 1px dashed #bb6d31; }
+.md-root [hidden] { display: none !important; }
+@media (max-width: 680px) {
+  .md-root .md-reader-toolbar { position: static; }
+  .md-root .md-reader-brand { flex: 1 1 100%; }
+}
+@media (prefers-reduced-motion: reduce) { .md-root { transition: none; } }
+.md-root .md-diagram-class-divider { stroke: var(--md-shape-stroke); stroke-width: 1.5; }
+.md-root .md-diagram-class-title { fill: var(--md-ink); font: 700 14px system-ui, sans-serif; }
+.md-root .md-diagram-member { fill: var(--md-ink); font: 12px ui-monospace, monospace; }

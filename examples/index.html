@@ -1,81 +1,226 @@
 <!doctype html>
 <html lang="cs">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>MD.js Reborn · Vanilla ES6</title>
-  <link rel="stylesheet" href="../MD.css">
-  <style>
-    :root{color-scheme:light;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
-    *{box-sizing:border-box}body{margin:0;background:#eef2f8;color:#1e293b}
-    header{padding:16px 24px;background:#172438;color:#fff;display:flex;align-items:center;justify-content:space-between}
-    header small{color:#abc2e2}main{display:grid;grid-template-columns:1fr 1fr;min-height:calc(100vh - 62px);gap:14px;padding:14px}
-    section{background:white;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 3px 12px #1c2e4b0e}
-    h2{font-size:13px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;margin:0;padding:14px 18px;border-bottom:1px solid #dce3f0}
-    textarea{flex:1;width:100%;resize:none;min-height:500px;border:0;outline:0;padding:22px;background:#fbfcff;color:#25364c;font:14px/1.65 ui-monospace,monospace;tab-size:2}
-    #preview{padding:14px 26px 32px;overflow:auto;max-height:calc(100vh - 120px)}
-    .warning{margin:14px 24px;color:#9a3412;font-size:13px}
-    @media(max-width:830px){main{grid-template-columns:1fr}textarea{min-height:330px}#preview{max-height:none}}
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MD.js Reborn · Arctic Edition</title>
+<link rel="stylesheet" href="../MD.css">
+<style>
+  :root { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; color: #d9e8fb; background: #0b1422; }
+  * { box-sizing: border-box; }
+  body { margin: 0; }
+  .mast { padding: 18px clamp(18px,3vw,36px); display: flex; justify-content: space-between; align-items: center; gap: 1em; flex-wrap: wrap; background: #111e31; border-bottom: 1px solid #2d425d; }
+  .mast h1 { margin: 0; font-size: 20px; letter-spacing: -.04em; }
+  .mast h1 span { color: #7bd9ce; }
+  .mast p { color: #9caecc; margin: .3em 0 0; font-size: 12px; }
+  .tag { color: #c5f7f0; border: 1px solid #35615e; border-radius: 20px; padding: 5px 13px; font-size: 12px; }
+  main { display: grid; grid-template-columns: minmax(260px, 42%) minmax(320px, 58%); gap: 15px; padding: 15px; }
+  .pane { border: 1px solid #2a3e58; background: #15243a; border-radius: 13px; overflow: hidden; min-width: 0; }
+  .pane-head { display: flex; justify-content: space-between; align-items: center; background: #1a3049; padding: 12px 17px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+  .pane-head button, .preset { background: #2d4666; border: 1px solid #4b6788; border-radius: 6px; color: #d7edff; padding: 6px 12px; cursor: pointer; }
+  .pane-head button:hover, .preset:hover { background: #3d5b7c; }
+  #source { width: 100%; height: calc(100vh - 166px); min-height: 560px; resize: vertical; display: block; border: 0; outline: 0; background: #101d2f; color: #bde6ef; padding: 23px; font: 13px/1.6 ui-monospace, SFMono-Regular, Consolas, monospace; tab-size: 2; }
+  .preview-wrap { background: #e6ebf3; padding: 14px; max-height: calc(100vh - 149px); overflow: auto; }
+  #preview { padding: 17px 24px 32px; border-radius: 10px; box-shadow: 0 5px 20px #06142618; }
+  .preset-bar { display: flex; gap: .5em; flex-wrap: wrap; padding: 11px 14px; border-top: 1px solid #304660; }
+  .preset { font-size: 12px; }
+  #status { font-size: 12px; color: #93a7c4; font-weight: 500; }
+  @media (max-width: 930px) { main { grid-template-columns: 1fr; } #source { height: 330px; min-height: 330px; } .preview-wrap { max-height: initial; } }
+</style>
 </head>
 <body>
-<header><strong>MD.js <span style="color:#89c3ff">Reborn</span></strong><small>Vanilla ES6 · 0 dependencies · safe HTML</small></header>
+<header class="mast"><div><h1>MD.js <span>Reborn</span> <small>↗</small></h1><p>ARCTIC EDITION · PHASE 2 + 3 · Vanilla ES6</p></div><span class="tag">ZERO IMPORTS · SVG-FIRST · LIGHT / DARK</span></header>
 <main>
-<section><h2>Markdown source</h2><textarea id="source" spellcheck="false"># MD.js Reborn 🚀
-
-###### A konečně H6!
-
-**Tučně**, *kurzívou*, ~~přeškrtnuté~~ a `inline <script>`.
-
-> Bezpečný Markdown parser v čistém ES6.
-> Žádné importy. Žádný framework.
-
-1. Číslované seznamy
-2. Standardní Markdown
-   - Vnořená položka
-   - Ještě jedna
-
-| Funkce | Výsledek |
-| :--- | ---: |
-| H1–H6 | ✅ |
-| Sanitizace výstupu | ✅ |
-| Bez závislostí | ✅ |
-
-```javascript
-const motto = "One Mother. Many Minds.";
-console.log(motto);
-```
-
-HTML injection (musí se ukázat jako text):
-
-<img src=x onerror=alert(1)>
-
-Nebezpečný link (musí zůstat text): [klikni](javascript:alert(1))
-
-**Příští fáze:** `mermaid` diagramy čistě ve VanillaJS.
-
-```mermaid
-flowchart LR
-  A[Pacient] --> B[Urgent]
-  B --> C{Diagnóza}
-```
-</textarea></section>
-<section><h2>Safe HTML preview</h2><div id="preview" class="md-root"></div></section>
+  <section class="pane" aria-label="Editor Markdown">
+    <div class="pane-head"><span>01 — Markdown editor</span><button id="reset" type="button">Obnovit ukázku</button></div>
+    <textarea id="source" spellcheck="false" aria-label="Zdroj Markdown"></textarea>
+    <nav class="preset-bar" aria-label="Ukázky"><button type="button" class="preset" data-example="overview">Všechno</button><button type="button" class="preset" data-example="flow">Flowchart</button><button type="button" class="preset" data-example="sequence">Sequence</button><button type="button" class="preset" data-example="pie">Pie chart</button><button type="button" class="preset" data-example="class">Class</button><button type="button" class="preset" data-example="timeline">Timeline</button><button type="button" class="preset" data-example="security">Útočný text</button></nav>
+  </section>
+  <section class="pane" aria-label="Náhled Markdown"><div class="pane-head"><span>02 — Reader / Live preview</span><span id="status" role="status" aria-live="polite">Ready</span></div><div class="preview-wrap"><article id="preview" class="md-root" data-md-theme="light"></article></div></section>
 </main>
-<p id="error" class="warning" aria-live="polite"></p>
-<script src="../MD.js"></script>
+<script src="../MD.js"></script><script src="../MD-diagrams.js"></script><script src="../MD-UX.js"></script>
 <script>
-  'use strict';
-  const md = new MD({ mode: 'extended' });
-  const source = document.getElementById('source');
-  const preview = document.getElementById('preview');
-  const error = document.getElementById('error');
-  function update() {
-    try { preview.innerHTML = md.parse(source.value); error.textContent = ''; }
-    catch (err) { error.textContent = `Parser error: ${err.message}`; }
+'use strict';
+const samples = {
+  overview: String.raw`# MD.js Reborn 🧊
+
+###### 2016 → 2026: bezpečný Markdown, který vyrostl.
+
+**Žádné importy.** *Žádný framework.* **Vanilla ES6 a SVG.**
+
+> Všechny diagramy jsou nativní SVG. Vlevo jejich zdroj; vpravo plně interaktivní náhled.
+> V pravém panelu najdeš přepínání dark/light, velikosti textu a navigaci dokumentem.
+
+## AICH Hospital · Flowchart
+
+~~~mermaid
+flowchart LR
+  A([Příjem]) --> B[Urgent]
+  B --> C{Diagnóza}
+  C -- Opravit --> D[Operační sál]
+  C -- Předat --> E[Upstream]
+  D -.-> E
+  E ==> F((Hotovo))
+~~~
+
+## Záchranka · Sequence
+
+~~~mermaid
+sequenceDiagram
+  actor User as Vývojář
+  participant AICH as AI Hospital
+  participant GitHub as Upstream
+  User->>AICH: Posílám problém
+  activate AICH
+  AICH->>GitHub: PR + testy
+  GitHub-->>AICH: Review
+  deactivate AICH
+  AICH-->>User: Výsledek
+  Note over User,AICH: Evidence zachována
+~~~
+
+## Výsledek testů · Pie
+
+~~~mermaid
+pie showData
+  title Výsledky testů
+  "PASS": 76
+  "WARN": 4
+  "FAIL": 1
+~~~
+
+## Přehled funkcí
+
+| Vlastnost | Stav |
+|:---|---:|
+| H1–H6 | ✅ |
+| Stavové diagramy | ✅ |
+| Light / Dark | ✅ |
+| SVG bez vnějších importů | ✅ |
+
+### Syntax highlighting
+
+~~~javascript
+const md = new MD({ mode: 'extended' });
+md.mount(document.getElementById('article'), '# Hello!');
+~~~
+
+**Bezpečné HTML:** <img src=x onerror=alert(1)>.
+
+A [zakázaný odkaz](javascript:alert(1)) musí zůstat textem.`,
+  flow: String.raw`# Mermaid-like Flowchart
+
+Podporujeme směry TB, BT, LR, RL a styly uzlů.
+
+~~~mermaid
+flowchart TB
+  A[Start] --> B(Parsování)
+  B --> C{Validní?}
+  C -- Ano --> D([Bezpečné SVG])
+  C -- Ne --> E[Zobrazit zdroj]
+  D ==> F((Hotovo))
+  E -.-> B
+~~~
+
+## Stavový diagram
+
+~~~mermaid
+stateDiagram-v2
+  [*] --> Waiting
+  Waiting --> Processing: receive
+  Processing --> Done: success
+  Processing --> Error: rejected
+  Done --> [*]
+~~~`,
+  sequence: String.raw`# Mermaid-like Sequence
+
+~~~mermaid
+sequenceDiagram
+  actor Marie as Marie
+  participant Browser as Prohlížeč
+  participant MD as MD.js
+  Marie->>Browser: Vloží Markdown
+  Browser->>MD: parse(source)
+  activate MD
+  Note over Browser,MD: Bez externích závislostí
+  MD-->>Browser: bezpečný HTML + SVG
+  deactivate MD
+  Browser-->>Marie: hotový dokument
+~~~`,
+  class: String.raw`# UML-like Class Diagram
+
+~~~mermaid
+classDiagram
+  class Patient {
+    +string name
+    +admit()
   }
-  source.addEventListener('input', update);
-  update();
+  class Inpatient {
+    +discharge()
+  }
+  Patient <|-- Inpatient
+  Inpatient --> Ward: placed in
+~~~`,
+  timeline: String.raw`# Arctic Timeline
+
+~~~mermaid
+timeline
+  title MD.js · cestou časem
+  section Origin
+  2016 : MD.js vzniká
+  2020 : Arctic Code Vault
+  : Snapshot uložen
+  section Reborn
+  2026 : ES6 + SVG + UX
+~~~`,
+  pie: String.raw`# Pie charts
+
+~~~mermaid
+pie
+  title Výsledky
+  "Markdown": 45
+  "Diagramy": 30
+  "UX": 25
+~~~`,
+  security: String.raw`# Nevěřím vstupu
+
+<script>alert('XSS')</scr${'ipt'}>
+
+~~~mermaid
+flowchart TB
+  A[<script>alert(1)</scr${'ipt'}>] --> B[" onload="alert(1)]
+  B --> C{javascript:alert(1)}
+~~~
+
+~~~mermaid
+flowchart TB
+  A --> B
+  click A "javascript:alert(1)"
+~~~
+
+Poslední diagram se **úmyslně nevykreslí**: nepodporované click zůstane jako text.`
+};
+const source = document.getElementById('source');
+const status = document.getElementById('status');
+const preview = document.getElementById('preview');
+const md = new MD({ mode:'extended' });
+function redraw() {
+  try {
+    md.mount(preview, source.value);
+    const drawn = preview.querySelectorAll('figure.md-diagram').length;
+    const fallback = preview.querySelectorAll('pre.md-diagram-fallback').length;
+    status.textContent = `${drawn} diagramů · ${fallback} fallback`; status.style.color = '#a9efdb';
+  } catch (e) { status.textContent = `Error: ${e.message}`; status.style.color = '#ffabac'; }
+}
+let queued = false;
+source.addEventListener('input', () => {
+  if (queued) return;
+  queued = true;
+  requestAnimationFrame(() => { queued = false; redraw(); });
+});
+const use = key => { source.value = samples[key]; redraw(); };
+document.getElementById('reset').addEventListener('click', () => use('overview'));
+document.querySelectorAll('[data-example]').forEach(b => b.addEventListener('click', () => use(b.dataset.example)));
+use('overview');
 </script>
 </body>
 </html>

@@ -1,103 +1,90 @@
-# MD.js Reborn — modernized 2016 parser
+# MD.js Reborn v0.3 — Arctic Edition
 
-**Standalone vanilla ES6. Zero runtime imports. Zero npm dependencies.**
+**Phases 2 + 3 delivered.** The 2016 Markdown parser rebuilt as browser-native ES6, now with a strict Mermaid-like SVG renderer and complete document light/dark/readability controls.
 
-Based on the three user-provided files: `MD(1).js`, `MD.css`, `U(1).js`. Unmodified originals are retained in `legacy/`. This is a rewrite, not a claim of 100% CommonMark conformance.
+No packages, imports, CDNs, fonts, `eval`, `Function`, `foreignObject`, external diagram code, or network requests are needed to render the Markdown and its diagrams. The supplied `MD.js` can still be used standalone as an HTML renderer.
 
-## Run in a browser
+## Open the demo
+
+Open `examples/index.html` directly in a browser. Type Markdown on the left; see the entire document on the right. Its embedded toolbar controls the document's theme, text scale (80–160%), reading width, and heading outline. Each diagram has independent zoom/reset/source controls.
+
+To embed in your own page:
 
 ```html
 <link rel="stylesheet" href="MD.css">
-<div id="article" class="md-root"></div>
+<article class="md-root" id="article"></article>
 <script src="MD.js"></script>
+<script src="MD-diagrams.js"></script>
+<script src="MD-UX.js"></script>
 <script>
   const md = new MD({ mode: 'extended' });
-  document.querySelector('#article').innerHTML = md.parse('###### Hello, ES6!');
+  md.mount(document.getElementById('article'), `# Hello\n\n\`\`\`mermaid\nflowchart LR\n A[Start] --> B[Done]\n\`\`\``);
 </script>
 ```
 
-Or simply open **`examples/index.html`**, a split-pane live editor. No web server required in an ordinary local browser environment.
+**No JavaScript module `import` is used.** The three small scripts are classic browser scripts. You can embed all code into one local HTML file if desired; split source files are only for maintainability.
 
-Run in Node (no dependencies; `require` is only a Node host integration, not a package dependency):
+**Backward compatibility:** `new MD({mode:'extended'}).parse(text)` still returns a safe HTML string. Diagram fences remain syntax-highlight-free, escaped `<pre><code>` blocks in `parse()` alone. `mount(container, text)` hydrates those code blocks into safe SVG if `MD-diagrams.js` is loaded. If it is not loaded, the code remains visible. `MD-UX.js` is optional too. Reader preferences persist *within the same container across rerenders*, not across browser sessions; nothing is stored in localStorage/cookies.
 
-```js
-const MD = require('./MD.js');
-const html = new MD({ mode: 'extended' }).parse('**Hello!**');
-```
+## F2 — strictly limited Mermaid-like source grammar
 
-## Compatibility and improvements
+The supported subset deliberately **does not** claim general Mermaid compatibility.
 
-| Feature | Legacy MD.js (2016) | MD.js Reborn |
+| Diagram | Supported | Deliberate limitation |
 |---|---|---|
-| `new MD({mode:'extended'}).parse(text)` | Yes | Yes |
-| `U.js` global dependency | Yes | No |
-| ATX headings | H1–H4 | H1–H6 |
-| Setext headings | No | H1/H2 |
-| Standard numbered list `1. item` | No | Yes |
-| Standard unordered list `- item` | Custom ordered semantics | Yes |
-| Nested lists and blockquotes | Limited/none | Common patterns |
-| Tables | GFM-like and compact | GFM-like and compact in extended mode |
-| Fenced code | Yes | Yes (` ``` ` and `~~~`) |
-| Syntax highlighters | HTML-fragment transformers | Escaped token-based lexers |
-| Raw HTML | Unsafe / passed into HTML fragments | Escaped as text |
-| Links / images | No reliable URL validation | Protocol allowlist and attribute escaping |
-| Reuse one parser instance | Persistent format indexes | Stateless per parse call |
-| Mermaid fenced code | Code text | Code text (diagram engine in phase 2) |
+| `flowchart` / `graph` | `LR`, `RL`, `TB`/`TD`, `BT`; rectangles, rounded, diamonds, circles, stadium-like; chained arrows, dashed, heavy, unlinked, edge labels; one-level `subgraph` | No arbitrary CSS/classes, links, `click`, complex edge IDs |
+| `sequenceDiagram` | `actor`/`participant`, `as`, `->>`, `-->>`, `->`, `-->`, `Note over`, `activate`/`deactivate` | No nested `alt`, `opt`, `loop` fragments |
+| `stateDiagram-v2` | Start/end `[*]`, named states, labeled transitions | No nested states, descriptions or concurrency |
+| `classDiagram` | Classes, member entries, basic inheritance/association arrows | No nested generics, UML constraints, annotations or Mermaid styling |
+| `timeline` | Title, sections, events by date, extra items at the same date | No advanced grouping, dates are display labels only |
+| `pie` / `pie showData` | `title`, positive numeric slices, auto-percentage legend | Max 16 slices; no arbitrary style directives |
 
-**Deliberate syntax change:** `- item` now creates `<ul>` as standard Markdown requires; `1. item` creates `<ol>`. Existing documents using the old `-` = numbered-list dialect will render differently. Basic vs extended controls compact legacy tables and available highlighting languages, not HTML safety.
+Example flowchart:
 
-## Security model
-
-Markdown input is **not** filtered by deleting suspicious characters. Instead, the renderer:
-
-1. **Escapes all untrusted text** at the HTML emission boundary (`& < > " '`).
-2. Uses **a closed set of output tags** (`p`, `h1`–`h6`, `a`, `img`, `pre`, `code`, `span`, `em`, `strong`, `del`, `ul`, `ol`, `li`, `blockquote`, `hr`, `br`, `table`, `thead`, `tbody`, `tr`, `th`, `td`).
-3. Uses static HTML attribute names and CSS classes. URL destinations are restricted to `http:`, `https:`, `mailto:` (links) and `http:`, `https:` (images), plus relative URLs. Protocol-relative URLs, controls and backslashes are rejected.
-4. Prevents extension callbacks from returning HTML: they return plain text and predefined token types which are escaped on rendering. An invalid/throwing extension falls back to plain escaped code.
-5. Caps input size (4 MiB default, configurable up to 16 MiB), line size (65,536 chars), nesting and highlighter work.
-6. Displays ` ```mermaid ` as escaped source until the isolated diagram engine is implemented.
-
-**Limits:** This is a defense-in-depth design, **not** a formal proof of XSS safety or a drop-in HTML sanitizer. It does not run arbitrary raw HTML. Custom CSS, browser vulnerabilities, embedded network image requests, link privacy, and denial-of-service beyond configured limits remain outside these tests. When allowing untrusted content in production, deploy a strict Content Security Policy, consider a vetted HTML sanitizer at the final HTML sink, and perform cross-browser tests/security review. This code is not CommonMark-conformance-certified.
-
-## Safe extension API
-
-Legacy highlighters once returned HTML, which is unsafe for third-party/untrusted plugins. The **new** contract is intentionally incompatible:
-
-```js
-const md = new MD({ mode: 'extended' });
-md.registerCodeHighlight('mydsl', (source, language) => [
-  { text: source, type: 'command' } // text will be HTML-escaped
-]);
+````text
+```mermaid
+flowchart TB
+  A[Start] --> B{Valid?}
+  B -- Yes --> C([Safe SVG])
+  B -- No --> D[Show source]
 ```
+````
 
-Allowed types: `command`, `controls`, `symbol`, `comment`, `attribute-name`, `attribute-value`. The callback must not mutate DOM or use `innerHTML`; it is treated as trusted JS code executing with application privileges. The tokens it emits cannot inject raw HTML via the renderer.
+### Security boundaries
 
-## Tests and performance
+The diagram engine is a narrow lexer/parser producing a constrained intermediate representation, not a generic Mermaid interpreter. Bounds: **12 KiB/source, 260 statements, 120 graph nodes, 200 graph edges, 16 sequence participants, 120 sequence steps, 16 pie slices**. Each input must match the allowlist exactly; unknown constructs become visibly escaped source text. 
+
+Rendering uses **only** DOM-created SVG tags with `document.createElementNS`, with labels assigned using `textContent`, coordinates computed numerically, and colors assigned through static CSS variables. No arbitrary node HTML, CSS from Markdown, event handlers, SVG URLs, `foreignObject`, scripts, external images, or browser network resources. Diagram source is taken from `code.textContent`, never from interpolated HTML attributes. Existing Markdown links and images retain the parser's separate URL restrictions, and external HTTP images (if included by the user) can still make network requests.
+
+This is a **defense-in-depth** implementation, not a mathematically proven impenetrable renderer. Treat a production deployment as security-sensitive: apply CSP, run an independent audit, fuzz across browser engines, and evaluate the embedding application's policies. JS extension callbacks remain trusted code, not sandboxes.
+
+### Layout limits
+
+A deterministic layered layout is used; cycles render with bounded fallback ranks rather than performing an unbounded physics simulation. The intention is understandable small diagrams, not faithful or pixel-identical Mermaid layout. Complex subgraphs/large cyclic graphs can visually overlap; invalid syntax never silently runs. SVG is horizontally scrollable with zoom controls.
+
+## F3 — modern max UX
+
+- **Light / dark theme across the entire rendered document** (including HTML tables, inline code, blockquotes, code highlighting and diagram palette).
+- **A− / A+ / reset** for scalable Markdown typography.
+- **Comfortable / wide reading mode** and accessible, collapsible H1–H3 document outline.
+- **Each Mermaid SVG** has zoom in/out/reset and escaped-source toggle.
+- Keyboard-operable buttons, `aria-label`, visible focus ring, reduced-motion setting, responsive panels, scoped styles.
+- All colors controlled via `--md-*` CSS custom properties scoped to the `.md-root` container.
+
+## Test and development
 
 ```bash
-node --test test/md.test.js
+node --test test/*.test.js
 node test/performance.js
+# optional: open examples/integration-smoke.html in a local browser
 ```
 
-No `npm install` is required. `npm test` and `npm run bench` are convenient shortcuts using empty dependency lists.
+No `npm install` needed. There are **117 passing Node tests** at the time of packaging: the 76 Phase-1 regressions and 41 additional diagrams/security/property tests. The DOM-backed browser integration smoke file is included but headless Chromium timed out in the artifact environment, so **cross-browser integration is not certified**. The Node suite uses a minimal mock SVG DOM for the renderer; it does not replace browser security tests.
 
-Tests cover 76 cases (including individual adversarial vectors and a deterministic 350-input corpus). A browser DOM smoke page is supplied at `examples/security-smoke.html`, **but was not executable in the current sandbox because headless Chromium timed out**. Open it locally to check your own browser; it is supplementary, not a formal security audit.
+## Original files and licensing
 
-One local benchmark on Node 22.16.0 (best of five parse calls; warm parser; Markdown headings/paragraphs/links; times vary by host/load):
+The exact three source artifacts uploaded from the 2016 project are retained under `legacy/`. Historical header claims GPLv3 while the repository previously advertised MIT; **resolve this with the author** before publishing the derivative under an explicit license. No license is silently assigned here.
 
-| Input | Elapsed (ms) | Throughput (MiB/s) |
-|---:|---:|---:|
-| 4 KiB | 0.86 | 4.53 |
-| 16 KiB | 2.49 | 6.28 |
-| 64 KiB | 5.18 | 12.06 |
-| 256 KiB | 22.41 | 11.15 |
+## Planned next steps
 
-This is **not** a like-for-like comparison with the 2016 version; those versions have different behavior and work per input. For defensible historical benchmarks, compare the same feature subset and document how the syntax/highlighting differs.
-
-## Phase 2: strictly bounded Mermaid-style diagrams
-
-See [`MERMAID-PHASE-2.md`](MERMAID-PHASE-2.md). Diagram code is deliberately **not executed** in the current parser. The future path is a tiny, allowlisted diagram grammar + internal graph representation + **safe native SVG elements**, not importing Mermaid or interpreting its entire language.
-
-## Licensing note
-
-The supplied historical JS file header references GPLv3, while previous project metadata discussed an MIT license. This package does not guess how that conflict should be resolved. **Confirm and explicitly set the new distribution license before public release.** The original files and their copyright headers are preserved under `legacy/`.
+Read [`ROADMAP-F4-F5.md`](ROADMAP-F4-F5.md). F4 is a measured research phase for extended Markdown interoperability (not an automatic feature dump). F5 is a separable **micro-IDE + virtual machine + assembler tooling + possible ZX Spectrum emulator**, not code to mix into the Markdown parser itself.
