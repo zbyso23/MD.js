@@ -1,0 +1,79 @@
+<!doctype html><html lang="cs"><head><meta charset="utf-8"><title>F4.5 Browser Smoke</title><link rel="stylesheet" href="../MD.css"></head>
+<body><article class="md-root" id="root"></article><pre id="result">PENDING</pre>
+<script src="../MD.js"></script><script src="../MD-diagrams.js"></script><script src="../MD-docux.js"></script><script src="../MD-UX.js"></script>
+<script>
+'use strict';
+(async()=>{
+  const failures=[],expect=(condition,message)=>{if(!condition)failures.push(message);};
+  const root=document.getElementById('root'),md=new MD({mode:'extended'});
+  const input=String.raw`# Zpráva o Mermaid
+
+## Druhý nadpis
+
+Mermaidové diagramy a dokumentace.
+
+~~~code-tabs
+::: js | JavaScript
+console.log("hello");
+::: python | Python
+print("hello")
+~~~
+
+~~~diff
+- const old=true;
++ const newApi=true;
+~~~
+
+:::details Tajemství
+**Bezpečný** obsah.
+:::
+
+| Soubor | Velikost |
+|:--|--:|
+| a.js | 20 |
+| b.py | 2 |
+
+![Arctic](assets/arctic.svg)
+![Hospital](assets/hospital.svg)
+
+~~~mermaid
+flowchart LR
+ A[Start] --> B[Done]
+~~~
+
+<script>alert(1)</script>`;
+  window.alert=()=>failures.push('XSS executed');
+  try{
+    md.mount(root,input);
+    expect(root.querySelectorAll('figure.md-diagram svg').length===1,'Missing SVG');
+    expect(Boolean(root.querySelector('[data-save-svg]')),'Missing Save SVG');
+    expect(root.querySelectorAll('.md-code-tab[role="tab"]').length===2,'Code tabs missing');
+    const tabs=root.querySelectorAll('.md-code-tab');tabs[1].click();
+    expect(tabs[1].getAttribute('aria-selected')==='true','Tab switching failed');
+    expect(root.querySelector('.md-code-tabpanel[hidden]')!==null,'Tab panel visibility failed');
+    expect(root.querySelectorAll('.md-diff-add,.md-diff-del').length===2,'Diff highlighting missing');
+    expect(Boolean(root.querySelector('details.md-details')),'FAQ missing');
+    expect(root.querySelectorAll('.md-code-frame .md-code-toolbar').length>=1,'Code toolbar missing');
+    expect(root.querySelectorAll('.md-smart-table').length===1,'Smart table missing');
+    const button=root.querySelector('.md-smart-table th .md-docux-button');button.click();
+    expect(root.querySelector('.md-smart-table th').getAttribute('aria-sort')==='ascending','Sort missing');
+    const image=root.querySelector('img.md-image');image.click();
+    const dialog=root.querySelector('dialog.md-lightbox');
+    expect(Boolean(dialog.open),'Gallery did not open');if(dialog.close)dialog.close();
+    expect(root.querySelectorAll('script').length===0,'Injected script inserted');
+    const dark=root.querySelector('.md-reader-button[aria-label*="tmavý"]');dark.click();
+    expect(root.dataset.mdTheme==='dark','Theme broken');
+    const search=root.querySelector('.md-reader-search input');search.value='mermmaid';
+    search.dispatchEvent(new Event('input',{bubbles:true}));
+    await new Promise(resolve=>setTimeout(resolve,180));
+    expect(root.querySelectorAll('.md-search-results li').length>0,'Typo fuzzy search failed');
+    md.mount(root,input);
+    expect(root.dataset.mdTheme==='dark','Rerender lost theme');
+    expect(root.querySelectorAll('.md-smart-table').length===1,'Rerender duplicated table');
+    expect(root.querySelectorAll('.md-code-tablist').length===1,'Rerender duplicated tabs');
+    expect(root.querySelectorAll('dialog.md-lightbox').length===1,'Rerender duplicated gallery');
+  }catch(e){failures.push(String(e.stack||e));}
+  document.getElementById('result').textContent=failures.length?'FAIL: '+failures.join('; '):'PASS: F4.5 integration';
+  document.body.dataset.smoke=failures.length?'FAIL':'PASS';
+})();
+</script></body></html>

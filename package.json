@@ -1,8 +1,8 @@
 {
   "name": "mdjs-reborn-arctic",
-  "version": "0.3.0",
+  "version": "0.4.5",
   "private": true,
-  "description": "Vanilla ES6 Markdown with safe Mermaid-like SVG and reader UX",
+  "description": "Vanilla ES6 Markdown, strict Mermaid-like SVG, fuzzy search, code tabs, smart tables, fullscreen, print and SVG export",
   "scripts": {
     "test": "node --test test/*.test.js",
     "bench": "node test/performance.js"

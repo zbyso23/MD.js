@@ -1,0 +1,60 @@
+<!doctype html><html lang="cs"><head><meta charset="utf-8"><link rel="stylesheet" href="../MD.css"><title>MD.js Browser Integration Smoke</title></head>
+<body><div id="out" class="md-root"></div><pre id="status">PENDING</pre>
+<script src="../MD.js"></script><script src="../MD-diagrams.js"></script><script src="../MD-docux.js"></script><script src="../MD-UX.js"></script>
+<script>
+(function(){
+const errors=[]; const ok=(test,msg)=>{ if(!test)errors.push(msg); };
+const target=document.getElementById('out');
+const md=new MD({mode:'extended'});
+const content=String.raw`# Title
+
+## Second
+
+~~~mermaid
+flowchart LR
+ A[<script>alert(1)</scr${'ipt'}>] --> B{" onload="evil}
+~~~
+
+~~~mermaid
+sequenceDiagram
+ A->>B: Hello
+~~~
+
+~~~mermaid
+pie
+ "ok": 9
+~~~
+
+~~~mermaid
+flowchart LR
+ A --> B
+ click A javascript:alert(1)
+~~~
+
+<img src=x onerror=alert(99)>`;
+try {
+  window.alert=()=>{errors.push('XSS alert executed');};
+  md.mount(target,content);
+  ok(target.querySelectorAll('figure.md-diagram svg').length===3,'Expected 3 diagrams');
+  ok(target.querySelectorAll('pre.md-diagram-fallback').length===1,'Expected fallback');
+  ok(target.querySelectorAll('script').length===0,'XSS script inserted');
+  ok(target.querySelectorAll('[onload],[onerror]').length===0,'XSS attributes inserted');
+  const btn=target.querySelector('.md-reader-button');
+  ok(Boolean(btn),'Missing controls');
+  btn.click();
+  ok(target.dataset.mdTheme==='dark','Dark mode broken');
+  const zoom=target.querySelector('.md-diagram-button[aria-label="Přiblížit diagram"]');
+  ok(Boolean(zoom),'No zoom control');
+  if(zoom)zoom.click();
+  ok(target.querySelector('svg').getAttribute('viewBox') !== '', 'SVG viewBox missing');
+  const sourceButton=target.querySelector('.md-diagram-button[aria-label="Přepnout zdroj diagramu"]');
+  if(sourceButton) sourceButton.click();
+  ok(!target.querySelector('figure.md-diagram pre').hidden, 'Source toggle broken');
+  md.mount(target,content);
+  ok(target.dataset.mdTheme==='dark','Theme not preserved on rerender');
+} catch(e) {errors.push(String(e.stack||e));}
+const status=document.getElementById('status');
+status.textContent=errors.length?'FAIL: '+errors.join('; '):'PASS';
+document.body.dataset.smoke=errors.length?'FAIL':'PASS';
+})();
+</script></body></html>

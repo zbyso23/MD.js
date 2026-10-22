@@ -28,16 +28,16 @@
 </style>
 </head>
 <body>
-<header class="mast"><div><h1>MD.js <span>Reborn</span> <small>↗</small></h1><p>ARCTIC EDITION · PHASE 2 + 3 · Vanilla ES6</p></div><span class="tag">ZERO IMPORTS · SVG-FIRST · LIGHT / DARK</span></header>
+<header class="mast"><div><h1>MD.js <span>Reborn</span> <small>↗</small></h1><p>ARCTIC EDITION · PHASE 4.5 · Document UX · Vanilla ES6</p></div><span class="tag">ZERO IMPORTS · SVG-FIRST · LIGHT / DARK</span></header>
 <main>
   <section class="pane" aria-label="Editor Markdown">
     <div class="pane-head"><span>01 — Markdown editor</span><button id="reset" type="button">Obnovit ukázku</button></div>
     <textarea id="source" spellcheck="false" aria-label="Zdroj Markdown"></textarea>
-    <nav class="preset-bar" aria-label="Ukázky"><button type="button" class="preset" data-example="overview">Všechno</button><button type="button" class="preset" data-example="flow">Flowchart</button><button type="button" class="preset" data-example="sequence">Sequence</button><button type="button" class="preset" data-example="pie">Pie chart</button><button type="button" class="preset" data-example="class">Class</button><button type="button" class="preset" data-example="timeline">Timeline</button><button type="button" class="preset" data-example="security">Útočný text</button></nav>
+    <nav class="preset-bar" aria-label="Ukázky"><button type="button" class="preset" data-example="overview">Všechno</button><button type="button" class="preset" data-example="flow">Flowchart</button><button type="button" class="preset" data-example="sequence">Sequence</button><button type="button" class="preset" data-example="pie">Pie chart</button><button type="button" class="preset" data-example="class">Class</button><button type="button" class="preset" data-example="timeline">Timeline</button><button type="button" class="preset" data-example="security">Útočný text</button><button type="button" class="preset" data-example="extended">Extended F4</button><button type="button" class="preset" data-example="docux">DocUX F4.5</button></nav>
   </section>
   <section class="pane" aria-label="Náhled Markdown"><div class="pane-head"><span>02 — Reader / Live preview</span><span id="status" role="status" aria-live="polite">Ready</span></div><div class="preview-wrap"><article id="preview" class="md-root" data-md-theme="light"></article></div></section>
 </main>
-<script src="../MD.js"></script><script src="../MD-diagrams.js"></script><script src="../MD-UX.js"></script>
+<script src="../MD.js"></script><script src="../MD-diagrams.js"></script><script src="../MD-docux.js"></script><script src="../MD-UX.js"></script>
 <script>
 'use strict';
 const samples = {
@@ -181,6 +181,123 @@ pie
   "Diagramy": 30
   "UX": 25
 ~~~`,
+  extended: String.raw`# Arctic Edition · Extended Markdown
+
+Naše malá knihovna zvládá vybrané rozšíření GitHub Markdownu.
+
+> [!TIP]
+> Žádný CDN a žádný import. Rozšíření zůstávají bezpečně zobrazená.
+
+## Checklist
+
+- [x] ES6 parser
+- [x] Mermaid-like diagramy
+- [x] Light / Dark
+- [ ] ZX / ASM v budoucnu
+
+## Reference a automatické odkazy
+
+Projekt má [dokumentaci][docs], alternativně lze napsat www.example.org nebo https://example.org/hello.
+
+[docs]: https://example.org "Další informace"
+
+## Tabulky
+
+| Vlastnost | Stupeň | Stav |
+|:---------|:------:|-----:|
+| Markdown | F4     | 90 % |
+| Diagramy | F2     | 6 |
+| Reader   | F3     | ✔ |
+
+## Poznámky pod čarou
+
+Důležitá poznámka[^one] a její opakování[^one].
+
+[^one]: Každá poznámka dostane kotvu a zpětný odkaz.
+
+## Upozornění
+
+> [!WARNING]
+> Markdown nikdy nesmí spouštět kód ze zdroje automaticky.
+
+## Escapování
+
+<svg onload=alert(1)> se vykreslí jako text.
+
+Vložte escapované hvězdičky a bezpečný kód.
+
+## Diagram
+
+~~~mermaid
+flowchart LR
+  A[Zápis] --> B{Kontrola}
+  B -- PASS --> C([Výstup])
+  B -- FAIL --> D[Zdroj]
+~~~`,
+  docux: String.raw`# MD.js · Document UX 4.5
+
+**Nativní přepínače, řazení, hledání s překlepy, galerie a export diagramů.**
+
+Zkus vyhledat například *mermmaid*, *dokumntace* nebo *diagramm*.
+
+## Code tabs
+
+~~~code-tabs
+::: javascript | JavaScript
+const md = new MD({ mode: 'extended' });
+console.log(md.parse('# Hello'));
+::: python | Python
+print('Markdown bez importů!')
+::: rust | Rust
+fn main() {
+    println!("Hello, Arctic!");
+}
+~~~
+
+## Copy / čísla řádků / diff
+
+~~~diff
+@@ -1,3 +1,3 @@
+- const oldParser = /regex/.exec(input);
++ const newParser = new MD({ mode: 'extended' });
+  renderSafely();
+~~~
+
+## Sbalitelné FAQ
+
+:::details Je možné číst dokument bez JavaScriptu?
+Ano. **HTML je vykresleno už parserem.** Interaktivní prvky jsou volitelnou vrstvou.
+
+- Žádné CDN
+- Žádné importy
+- Žádný automaticky spouštěný kód
+:::
+
+## Smart table · klikni na záhlaví
+
+| Komponenta | Testy | Cena |
+|:--|--:|--:|
+| MD core | 161 | 0 |
+| Mermaid SVG | 41 | 0 |
+| Reader | 26 | 0 |
+| IDE future | 0 | 9 |
+
+## Galerie · klikni na obrázek
+
+![Arctic Vault](assets/arctic.svg)
+![AI Hospital](assets/hospital.svg)
+![ZX 48K](assets/spectrum.svg)
+
+## Mermaid s uložením SVG
+
+~~~mermaid
+flowchart LR
+  A[Dokument] --> B{Bezpečný?}
+  B -- Ano --> C([SVG export])
+  B -- Ne --> D[Zobrazit zdroj]
+~~~
+
+**Vyzkoušej:** dark/light, fullscreen, print a tlačítko ↓ SVG u diagramu.`,
   security: String.raw`# Nevěřím vstupu
 
 <script>alert('XSS')</scr${'ipt'}>

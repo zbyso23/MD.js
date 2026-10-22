@@ -3,14 +3,33 @@
  * Derived from the user's MD.js (2016); modern ES6 rewrite (2026).
  * ZERO runtime dependencies, no imports, no eval or DOM required.
  * The output is an HTML string: use it only in an HTML context.
- * This is a pragmatic Markdown subset, NOT a full CommonMark implementation.
+ * This is a pragmatic GFM-oriented Markdown subset, NOT full CommonMark conformance.
  */
 (function (root) {
   'use strict';
 
+  let nextDocumentId = 1;
   const escapeHTML = value => String(value).replace(/[&<>"']/g, char => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   })[char]);
+
+
+  // Bounded HTML entity decoding for ordinary text and attribute content.
+  // We always escape the decoded value at HTML serialization, never inject markup.
+  const ENTITIES = Object.freeze({amp:'&', lt:'<', gt:'>', quot:'"', apos:"'", nbsp:'\u00a0',
+    copy:'©', reg:'®', trade:'™', hellip:'…', mdash:'—', ndash:'–', euro:'€'});
+  function decodeEntities(text) {
+    return String(text).replace(/&(#(?:[xX][0-9a-fA-F]{1,6}|[0-9]{1,7})|[a-zA-Z]{2,12});/g, (whole, entity) => {
+      if (entity[0] !== '#') return Object.prototype.hasOwnProperty.call(ENTITIES, entity) ? ENTITIES[entity] : whole;
+      const hex = entity[1] === 'x' || entity[1] === 'X';
+      const point = parseInt(entity.slice(hex ? 2 : 1), hex ? 16 : 10);
+      if (!Number.isFinite(point) || point <= 0 || point > 0x10ffff || (point >= 0xd800 && point <= 0xdfff)) return '\ufffd';
+      // Make C0 controls nonfunctional and visible as replacement glyphs.
+      if ((point < 0x20 && point !== 9 && point !== 10) || point === 0x7f) return '\ufffd';
+      return String.fromCodePoint(point);
+    });
+  }
+  function refKey(label) { return label.trim().replace(/\s+/g, ' ').toLowerCase().slice(0, 150); }
 
   const LANG = /^[a-z][a-z0-9_-]{0,31}$/;
   const HIGHLIGHT_TYPES = new Set(['command', 'controls', 'symbol', 'comment', 'attribute-name', 'attribute-value']);
@@ -159,6 +178,13 @@
         highlight: config.highlight !== false,
       });
       this.highlighters = new Map();
+      this._docId = nextDocumentId++;
+      this._references = new Map();
+      this._footnotes = new Map();
+      this._noteOrder = [];
+      this._noteCounts = new Map();
+      this._noteNumbers = new Map();
+      this._renderingFootnote = false;
     }
 
     // Safe extension contract: return [{text, type?}], NOT an HTML string.
@@ -182,7 +208,87 @@
       if (lines.length > 150000 || lines.some(line => line.length > 65536)) {
         throw new RangeError('Markdown exceeds line limits');
       }
-      return this._blocks(lines, 0);
+      // State is reset per document; repeated parse() calls are independent.
+      this._references = new Map();
+      this._footnotes = new Map();
+      this._noteOrder = [];
+      this._noteCounts = new Map();
+      this._noteNumbers = new Map();
+      this._renderingFootnote = false;
+      const filtered = this.options.mode === 'extended' ? this._definitions(lines) : lines;
+      const body = this._blocks(filtered, 0);
+      return body + this._footnotesHTML();
+    }
+
+
+    _definitions(lines) {
+      const output = [];
+      let fence = null;
+      let count = 0;
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        if (fence) {
+          output.push(line);
+          const close = new RegExp(`^ {0,3}${fence.marker === '`' ? '`' : '~'}{${fence.count},}[ \t]*$`);
+          if (close.test(line)) fence = null;
+          continue;
+        }
+        const start = isFence(line);
+        if (start) { fence = start; output.push(line); continue; }
+        // Do not interpret definitions inside indented code, nor in blockquotes.
+        if (isIndentedCode(line) || /^ {0,3}>/.test(line) || count >= 2048) { output.push(line); continue; }
+        const footnote = /^ {0,3}\[\^([^\]\n]{1,150})\]:[ \t]*(.*)$/.exec(line);
+        if (footnote) {
+          const key = refKey(footnote[1]);
+          const content = [footnote[2]];
+          while (i + 1 < lines.length && /^(?: {4}|\t)/.test(lines[i + 1]) && content.join('').length < 8192) {
+            content.push(lines[++i].replace(/^(?: {4}|\t)/, ''));
+          }
+          if (key && !this._footnotes.has(key)) { this._footnotes.set(key, content.join(' ').slice(0, 8192)); count++; }
+          continue;
+        }
+        const ref = /^ {0,3}\[([^\]\n]{1,150})\]:[ \t]*(<[^<>\n]*>|\S+)(?:[ \t]+(?:"([^"\n]*)"|'([^'\n]*)'))?[ \t]*$/.exec(line);
+        if (ref) {
+          const key = refKey(ref[1]);
+          const url = ref[2].startsWith('<') ? ref[2].slice(1, -1) : ref[2];
+          if (key && !this._references.has(key)) {
+            this._references.set(key, { url, title: ref[3] || ref[4] || '' }); count++;
+          }
+          continue;
+        }
+        output.push(line);
+      }
+      return output;
+    }
+
+    _footnotesHTML() {
+      if (!this._noteOrder.length) return '';
+      const pieces = [];
+      this._renderingFootnote = true;
+      for (let i = 0; i < this._noteOrder.length; i++) {
+        const key = this._noteOrder[i];
+        const n = i + 1;
+        const body = this._inline(this._footnotes.get(key));
+        const backs = [];
+        for (let j = 1; j <= this._noteCounts.get(key); j++) {
+          const id = `mdfnref-${this._docId}-${n}-${j}`;
+          backs.push(`<a class="md-footnote-back" href="#${id}" aria-label="Zpět na odkaz ${n}.${j}">↩</a>`);
+        }
+        pieces.push(`<li id="mdfn-${this._docId}-${n}">${body} ${backs.join(' ')}</li>`);
+      }
+      this._renderingFootnote = false;
+      return `\n<section class="md-footnotes" aria-label="Poznámky pod čarou"><hr><ol>${pieces.join('')}</ol></section>`;
+    }
+
+    _referenceHTML(label, ref, image, depth) {
+      const safe = safeURL(decodeEntities(ref.url), image);
+      if (!safe) return null;
+      if (image) {
+        const alt = label.replace(/\\([\\`*_{}\[\]()#+.!|>~\-])/g, '$1').replace(/[`*_~]/g, '');
+        return `<img class="md-image" src="${escapeHTML(safe)}" alt="${escapeHTML(decodeEntities(alt))}" loading="lazy">`;
+      }
+      const title = ref.title ? ` title="${escapeHTML(decodeEntities(ref.title))}"` : '';
+      return `<a href="${escapeHTML(safe)}"${title} rel="noopener noreferrer" target="_blank">${this._inline(label, depth + 1)}</a>`;
     }
 
     // Render HTML fallback first; hydrate only if optional browser-side scripts are loaded.
@@ -192,6 +298,7 @@
       container.classList.add('md-root');
       container.innerHTML = this.parse(markdown);
       if (root.MDDiagrams && typeof root.MDDiagrams.enhance === 'function') root.MDDiagrams.enhance(container);
+      if (root.MDDocUX && typeof root.MDDocUX.enhance === 'function') root.MDDocUX.enhance(container);
       if (root.MDReader && typeof root.MDReader.enhance === 'function') root.MDReader.enhance(container);
       return container;
     }
@@ -201,7 +308,7 @@
       if (this.options.mode === 'basic' && ['general', 'javascript', 'js', 'python', 'py'].indexOf(lang) === -1) lang = 'general';
       const label = escapeHTML(lang);
       let output;
-      if (language === 'mermaid' || !this.options.highlight || code.length > 128 * 1024) output = escapeHTML(code);
+      if (language === 'mermaid' || language === 'code-tabs' || language === 'diff' || !this.options.highlight || code.length > 128 * 1024) output = escapeHTML(code);
       else {
         let tokens;
         try { tokens = this.highlighters.has(lang) ? this.highlighters.get(lang)(code, lang) : builtinHighlighter(code, lang); }
@@ -215,17 +322,19 @@
         }).join('');
       }
       const diagram = language.toLowerCase() === 'mermaid' ? ' data-md-diagram="mermaid"' : '';
-      return `<pre class="md-code md-code-syntax-lang-${label}"${diagram}><code>${output}</code></pre>`;
+      const tabs = language.toLowerCase() === 'code-tabs' ? ' data-md-code-tabs="true"' : '';
+      return `<pre class="md-code md-code-syntax-lang-${label}"${diagram}${tabs}><code>${output}</code></pre>`;
     }
 
     _inline(input, depth = 0) {
       if (depth > MAX_INLINE_NESTING) return escapeHTML(input);
       let out = '';
       let plain = '';
-      const flush = () => { out += escapeHTML(plain); plain = ''; };
+      const flush = () => { out += escapeHTML(decodeEntities(plain)); plain = ''; };
       let i = 0;
       while (i < input.length) {
         const ch = input[i];
+        if (ch === '\\' && input[i + 1] === '\n') { flush(); out += '<br>'; i += 2; continue; }
         if (ch === '\\' && i + 1 < input.length && /[\\`*_{}\[\]()#+.!|>~\-]/.test(input[i + 1])) {
           plain += input[i + 1]; i += 2; continue;
         }
@@ -242,6 +351,24 @@
             i = end + n; continue;
           }
           plain += delimiter; i += n; continue;
+        }
+        if (this.options.mode === 'extended' && !this._renderingFootnote && ch === '[' && input[i + 1] === '^') {
+          const close = input.indexOf(']', i + 2);
+          if (close > 0 && close - i <= 152) {
+            const key = refKey(input.slice(i + 2, close));
+            if (this._footnotes.has(key)) {
+              flush();
+              if (!this._noteCounts.has(key)) {
+                this._noteOrder.push(key); this._noteCounts.set(key, 0);
+                this._noteNumbers.set(key, this._noteOrder.length);
+              }
+              const count = this._noteCounts.get(key) + 1;
+              this._noteCounts.set(key, count);
+              const num = this._noteNumbers.get(key);
+              out += `<sup class="md-footnote-ref" id="mdfnref-${this._docId}-${num}-${count}"><a href="#mdfn-${this._docId}-${num}" aria-label="Poznámka ${num}">${num}</a></sup>`;
+              i = close + 1; continue;
+            }
+          }
         }
         if (ch === '[' || (ch === '!' && input[i + 1] === '[')) {
           const image = ch === '!';
@@ -266,21 +393,28 @@
               const rawDest = input.slice(cursor + 1, close).trim();
               const match = /^(<[^<>\n]*>|[^\s]+?)(?:\s+["']([^"']*)["'])?$/.exec(rawDest);
               const destination = match ? (match[1].startsWith('<') ? match[1].slice(1, -1) : match[1]) : '';
-              const safe = safeURL(destination, image);
-              if (safe) {
-                flush();
-                if (image) {
-                  const alt = label.replace(/\\([\\`*_{}\[\]()#+.!|>~\-])/g, '$1').replace(/[`*_~]/g, '');
-                  out += `<img class="md-image" src="${escapeHTML(safe)}" alt="${escapeHTML(alt)}" loading="lazy">`;
-                } else {
-                  const title = match && match[2] ? ` title="${escapeHTML(match[2])}"` : '';
-                  out += `<a href="${escapeHTML(safe)}"${title} rel="noopener noreferrer" target="_blank">${this._inline(label, depth + 1)}</a>`;
-                }
-                i = close + 1; continue;
-              }
+              const linkHTML = this._referenceHTML(label, { url: destination, title: match && match[2] || '' }, image, depth);
+              if (linkHTML) { flush(); out += linkHTML; i = close + 1; continue; }
               // Dangerous destinations remain visible as TEXT (not clickable).
               plain += input.slice(i, close + 1);
               i = close + 1; continue;
+            }
+          }
+          // [label][ref], [label][] and [ref] (also image references).
+          if (!nesting && this.options.mode === 'extended') {
+            const label = input.slice(start + 1, cursor - 1);
+            let key = refKey(label);
+            let end = cursor;
+            if (input[cursor] === '[') {
+              const after = input.indexOf(']', cursor + 1);
+              if (after > cursor && after - cursor < 153) {
+                key = refKey(input.slice(cursor + 1, after) || label);
+                end = after + 1;
+              } else if (after === cursor + 1) { end = after + 1; }
+            }
+            if (this._references.has(key)) {
+              const html = this._referenceHTML(label, this._references.get(key), image, depth);
+              if (html) { flush(); out += html; i = end; continue; }
             }
           }
         }
@@ -291,8 +425,23 @@
             i += match[0].length; continue;
           }
         }
+        if (this.options.mode === 'extended' && (ch === 'h' || ch === 'w') &&
+            (i === 0 || !/[\w@/]/.test(input[i - 1]))) {
+          const m = /^(https?:\/\/|www\.)([^\s<>"']{1,2048})/i.exec(input.slice(i));
+          if (m) {
+            let dest = m[0].replace(/[.,;:!?]+$/, '');
+            while (dest.endsWith(')') && (dest.match(/\)/g) || []).length > (dest.match(/\(/g) || []).length) dest = dest.slice(0, -1);
+            const href = dest.startsWith('www.') ? 'https://' + dest : dest;
+            const safe = safeURL(href);
+            if (safe && dest.length > m[1].length) {
+              flush();
+              out += `<a href="${escapeHTML(safe)}" rel="noopener noreferrer" target="_blank">${escapeHTML(dest)}</a>`;
+              i += dest.length; continue;
+            }
+          }
+        }
         if (ch === '*' || ch === '_' || ch === '~') {
-          const markers = ch === '~' ? ['~~'] : [ch.repeat(3), ch.repeat(2), ch];
+          const markers = ch === '~' ? (this.options.mode === 'extended' ? ['~~', '~'] : ['~~']) : [ch.repeat(3), ch.repeat(2), ch];
           let matched = false;
           for (const marker of markers) {
             if (!input.startsWith(marker, i)) continue;
@@ -303,7 +452,7 @@
             flush();
             const middle = this._inline(input.slice(i + marker.length, end), depth + 1);
             out += marker.length === 3 ? `<strong class="md-strong"><em class="md-em">${middle}</em></strong>`
-              : marker === '~~' ? `<del>${middle}</del>`
+              : ch === '~' ? `<del>${middle}</del>`
                 : marker.length === 2 ? `<strong class="md-strong">${middle}</strong>` : `<em class="md-em">${middle}</em>`;
             i = end + marker.length; matched = true; break;
           }
@@ -348,6 +497,7 @@
       const line = lines[index];
       if (!line || !line.trim()) return true;
       if (isFence(line) || isHeading(line) || isRule(line) || isQuote(line) || listMarker(line)) return true;
+      if (this.options.mode === 'extended' && /^ {0,3}:::(?:details|faq)[ \t]+\S/.test(line)) return true;
       if (index + 1 < lines.length && line.includes('|') && tableAlignment(lines[index + 1], splitTableRow(line).length)) return true;
       if (this.options.mode === 'extended' && /^\[[^\]]*;/.test(line.trim())) return true;
       return false;
@@ -360,6 +510,22 @@
         const line = lines[i];
         if (!line.trim()) { i++; continue; }
 
+        // Phase 4.5: a bounded, non-nesting details/FAQ directive.
+        // Its content uses the same safe Markdown renderer; raw HTML remains escaped.
+        const details = this.options.mode === 'extended'
+          ? /^ {0,3}:::(?:details|faq)[ \t]+(.{1,160})[ \t]*$/.exec(line) : null;
+        if (details) {
+          let end = i + 1, size = 0;
+          while (end < lines.length && end - i <= 120 && size <= 16384 && !/^ {0,3}:::[ \t]*$/.test(lines[end])) {
+            size += lines[end].length; end++;
+          }
+          if (end < lines.length && end - i <= 120 && size <= 16384 && /^ {0,3}:::[ \t]*$/.test(lines[end])) {
+            result.push(`<details class="md-details"><summary>${this._inline(details[1].trim())}</summary><div class="md-details-body">${this._blocks(lines.slice(i+1, end), depth+1)}</div></details>`);
+            i = end + 1; continue;
+          }
+          // Incomplete directives are escaped as ordinary text, never swallowed.
+          result.push(`<p>${this._inline(line)}</p>`); i++; continue;
+        }
         const fence = isFence(line);
         if (fence) {
           const code = [];
@@ -386,7 +552,12 @@
           while (i < lines.length && (isQuote(lines[i]) || (lines[i].trim() === '' && i + 1 < lines.length && isQuote(lines[i + 1])))) {
             inner.push(lines[i].replace(/^ {0,3}>[ \t]?/, '')); i++;
           }
-          result.push(`<blockquote class="md-blockquote">${this._blocks(inner, depth + 1)}</blockquote>`);
+          const alert = this.options.mode === 'extended' && /^\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\][ \t]*$/i.exec(inner[0].trim());
+          if (alert) {
+            const type = alert[1].toLowerCase();
+            const text = { note: 'Note', tip: 'Tip', important: 'Important', warning: 'Warning', caution: 'Caution' }[type];
+            result.push(`<aside class="md-alert md-alert-${type}" role="note"><div class="md-alert-title">${text}</div>${this._blocks(inner.slice(1), depth + 1)}</aside>`);
+          } else result.push(`<blockquote class="md-blockquote">${this._blocks(inner, depth + 1)}</blockquote>`);
           continue;
         }
 
@@ -410,9 +581,19 @@
               if (indent < marker.indent + 2) break;
               content.push(next.slice(marker.indent + 2)); i++;
             }
+            let checkbox = '';
+            let taskClass = '';
+            if (this.options.mode === 'extended') {
+              const task = /^\[([ xX])\][ \t]+/.exec(content[0]);
+              if (task) {
+                content[0] = content[0].slice(task[0].length);
+                taskClass = ' class="md-task-item"';
+                checkbox = `<input type="checkbox" disabled${task[1].toLowerCase() === 'x' ? ' checked' : ''} aria-label="Task status"> `;
+              }
+            }
             const rendered = this._blocks(content, depth + 1);
-            // Tight-list paragraph (but preserve distinct nested blocks).
-            items.push(`<li>${rendered.replace(/^<p>([\s\S]*?)<\/p>(?=(?:<ul|<ol|$))/, '$1')}</li>`);
+            const tight = rendered.replace(/^<p>([\s\S]*?)<\/p>(?=(?:<ul|<ol|$))/, '$1');
+            items.push(`<li${taskClass}>${checkbox}${tight}</li>`);
             if (i < lines.length && !lines[i].trim()) {
               const nextMarker = i + 1 < lines.length ? listMarker(lines[i + 1]) : null;
               if (nextMarker && nextMarker.type === type && nextMarker.indent === marker.indent) i++;
