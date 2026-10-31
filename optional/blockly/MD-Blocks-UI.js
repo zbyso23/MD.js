@@ -5,6 +5,7 @@
   let program=MDBlocks.playground(), language='javascript', cancel=0, active=false, buttonHeld=false;
   let replay=null, replayIndex=0, replayTimer=0, replayHistory=[], boardState=null;
   let undoStack=[],redoStack=[],zoom=1,drag=null,dragGhost=null,dropTarget=null;
+  let graphView=null,view='blocks';
   const by=id=>document.getElementById(id);
   const types=['print','set','change','repeat','if','pinMode','write','delay','readDigital','readAnalog','map','writeVar','pwm','servo','stepper'];
   const defaults={print:()=>({type:'print',text:'Ahoj!'}),set:()=>({type:'set',name:'counter',value:0}),change:()=>({type:'change',name:'counter',delta:1}),repeat:()=>({type:'repeat',count:3,body:[]}),if:()=>({type:'if',name:'counter',op:'>=',value:3,body:[]}),pinMode:()=>({type:'pinMode',pin:'LED_BUILTIN',mode:'OUTPUT'}),write:()=>({type:'write',pin:'LED_BUILTIN',state:'HIGH'}),delay:()=>({type:'delay',ms:1000}),readDigital:()=>({type:'readDigital',name:'button',pin:2}),readAnalog:()=>({type:'readAnalog',name:'pot',pin:'A0'}),map:()=>({type:'map',name:'brightness',source:'pot',outMax:255}),writeVar:()=>({type:'writeVar',name:'button',pin:13}),pwm:()=>({type:'pwm',pin:9,value:128}),servo:()=>({type:'servo',pin:10,value:90}),stepper:()=>({type:'stepper',steps:8})};
@@ -130,7 +131,7 @@
     for(const [key,title,desc] of [['setup','SETUP','Spouští se jednou'],['loop','LOOP','Běží opakovaně']]){
       const scope=el('div','scope');scope.append(el('div','scope-header',title+' · '+desc));scope.append(makeEditor(program[key],[key]));host.append(scope);
     }
-    renderToolbox();by('blocks').style.zoom=String(zoom);by('zoom-level').textContent=Math.round(zoom*100)+' %';updateUndoButtons();
+    renderToolbox();if(graphView)graphView.refresh();by('blocks').style.zoom=String(zoom);by('zoom-level').textContent=Math.round(zoom*100)+' %';updateUndoButtons();
     try{const src=MDBlocks.generate(program,language);by('source').textContent=src;if(active)startPlayback();else if(!replay)by('console').textContent='Připraveno · '+MDBlocks.validate(program).count+' bloků.';}
     catch(e){by('source').textContent='CHYBA: '+e.message;by('console').textContent='Oprav blok: '+e.message;}
   }
@@ -152,6 +153,7 @@
   function describe(e){return '['+e.time+' ms] '+(e.kind==='print'?e.text:e.kind==='write'?'D'+e.pin+' = '+e.state:e.kind==='sensor'?e.source+' → '+e.name+' = '+e.value:e.kind==='pwm'?'PWM D9 = '+e.value:e.kind==='servo'?'Servo = '+e.value+'°':e.kind==='stepper'?'Stepper '+e.steps+' → '+e.position:e.kind==='var'?e.name+' = '+e.value:e.kind==='mode'?'pin '+e.pin+' mode '+e.mode:e.kind);}
   function showGroup(group){
     for(const e of group.events){
+      if(e.kind==='node'){if(graphView)graphView.highlight(e.path);continue;}
       replayHistory.push(describe(e));
       if(e.kind==='write')boardState.pins[e.pin==='LED_BUILTIN'?'13':e.pin]=e.state;
       if(e.kind==='pwm')boardState.pwm=e.value;
@@ -173,8 +175,8 @@
   function prepareReplay(){
     clearTimer();active=false;replayHistory=[];replayIndex=0;replay=null;emptyBoard();
     try{
-      const r=MDBlocks.simulate(program,3,inputs());
-      replay=MDBlocksPlayback.plan(r.trace,Number(by('teaching-pace').value));
+      const r=MDBlocks.simulate(program,3,{...inputs(),traceNodes:view==='graph'});
+      replay=view==='graph'&&typeof MDBlocksArduinoGraph!=='undefined'?MDBlocksArduinoGraph.planTrace(r.trace,Number(by('teaching-pace').value)):MDBlocksPlayback.plan(r.trace,Number(by('teaching-pace').value));
       by('playback-status').textContent='Připraveno: '+replay.length+' časových kroků / 3 cykly · '+r.virtualTimeMs+' ms programu';
       return true;
     }catch(e){by('console').textContent='STOP: '+e.message;by('playback-status').textContent='Chyba simulace';return false;}
@@ -211,8 +213,24 @@
   function download(name,content,mime){const url=URL.createObjectURL(new Blob([content],{type:mime}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
   by('save').addEventListener('click',()=>{try{MDBlocks.validate(program);const d=new Date(),stamp=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0'),String(d.getHours()).padStart(2,'0'),String(d.getMinutes()).padStart(2,'0'),String(d.getSeconds()).padStart(2,'0')].join('');download('blocks-lite_'+stamp+'.json',JSON.stringify(program,null,2),'application/json');}catch(e){alert(e.message);}});
   by('load').addEventListener('click',()=>by('file').click());
-  by('file').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;if(f.size>100000){alert('Max 100 KiB');return;}try{const obj=JSON.parse(await f.text());MDBlocks.validate(obj);clearTimer();active=false;replay=null;emptyBoard();saveUndo();program=obj;refresh();}catch(err){alert('Invalid workspace: '+err.message);}e.target.value='';});
+  by('file').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;if(f.size>100000){alert('Max 100 KiB');return;}try{const obj=JSON.parse(await f.text());(typeof MDBlocksArduinoGraph!=='undefined'?MDBlocksArduinoGraph.model:MDBlocks).check?.(obj)||MDBlocks.validate(obj);clearTimer();active=false;replay=null;emptyBoard();saveUndo();program=obj;refresh();}catch(err){alert('Invalid workspace: '+err.message);}e.target.value='';});
   by('copy').addEventListener('click',()=>navigator.clipboard.writeText(by('source').textContent).catch(()=>alert('Clipboard není dostupný (potřebuje HTTPS nebo localhost).')));
   if (new URLSearchParams(location.search).get('preset') === 'blink') { by('preset').value = 'blink'; program = MDBlocks.demo(); }
+  if(typeof MDBlocksArduinoGraph!=='undefined')graphView=MDBlocksArduinoGraph.mount(by('arduino-graph-host'),{
+    get:()=>program,defaults,labels,
+    commit(next){MDBlocksArduinoGraph.model.check(next);saveUndo();clearTimer();active=false;replay=null;emptyBoard();program=next;refresh();}
+  });
+  function setView(next){view=next;
+    by('blocks').hidden=next==='graph';by('arduino-graph-host').hidden=next!=='graph';
+    by('toolbox').hidden=next==='graph';by('toolbox').parentElement.classList.toggle('graph-on',next==='graph');
+    by('view-blocks').setAttribute('aria-pressed',String(next==='blocks'));
+    by('view-graph').setAttribute('aria-pressed',String(next==='graph'));
+    if(next==='graph'&&graphView)graphView.refresh();
+    clearTimer();active=false;replay=null;emptyBoard();
+    by('playback-status').textContent='Zobrazení '+(next==='graph'?'Graph':'Blocks')+' · program beze změny.';
+  }
+  if(!graphView){by('view-graph').disabled=true;by('view-graph').title='Graph not available';}
+  by('view-blocks').addEventListener('click',()=>setView('blocks'));
+  by('view-graph').addEventListener('click',()=>setView('graph'));
   emptyBoard();refresh();
 })();

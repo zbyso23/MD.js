@@ -80,7 +80,7 @@
     if(!['javascript','python','arduino'].includes(dialect)) fail('Unknown generator');
     if(dialect === 'arduino'){
       const vars=variables.map(v=>`long ${v} = 0;`).join('\n');
-      const json=JSON.stringify(program);
+      const json=JSON.stringify({setup:program.setup,loop:program.loop}); // Detached Graph nodes do not affect generated firmware.
       const prints=json.includes('"type":"print"');
       const usesServo=json.includes('"type":"servo"');
       const usesStepper=json.includes('"type":"stepper"');
@@ -127,6 +127,7 @@ ${vars}\ndef setup():\n${globals}${statements(program.setup,'python',1)||'    pa
     const vars=Object.create(null), pinStates=Object.create(null), trace=[];
     if(!plain(environment))fail('Invalid environment');
     const digital=environment.digital || {},analog=environment.analog || {};
+    const traceNodes=environment.traceNodes===true;
     if(!plain(digital)||!plain(analog))fail('Invalid sensor input');
     const d2=num(digital[2]===undefined?0:digital[2],0,1,'button'), d3=num(digital[3]===undefined?0:digital[3],0,1,'switch');
     const a0=num(analog.A0===undefined?512:analog.A0,0,1023,'potentiometer');
@@ -137,7 +138,7 @@ ${vars}\ndef setup():\n${globals}${statements(program.setup,'python',1)||'    pa
     function val(v){return vars[v]||0;}
     function resolve(v){return typeof v === 'string' ? val(v) : v;}
     function event(e){trace.push({time:now,...e});}
-    function visit(nodes){for(const n of nodes){step();switch(n.type){
+    function visit(nodes,path){for(let idx=0;idx<nodes.length;idx++){const n=nodes[idx],nodePath=path.concat(idx);step();if(traceNodes)event({kind:'node',path:nodePath,nodeType:n.type});switch(n.type){
       case 'print':trace.push({time:now,kind:'print',text:n.text});break;
       case 'set':vars[n.name]=n.value;trace.push({time:now,kind:'var',name:n.name,value:vars[n.name]});break;
       case 'change':vars[n.name]=val(n.name)+n.delta;if(!Number.isSafeInteger(vars[n.name]))fail('Integer overflow');trace.push({time:now,kind:'var',name:n.name,value:vars[n.name]});break;
@@ -151,10 +152,10 @@ ${vars}\ndef setup():\n${globals}${statements(program.setup,'python',1)||'    pa
       case 'pinMode':trace.push({time:now,kind:'mode',pin:String(n.pin),mode:n.mode});break;
       case 'write':pinStates[String(n.pin)]=n.state;trace.push({time:now,kind:'write',pin:String(n.pin),state:n.state});break;
       case 'delay':now+=n.ms;if(now>LIMITS.virtualMs)fail('Virtual time budget exceeded');break;
-      case 'repeat':for(let t=0;t<n.count;t++){step();visit(n.body);}break;
-      case 'if':{const a=val(n.name),b=n.value;const ok=n.op==='=='?a===b:n.op==='!='?a!==b:n.op==='<'?a<b:n.op==='<='?a<=b:n.op==='>'?a>b:a>=b;if(ok)visit(n.body);break;}
+      case 'repeat':for(let t=0;t<n.count;t++){step();visit(n.body,nodePath.concat('body'));}break;
+      case 'if':{const a=val(n.name),b=n.value;const ok=n.op==='=='?a===b:n.op==='!='?a!==b:n.op==='<'?a<b:n.op==='<='?a<=b:n.op==='>'?a>b:a>=b;if(ok)visit(n.body,nodePath.concat('body'));break;}
     }}}
-    visit(program.setup);for(let j=0;j<cycles;j++){step();visit(program.loop);}
+    visit(program.setup,['setup']);for(let j=0;j<cycles;j++){step();visit(program.loop,['loop']);}
     return {trace, pins:{...pinStates}, variables:{...vars}, actuators:{...actuators}, inputs:{button:d2,switch:d3,pot:a0,mic:a1}, virtualTimeMs:now, steps};
   }
   function demo(){return {version:1,setup:[{type:'pinMode',pin:'LED_BUILTIN',mode:'OUTPUT'},{type:'print',text:'MD.js Blocks Lite ready'}],loop:[{type:'write',pin:'LED_BUILTIN',state:'HIGH'},{type:'delay',ms:1000},{type:'write',pin:'LED_BUILTIN',state:'LOW'},{type:'delay',ms:1000}]};}

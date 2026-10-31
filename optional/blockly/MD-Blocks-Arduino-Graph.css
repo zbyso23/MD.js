@@ -1,0 +1,24 @@
+/* Blueprint-like Arduino Graph; scoped under .ag-view; vanilla CSS. */
+.ag-view[hidden],#blocks[hidden],#toolbox[hidden]{display:none!important}
+.editor-grid.graph-on{grid-template-columns:minmax(0,1fr)!important}
+.ag-view{min-width:0}
+.ag-bar{display:flex;gap:5px;align-items:center;flex-wrap:wrap;padding:9px;background:var(--panel);border:1px solid var(--border);border-radius:10px 10px 0 0}
+.ag-bar strong{font-size:13px;color:var(--accent)}.ag-bar select{min-width:78px;max-width:215px;padding:6px;border-radius:8px;background:var(--panel);color:var(--text);border:1px solid var(--border);font-size:12px}
+.ag-bar button{padding:6px 10px;font-size:12px}
+.ag-vp{height:650px;overflow:hidden;touch-action:none;position:relative;cursor:grab;outline-offset:-3px;background:#08101d;background-image:radial-gradient(circle,rgba(130,181,228,.24) 1px,transparent 1px);background-size:24px 24px;border:1px solid var(--border);border-top:0}
+.ag-vp:active{cursor:grabbing}.ag-world{position:absolute;left:0;top:0;transform-origin:0 0}.ag-wires,.ag-cards{position:absolute;left:0;top:0;width:100%;height:100%}.ag-wires{pointer-events:none}
+.ag-wire{fill:none;stroke-width:3;stroke-linecap:round}.ag-ewire{stroke:#d2dff5}.ag-dwire{stroke:#3ae4cc;stroke-dasharray:7 4;stroke-width:2.5}
+.ag-node{position:absolute;background:#15253c;color:#edf3ff;border:1px solid #526c95;border-radius:10px;box-shadow:0 10px 30px #0008;font-size:12px;display:flex;flex-direction:column}
+.ag-node.ag-logic{background:#291f42;border-color:#ab8ae4}.ag-node.ag-loose{border-style:dashed}.ag-node.ag-root{background:#244a78;border-color:#80c9ff;min-height:50px!important}
+.ag-head{display:flex;align-items:center;gap:4px;background:#294262;border-radius:9px 9px 0 0;min-height:32px;padding:5px 7px;cursor:grab}
+.ag-logic .ag-head{background:#513474}.ag-root .ag-head{background:transparent}.ag-head strong.ag-name{flex:1;font-size:11px;line-height:1.2}
+.ag-pin{min-width:24px;min-height:24px;padding:1px 5px;border-radius:6px;font:700 13px ui-monospace,monospace;background:#425b7a;color:white;border:1px solid #bcd5fb}
+.ag-pin.ag-body{background:#65409a;border-color:#cdaaff}.ag-pin.ag-data{background:#075b51;border-color:#54eacb}.ag-pin:hover{filter:brightness(1.3)}
+.ag-more{font-size:12px;padding:1px 5px;background:transparent;border-color:#7086a4;color:white}.ag-fields{display:grid;gap:4px;padding:8px}
+.ag-field{display:flex;align-items:center;gap:4px;min-width:0}.ag-field span{width:45px;flex:0 0 45px;color:#b9c6db;overflow:hidden;text-overflow:ellipsis}
+.ag-field input,.ag-field select{min-width:0;width:100%;flex:1;color:#e7f2ff;background:#0c182a;border:1px solid #5b7090;border-radius:5px;padding:4px;font:11px ui-monospace,monospace}
+.ag-actions{padding:5px;display:flex;gap:4px;border-top:1px solid #536079}.ag-actions[hidden]{display:none}.ag-actions button{flex:1;padding:4px;font-size:11px}
+.ag-active{border-color:#ffdf55!important;box-shadow:0 0 0 3px #e9b837,0 0 25px #ffb627b9!important}.ag-active .ag-head{background:#7b5e29!important}
+.ag-msg{padding:7px 9px;color:var(--muted);background:var(--panel);font-size:12px;border:1px solid var(--border);border-top:0;border-radius:0 0 10px 10px}.ag-msg.bad{color:#e45c69}
+.view-switcher{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:5px 0;margin:0 0 8px}.view-switcher button{padding:7px 12px;font-size:12px}.view-switcher [aria-pressed=true]{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:750}
+@media(max-width:700px){.ag-vp{height:470px}.ag-bar select{max-width:140px}.ag-bar button{padding:5px}}

@@ -54,3 +54,31 @@ Optional drag-and-drop block connectors, richer editable branching, more electro
 ### Stabilization-2 regression gates
 
 `node tests/test.mjs` now includes playback planning/timing edge cases. `python3 tests/test_education_playback_browser.py` checks actual LED transitions, pause, single-step, and timer cleanup in Chromium. `python3 tests/browser.py` checks the Arduino full board, while `python3 tests/test_dnd_browser.py` covers real Pointer Events. These are separate from AVR/physical Arduino correctness.
+
+
+## Phase 4R: Arduino Graph (Blueprint-like)
+
+The Graph tab is a visual alternative to the Blocks tab. Both edit the same `version:1`
+`{setup,loop}` Arduino AST. The existing bounded simulator and JavaScript/Python/
+Arduino C++ exporters remain the only runtime/generators. No imported JavaScript
+executed, no new AVR/circuit simulation, no assembler, no external dependency.
+
+Graph: add nodes into SETUP/LOOP or as unexecuted detached chains; click the white
+`▶` execution output followed by `◀` target input to reconnect commands; for
+`if`/`repeat` the violet `⤷` output connects a body. Old displaced chains remain
+under loose roots and do not execute. Green `●` variable output -> green `◀`
+consumer input connects variables in Arduino's supported AST and supports fan-out
+(e.g. `analogRead` → `map` → both PWM and servo). Controls include zoom, fit,
+canvas pan, node drag, removal/detaching, shared undo/redo, and live yellow
+execution highlight when stepping through the simulator.
+
+**Important semantics:** this is a structured, acyclic control-flow graph view.
+Free-form arbitrary execution cycles and general expressions are **not supported**.
+The only data wires are shared typed-by-usage variable names. The Graph is an
+Arduino-adapted implementation inspired by MD-Blocks-Graph from the user's R-Type
+export; the game graph is not directly transplanted because its interpreter and
+JSON structure differ. Blocks offers keyboard-friendly alternative editing.
+
+Tests: `npm run test:arduino:graph` includes Node model/oracle assertions and actual
+Chromium interaction (test fixture inlined, no HTTP server). This does not certify
+direct `file://` navigation where the sandbox blocks it.
