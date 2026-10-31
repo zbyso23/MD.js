@@ -7,7 +7,7 @@ ROOT=Path(__file__).resolve().parents[1]
 BASE=ROOT.parents[1]
 async def main():
  html=(ROOT/'index.html').read_text()
- for n in ('PC-Core.js','PC-Video.js','PC-BIOS.js','PC-Floppy.js','PC-Machine.js'):
+ for n in ('PC-Core.js','PC-Video.js','PC-BIOS.js','PC-Floppy.js','PC-Machine.js','PC-EmbeddedAssets.js'):
   html=html.replace(f'<script src="{n}"></script>',f'<script>{(ROOT/n).read_text()}</script>')
  html=html.replace('<script src="../../MD-Runtime.js"></script>',f'<script>{(BASE/"MD-Runtime.js").read_text()}</script>')
  async with async_playwright() as p:
@@ -15,6 +15,8 @@ async def main():
   page=await browser.new_page(viewport={'width':1300,'height':1200},device_scale_factor=1,accept_downloads=True)
   errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
   await page.set_content(html,wait_until='load')
+  await page.locator('#pc-pause').click()
+  await page.locator('#video-adapter').select_option('cga')
   await page.locator('#video-text-demo').click()
   status=await page.locator('#video-status').inner_text()
   assert 'CGA' in status,status

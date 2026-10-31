@@ -81,7 +81,7 @@ class PCMachine {
   this.rom=new Uint8Array(65536);this.rom.fill(0xf4);
   this.pic=new PIC8259(8);this.picSlave=profile==='at'?new PIC8259(0x70):null;this.pit=new PIT8253(this.pic);this.dma=new DMA8237();
   this.cmos=new Uint8Array(128);this.cmosIndex=0;this.a20=false;this.kbcOutput=0;this.kbcInputCommand=0;this.kbdQueue=[];
-  this.xtKeyboard=0;this.log=[];this.biosCalls=[];this.cpu=new PC16CPU(this,profile);
+  this.xtKeyboard=0;this.waitingForKey=false;this.biosTickAccumulator=0;this.log=[];this.biosCalls=[];this.cpu=new PC16CPU(this,profile);
   this.bios=new PCBios(this);
   this.installFirmware();
  }
@@ -141,9 +141,10 @@ class PCMachine {
   this.cpu.reset();
  }
  beforeInstruction(cpu){return this.bios.dispatch(cpu);}
- queueBIOSKey(code){return this.bios.queueKey(code);}
+ queueBIOSKey(code){const ok=this.bios.queueKey(code);if(ok)this.waitingForKey=false;return ok;}
  mountDisk(drive,bytes,name){return this.fdd.mount(drive,bytes,name);}
  bootFloppy(drive=0){
+  this.waitingForKey=false;
   const sector=this.fdd.readSector(drive,0,0,1);if(!sector)throw new Error('Boot drive absent or invalid CHS');
   if(sector[510]!==0x55||sector[511]!==0xaa)throw new Error('Boot sector signature 55 AA missing');
   this.ram.set(sector,0x7c00);
@@ -166,13 +167,23 @@ class PCMachine {
   }else this.cpu.interrupt(n);
   return true;
  }
- run(n=10000){return this.cpu.run(n);}
+ run(n=10000){const result=this.cpu.run(n);
+  // Emulated BIOS timer ticks (~18.2 Hz) based on guest instruction progress.
+  // Clock is deterministic and doesn't depend on host refresh rate.
+  this.biosTickAccumulator+=result.executed;
+  while(this.biosTickAccumulator>=50000){
+   this.biosTickAccumulator-=50000;
+   const value=this.bios.get32(0x46c)+1;
+   if(value>=0x1800b0){this.bios.set32(0x46c,0);this.write8(0x470,1);}
+   else this.bios.set32(0x46c,value);
+  }
+  return result;}
  // Portable checkpoint for the exact Phase-1 chipset. ROM stays rebuilt from open firmware.
  exportState(codec){
   if(!codec||!codec.bytesToBase64)throw new Error('Missing MD.js runtime codec');
   const packPIC=x=>x?{mask:x.mask,irr:x.irr,isr:x.isr,vector:x.vector,icw:x.icw,expectICW4:x.expectICW4,single:x.single,readISR:x.readISR,autoEOI:x.autoEOI}:null;
   const p=this.pit,d=this.dma,c=this.cpu;
-  return {floppy:this.fdd.snapshot(codec),video:this.video.snapshot(codec),profile:this.profile,conventional:this.conventional,extended:this.extended,ram:codec.bytesToBase64(this.ram),extRam:codec.bytesToBase64(this.extRam),a20:this.a20,cmos:codec.bytesToBase64(this.cmos),cmosIndex:this.cmosIndex,kbcOutput:this.kbcOutput,kbcInputCommand:this.kbcInputCommand,kbdQueue:[...this.kbdQueue],xtKeyboard:this.xtKeyboard,pic:packPIC(this.pic),picSlave:packPIC(this.picSlave),pit:{reload:Array.from(p.reload),value:Array.from(p.value),mode:[...p.mode],access:[...p.access],writeLow:[...p.writeLow],readLow:[...p.readLow],temp:Array.from(p.temp)},dma:{addr:Array.from(d.addr),count:Array.from(d.count),baseAddr:Array.from(d.baseAddr),baseCount:Array.from(d.baseCount),page:Array.from(d.page),mode:Array.from(d.mode),mask:d.mask,flip:d.flip,status:d.status},cpu:{...c.snapshot(),ticks:c.ticks,lastOpcode:c.lastOpcode,instructionStartIP:c.instructionStartIP,segOverride:c.segOverride},bios:{calls:[...this.bios.calls],lastDiskStatus:this.bios.lastDiskStatus}};
+  return {floppy:this.fdd.snapshot(codec),video:this.video.snapshot(codec),profile:this.profile,conventional:this.conventional,extended:this.extended,ram:codec.bytesToBase64(this.ram),extRam:codec.bytesToBase64(this.extRam),a20:this.a20,cmos:codec.bytesToBase64(this.cmos),cmosIndex:this.cmosIndex,kbcOutput:this.kbcOutput,kbcInputCommand:this.kbcInputCommand,kbdQueue:[...this.kbdQueue],xtKeyboard:this.xtKeyboard,waitingForKey:this.waitingForKey,biosTickAccumulator:this.biosTickAccumulator,pic:packPIC(this.pic),picSlave:packPIC(this.picSlave),pit:{reload:Array.from(p.reload),value:Array.from(p.value),mode:[...p.mode],access:[...p.access],writeLow:[...p.writeLow],readLow:[...p.readLow],temp:Array.from(p.temp)},dma:{addr:Array.from(d.addr),count:Array.from(d.count),baseAddr:Array.from(d.baseAddr),baseCount:Array.from(d.baseCount),page:Array.from(d.page),mode:Array.from(d.mode),mask:d.mask,flip:d.flip,status:d.status},cpu:{...c.snapshot(),ticks:c.ticks,lastOpcode:c.lastOpcode,instructionStartIP:c.instructionStartIP,segOverride:c.segOverride},bios:{calls:[...this.bios.calls],lastDiskStatus:this.bios.lastDiskStatus}};
  }
  static fromState(data,codec){
   if(!data||!['xt','at'].includes(data.profile)||!codec||!codec.base64ToBytes)throw new Error('Invalid PC snapshot');
@@ -194,7 +205,7 @@ class PCMachine {
   for(const k of ['addr','count','baseAddr','baseCount','page','mode'])restoreArr(m.dma[k],data.dma[k],'DMA '+k);
   for(const k of ['mask','flip','status']){if(!Number.isSafeInteger(data.dma[k]))throw new Error('Bad DMA '+k);m.dma[k]=data.dma[k];}
   m.a20=!!data.a20;m.cmosIndex=data.cmosIndex|0;m.kbcOutput=data.kbcOutput|0;m.kbcInputCommand=data.kbcInputCommand|0;
-  m.kbdQueue=check(data.kbdQueue||[],(data.kbdQueue||[]).length,'keyboard queue').slice();m.xtKeyboard=data.xtKeyboard|0;
+  m.kbdQueue=check(data.kbdQueue||[],(data.kbdQueue||[]).length,'keyboard queue').slice();m.xtKeyboard=data.xtKeyboard|0;m.waitingForKey=!!data.waitingForKey;m.biosTickAccumulator=Number.isSafeInteger(data.biosTickAccumulator)&&data.biosTickAccumulator>=0?data.biosTickAccumulator:0;
   c.r.set(src.r);c.s.set(src.s);c.base.set(src.base);c.limit.set(src.limit);c.segAccess.set(src.segAccess);c.nullSegment.set(src.nullSegment);
   c.flags=src.flags;c.ip=src.ip;c.msw=src.msw;c.gdtr={...src.gdtr};c.idtr={...src.idtr};c.ldtr=src.ldtr?{...src.ldtr}:{selector:0,base:0,limit:0,valid:false};c.tr=src.tr?{...src.tr}:{selector:0,base:0,limit:0,valid:false};c.halted=!!src.halted;c.steps=src.steps;c.ticks=src.ticks;c.lastOpcode=src.lastOpcode|0;c.instructionStartIP=src.instructionStartIP|0;c.segOverride=src.segOverride??null;c.lastFault=src.lastFault?{...src.lastFault}:null;
   if(!Array.isArray(data.bios.calls))throw new Error('Bad BIOS call history');m.bios.calls.splice(0,m.bios.calls.length,...data.bios.calls);m.bios.lastDiskStatus=data.bios.lastDiskStatus|0;

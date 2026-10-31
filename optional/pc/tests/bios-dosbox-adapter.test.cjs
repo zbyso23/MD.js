@@ -32,8 +32,10 @@ test('INT 16h keyboard peek, read, then empty checks',()=>{
  m.cpu.step();m.cpu.step();m.cpu.step();assert.equal(m.cpu.r[R.AX],0x1e61);assert.equal(!!(m.cpu.flags&F.ZF),false);
  m.run();assert.equal(m.cpu.r[R.AX],0x1e61);assert.equal(m.read16Physical(BDA.KB_HEAD),m.read16Physical(BDA.KB_TAIL));
 });
-test('INT 16h AH=00 with empty queue does not claim fabricated key',()=>{
- const m=program(command(0));assert.throws(()=>m.run(),/keyboard wait/);
+test('INT 16h AH=00 blocks without a fabricated key, then resumes with injected input',()=>{
+ const m=program(command(0));const r=m.run(100);assert.equal(r.waitingForKey,true);assert.equal(r.halted,false);
+ assert.equal(m.queueBIOSKey(0x1e61),true);const resumed=m.run(100);assert.equal(resumed.halted,true);
+ assert.equal(m.cpu.r[R.AX],0x1e61);assert.equal(m.waitingForKey,false);
 });
 test('keyboard ring buffer wraps at BIOS 0x40:3e and preserves ordering',()=>{
  const m=new PCMachine('xt');

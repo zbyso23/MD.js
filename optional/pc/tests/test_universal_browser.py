@@ -20,6 +20,8 @@ async def inject_standalone(page,htmlfile):
   await page.add_script_tag(content=thing.read_text() if kind=='src' else thing)
 
 async def test_pc(page):
+ await page.locator('#pc-pause').click()
+ await page.locator('#reset').click()
  await page.locator('#boot').click()
  assert 'HALTED' in await page.locator('#mode').inner_text()
  await page.locator('#machine').select_option('at')

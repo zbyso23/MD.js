@@ -297,6 +297,7 @@ class PC16CPU {
  step(){
   if(this.halted)return 0;
   if(this.m.beforeInstruction)this.m.beforeInstruction(this);
+  if(this.m.waitingForKey)return 0; // BIOS INT 16h blocks without executing IRET until host supplies a key.
   try {
   const origin={cs:this.s[S.CS],ip:this.ip};
   this.instructionStartIP=this.ip;this.segOverride=null;
@@ -421,10 +422,19 @@ class PC16CPU {
     if(n<signed16(lo)||n>signed16(hi))this.raiseGuestFault(5,'#BR','BOUND value outside signed range');
     break;
    }
+   case 0x66:case 0x67: { // 386 operand/address-size prefixes: invalid on a 286
+    if(this.profile==='at')this.raiseGuestFault(6,'#UD','386 size prefix unsupported on 286');
+    else throw new CPUFault('386 prefix unsupported on XT');
+    break;
+   }
    case 0x90:break;
    case 0x98:this.r[R.AX]=(this.get8(0)&0x80)?(0xff00|this.get8(0)):this.get8(0);break; // CBW
    case 0x99:this.r[R.DX]=(this.r[R.AX]&0x8000)?0xffff:0;break; // CWD
    case 0x9b:break; // WAIT, no 8087 fitted
+   case 0xd8:case 0xd9:case 0xda:case 0xdb:case 0xdc:case 0xdd:case 0xde:case 0xdf:
+    // 8086 ESC to absent 8087: CPU still consumes ModR/M and displacement,
+    // while the uncoupled coprocessor sees no command. DEBUG.COM probes 8087 via ESC.
+    this.modrm();break;
    case 0xd7:{const addr=(this.r[R.BX]+this.get8(0))&0xffff;this.put8(0,this.read8(this.segOverride===null?S.DS:this.segOverride,addr));break;} // XLAT
    case 0xce:if(this.flags&F.OF)this.interrupt(4,true);break; // INTO
    case 0x9a: { // CALL FAR imm16:16
@@ -609,7 +619,7 @@ class PC16CPU {
    throw err;
   }
  }
- run(maxSteps=10000){let n=0;while(n<maxSteps&&!this.halted){this.step();n++;}return {executed:n,halted:this.halted,cs:this.s[S.CS],ip:this.ip,steps:this.steps};}
+ run(maxSteps=10000){let n=0;while(n<maxSteps&&!this.halted){const cycles=this.step();if(cycles===0&&this.m.waitingForKey)break;n++;}return {executed:n,halted:this.halted,waitingForKey:!!this.m.waitingForKey,cs:this.s[S.CS],ip:this.ip,steps:this.steps};}
  snapshot(){return {profile:this.profile,r:Array.from(this.r),s:Array.from(this.s),base:Array.from(this.base),limit:Array.from(this.limit),flags:this.flags,ip:this.ip,msw:this.msw,gdtr:{...this.gdtr},idtr:{...this.idtr},ldtr:{...this.ldtr},tr:{...this.tr},halted:this.halted,steps:this.steps,lastFault:this.lastFault?{...this.lastFault}:null,segAccess:Array.from(this.segAccess),nullSegment:Array.from(this.nullSegment)};}
 }
 const api={PC16CPU,CPUFault,PCProtectionFault,R,S,F};

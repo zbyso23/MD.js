@@ -1,3 +1,9 @@
+## FreeDOS Gate 2 update (v0.8.0)
+
+Default Workbench opens XT/Hercules amber, mounts embedded FreeDOS 720 KiB with DEBUG.COM and starts the guest boot. The display uses a lightweight amber phosphor simulation via CSS and Canvas. Keyboard input is passed to BIOS INT 16h. BIOS clock ticks progress deterministically with executed guest instructions. The CPU supports 8086 ESC (no 8087 present) for DEBUG.COM detection.
+
+On XT, DEBUG.COM executes A/U/R/G/Q. On AT, FreeDOS and FAT12 work, but this DEBUG.COM has a 386 probe (66h) causing a guest #UD; full AT DEBUG compatibility remains a known limit. Original FDD timing, full 286 task switch and extensive 8087 emulation not added.
+
 # PC Environment Phase 2 — v0.7.8 (current)
 
 CGA/Hercules video hardware, usable BIOS `INT 10h`, and basic FDD/NEC 765/BIOS `INT 13h`/`INT 19h` have been added to the existing XT and 286 testbed. Native JavaScript, no build. The browser renders graphics directly from video RAM. Both platforms execute a self-created boot sector from a mounted disk. **Actual FreeDOS boot is not yet verified, so Gate 2 is open.**

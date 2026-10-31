@@ -1,15 +1,16 @@
 <!doctype html>
-<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MD.js Ultra · PC Lab Phase 2 · Video</title>
+<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MD.js Ultra · FreeDOS XT / Hercules Amber</title>
 <style>
 :root{color-scheme:dark;font:14px/1.55 system-ui,-apple-system,'Segoe UI',sans-serif;background:#091420;color:#e6f4f5}*{box-sizing:border-box}body{margin:0}button,select,input{font:inherit}button,select{cursor:pointer}button{border:1px solid #426276;border-radius:9px;padding:10px 13px;color:#eaf8f3;background:#22394b;font-weight:650}button:hover{background:#315369}button.primary{background:#23b5a6;color:#05282d;border-color:#32d2bf}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #ecca78}select,input{background:#152c3b;color:#fff;border:1px solid #426276;border-radius:8px;padding:9px}.container{max-width:1260px;margin:0 auto;padding:26px 20px 70px}.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.eyebrow{color:#65d6be;font-weight:800;text-transform:uppercase;font-size:11px;letter-spacing:.16em}.back{color:#a3cbd2;text-decoration:none}h1{font-size:clamp(28px,4vw,44px);line-height:1.1;margin:8px 0}h2{font-size:17px;margin:0 0 12px}.lede{color:#aec5cd;max-width:760px}.badge{border:1px solid #64858c;color:#c9d8dc;padding:6px 9px;border-radius:30px;white-space:nowrap;font-size:11px}.notice{background:#24353a;border-left:4px solid #edbf69;padding:13px 15px;margin:18px 0 21px;color:#e7e5dc;border-radius:6px}.actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:14px 0 20px}.layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:15px}.panel{border:1px solid #2b485c;background:linear-gradient(150deg,#102637,#101d2d);border-radius:15px;padding:17px;min-width:0}.wide{grid-column:1/-1}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:#172e3f;padding:12px;border-radius:9px}.stat .meta{color:#94bbc0;font-size:11px}.stat .num{font-size:18px;font-weight:750;letter-spacing:.02em}.registers{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.register{display:flex;justify-content:space-between;gap:5px;border:1px solid #2b5060;border-radius:8px;padding:7px;background:#122c3b;font-family:ui-monospace,monospace}.register b{color:#77dfcc}.register span{color:#eefaff}.muted{color:#8eafbb}.memory{font-family:ui-monospace,Consolas,monospace;font-size:12px;white-space:pre;overflow:auto;max-height:285px;margin:0;line-height:1.7;color:#c4ede9}.trace{font-family:ui-monospace,Consolas,monospace;font-size:12px;white-space:pre-wrap;word-break:break-word;margin:0;min-height:100px;max-height:285px;overflow:auto;color:#b8d8e2}.split{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.check{margin:0;display:inline-flex;gap:7px;align-items:center;color:#aacbd0}.ok{color:#77dec1}.error{color:#f5a99c}.screen-shell{display:block;position:relative;max-width:100%;overflow:hidden;border:6px solid #263c45;border-radius:8px;background:#000}.screen-shell canvas{display:block;max-width:100%;width:100%;height:auto;image-rendering:pixelated;background:#000}.screen-shell.hercules{background:#140b02;border-color:#5d4120;box-shadow:0 0 0 1px rgba(255,191,102,.16) inset,0 0 20px rgba(255,180,90,.18), inset 0 0 34px rgba(255,170,70,.08)}.screen-shell.hercules::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(to bottom, rgba(255,196,120,.05) 0 1px, rgba(0,0,0,0) 1px 3px);opacity:.34;pointer-events:none}.screen-shell.hercules::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 35%, rgba(255,204,128,.18), rgba(255,140,40,.04) 44%, rgba(0,0,0,.20) 100%);mix-blend-mode:screen;pointer-events:none}.screen-shell.cga{background:#000;border-color:#263c45;box-shadow:none}footer{margin-top:22px;color:#91a6b4;font-size:12px}@media(max-width:850px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:510px){.registers{grid-template-columns:repeat(2,1fr)}.top{flex-direction:column}.stat .num{font-size:15px}}
 </style></head><body><main class="container">
-<div class="top"><div><a class="back" href="../../index.html">← MD.js Ultra</a><div class="eyebrow">PC Environment · Phase 2 / Video</div><h1>8086 / 80286 Workbench</h1><p class="lede">Čistý JavaScript: XT a AT, Hercules/CGA grafické adaptéry, mapované VRAM, BIOS INT 10h a historicky věrné bankování bitových map.</p></div><span class="badge">GPLv3 · LOCAL · NO AUTORUN</span></div>
-<div class="notice"><strong>Debug bring-up pro XT + Hercules je připraven.</strong> Do osobního balíku je vložena vestavěná 720&nbsp;KiB bootovací FreeDOS disketa pro A:, rozšířená o <code>DEBUG.COM</code>. Po resetu se automaticky připojí do A:; stále nejde o plný historický POST ani kompletní DOS kompatibilitu, ale pracovní základ pro XT/Hercules ladění už je přímo uvnitř.</div>
-<div class="actions"><label for="machine">Profil</label><select id="machine"><option value="xt" selected>XT · 8086 ISA / 8088 cíl</option><option value="at">AT · 80286</option></select><button id="reset">Reset</button><button id="step">CPU krok</button><label for="video-adapter">Video</label><select id="video-adapter"><option value="cga">CGA</option><option value="hercules" selected>Hercules · amber</option></select><button id="video-text-demo" class="primary">INT 10h · text demo</button><button id="video-cga-demo">CGA · 320×200</button><button id="video-herc-demo">Hercules · 720×348</button><button id="video-render">Obnovit obraz</button><button id="boot" class="primary">Boot ROM</button><button id="pm">286 Protected Mode demo</button><button id="cpu-demo">ModR/M + REP demo</button><button id="alu-demo">ALU / SHIFT demo</button><button id="idt-demo">286 IDT demo</button><button id="de-demo">#DE · dělení nulou</button><button id="br-demo">286 #BR · BOUND</button><button id="bcd-demo">8086 BCD demo</button><button id="irq10-demo">286 IRQ10 / 2× PIC</button><button id="pit">PIT → IRQ0</button></div>
+<div class="top"><div><a class="back" href="../../index.html">← MD.js Ultra</a><div class="eyebrow">PC Environment · Phase 2 / FreeDOS</div><h1>8086 / 80286 Workbench</h1><p class="lede">Čistý JavaScript: XT a AT, Hercules/CGA grafické adaptéry, mapované VRAM, BIOS INT 10h a historicky věrné bankování bitových map.</p></div><span class="badge">GPLv3 · LOCAL · NO AUTORUN</span></div>
+<div class="notice"><strong>Debug bring-up pro XT + Hercules je připraven.</strong> Do osobního balíku je vložena vestavěná 720&nbsp;KiB bootovací FreeDOS disketa pro A:, rozšířená o <code>DEBUG.COM</code>. Po resetu se automaticky připojí do A:. Vývojový obraz FreeDOS spouští přímo příkazový řádek bez instalačního menu. Jde o omezenou kompatibilní emulaci, nikoli úplný historický BIOS a POST.</div>
+<div class="actions"><label for="machine">Profil</label><select id="machine"><option value="xt" selected>XT · 8086 ISA / 8088 cíl</option><option value="at">AT · 80286</option></select><button id="reset">Reset</button><button id="step">CPU krok</button><button id="pc-run" class="primary">▶ Pokračovat</button><button id="pc-pause">Ⅱ Pauza</button><label for="video-adapter">Video</label><select id="video-adapter"><option value="cga">CGA</option><option value="hercules" selected>Hercules · amber</option></select><button id="video-text-demo" class="primary">INT 10h · text demo</button><button id="video-cga-demo">CGA · 320×200</button><button id="video-herc-demo">Hercules · 720×348</button><button id="video-render">Obnovit obraz</button><button id="boot" class="primary">Boot ROM</button><button id="pm">286 Protected Mode demo</button><button id="cpu-demo">ModR/M + REP demo</button><button id="alu-demo">ALU / SHIFT demo</button><button id="idt-demo">286 IDT demo</button><button id="de-demo">#DE · dělení nulou</button><button id="br-demo">286 #BR · BOUND</button><button id="bcd-demo">8086 BCD demo</button><button id="irq10-demo">286 IRQ10 / 2× PIC</button><button id="pit">PIT → IRQ0</button></div>
 <section class="panel" aria-label="Grafická karta a obrazovka">
 <h2>Emulovaný monitor · přímý obraz z VRAM</h2>
 <p class="muted" id="video-status">Hercules amber text 80×25 · standardní RAM/video prostor je oddělen</p>
-<div id="video-shell" class="screen-shell hercules"><canvas id="video-screen" width="640" height="200" aria-label="CGA nebo Hercules obrazovka"></canvas></div>
+<div id="video-shell" class="screen-shell hercules" tabindex="0" role="application" aria-label="Hercules monitor. Klikněte pro ovládání klávesnicí DOSu."><canvas id="video-screen" width="640" height="200" aria-label="CGA nebo Hercules obrazovka"></canvas></div>
+<div class="actions"><button id="pc-key-focus">⌨ Klávesnice → DOS</button><label for="pc-key-text">Příkaz / text</label><input id="pc-key-text" type="text" placeholder="DEBUG, DIR, R, A 100…" style="flex:1;min-width:170px"><button id="pc-key-send">Odeslat + ENTER</button></div><p id="pc-boot-progress" class="muted" role="status">Připravuji FreeDOS 720 KB + DEBUG…</p>
 <p class="muted">Režimy CGA 0–6, Hercules text a bitmapový HGC. Hercules používá jantarový monitor skin s jemným phosphor fade/glow efektem. Textové glyfy kreslí prohlížeč (zatím bez originálního 8×8/9×14 ROM fontu). Emulace není cycle-accurate; retrace signál je zjednodušený.</p>
 </section>
 <section class="panel" id="pc-floppy" aria-label="Disketové mechaniky">
@@ -32,7 +33,7 @@
 <section class="panel"><h2>Paměť · byte view</h2><div class="split"><label for="address">Fyzická adresa hex</label><input id="address" value="F0100" maxlength="6" size="9" aria-label="Memory address"><button id="showmemory">Zobrazit</button></div><pre class="memory" id="memory"></pre></section>
 <section class="panel"><h2>Protokol skutečných instrukcí</h2><pre class="trace" id="trace"></pre></section>
 <section class="panel wide"><h2>Testovací kontrolní body</h2><div class="split"><button id="selftest">Spustit diagnostiku</button><span id="testresult" class="muted">Připraveno</span></div><p class="muted">Diagnostika provede boot XT, boot AT, test 286 GDT/LMSW, ModR/M + REP, ALU/SHIFT, BCD, #DE/#BR, AT IRQ10 a hranici 1 MiB. Každý test používá přímo implementovaný CPU, ne mock.</p></section>
-</div><footer>Neznámý opcode vyvolá CPUFault; nevydává se za úspěšnou emulaci. Binární programy z dokumentů se nikdy nespouštějí automaticky. Fáze 1 uzavřena jako otestovaný základ; Gate 2: video a FDD demo prošly; FreeDOS boot stále čeká.</footer>
+</div><footer>Neznámý opcode vyvolá CPUFault; nevydává se za úspěšnou emulaci. Binární programy z dokumentů se nikdy nespouštějí automaticky. Fáze 2: XT/AT FreeDOS 1.4 boot, FAT12 DIR/COPY/DEL a XT DEBUG R/A/U/G/Q testováno. Dodaný DEBUG.COM na AT při 386 CPU detekci vykazuje #UD (66h); 286 nepředstírá 386. Přímo file:// desktop test doporučen.</footer>
 </main>
 <script id="mdjs-state-worker" type="text/plain">
 self.onmessage = function(event){
@@ -51,6 +52,7 @@ self.onmessage = function(event){
 const {PCMachine}=window.MDPC_MACHINE,{R,S}=window.MDPC_CPU, runtime=window.MDUltraRuntime;
 const el=id=>document.getElementById(id),fmt=(n,w=4)=>((n>>>0).toString(16).toUpperCase().padStart(w,'0'));
 let machine=new PCMachine('xt',{videoAdapter:'hercules'});let messages=['PC Lab initialized. XT + Hercules amber + embedded FreeDOS/DEBUG A:.'];
+let running=false,frameId=0,lastVideoRefresh=0,autoStopAtPrompt=false;const inputQueue=[];
 const trace=s=>{messages.push(s);if(messages.length>160)messages.shift();};
 function refresh(){const c=machine.cpu,state=c.snapshot();
  const regs=['AX','BX','CX','DX','SP','BP','SI','DI'];const seg=['ES','CS','SS','DS'];
@@ -67,7 +69,7 @@ function drawMemory(){const raw=el('address').value.trim();if(!/^[0-9a-fA-F]{1,6
  let a=parseInt(raw,16),out=[];for(let row=0;row<12;row++){const bytes=[];for(let i=0;i<16;i++)bytes.push(fmt(machine.read8(a+i),2));out.push(fmt(a,6)+': '+bytes.join(' '));a+=16;}el('memory').textContent=out.join('\n');}
 function safe(task){try{task();}catch(e){trace(`ERROR [${e.name}]: ${e.message}`);}refresh();}
 function mountEmbeddedBootDisk(notify=true){const payload=window.MDPC_EMBEDDED&&window.MDPC_EMBEDDED.freedos720kDebug;if(!payload)return false;const bytes=runtime.base64ToBytes(payload,737280);const g=machine.mountDisk(0,bytes,'x86BOOT-720K-DEBUG.img');if(notify){el('fdd-status').textContent=`A: mounted embedded ${g.type} (${g.cylinders}×${g.heads}×${g.sectors}) with DEBUG.COM`;trace(`A: embedded FreeDOS 720K + DEBUG mounted (${g.type})`);}return true;}
-function reboot(p){machine=new PCMachine(p,{videoAdapter:el('video-adapter').value});messages=[];trace(`${p.toUpperCase()} RESET · ${fmt(machine.cpu.s[S.CS])}:${fmt(machine.cpu.ip)} · hidden CS base ${fmt(machine.cpu.base[S.CS],6)}`);mountEmbeddedBootDisk(true);refresh();}
+function reboot(p){pauseCPU();machine=new PCMachine(p,{videoAdapter:el('video-adapter').value});messages=[];inputQueue.length=0;trace(`${p.toUpperCase()} RESET · ${fmt(machine.cpu.s[S.CS])}:${fmt(machine.cpu.ip)} · hidden CS base ${fmt(machine.cpu.base[S.CS],6)}`);mountEmbeddedBootDisk(true);refresh();}
 function cpuStep(){const c=machine.cpu,at=fmt(c.s[S.CS])+':'+fmt(c.ip),op=machine.read8(c.physical(S.CS,c.ip));const count=c.steps;c.step();trace(`${at} [${fmt(op,2)}] → ${fmt(c.s[S.CS])}:${fmt(c.ip)}  ${c.halted?'HALT':''}  #${count+1}`);}
 el('machine').addEventListener('change',e=>reboot(e.target.value));el('reset').addEventListener('click',()=>reboot(el('machine').value));
 el('step').addEventListener('click',()=>safe(cpuStep));el('boot').addEventListener('click',()=>safe(()=>{const result=machine.run(2000);trace(`BOOT ROM: ${result.executed} instructions · ${result.halted?'HALTED':'budget exhausted'} · AX=${fmt(machine.cpu.reg('AX'))}`);}));
@@ -230,6 +232,41 @@ el('video-cga-demo').addEventListener('click',()=>safe(videoCgaDemo));
 el('video-herc-demo').addEventListener('click',()=>safe(videoHercDemo));
 el('video-render').addEventListener('click',()=>safe(()=>trace('Video framebuffer repainted from mapped VRAM.')));
 
+// Cooperative guest CPU runner: bounded per animation frame, no compiler or server needed.
+function pauseCPU(){running=false;if(frameId)cancelAnimationFrame(frameId);frameId=0;}
+function lastTextLine(){const v=machine.video;if(v.isGraphics)return '';let text='';for(let row=24;row>=0;row--){let s='';for(let col=0;col<v.textCols;col++){let cell=v.readCell(row,col);s+=cell&&cell.char>=32?String.fromCharCode(cell.char):' ';}if(s.trim()){text=s.trim();break;}}return text;}
+function pumpKeyboard(){for(let i=0;i<16&&inputQueue.length;i++){if(!machine.queueBIOSKey(inputQueue[0]))break;inputQueue.shift();}}
+function cpuFrame(){if(!running)return;frameId=0;
+ try{
+  pumpKeyboard();const r=machine.run(45000);pumpKeyboard();
+  if(r.halted){pauseCPU();el('pc-boot-progress').textContent='CPU HLT · stroj pozastaven';refresh();return;}
+  const line=lastTextLine();
+  if(autoStopAtPrompt&&((/^A:\\>\s*$/.test(line))||line==='-')){
+   autoStopAtPrompt=false;pauseCPU();el('pc-boot-progress').textContent='DOS/DEBUG připraven · '+line+' · Klikni do monitoru a piš.';refresh();return;
+  }
+  const now=performance.now();if(now-lastVideoRefresh>110){lastVideoRefresh=now;refresh();el('pc-boot-progress').textContent=`CPU běží · ${machine.cpu.steps.toLocaleString('cs-CZ')} instrukcí · ${machine.bios.get32(0x46c)} BIOS ticků`}
+ }catch(e){pauseCPU();trace('GUEST ERROR: '+e.message);el('pc-boot-progress').textContent='Emulátor zastaven: '+e.message;refresh();return;}
+ frameId=requestAnimationFrame(cpuFrame);
+}
+function startCPU(stopAtPrompt=false){if(stopAtPrompt)autoStopAtPrompt=true;if(running)return;running=true;frameId=requestAnimationFrame(cpuFrame);}
+function startFreeDOS(){pauseCPU();const b=machine.bootFloppy(0);autoStopAtPrompt=true;el('pc-boot-progress').textContent='Boot FreeDOS z A: · '+fmt(b.cs)+':'+fmt(b.ip);startCPU(true);}
+const KEY_SCANS={Enter:0x1c,Backspace:0x0e,Tab:0x0f,Escape:0x01,Space:0x39,Digit1:0x02,Digit2:0x03,Digit3:0x04,Digit4:0x05,Digit5:0x06,Digit6:0x07,Digit7:0x08,Digit8:0x09,Digit9:0x0a,Digit0:0x0b,Minus:0x0c,Equal:0x0d,BracketLeft:0x1a,BracketRight:0x1b,Backslash:0x2b,Semicolon:0x27,Quote:0x28,Backquote:0x29,Comma:0x33,Period:0x34,Slash:0x35,Space:0x39};
+'QWERTYUIOP'.split('').forEach((x,i)=>KEY_SCANS['Key'+x]=[0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19][i]);
+'ASDFGHJKL'.split('').forEach((x,i)=>KEY_SCANS['Key'+x]=[0x1e,0x1f,0x20,0x21,0x22,0x23,0x24,0x25,0x26][i]);
+'ZXCVBNM'.split('').forEach((x,i)=>KEY_SCANS['Key'+x]=[0x2c,0x2d,0x2e,0x2f,0x30,0x31,0x32][i]);
+function queueText(text){for(const ch of text){const ascii=ch==='\n'?13:ch.charCodeAt(0),code=ch==='\n'?'Enter':('Key'+ch.toUpperCase());if(ascii>=0&&ascii<=127)inputQueue.push(((KEY_SCANS[code]||0)<<8)|ascii);}startCPU(true);}
+el('pc-run').addEventListener('click',()=>startCPU());
+el('pc-pause').addEventListener('click',()=>{pauseCPU();el('pc-boot-progress').textContent='CPU pozastaven · '+machine.cpu.steps.toLocaleString('cs-CZ')+' instrukcí';});
+el('pc-key-focus').addEventListener('click',()=>el('video-shell').focus());
+el('video-shell').addEventListener('click',()=>el('video-shell').focus());
+el('video-shell').addEventListener('keydown',e=>{
+ let c=(e.key==='Enter'?13:e.key==='Backspace'?8:e.key==='Tab'?9:e.key==='Escape'?27:e.key.length===1?e.key.charCodeAt(0):-1);
+ if(c<0||c>127||e.ctrlKey||e.metaKey)return;
+ const scan=KEY_SCANS[e.code]||0;inputQueue.push((scan<<8)|c);e.preventDefault();startCPU(true);
+});
+el('pc-key-send').addEventListener('click',()=>{queueText(el('pc-key-text').value+'\n');el('pc-key-text').value='';});
+el('pc-key-text').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();el('pc-key-send').click();}});
+
 // FDD workflow: user supplies raw sectors; nothing is fetched or executed automatically.
 const driveIndex=()=>Number(el('fdd-drive').value);
 function fddStatus(msg){el('fdd-status').textContent=msg;trace(msg);refresh();}
@@ -256,15 +293,14 @@ el('fdd-create').addEventListener('click',()=>safe(()=>{
  fddStatus('A: embedded 720 KiB FreeDOS + DEBUG restored.');
 }));
 el('fdd-boot').addEventListener('click',()=>safe(()=>{
- const boot=machine.bootFloppy(0),r=machine.run(600);
- fddStatus(`A: guest boot ${fmt(boot.cs)}:${fmt(boot.ip)} → ${r.halted?'HALT':'RUNNING'} after ${r.executed} instructions; BIOS calls: ${machine.biosCalls.map(n=>'INT '+fmt(n,2)).join(',')}`);
+ const boot=machine.bootFloppy(0);trace(`A: FreeDOS boot ${fmt(boot.cs)}:${fmt(boot.ip)}`);startCPU(true);
 }));
 el('fdd-eject').addEventListener('click',()=>safe(()=>{const d=driveIndex();machine.fdd.eject(d);fddStatus(`${d?'B':'A'}: ejected`);}));
 
 const PC_SAVE_KEY='mdjs-ultra:pc:phase1';
 const status=(msg)=>{el('pc-storage-status').textContent=msg;trace(msg);refresh();};
 function currentSnapshot(){return runtime.wrapState('pc',machine.exportState(runtime));}
-function importPCSnapshot(doc){const data=runtime.parseState(doc,'pc');const candidate=PCMachine.fromState(data,runtime);
+function importPCSnapshot(doc){pauseCPU();const data=runtime.parseState(doc,'pc');const candidate=PCMachine.fromState(data,runtime);
  machine=candidate;el('machine').value=machine.profile;el('video-adapter').value=machine.video.adapter;messages=['Snapshot restored: '+machine.profile.toUpperCase()];refresh();return machine;
 }
 el('pc-save-local').addEventListener('click',()=>safe(()=>{
@@ -285,7 +321,7 @@ el('pc-json-file').addEventListener('change',async(e)=>{
  importPCSnapshot(json);status('PC: JSON snapshot úspěšně obnoven.');}catch(err){status('PC: Import odmítnut: '+err.message);}
 });
 el('pc-import-paste').addEventListener('click',()=>safe(()=>{importPCSnapshot(el('pc-json-paste').value);status('PC: stav obnoven z vloženého JSON.');}));
-window.__mdPCUniversal={get machine(){return machine;},currentSnapshot,importPCSnapshot};
-reboot('xt');
+window.__mdPCUniversal={get machine(){return machine;},currentSnapshot,importPCSnapshot,startFreeDOS,startCPU,pauseCPU,queueText,get running(){return running;}};
+reboot('xt');startFreeDOS();
 })();
 </script></body></html>

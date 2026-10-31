@@ -1,6 +1,6 @@
 {
   "name": "mdjs-ultra",
-  "version": "0.7.8-phase2-video",
+  "version": "0.8.0-phase2-freedos",
   "private": true,
   "description": "MD.js Ultra: standalone Markdown, Mermaid, Charts and optional ZX, Blockly/Arduino, PC (XT and 286) labs",
   "scripts": {
@@ -21,7 +21,7 @@
     "test:pc:phase1": "node --test optional/pc/tests/*.test.cjs",
     "test:pc:phase2:video": "node --test optional/pc/tests/video-phase2-v078.test.cjs",
     "test:pc:phase2:floppy": "node --test optional/pc/tests/floppy-phase2-v078.test.cjs",
-    "test:pc:phase2:browser": "python3 optional/pc/tests/test_video_browser.py && python3 optional/pc/tests/test_floppy_browser.py",
+    "test:pc:phase2:browser": "python3 optional/pc/tests/test_video_browser.py && python3 optional/pc/tests/test_floppy_browser.py && python3 optional/pc/tests/test_freedos_browser.py",
     "test:pc:browser": "python3 optional/pc/tests/test_browser.py",
     "test:runtime:browser": "python3 optional/pc/tests/test_universal_browser.py && python3 zx/tests/e2e/test_universal_zx_browser.py",
     "test:pc": "npm run test:pc:phase1 && npm run test:pc:browser",

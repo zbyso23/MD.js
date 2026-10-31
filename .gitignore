@@ -8,3 +8,8 @@ zx/roms/*.json
 
 # Personal user-supplied ZX ROM (never commit)
 zx/ZX-ROM-embedded.js
+
+# Personal user-supplied FreeDOS / DEBUG binary assets (not part of the Git source distribution)
+optional/pc/PC-EmbeddedAssets.js
+optional/pc/x86BOOT*.img
+optional/pc/DEBUG.COM

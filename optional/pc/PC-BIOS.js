@@ -94,8 +94,8 @@ class PCBios {
     const fn=this.ah(cpu);
     if(fn===0x00||fn===0x10){
      const code=this.peekKey(true);
-     if(code===null)throw new CPUFault('INT 16h keyboard wait: asynchronous idle callback not implemented');
-     cpu.r[R.AX]=code;
+     if(code===null){this.m.waitingForKey=true;return true;}
+     this.m.waitingForKey=false;cpu.r[R.AX]=code;
     }else if(fn===0x01||fn===0x11){
      const code=this.peekKey(false);this.zf(cpu,code===null);if(code!==null)cpu.r[R.AX]=code;
     }else if(fn===0x02){cpu.put8(0,this.m.read8(BDA.KB_SHIFT));}

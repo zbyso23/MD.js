@@ -1,3 +1,20 @@
+# MD.js Ultra v0.8.0 — Phase 2 FreeDOS & DEBUG release (23 October 2026)
+
+**New milestone:** Boot real FreeDOS 1.4 from an embedded 720 KiB FAT12 floppy on XT and 286 AT, with an amber Hercules CRT and actual executable DEBUG.COM on XT.
+
+- Open `optional/pc/index.html` directly. The personal build includes `PC-EmbeddedAssets.js`, automatically mounts drive A: and boots FreeDOS without a server.
+- Click the Hercules monitor or `Klávesnice → DOS` and type using the host keyboard. Or enter DOS commands in the text input and click `Odeslat + ENTER`.
+- XT: `DEBUG`, then `R`, `A 100`, `U 100`, `G`, `Q` were executed by the real x86 guest interpreter.
+- XT/AT: `DIR`, `COPY`, `DEL` and real FAT12 writes pass. `DEBUG.COM` on AT currently fails its CPU-detection attempt at 386 opcode 66h, correctly invalid on 286. See report; do not treat as full 286 application compatibility.
+- A: is embedded 720 KiB; 1.44 MiB images remain import-only (File API, not Base64-embedded).
+- Original 720 KiB image preserved (`x86BOOT-720K-DEBUG.img`); the dev variant bypasses the installer menu by modifying only FDCONFIG.SYS and FDAUTO.BAT and adds the user-supplied DEBUG.COM.
+- Pure plain JavaScript; no build step, WASM, or 386 processor; strict ≤1 MiB installed system RAM.
+- The personal build contains user-supplied ROM and DOS image: check redistribution rights before making this exact package public.
+
+See `PC-PHASE2-FREEDOS-DEBUG-GATE-v0.8.0.md` for tests, scope and limitations.
+
+---
+
 # MD.js Ultra v0.7.8 — Phase 2 CGA/Hercules + FDD milestone
 
 **Latest release:** video and floppy hardware now work as native, readable JavaScript in the optional PC Workbench. Both XT and AT execute BIOS `INT 10h` text/graphics and can load/execute a real guest boot sector from a raw floppy image via `INT 13h` and `INT 19h`. **FreeDOS has NOT been booted yet; Gate 2 is open.**

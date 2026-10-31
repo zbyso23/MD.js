@@ -9,7 +9,7 @@ ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'pc-phase1-browser.png'
 async def main():
     page_src=(ROOT/'index.html').read_text()
-    for name in ('PC-Core.js','PC-Video.js','PC-BIOS.js','PC-Floppy.js','PC-Machine.js'):
+    for name in ('PC-Core.js','PC-Video.js','PC-BIOS.js','PC-Floppy.js','PC-Machine.js','PC-EmbeddedAssets.js'):
         body=(ROOT/name).read_text().replace('</script','<\\/script')
         page_src=page_src.replace(f'<script src="{name}"></script>',f'<script>{body}</script>')
     async with async_playwright() as p:
@@ -17,9 +17,12 @@ async def main():
         page=await browser.new_page(viewport={'width':1300,'height':950},device_scale_factor=1)
         errors=[]
         page.on('pageerror',lambda e: errors.append(str(e)))
+        page_src=page_src.replace('<script src="../../MD-Runtime.js"></script>', f'<script>{(ROOT.parents[1]/"MD-Runtime.js").read_text()}</script>')
         await page.goto('about:blank')
         await page.set_content(page_src,wait_until='load')
         assert 'PC Lab initialized' in await page.locator('#trace').inner_text() or 'XT RESET' in await page.locator('#trace').inner_text()
+        await page.locator('#pc-pause').click()
+        await page.locator('#reset').click()
         await page.locator('#boot').click()
         assert 'BOOT ROM: 17 instructions' in await page.locator('#trace').inner_text()
         assert '0280' in await page.locator('#regs').inner_text()
