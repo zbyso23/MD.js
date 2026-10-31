@@ -1,6 +1,6 @@
 {
   "name": "mdjs-ultra",
-  "version": "0.8.1-ux-stabilization",
+  "version": "0.8.2-ux-shell",
   "private": true,
   "description": "MD.js Ultra: standalone Markdown, Mermaid, Charts and optional ZX, Blockly/Arduino, PC (XT and 286) labs",
   "scripts": {
@@ -26,7 +26,8 @@
     "test:runtime:browser": "python3 optional/pc/tests/test_universal_browser.py && python3 zx/tests/e2e/test_universal_zx_browser.py",
     "test:pc": "npm run test:pc:phase1 && npm run test:pc:browser",
     "test:zx:personal-rom": "python3 zx/tests/e2e/test_embedded_rom_v077.py",
-    "test:ux:browser": "python3 optional/blockly/tests/test_dnd_browser.py && python3 zx/tests/e2e/test_keyboard_ux_browser.py && python3 optional/pc/tests/test_video_browser.py"
+    "test:ux:browser": "python3 optional/blockly/tests/test_dnd_browser.py && python3 zx/tests/e2e/test_keyboard_ux_browser.py && python3 optional/pc/tests/test_video_browser.py",
+    "test:ux:shell": "python3 test/e2e/test_ux_shell_v082.py"
   },
   "dependencies": {},
   "devDependencies": {}

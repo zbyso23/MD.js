@@ -1,3 +1,5 @@
+> **Novinka v0.8.2:** UX Shell, přesné měřítko HGC/CGA a vysouvací panely. Viz [UX-SHELL-RELEASE-v0.8.2.md](UX-SHELL-RELEASE-v0.8.2.md).
+
 # MD.js Ultra v0.8.0 — Phase 2 FreeDOS & DEBUG release (23 October 2026)
 
 **New milestone:** Boot real FreeDOS 1.4 from an embedded 720 KiB FAT12 floppy on XT and 286 AT, with an amber Hercules CRT and actual executable DEBUG.COM on XT.

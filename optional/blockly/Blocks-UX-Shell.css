@@ -1,0 +1,20 @@
+
+/* Blocks Lite studio: large drag/drop field, code and board as slide-over drawers. */
+body>header{padding:14px clamp(14px,2vw,30px);gap:12px}header h1{font-size:23px}header p{font-size:12px}body>main{display:block;max-width:none;margin:auto;padding:8px clamp(10px,2vw,28px)}
+body>main>.workspace{min-height:calc(100dvh - 225px);padding:clamp(10px,1.5vw,20px)}
+body>main>.workspace .editor-grid{grid-template-columns:minmax(172px,235px) minmax(0,1fr);min-height:calc(100dvh - 380px)}
+body>main>.workspace #blocks{min-height:560px;max-height:none}
+body>main>.right{display:none}.ux-block-workspace-shell{display:block}.ux-block-workspace-shell .ux-commandbar{margin:0 0 11px}
+.ux-block-drawer.ux-drawer{--ux-panel:var(--panel);width:min(550px,93vw);background:var(--panel);color:var(--text);border-color:var(--border)}
+.ux-block-drawer .ux-drawer-header{background:var(--panel);border-bottom:1px solid var(--border)}
+.ux-block-drawer .ux-drawer-header h2{color:var(--text)}.ux-block-drawer .ux-close{background:var(--bg);color:var(--text);border-color:var(--border)}
+.ux-block-drawer .ux-drawer-body{padding:12px 15px;color:var(--text)}
+.ux-block-drawer .code-panel,.ux-block-drawer .sim-panel{box-shadow:none;border:0;padding:0;background:transparent}
+.ux-block-drawer .code{min-height:380px;max-height:min(60dvh,700px)}
+.ux-block-drawer .devices{max-height:none}.ux-block-drawer .console{max-height:280px}
+body.dark .ux-block-drawer{background:var(--panel);color:var(--text)}
+.ux-block-toolbox-hidden .editor-grid{grid-template-columns:minmax(0,1fr)!important}
+.ux-block-toolbox-hidden #toolbox{display:none}
+@media(max-width:850px){body>main>.workspace .editor-grid{grid-template-columns:minmax(100px,180px) minmax(0,1fr)}}
+@media(max-width:560px){header h1{font-size:19px}.header-actions{gap:4px}body>main>.workspace .editor-grid{grid-template-columns:90px minmax(0,1fr)}.ux-block-drawer.ux-drawer{top:auto;height:min(85dvh,820px);max-height:85dvh;width:100%;border-radius:18px 18px 0 0}}
+@media(prefers-reduced-motion:reduce){.ux-block-drawer.ux-drawer{transition:none}}

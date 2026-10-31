@@ -1,0 +1,25 @@
+
+/* ZX v0.8.2 fullscreen-like play field and slide-over tools */
+body:has(#zx-here) main{max-width:1450px;width:min(96vw,1450px);margin:0 auto}
+#zx-here{min-height:min(75dvh,700px);position:relative}
+#zx-here .mdzx-shell{max-width:1180px;margin:10px auto 24px;border:1px solid #365367;box-shadow:0 20px 65px #0005}
+#zx-here .mdzx-embedded{padding:clamp(12px,2vw,28px)}
+#zx-here .mdzx-screen-frame{max-width:min(960px,95%)}
+#zx-here .mdzx-foot,#zx-here .mdzx-virtual-keyboard{max-width:900px}
+#zx-here .mdzx-workbench.ux-drawer{display:flex;position:fixed;min-width:260px;max-width:min(520px,93vw);z-index:2147483642;color:#eaf4ff;overflow:hidden;margin:0;border-radius:0}
+#zx-here .mdzx-workbench.ux-drawer:not(.ux-active){visibility:hidden}
+#zx-here .mdzx-workbench .ux-drawer-body{display:block;overflow-y:auto}
+#zx-here .mdzx-workbench .mdzx-tools{display:flex;gap:7px}
+#zx-here .mdzx-workbench .mdzx-regs,#zx-here .mdzx-workbench .mdzx-memory{white-space:pre-wrap}
+#zx-here .mdzx-screen-frame:focus-within{outline:2px solid #64c7ad}
+#zx-here .zx-ux-keyrow{display:flex;align-items:center;gap:8px;padding:0 16px;max-width:900px;margin:auto}
+#zx-here .zx-ux-keyrow .mdzx-button{min-height:38px}
+#zx-here .zx-ux-display{font-size:12px;color:#bdd8e5}
+#zx-here .ux-commandbar{max-width:1180px;margin:0 auto 8px}
+#zx-here .ux-commandbar .ux-kicker{display:block}
+@media(max-width:740px){#zx-here .mdzx-screen-frame{max-width:100%}#zx-here .mdzx-shell{max-width:100%}#zx-here .mdzx-workbench.ux-drawer{max-width:100%;height:min(78dvh,770px);min-height:0;top:auto;border-radius:18px 18px 0 0}#zx-here .mdzx-embedded{padding:8px}}
+/* Fullscreen is native browser fullscreen where available; tools still slide above screen. */
+#zx-here .mdzx-shell:fullscreen,#zx-here .mdzx-shell.mdzx-full-fallback{display:block!important;overflow:auto!important;max-height:100dvh}
+#zx-here .mdzx-shell:fullscreen .mdzx-screen-frame,#zx-here .mdzx-shell.mdzx-full-fallback .mdzx-screen-frame{width:min(960px,98%);margin:20px auto;max-width:100%}
+
+@media(min-width:741px){#zx-here .mdzx-screen-frame{max-width:min(880px,calc(70dvh * 4 / 3))}}
