@@ -11,6 +11,7 @@ class PCIDE {
  get capacity(){return this.image?this.image.length/SECTOR:0;}
  get geometry(){return {heads:4,sectors:16,cylinders:Math.max(1,Math.ceil(this.capacity/64))};}
  mount(bytes,name='IDE HDD'){
+  if(bytes instanceof ArrayBuffer)bytes=new Uint8Array(bytes);
   if(!(bytes instanceof Uint8Array)||bytes.length===0||bytes.length%SECTOR||bytes.length>MAX)throw Error('IDE image must contain 1..65536 sectors of 512 bytes (max 32 MiB)');
   this.image=new Uint8Array(bytes);this.overlay.clear();this.name=String(name).slice(0,120);this.reset();return this.geometry;
  }
@@ -18,6 +19,7 @@ class PCIDE {
  sectorAt(lba){if(!Number.isSafeInteger(lba)||lba<0||lba>=this.capacity)throw new RangeError('IDE LBA outside mounted image');return this.overlay.get(lba)||this.image.subarray(lba*SECTOR,(lba+1)*SECTOR);}
  readSector(lba){return new Uint8Array(this.sectorAt(lba));}
  writeSector(lba,bytes){if(!(bytes instanceof Uint8Array)||bytes.length!==SECTOR)throw Error('IDE sector length must be 512');this.sectorAt(lba);this.overlay.set(lba,new Uint8Array(bytes));}
+ exportArrayBuffer(){return this.exportImage().buffer;}
  exportImage(){if(!this.image)throw Error('No IDE media');const bytes=new Uint8Array(this.image);for(const [lba,sector] of this.overlay)bytes.set(sector,lba*SECTOR);return bytes;}
  irq(){this.irqPending=true;if(!(this.control&2)&&this.machine.picSlave)this.machine.requestIRQ(14);}
  currentLBA(){

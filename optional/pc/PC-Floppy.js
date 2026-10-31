@@ -16,12 +16,15 @@ class FDD765 {
  constructor(m){this.m=m;this.disks=[null,null];this.dor=0x0c;this.status=0;this.cmd=[];this.expected=0;this.result=[];this.cyl=[0,0];this.lastInterrupt={st0:0x80,cyl:0};}
  mount(drive,bytes,name='floppy.img'){
   if(![0,1].includes(drive))throw new RangeError('Only floppy A: and B:');
-  if(!(bytes instanceof Uint8Array))throw new TypeError('Floppy image must be Uint8Array');
+  if(bytes instanceof ArrayBuffer)bytes=new Uint8Array(bytes);
+  if(!(bytes instanceof Uint8Array))throw new TypeError('Floppy image must be Uint8Array or ArrayBuffer');
   const g=GEOMETRIES.find(x=>x.bytes===bytes.length);if(!g)throw new RangeError('Unsupported 160K/180K/320K/360K/720K/1.2M/1.44M floppy image size');
   this.disks[drive]={data:new Uint8Array(bytes),geometry:{...g},name:String(name).slice(0,128)};
   this.updateEquipment();
   return g;
  }
+ exportImage(drive){if(![0,1].includes(drive)||!this.disks[drive])throw new Error('No floppy media in selected drive');return new Uint8Array(this.disks[drive].data);}
+ exportArrayBuffer(drive){return this.exportImage(drive).buffer;}
  eject(drive){if(![0,1].includes(drive))throw RangeError('Drive');this.disks[drive]=null;this.updateEquipment();}
  updateEquipment(){const count=this.disks.filter(Boolean).length;this.m.cmos[0x10]=((this.disks[0]?4:0)<<4)|(this.disks[1]?4:0);if(this.m.bios){const a=0x410,old=this.m.read16Physical(a),updated=(old&~0xc1)|(count?1|((count-1)<<6):0);this.m.write16Physical(a,updated);}}
  lba(drive,cyl,head,sec){

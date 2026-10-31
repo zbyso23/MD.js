@@ -33,17 +33,17 @@
 </section>
 <section class="panel" id="pc-floppy" aria-label="Disketové mechaniky">
 <h2>FDD A: / B: · NEC 765 + BIOS INT 13h</h2>
-<div class="actions"><label for="fdd-drive">Mechanika</label><select id="fdd-drive"><option value="0">A:</option><option value="1">B:</option></select><button id="fdd-mount">↑ Připojit .IMG / .IMA</button><input id="fdd-file" type="file" accept=".img,.ima,.dsk,application/octet-stream" hidden><button id="fdd-create">Obnovit vestavěnou 720K A:</button><button id="fdd-boot" class="primary">Boot A: FreeDOS + DEBUG</button><button id="fdd-eject">Vysunout</button></div>
+<div class="actions"><label for="fdd-drive">Mechanika</label><select id="fdd-drive"><option value="0">A:</option><option value="1">B:</option></select><button id="fdd-mount">↑ Připojit .IMG / .IMA</button><input id="fdd-file" type="file" accept=".img,.ima,.dsk,application/octet-stream" hidden><button id="fdd-create">Obnovit vestavěnou 720K A:</button><button id="fdd-boot" class="primary">Boot A: FreeDOS + DEBUG</button><button id="fdd-eject">Vysunout</button><label for="fdd-format">Nový obraz</label><select id="fdd-format"><option value="720K">720 KiB FAT12</option><option value="1.44M">1,44 MiB FAT12</option><option value="360K">360 KiB FAT12</option><option value="1.2M">1,2 MiB FAT12</option><option value="160K">160 KiB FAT12</option><option value="180K">180 KiB FAT12</option><option value="320K">320 KiB FAT12</option></select><button id="fdd-new">+ Nová disketa</button><button id="fdd-export">↓ Uložit disketu IMG</button></div>
 <details><summary>Ruční vložení Base64 disketového obrazu</summary><textarea id="fdd-base64" rows="3" style="width:100%;background:#152c3b;color:#fff;border:1px solid #426276;border-radius:8px" placeholder="Base64 raw diskette image (.img)"></textarea><button id="fdd-paste">Připojit Base64</button></details>
 <p class="muted"><strong>🌀 MANDEL.COM:</strong> pro 80287XL výukové preview přepni na <strong>AT/286 + VGA</strong>, zaškrtni <strong>80287XL</strong> a do FreeDOS promptu napiš <code>MANDEL</code>. Po vykreslení se klávesou vrátíš do DOSu. Výchozí rychlý výpočet používá binary64; experimentální 80bitový aritmetický režim je volitelný a může být výrazně pomalejší.</p>
 <p class="muted"><strong>🎵 AdLib DOS melodie:</strong> zapni PC zvuk a napiš v DOSu <code>TUNE</code>. Program má 137 bajtů, běží na XT i AT/286, nic se nespouští automaticky.</p>
-<p class="muted" id="fdd-status">Po resetu se do A: automaticky připojí vestavěná 720 KiB FreeDOS disketa s DEBUG.COM a TUNE.COM. Můžeš ji přepsat vlastní .IMG/.IMA nebo zase obnovit.</p>
+<p class="muted" id="fdd-status">Při prvním spuštění se do A: připojí vestavěná 720 KiB FreeDOS disketa s DEBUG.COM a TUNE.COM. Můžeš ji přepsat vlastní .IMG/.IMA nebo zase obnovit.</p>
 <p class="muted">Podporované RAW obrazy 160/180/320/360/720 KiB, 1,2/1,44 MiB. INT 13h CHS čtení, zápis, ověření a geometrie; omezené 765 porty + DMA2. Vestavěný osobní obraz používá 720 KiB FreeDOS a obsahuje DEBUG.COM (~22 KiB) a TUNE.COM (137 bajtů, sedmitónová melodie přes skutečné OPL2 porty).</p>
 </section>
 <section class="panel" id="pc-ide" aria-label="AT IDE hard disk">
 <h2>ATA IDE (AT/286) — PIO, C: disková laboratoř</h2>
-<p class="muted">Připoj vlastní sektorový RAW HDD obraz. Emulátor načte pracovní kopii a zapisuje do oddělené vrstvy; původní soubor se nikdy přímo nemění. Pouze AT/286. Zatím neimplementováno automatické připojení FAT souborového systému jako C: do FreeDOS.</p>
-<div class="actions"><button id="ide-mount">↑ Připojit HDD IMG</button><input id="ide-file" type="file" accept=".img,.ima,.bin,application/octet-stream" hidden><button id="ide-export">↓ Export změněného IMG</button><button id="ide-eject">Vysunout IDE</button></div>
+<p class="muted">Připoj vlastní sektorový RAW HDD obraz. Emulátor načte pracovní kopii a zapisuje do oddělené vrstvy; původní soubor se nikdy přímo nemění. Pouze AT/286. Nový HDD je v paměti ArrayBuffer, obsahuje MBR a prázdný FAT16 oddíl. Neobsahuje DOS systémové soubory, proto se z něj nebootuje. Po resetu AT/286 jej dodaný FreeDOS umí detekovat jako datové C: (ověřeno COPY a DIR).</p>
+<div class="actions"><button id="ide-mount">↑ Připojit HDD IMG</button><input id="ide-file" type="file" accept=".img,.ima,.bin,application/octet-stream" hidden><button id="ide-export">↓ Export změněného IMG</button><button id="ide-eject">Vysunout IDE</button><label for="ide-size">Nový disk</label><select id="ide-size"><option value="8">8 MiB</option><option value="16">16 MiB</option><option value="32">32 MiB</option></select><button id="ide-new">+ Nový FAT16 HDD</button></div>
 <p class="muted" id="ide-status" role="status">Bez HDD obrazu · pro IDE zvol AT/286.</p>
 </section>
 <section class="panel" id="pc-persistence" aria-label="Přenosné snapshoty">
@@ -70,7 +70,7 @@ self.onmessage = function(event){
 <script src="PC-Core.js"></script>
 <script src="PC-Video.js"></script><script src="PC-VGA.js"></script>
 <script src="PC-BIOS.js"></script>
-<script src="PC-Floppy.js"></script><script src="PC-IDE.js"></script><script src="PC-FPU287.js"></script>
+<script src="PC-Floppy.js"></script><script src="PC-IDE.js"></script><script src="PC-Disk-Images.js"></script><script src="PC-FPU287.js"></script>
 <script src="PC-Audio.js"></script>
 <script src="PC-OPL2.js"></script>
 <script src="PC-SB2.js"></script>
@@ -81,8 +81,8 @@ self.onmessage = function(event){
 (()=>{'use strict';
 const {PCMachine}=window.MDPC_MACHINE,{R,S}=window.MDPC_CPU, runtime=window.MDUltraRuntime;
 const el=id=>document.getElementById(id),fmt=(n,w=4)=>((n>>>0).toString(16).toUpperCase().padStart(w,'0'));
-const audioOutput=new window.MDPC_AUDIO_OUTPUT.PCWebAudioOutput();
-let machine=new PCMachine('xt',{videoAdapter:'hercules'});let retainedIDE=null;let messages=['PC Lab initialized. XT + Hercules amber + embedded FreeDOS/DEBUG A:.'];
+const audioOutput=new window.MDPC_AUDIO_OUTPUT.PCWebAudioOutput();const diskImages=window.MDPC_DISK_IMAGES;
+let machine=new PCMachine('xt',{videoAdapter:'hercules'});let retainedIDE=null,mediaInitialized=false;let messages=['PC Lab initialized. XT + Hercules amber + embedded FreeDOS/DEBUG A:.'];
 let running=false,frameId=0,lastVideoRefresh=0,autoStopAtPrompt=false;const inputQueue=[];
 const trace=s=>{messages.push(s);if(messages.length>160)messages.shift();};
 function refresh(){const c=machine.cpu,state=c.snapshot();
@@ -102,8 +102,24 @@ function drawMemory(){const raw=el('address').value.trim();if(!/^[0-9a-fA-F]{1,6
  let a=parseInt(raw,16),out=[];for(let row=0;row<12;row++){const bytes=[];for(let i=0;i<16;i++)bytes.push(fmt(machine.read8(a+i),2));out.push(fmt(a,6)+': '+bytes.join(' '));a+=16;}el('memory').textContent=out.join('\n');}
 function safe(task){try{task();}catch(e){trace(`ERROR [${e.name}]: ${e.message}`);}refresh();}
 function mountEmbeddedBootDisk(notify=true){const payload=window.MDPC_EMBEDDED&&window.MDPC_EMBEDDED.freedos720kDebug;if(!payload)return false;const bytes=runtime.base64ToBytes(payload,737280);const g=machine.mountDisk(0,bytes,'x86BOOT-720K-DEBUG.img');if(notify){el('fdd-status').textContent=`A: mounted embedded ${g.type} (${g.cylinders}×${g.heads}×${g.sectors}) with DEBUG.COM`;trace(`A: embedded FreeDOS 720K + DEBUG mounted (${g.type})`);}return true;}
-function reboot(p,bootDOS=false){el('fpu-enabled').disabled=p!=='at';el('fpu-clock').disabled=p!=='at';el('fpu-precision').disabled=p!=='at';if(p==='xt'&&el('video-adapter').value==='vga'){el('video-adapter').value='cga';trace('VGA je dostupná pouze na AT/286; XT přepnut na CGA.');}pauseCPU();autoStopAtPrompt=false;if(machine.ide&&machine.ide.image)retainedIDE={bytes:machine.ide.exportImage(),name:machine.ide.name};machine=new PCMachine(p,{videoAdapter:el('video-adapter').value,fpuEnabled:p==='at'&&el('fpu-enabled').checked,cpuHz:Number(el('fpu-clock').value),fpuPrecision:el('fpu-precision').value});if(machine.ide&&retainedIDE)machine.ide.mount(retainedIDE.bytes,retainedIDE.name);machine.audio.setCapture(audioOutput.enabled);messages=[];inputQueue.length=0;trace(`${p.toUpperCase()} RESET · ${fmt(machine.cpu.s[S.CS])}:${fmt(machine.cpu.ip)} · hidden CS base ${fmt(machine.cpu.base[S.CS],6)}`);mountEmbeddedBootDisk(true);el('pc-profile-note').textContent=p==='at'?'AT / 80286: FreeDOS a DEBUG.COM (reálné FLAGS CPU). Žádné instrukce 386 nejsou emulovány.':'XT: FreeDOS + DEBUG.COM pro assembler A, U, R, G, Q. Přepnutí profilu obnoví vestavěnou disketu.';refresh();if(bootDOS)startFreeDOS();}
-function cpuStep(){const c=machine.cpu,at=fmt(c.s[S.CS])+':'+fmt(c.ip),op=machine.read8(c.physical(S.CS,c.ip));const count=c.steps;c.step();trace(`${at} [${fmt(op,2)}] → ${fmt(c.s[S.CS])}:${fmt(c.ip)}  ${c.halted?'HALT':''}  #${count+1}`);}
+function reboot(p,bootDOS=false){
+ el('fpu-enabled').disabled=p!=='at';el('fpu-clock').disabled=p!=='at';el('fpu-precision').disabled=p!=='at';
+ if(p==='xt'&&el('video-adapter').value==='vga'){el('video-adapter').value='cga';trace('VGA je dostupná pouze na AT/286; XT přepnut na CGA.');}
+ pauseCPU();autoStopAtPrompt=false;
+ // Preserve the in-memory media across CPU resets, adapter changes and XT/AT switches.
+ // In particular NEVER silently remount the embedded image over a modified A:.
+ const retainedFDD=mediaInitialized?machine.fdd.disks.map((d,i)=>d?{bytes:machine.fdd.exportImage(i),name:d.name}:null):null;
+ if(machine.ide&&machine.ide.image)retainedIDE={bytes:machine.ide.exportImage(),name:machine.ide.name};
+ machine=new PCMachine(p,{videoAdapter:el('video-adapter').value,fpuEnabled:p==='at'&&el('fpu-enabled').checked,cpuHz:Number(el('fpu-clock').value),fpuPrecision:el('fpu-precision').value});
+ if(machine.ide&&retainedIDE)machine.ide.mount(retainedIDE.bytes,retainedIDE.name);
+ machine.audio.setCapture(audioOutput.enabled);messages=[];inputQueue.length=0;
+ trace(`${p.toUpperCase()} RESET · ${fmt(machine.cpu.s[S.CS])}:${fmt(machine.cpu.ip)} · hidden CS base ${fmt(machine.cpu.base[S.CS],6)}`);
+ if(retainedFDD){retainedFDD.forEach((d,i)=>{if(d)machine.mountDisk(i,d.bytes,d.name);});trace('FDD media preserved across reset (including empty/ejected drives).');}
+ else mountEmbeddedBootDisk(true);
+ mediaInitialized=true;
+ el('pc-profile-note').textContent=p==='at'?'AT / 80286: FreeDOS a DEBUG.COM; FDD média zachována při resetu.':'XT: FreeDOS + DEBUG.COM; FDD média zachována při resetu.';
+ refresh();if(bootDOS)startFreeDOS();
+}
 el('machine').addEventListener('change',e=>safe(()=>reboot(e.target.value,true)));el('fpu-enabled').addEventListener('change',()=>safe(()=>reboot(el('machine').value,true)));el('fpu-clock').addEventListener('change',()=>safe(()=>reboot(el('machine').value,true)));el('fpu-precision').addEventListener('change',()=>safe(()=>reboot(el('machine').value,true)));el('reset').addEventListener('click',()=>safe(()=>reboot(el('machine').value,true)));
 el('step').addEventListener('click',()=>safe(cpuStep));el('boot').addEventListener('click',()=>safe(()=>{const m=new PCMachine(machine.profile,{videoAdapter:machine.video.adapter}),result=m.run(2000);trace(`[ISOLATED] BOOT ROM: ${result.executed} instructions · ${result.halted?'HALTED':'budget exhausted'} · AX=${fmt(m.cpu.reg('AX'))}`);}));
 el('showmemory').addEventListener('click',refresh);el('address').addEventListener('change',drawMemory);
@@ -412,6 +428,12 @@ el('fdd-boot').addEventListener('click',()=>safe(()=>{
  const boot=machine.bootFloppy(0);trace(`A: FreeDOS boot ${fmt(boot.cs)}:${fmt(boot.ip)}`);startCPU(true);
 }));
 el('fdd-eject').addEventListener('click',()=>safe(()=>{const d=driveIndex();machine.fdd.eject(d);fddStatus(`${d?'B':'A'}: ejected`);}));
+// The complete working disk image (including guest writes) is exported, never the original file.
+function saveRawImage(bytes,name){const blob=new Blob([bytes],{type:'application/octet-stream'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name.replace(/[^a-zA-Z0-9_.-]/g,'_');document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+function diskTimestamp(){return new Date().toISOString().replace(/\D/g,'').slice(0,14);}
+el('fdd-new').addEventListener('click',()=>safe(()=>{const d=driveIndex(),type=el('fdd-format').value,bytes=diskImages.createFloppy(type);machine.mountDisk(d,bytes,`MDJS-${type}.img`);fddStatus(`${d?'B':'A'}: nový prázdný FAT12 ${type}, ${bytes.byteLength} bajtů (ArrayBuffer). Neobsahuje DOS.`);}));
+el('fdd-export').addEventListener('click',()=>safe(()=>{const d=driveIndex(),bytes=machine.fdd.exportImage(d);saveRawImage(bytes,`mdjs-fdd-${d?'B':'A'}-${diskTimestamp()}.img`);fddStatus(`FDD ${d?'B':'A'}: export aktuálních ${bytes.length} bajtů včetně změn.`);}));
+
 
 // IDE raw media is copy-on-write; only explicit export saves a changed image.
 function ideStatus(message){el('ide-status').textContent=message;trace(message);refresh();}
@@ -429,6 +451,8 @@ el('ide-export').addEventListener('click',()=>safe(()=>{
  ideStatus(`IDE export: ${data.length} bytes, ${machine.ide.overlay.size} změněných sektorů.`);
 }));
 el('ide-eject').addEventListener('click',()=>safe(()=>{if(!machine.ide)throw Error('Only AT');machine.ide.eject();retainedIDE=null;ideStatus('IDE medium ejected.');}));
+el('ide-new').addEventListener('click',()=>safe(()=>{if(!machine.ide)throw Error('IDE je dostupné jen pro AT/286');const size=Number(el('ide-size').value);const buf=diskImages.createIDE(size,'MDJS HDD');const g=machine.ide.mount(buf,`MDJS-HDD-${size}MiB.img`);retainedIDE=null;ideStatus(`Nový HDD: ${size} MiB ArrayBuffer; MBR + FAT16, ${g.cylinders}×${g.heads}×${g.sectors}. Dosud bez DOS systémových souborů.`);}));
+
 
 const PC_SAVE_KEY='mdjs-ultra:pc:phase1';
 const status=(msg)=>{el('pc-storage-status').textContent=msg;trace(msg);refresh();};
@@ -445,13 +469,13 @@ el('pc-load-local').addEventListener('click',()=>safe(()=>{
  importPCSnapshot(runtime.wrapState('pc',r.payload));status('PC: stav obnoven z localStorage');
 }));
 el('pc-export-json').addEventListener('click',async()=>{
- try{const doc=currentSnapshot(),res=await runtime.workerJSON(doc);runtime.download('mdjs-pc-'+machine.profile+'-v1.json',res.text);
+ try{const doc=currentSnapshot(),res=await runtime.workerJSON(doc);runtime.download('mdjs-pc-'+machine.profile+'-'+diskTimestamp()+'.json',res.text);
  status('PC: JSON export hotový ('+(res.worker?'Blob Worker':'main-thread fallback')+').');}catch(e){status('ERROR: '+e.message);}
 });
 el('pc-import-json').addEventListener('click',()=>el('pc-json-file').click());
 el('pc-json-file').addEventListener('change',async(e)=>{
  const file=e.target.files&&e.target.files[0];e.target.value='';if(!file)return;
- try{const bytes=await runtime.readFile(file,12*1024*1024);const json=new TextDecoder().decode(bytes);
+ try{const bytes=await runtime.readFile(file,64*1024*1024);const json=new TextDecoder().decode(bytes);
  importPCSnapshot(json);status('PC: JSON snapshot úspěšně obnoven.');}catch(err){status('PC: Import odmítnut: '+err.message);}
 });
 el('pc-import-paste').addEventListener('click',()=>safe(()=>{importPCSnapshot(el('pc-json-paste').value);status('PC: stav obnoven z vloženého JSON.');}));

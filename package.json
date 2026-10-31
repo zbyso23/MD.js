@@ -17,7 +17,7 @@
     "test:zx:real:http": "python3 zx/tests/e2e/test_zx_browser.py --real",
     "test:blocks": "node optional/blockly/tests/test.mjs",
     "test:ultra:browser": "python3 test/e2e/test_ultra_browser.py",
-    "test:release": "npm test && npm run test:blocks && npm run test:zx:unit && npm run test:pc:phase1 && npm run test:pc:browser && npm run test:pc:phase2:browser && npm run test:runtime:browser && npm run test:ultra:browser && npm run test:ux:browser && npm run test:ux:shell && npm run test:pc:phase3:compat && npm run test:pc:phase4a && npm run test:pc:phase4b && npm run test:pc:phase4d && npm run test:pc:phase4e:hardening && npm run test:pc:closure",
+    "test:release": "npm test && npm run test:blocks && npm run test:zx:unit && npm run test:pc:phase1 && npm run test:pc:browser && npm run test:pc:phase2:browser && npm run test:runtime:browser && npm run test:ultra:browser && npm run test:ux:browser && npm run test:ux:shell && npm run test:pc:phase3:compat && npm run test:pc:phase4a && npm run test:pc:phase4b && npm run test:pc:phase4d && npm run test:pc:phase4e:hardening && npm run test:pc:closure && npm run test:pc:disk-images",
     "test:pc:phase1": "node --test optional/pc/tests/*.test.cjs",
     "test:pc:phase2:video": "node --test optional/pc/tests/video-phase2-v078.test.cjs",
     "test:pc:phase2:floppy": "node --test optional/pc/tests/floppy-phase2-v078.test.cjs",
@@ -43,7 +43,8 @@
     "test:pc:phase4d": "node --test optional/pc/tests/phase4d-debug-audio.test.cjs && python3 optional/pc/tests/test_phase4d_debug_browser.py && python3 optional/pc/tests/test_vga_dos_com_browser.py && python3 optional/pc/phase3/test_tune_dos_browser.py",
     "test:pc:phase4e:hardening": "node --test optional/pc/tests/hardening-regressions-20261029.test.cjs optional/pc/tests/pc-integration-hardening-20261029.test.cjs optional/pc/tests/mandel-geometry-regression.test.cjs && python3 optional/pc/tests/test_mandel_dos_browser.py",
     "test:pc:closure": "node --test optional/pc/tests/pc-286-compat-20261029.test.cjs optional/pc/tests/fpu-extended80-20261029.test.cjs optional/pc/phase3/audio-closure-20261029.test.cjs && python3 optional/pc/tests/test_80bit_browser.py",
-    "test:file:real": "python3 test/compat/file-url-smoke.py"
+    "test:file:real": "python3 test/compat/file-url-smoke.py",
+    "test:pc:disk-images": "node --test optional/pc/tests/disk-image-arraybuffer-20261029.test.cjs && python3 optional/pc/tests/test_disk_images_browser_20261029.py && python3 optional/pc/tests/test_dos_hdd_c_drive_browser_20261029.py"
   },
   "dependencies": {},
   "devDependencies": {}
