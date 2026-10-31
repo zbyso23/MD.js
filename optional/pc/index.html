@@ -33,7 +33,7 @@
 </section>
 <section class="panel" id="pc-floppy" aria-label="Disketové mechaniky">
 <h2>FDD A: / B: · NEC 765 + BIOS INT 13h</h2>
-<div class="actions"><label for="fdd-drive">Mechanika</label><select id="fdd-drive"><option value="0">A:</option><option value="1">B:</option></select><button id="fdd-mount">↑ Připojit .IMG / .IMA</button><input id="fdd-file" type="file" accept=".img,.ima,.dsk,application/octet-stream" hidden><button id="fdd-create">Obnovit vestavěnou 720K A:</button><button id="fdd-boot" class="primary">Boot A: FreeDOS + DEBUG</button><button id="fdd-eject">Vysunout</button><label for="fdd-format">Nový obraz</label><select id="fdd-format"><option value="720K">720 KiB FAT12</option><option value="1.44M">1,44 MiB FAT12</option><option value="360K">360 KiB FAT12</option><option value="1.2M">1,2 MiB FAT12</option><option value="160K">160 KiB FAT12</option><option value="180K">180 KiB FAT12</option><option value="320K">320 KiB FAT12</option></select><button id="fdd-new">+ Nová disketa</button><button id="fdd-export">↓ Uložit disketu IMG</button></div>
+<div class="actions"><label for="fdd-drive">Mechanika</label><select id="fdd-drive"><option value="0">A:</option><option value="1">B:</option></select><button id="fdd-mount">↑ Připojit .IMG / .IMA</button><input id="fdd-file" type="file" accept=".img,.ima,.dsk,application/octet-stream" hidden><button id="fdd-create">Obnovit vestavěnou 720K A:</button><button id="fdd-boot" class="primary">Boot A: FreeDOS + DEBUG</button><button id="fdd-eject">Vysunout</button><label for="fdd-format">Nový obraz</label><select id="fdd-format"><option value="720K">720 KiB FAT12</option><option value="1.44M">1,44 MiB FAT12</option><option value="360K">360 KiB FAT12</option><option value="1.2M">1,2 MiB FAT12</option><option value="160K">160 KiB FAT12</option><option value="180K">180 KiB FAT12</option><option value="320K">320 KiB FAT12</option></select><button id="fdd-new">+ Nová disketa</button><button id="fdd-export">↓ Uložit disketu IMG</button><label for="fdd-write-protect">Ochrana zápisu</label><input type="checkbox" id="fdd-write-protect" aria-label="Disketa pouze pro čtení"></div>
 <details><summary>Ruční vložení Base64 disketového obrazu</summary><textarea id="fdd-base64" rows="3" style="width:100%;background:#152c3b;color:#fff;border:1px solid #426276;border-radius:8px" placeholder="Base64 raw diskette image (.img)"></textarea><button id="fdd-paste">Připojit Base64</button></details>
 <p class="muted"><strong>🌀 MANDEL.COM:</strong> pro 80287XL výukové preview přepni na <strong>AT/286 + VGA</strong>, zaškrtni <strong>80287XL</strong> a do FreeDOS promptu napiš <code>MANDEL</code>. Po vykreslení se klávesou vrátíš do DOSu. Výchozí rychlý výpočet používá binary64; experimentální 80bitový aritmetický režim je volitelný a může být výrazně pomalejší.</p>
 <p class="muted"><strong>🎵 AdLib DOS melodie:</strong> zapni PC zvuk a napiš v DOSu <code>TUNE</code>. Program má 137 bajtů, běží na XT i AT/286, nic se nespouští automaticky.</p>
@@ -113,13 +113,13 @@ function reboot(p,bootDOS=false){
  pauseCPU();autoStopAtPrompt=false;
  // Preserve the in-memory media across CPU resets, adapter changes and XT/AT switches.
  // In particular NEVER silently remount the embedded image over a modified A:.
- const retainedFDD=mediaInitialized?machine.fdd.disks.map((d,i)=>d?{bytes:machine.fdd.exportImage(i),name:d.name}:null):null;
+ const retainedFDD=mediaInitialized?machine.fdd.disks.map((d,i)=>d?{bytes:machine.fdd.exportImage(i),name:d.name,writeProtected:!!d.writeProtected}:null):null;
  if(machine.ide&&machine.ide.image)retainedIDE={bytes:machine.ide.exportImage(),name:machine.ide.name};
  machine=new PCMachine(p,{videoAdapter:el('video-adapter').value,fpuEnabled:p==='at'&&el('fpu-enabled').checked,cpuHz:Number(el('fpu-clock').value),fpuPrecision:el('fpu-precision').value});
  if(machine.ide&&retainedIDE)machine.ide.mount(retainedIDE.bytes,retainedIDE.name);
  machine.audio.setCapture(audioOutput.enabled);messages=[];inputQueue.length=0;
  trace(`${p.toUpperCase()} RESET · ${fmt(machine.cpu.s[S.CS])}:${fmt(machine.cpu.ip)} · hidden CS base ${fmt(machine.cpu.base[S.CS],6)}`);
- if(retainedFDD){retainedFDD.forEach((d,i)=>{if(d)machine.mountDisk(i,d.bytes,d.name);});trace('FDD media preserved across reset (including empty/ejected drives).');}
+ if(retainedFDD){retainedFDD.forEach((d,i)=>{if(d){machine.mountDisk(i,d.bytes,d.name);if(d.writeProtected)machine.fdd.setWriteProtected(i,true);}});trace('FDD media preserved across reset (including empty/ejected drives).');}
  else mountEmbeddedBootDisk(true);
  mediaInitialized=true;
  el('pc-profile-note').textContent=p==='at'?'AT / 80286: FreeDOS a DEBUG.COM; FDD média zachována při resetu.':'XT: FreeDOS + DEBUG.COM; FDD média zachována při resetu.';
@@ -406,7 +406,7 @@ el('pc-key-text').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDe
 
 // FDD workflow: user supplies raw sectors; nothing is fetched or executed automatically.
 const driveIndex=()=>Number(el('fdd-drive').value);
-function fddStatus(msg){el('fdd-status').textContent=msg;trace(msg);refresh();}
+function fddStatus(msg){el('fdd-status').textContent=msg;trace(msg);refresh();syncFDDWriteProtection();}
 function makeDemoDisk(){
  const disk=new Uint8Array(720*1024),label='MD.JS ULTRA · BOOT OK';
  const prog=[0xfa,0xb8,0,0,0x8e,0xd0,0xbc,0,0x7c,0xfb];
@@ -414,7 +414,10 @@ function makeDemoDisk(){
  prog.push(0xf4);disk.set(prog);disk[510]=0x55;disk[511]=0xaa;
  return disk;
 }
-el('fdd-mount').addEventListener('click',()=>el('fdd-file').click());
+function syncFDDWriteProtection(){const d=machine.fdd.disks[driveIndex()];el('fdd-write-protect').checked=!!(d&&d.writeProtected);el('fdd-write-protect').disabled=!d;}
+el('fdd-drive').addEventListener('change',syncFDDWriteProtection);
+el('fdd-write-protect').addEventListener('change',()=>safe(()=>{machine.fdd.setWriteProtected(driveIndex(),el('fdd-write-protect').checked);fddStatus('FDD: ochrana proti zápisu '+(el('fdd-write-protect').checked?'zapnuta':'vypnuta'));}));
+el('fdd-mount').addEventListener('click' ,()=>el('fdd-file').click());
 el('fdd-file').addEventListener('change',async e=>{
  const file=e.target.files&&e.target.files[0];e.target.value='';if(!file)return;
  try{const bytes=await runtime.readFile(file,1474560),d=driveIndex(),g=machine.mountDisk(d,bytes,file.name);

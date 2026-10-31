@@ -119,3 +119,15 @@ execution in Chromium, seven note changes, PCM samples and return to DOS.
 This is a limited device compatibility milestone, **not** a hardware-accurate
 OPL2/SB2 final gate. Original DBOPL envelopes, rhythm, SB2 DSP breadth,
 source provenance and cross-browser file:// are still open.
+
+## Phase 4I/J/K — XT integer fractals, instruction and disk reliability
+
+`CGAFRAC.COM` and `HGCFRAC.COM` are compact **actual 8086 integer Q6 Mandelbrot** DOS programs preinstalled on FreeDOS A:. They do not require 80287XL or a 286. Select XT+CGA or XT+Hercules and run the corresponding command. Press a key to return. To rebuild the demos from editable `.s` source on a development machine with GNU binutils: `python3 optional/pc/phase4/build_xt_fractals.py`. **Runtime never needs a build.**
+
+Additional verified x87 educational subset (AT-only): `FLDCW/FNSTCW`, `FNSTSW m16`, `FILD/FISTP m16/m32`, `FCHS`, `FABS`, `FXCH`, `FNOP`, `FTST`, `FRNDINT`, and binary64 `FSQRT`. The optional extended80 mode rejects FSQRT rather than pretending binary64 is faithfully 80-bit. 286 protected mode and x87 exception/timing fidelity remain incomplete.
+
+Disk reliability: malformed IDE snapshot restore is atomic, FDD A:/B: can be write-protected (including BIOS/FDC write failures), and protection survives a snapshot or reset. The host-origin IMG and HDD copy-on-write behavior remain intact. A disk-exported IMG is needed to persist media changes outside a browser session.
+
+New gates: `npm run test:pc:phase4i`, `npm run test:pc:phase4j`, `npm run test:pc:phase4k`; they are included in `test:release`.
+
+The AT/286 FreeDOS disk now also contains `FPUCHECK.COM` (85 bytes). It prints `80287XL FPU NOT ENABLED` if the option is off, and `80287XL FPU OK` after an x87 arithmetic/integer-store self-check when enabled. This path has a real FreeDOS Chromium regression.

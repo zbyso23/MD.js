@@ -14,15 +14,17 @@ const GEOMETRIES=[
 ];
 class FDD765 {
  constructor(m){this.m=m;this.disks=[null,null];this.dor=0x0c;this.status=0;this.cmd=[];this.expected=0;this.result=[];this.cyl=[0,0];this.lastInterrupt={st0:0x80,cyl:0};}
- mount(drive,bytes,name='floppy.img'){
+ mount(drive,bytes,name='floppy.img',writeProtected=false){
   if(![0,1].includes(drive))throw new RangeError('Only floppy A: and B:');
   if(bytes instanceof ArrayBuffer)bytes=new Uint8Array(bytes);
   if(!(bytes instanceof Uint8Array))throw new TypeError('Floppy image must be Uint8Array or ArrayBuffer');
+  if(typeof writeProtected!=='boolean')throw TypeError('FDD write protection must be boolean');
   const g=GEOMETRIES.find(x=>x.bytes===bytes.length);if(!g)throw new RangeError('Unsupported 160K/180K/320K/360K/720K/1.2M/1.44M floppy image size');
-  this.disks[drive]={data:new Uint8Array(bytes),geometry:{...g},name:String(name).slice(0,128)};
+  this.disks[drive]={data:new Uint8Array(bytes),geometry:{...g},name:String(name).slice(0,128),writeProtected};
   this.updateEquipment();
   return g;
  }
+ setWriteProtected(drive,on){if(![0,1].includes(drive)||!this.disks[drive])throw Error('No floppy media in selected drive');if(typeof on!=='boolean')throw TypeError('Write protect expects boolean');this.disks[drive].writeProtected=on;}
  exportImage(drive){if(![0,1].includes(drive)||!this.disks[drive])throw new Error('No floppy media in selected drive');return new Uint8Array(this.disks[drive].data);}
  exportArrayBuffer(drive){return this.exportImage(drive).buffer;}
  eject(drive){if(![0,1].includes(drive))throw RangeError('Drive');this.disks[drive]=null;this.updateEquipment();}
@@ -34,7 +36,7 @@ class FDD765 {
   return (cyl*g.heads*g.sectors+head*g.sectors+sec-1);
  }
  readSector(drive,cyl,head,sec){const lba=this.lba(drive,cyl,head,sec);return lba<0?null:this.disks[drive].data.slice(lba*512,(lba+1)*512);}
- writeSector(drive,cyl,head,sec,bytes){const lba=this.lba(drive,cyl,head,sec);if(lba<0||!(bytes instanceof Uint8Array)||bytes.length!==512)return false;this.disks[drive].data.set(bytes,lba*512);return true;}
+ writeSector(drive,cyl,head,sec,bytes){const lba=this.lba(drive,cyl,head,sec);if(lba<0||this.disks[drive].writeProtected||!(bytes instanceof Uint8Array)||bytes.length!==512)return false;this.disks[drive].data.set(bytes,lba*512);return true;}
  portRead(port){
   if(port===0x3f2)return this.dor;
   if(port===0x3f4)return this.result.length?0xd0:0x80; // RQM + direction for queued replies
@@ -70,6 +72,7 @@ class FDD765 {
   const direction=(dma.mode[chan]>>>2)&3,expectedDirection=type===0x06?1:2;
   const lba=this.lba(drive,cyl,head,sec);
   if(!d||lba<0||n!==2||sec>eot){st0=0x40|drive;st1=4;}
+  else if(type===0x05&&d.writeProtected){st0=0x40|drive;st1=2;}
   else if((dma.mask&(1<<chan))||!(this.dor&4)||direction!==expectedDirection){st0=0x40|drive;st1=0x10;}
   else if(requested<512||requested%512!==0||requested>(eot-sec+1)*512||lba+requested/512>d.data.length/512){st0=0x40|drive;st1=0x10;}
   else{
@@ -92,18 +95,18 @@ class FDD765 {
   }
   this.result=[st0,st1,st2,cyl,head,sec,n];this.interrupt(st0,cyl);
  }
- snapshot(codec){return {dor:this.dor,cyl:[...this.cyl],status:this.status,cmd:[...this.cmd],expected:this.expected,result:[...this.result],lastInterrupt:{...this.lastInterrupt},disks:this.disks.map(d=>d?{name:d.name,bytes:codec.bytesToBase64(d.data)}:null)};}
+ snapshot(codec){return {dor:this.dor,cyl:[...this.cyl],status:this.status,cmd:[...this.cmd],expected:this.expected,result:[...this.result],lastInterrupt:{...this.lastInterrupt},disks:this.disks.map(d=>d?{name:d.name,bytes:codec.bytesToBase64(d.data),writeProtected:!!d.writeProtected}:null)};}
  restore(data,codec){
   if(!data||!Array.isArray(data.disks)||data.disks.length!==2)throw Error('Invalid FDD snapshot');
   // Decode and validate ALL incoming media before mutating the live controller.
   // An invalid B: must never silently replace a valid A: or lose an ejected drive.
   const drives=data.disks.map(d=>{
    if(d===null)return null;
-   if(!d||typeof d!=='object')throw Error('Invalid FDD drive metadata');
+   if(!d||typeof d!=='object'||(d.writeProtected!==undefined&&typeof d.writeProtected!=='boolean'))throw Error('Invalid FDD drive metadata');
    const bytes=codec.base64ToBytes(d.bytes,1474560);
    const g=GEOMETRIES.find(x=>x.bytes===bytes.length);
    if(!g)throw RangeError('Unsupported floppy geometry in snapshot');
-   return {data:new Uint8Array(bytes),geometry:{...g},name:String(d.name||'floppy.img').slice(0,128)};
+   return {data:new Uint8Array(bytes),geometry:{...g},name:String(d.name||'floppy.img').slice(0,128),writeProtected:!!d.writeProtected};
   });
   const validBytes=(v,n)=>Array.isArray(v)&&v.length===n&&v.every(x=>Number.isInteger(x)&&x>=0&&x<=255);
   if(!validBytes(data.cyl,2)||!validBytes(data.cmd,Array.isArray(data.cmd)?data.cmd.length:-1)||data.cmd.length>9||

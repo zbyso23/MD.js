@@ -138,6 +138,7 @@ class PCBios {
   const start=fdd.lba(dl,cyl,dh,sec),byteCount=count*512;
   if(count===0||count>127||start<0||start+count>disk.data.length/512){fail(4);return;}
   if(bx+byteCount>65536){fail(9);return;} // 64KiB DMA boundary
+  if(fn===3&&disk.writeProtected){fail(3);return;} // BIOS 03h: medium is write-protected
   if(fn===2){for(let i=0;i<byteCount;i++)cpu.write8(S.ES,bx+i,disk.data[start*512+i]);}
   if(fn===3){for(let i=0;i<byteCount;i++)disk.data[start*512+i]=cpu.read8(S.ES,bx+i);}
   cpu.put8(0,count);success();

@@ -36,7 +36,17 @@ with sync_playwright() as pw:
  assert page.evaluate('__mdPCUniversal.machine.fdd.disks[1]===null')
  page.locator('#fdd-file').set_input_files({'name':'roundtrip.img','mimeType':'application/octet-stream','buffer':fdb})
  assert page.evaluate('__mdPCUniversal.machine.fdd.readSector(1,0,0,3)[0]')==0x6c
- print('PASS FDD B: in-memory FAT12 -> writes -> .img download -> eject/reimport')
+ # The real GUI must toggle the FDD read-only flag; failed writes must not alter media.
+ page.locator('#fdd-write-protect').check()
+ assert page.evaluate('__mdPCUniversal.machine.fdd.disks[1].writeProtected') is True
+ assert page.evaluate('''() => __mdPCUniversal.machine.fdd.writeSector(1,0,0,3,new Uint8Array(512).fill(0x19))''') is False
+ assert page.evaluate('__mdPCUniversal.machine.fdd.readSector(1,0,0,3)[0]')==0x6c
+ page.locator('#reset').click();page.wait_for_function('!__mdPCUniversal.running',timeout=120000)
+ assert page.evaluate('__mdPCUniversal.machine.fdd.disks[1].writeProtected') is True
+ page.locator('#fdd-write-protect').uncheck()
+ assert page.evaluate('__mdPCUniversal.machine.fdd.disks[1].writeProtected') is False
+ assert page.evaluate('''() => __mdPCUniversal.machine.fdd.writeSector(1,0,0,3,new Uint8Array(512).fill(0x6c))''') is True
+ print('PASS FDD B: in-memory FAT12 -> export/reimport -> GUI write protect/unprotect -> reset')
  page.select_option('#machine','at')
  page.wait_for_function('!__mdPCUniversal.running',timeout=120000)
  assert page.evaluate('__mdPCUniversal.machine.fdd.readSector(1,0,0,3)[0]')==0x6c

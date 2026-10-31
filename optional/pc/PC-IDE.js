@@ -54,12 +54,28 @@ class PCIDE {
  write8(port,n){n&=255;switch(port){case 0x1f0:this.writeData(n);return true;case 0x1f1:this.features=n;return true;case 0x1f2:this.count=n;return true;case 0x1f3:this.sector=n;return true;case 0x1f4:this.cylinderLo=n;return true;case 0x1f5:this.cylinderHi=n;return true;case 0x1f6:this.drive=n;return true;case 0x1f7:this.execute(n);return true;case 0x3f6:{const wasReset=this.control&4;this.control=n;if((n&4)||wasReset)this.reset();this.control=n;return true;}default:return false;}}
  write16(port,n){if(port!==0x1f0)return false;this.writeData(n);this.writeData(n>>>8);return true;}
  snapshot(codec){return {image:this.image?codec.bytesToBase64(this.exportImage()):null,name:this.name,control:this.control,drive:this.drive,count:this.count,sector:this.sector,cylinderLo:this.cylinderLo,cylinderHi:this.cylinderHi,status:this.status,error:this.error,features:this.features,command:this.command,index:this.index,remaining:this.remaining,lba:this.lba,transfer:this.transfer?codec.bytesToBase64(this.transfer):null};}
- restore(st,codec){if(!st||typeof st!=='object')throw Error('Invalid IDE snapshot');const bytes=st.image===null?null:codec.base64ToBytes(st.image,MAX);if(bytes)this.mount(bytes,st.name);else this.eject();
-  for(const k of ['control','drive','count','sector','cylinderLo','cylinderHi','status','error','features','command'])if(!Number.isInteger(st[k])||st[k]<0||st[k]>255)throw Error('Invalid IDE register '+k);
-  for(const k of ['index','remaining','lba'])if(!Number.isSafeInteger(st[k])||st[k]<0)throw Error('Invalid IDE '+k);
+ restore(st,codec){
+  // Validate the entire snapshot into local variables BEFORE touching the live drive.
+  if(!st||typeof st!=='object'||(st.image!==null&&typeof st.image!=='string')||
+     typeof st.name!=='string'||st.name.length>120)throw Error('Invalid IDE snapshot metadata');
+  const bytes=st.image===null?null:codec.base64ToBytes(st.image,MAX);
+  if(bytes&&(!bytes.length||bytes.length%SECTOR||bytes.length>MAX))throw Error('Invalid IDE media geometry');
+  for(const k of ['control','drive','count','sector','cylinderLo','cylinderHi','status','error','features','command'])
+   if(!Number.isInteger(st[k])||st[k]<0||st[k]>255)throw Error('Invalid IDE register '+k);
+  for(const k of ['index','remaining','lba'])
+   if(!Number.isSafeInteger(st[k])||st[k]<0)throw Error('Invalid IDE '+k);
+  if(st.transfer!==null&&typeof st.transfer!=='string')throw Error('Invalid IDE transfer type');
   const transfer=st.transfer===null?null:codec.base64ToBytes(st.transfer,SECTOR);
-  if((transfer&&transfer.length!==SECTOR)||st.index>SECTOR||st.remaining>256||(this.image&&st.lba>this.capacity)||(!this.image&&transfer))throw Error('Invalid IDE transfer snapshot');
-  Object.assign(this,{control:st.control,drive:st.drive,count:st.count,sector:st.sector,cylinderLo:st.cylinderLo,cylinderHi:st.cylinderHi,status:st.status,error:st.error,features:st.features,command:st.command,index:st.index,remaining:st.remaining,lba:st.lba,transfer});this.irqPending=false;
+  const capacity=bytes?bytes.length/SECTOR:0;
+  if((transfer&&transfer.length!==SECTOR)||st.index>SECTOR||st.remaining>256||
+     st.lba>capacity||(!bytes&&transfer)||(!bytes&&st.remaining))throw Error('Invalid IDE transfer snapshot');
+  // All checks passed. Commit the drive and controller as one logical operation.
+  if(bytes)this.mount(bytes,st.name);else this.eject();
+  Object.assign(this,{control:st.control,drive:st.drive,count:st.count,sector:st.sector,
+   cylinderLo:st.cylinderLo,cylinderHi:st.cylinderHi,status:st.status,error:st.error,
+   features:st.features,command:st.command,index:st.index,remaining:st.remaining,
+   lba:st.lba,transfer});
+  this.irqPending=false;
  }
 }
 const api={PCIDE};if(typeof module!=='undefined'&&module.exports)module.exports=api;root.MDPC_IDE=api;

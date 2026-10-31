@@ -89,6 +89,19 @@ class PCFloat80 {
   else if(v.m!==0n){const neg=v.m<0n;mant=neg?-v.m:v.m;const ex=v.e+63+16383;h=(ex<1?0:Math.min(0x7ffe,ex))|(neg?0x8000:0);}
   return [0,16,32,48].map(n=>Number((mant>>BigInt(n))&0xffffn)).concat(h);
  }
+ static roundInteger(v,mode=0){
+  if(v.sp||v.m===0n)return v;
+  if(v.e>=0)return v;
+  const neg=v.m<0n,mag=neg?-v.m:v.m,shift=BigInt(-v.e);
+  const q=mag>>shift,rest=mag&((1n<<shift)-1n),half=1n<<(shift-1n);
+  let inc=false;
+  if(mode===0)inc=rest>half||(rest===half&&(q&1n)!==0n); // RNE ties-even
+  else if(mode===1)inc=neg&&rest!==0n; // round toward -Infinity
+  else if(mode===2)inc=!neg&&rest!==0n; // round toward +Infinity
+  // mode 3: truncate toward zero
+  const result=q+(inc?1n:0n);
+  return PCFloat80.norm(neg?-result:result,0);
+ }
  static encoded(v){return PCFloat80.words(v).map(w=>w.toString(16).padStart(4,'0')).join('');}
 }
 
@@ -106,6 +119,18 @@ class PCFPU287 {
  pop(){const v=this.get();this.cells[this.top]=null;this.raw80[this.top]=null;this.top=(this.top+1)&7;return v;}
  compareRaw(a,b){const cmp=PCFloat80.cmp(a,b);this.status&=~0x4700;if(Number.isNaN(cmp))this.status|=0x4500;else if(cmp<0)this.status|=0x0100;else if(cmp===0)this.status|=0x4000;}
  compare(a,b){this.status&=~0x4700;if(Number.isNaN(a)||Number.isNaN(b))this.status|=0x4500;else if(a<b)this.status|=0x0100;else if(a===b)this.status|=0x4000;}
+ roundToInteger(v){const mode=(this.cw>>>10)&3;
+  if(this.precisionMode==='extended80')return PCFloat80.toNumber(PCFloat80.roundInteger(this.getRaw(),mode));
+  const floor=Math.floor(v),frac=v-floor;
+  if(mode===1)return Math.floor(v);if(mode===2)return Math.ceil(v);if(mode===3)return Math.trunc(v);
+  return frac<0.5?floor:frac>0.5?floor+1:floor%2===0?floor:floor+1;
+ }
+ fpuSign(abs){
+  if(this.precisionMode==='extended80'){
+   const v=this.getRaw();if(v.sp){if(v.sp==='NaN')return;this.putRaw(0,{sp:abs?'Infinity':v.sp==='Infinity'?'-Infinity':'Infinity'});return;}
+   this.putRaw(0,{m:abs?(v.m<0n?-v.m:v.m):-v.m,e:v.e});
+  }else this.put(0,abs?Math.abs(this.get()):-this.get());
+ }
  readF32(cpu,seg,off){const data=new DataView(new ArrayBuffer(4));data.setUint16(0,cpu.read16(seg,off),true);data.setUint16(2,cpu.read16(seg,(off+2)&65535),true);return data.getFloat32(0,true);}
  writeF32(cpu,seg,off,value){const data=new DataView(new ArrayBuffer(4));data.setFloat32(0,value,true);cpu.write16(seg,off,data.getUint16(0,true));cpu.write16(seg,(off+2)&65535,data.getUint16(2,true));}
  arithmetic(group,a,b){switch(group){case 0:return a+b;case 1:return a*b;case 4:return a-b;case 5:return b-a;case 6:return a/b;case 7:return b/a;default:throw new Error('Unsupported 80287XL arithmetic operation '+group);}}
@@ -114,7 +139,27 @@ class PCFPU287 {
   const m=cpu.modrm();const b=m.byte;
   if(!this.enabled)return; // explicit no-FPU configuration retains previous ESC behavior
   if(m.mem){
-   if(op===0xd9&&(m.reg===0||m.reg===2||m.reg===3)){
+   if(op===0xd9&&(m.reg===5||m.reg===7)){
+    if(m.reg===5)this.cw=cpu.read16(m.seg,m.off); // FLDCW m16
+    else cpu.write16(m.seg,m.off,this.cw); // FNSTCW m16
+   }else if(op===0xdd&&m.reg===7)cpu.write16(m.seg,m.off,this.statusWord()); // FNSTSW m16
+   else if((op===0xdf||op===0xdb)&&(m.reg===0||m.reg===3)){
+    const bits=op===0xdf?16:32;
+    if(m.reg===0){ // FILD signed integer
+     const low=cpu.read16(m.seg,m.off);
+     const raw=bits===16?(low<<16)>>16:((cpu.read16(m.seg,(m.off+2)&65535)<<16)|low);
+     if(this.precisionMode==='extended80')this.pushRaw(PCFloat80.norm(BigInt(raw),0));else this.push(raw);
+    }else{ // FISTP with control-word rounding, indefinite on invalid overflow
+     const value=this.roundToInteger(this.get());
+     const limit=bits===16?32768:2147483648;
+     const invalid=!Number.isFinite(value)||value< -limit||value>=limit;
+     if(invalid)this.status|=1;
+     const out=invalid?-limit:value;
+     cpu.write16(m.seg,m.off,out&65535);
+     if(bits===32)cpu.write16(m.seg,(m.off+2)&65535,(out>>16)&65535);
+     this.pop();
+    }
+   }else if(op===0xd9&&(m.reg===0||m.reg===2||m.reg===3)){
     if(m.reg===0)this.push(this.readF32(cpu,m.seg,m.off));
     else {this.writeF32(cpu,m.seg,m.off,this.get());if(m.reg===3)this.pop();}
    }else if(op===0xd8){
@@ -127,6 +172,26 @@ class PCFPU287 {
     else{const out=PCFloat80.words(this.getRaw());for(let i=0;i<5;i++)cpu.write16(m.seg,(m.off+2*i)&65535,out[i]);this.pop();}
    }else throw new Error('Unsupported 80287XL memory opcode '+op.toString(16)+' /'+m.reg);
   }else if(op===0xdb&&b===0xe3)this.reset(); // FNINIT
+  else if(op===0xd9&&b===0xe0)this.fpuSign(false); // FCHS
+  else if(op===0xd9&&b===0xe1)this.fpuSign(true); // FABS
+  else if(op===0xd9&&b===0xd0){} // FNOP
+  else if(op===0xd9&&b>=0xc8&&b<=0xcf){ // FXCH ST(i)
+   const i=this.top,j=(this.top+(b&7))&7;
+   [this.cells[i],this.cells[j]]=[this.cells[j],this.cells[i]];
+   [this.raw80[i],this.raw80[j]]=[this.raw80[j],this.raw80[i]];
+  }
+  else if(op===0xd9&&b===0xe4){ // FTST against zero
+   if(this.precisionMode==='extended80')this.compareRaw(this.getRaw(),PCFloat80.fromNumber(0));
+   else this.compare(this.get(),0);
+  }
+  else if(op===0xd9&&b===0xfc){ // FRNDINT, preserve exact 80-bit integer
+   if(this.precisionMode==='extended80')this.putRaw(0,PCFloat80.roundInteger(this.getRaw(),(this.cw>>>10)&3));
+   else this.put(0,this.roundToInteger(this.get()));
+  }
+  else if(op===0xd9&&b===0xfa){ // FSQRT binary64 teaching mode only
+   if(this.precisionMode==='extended80')throw Error('FSQRT requires unimplemented extended80 correctly rounded result');
+   const val=this.get();if(val<0){this.status|=1;this.put(0,NaN);}else this.put(0,Math.sqrt(val));
+  }
   else if(op===0xd9&&b===0xee)this.push(0); // FLDZ
   else if(op===0xd9&&b===0xe8)this.push(1); // FLD1
   else if(op===0xdf&&b===0xe0)cpu.r[0]=this.statusWord(); // FNSTSW AX
