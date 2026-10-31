@@ -61,4 +61,15 @@ t('JS generated playground compiles and runs',()=>{const code=b.generate(playgro
 t('Python generated playground has map and servo',()=>{const code=b.generate(playground,'python');assert.match(code,/def servoWrite/);assert.match(code,/def mapValue/);assert.match(code,/analogRead\(A1\)/);});
 t('block import/export preserves references',()=>{const data=JSON.parse(JSON.stringify(playground));assert.equal(b.validate(data).count,15);assert.equal(data.loop[3].name,'brightness');});
 
+
+
+// Stabilization-2: separate deterministic virtual execution from deliberately slow UI playback.
+const playbackSandbox={};vm.runInNewContext(fs.readFileSync(new URL('../Blocks-Playback.js',import.meta.url),'utf8'),playbackSandbox);
+const playback=playbackSandbox.MDBlocksPlayback;
+t('blink builds 6 slow visible changes',()=>{const result=b.simulate(demo,3);const groups=playback.plan(result.trace,2000);const toggles=groups.flatMap(g=>g.events).filter(e=>e.kind==='write');assert.equal(toggles.length,6);assert.equal(JSON.stringify(toggles.map(e=>e.state)),JSON.stringify(['HIGH','LOW','HIGH','LOW','HIGH','LOW']));assert.equal(JSON.stringify(toggles.map(e=>e.time)),JSON.stringify([0,1000,2000,3000,4000,5000]));assert.equal(groups.length,6);assert.ok(groups.slice(0,-1).every(g=>g.dwellMs>=2000));});
+t('even very short virtual delay is visible for at least 2 sec',()=>{const g=playback.plan([{time:0},{time:1},{time:2}],2000);assert.equal(g[0].dwellMs,2000);assert.equal(g[1].dwellMs,2000);});
+t('teaching playback caps wait for large virtual delay',()=>assert.equal(playback.plan([{time:0},{time:60000}],2000)[0].dwellMs,4000));
+t('simultaneous virtual output events are grouped',()=>{const g=playback.plan([{time:0,kind:'mode'},{time:0,kind:'write'},{time:300,kind:'write'}]);assert.equal(g.length,2);assert.equal(g[0].events.length,2);});
+t('nonmonotonic times rejected',()=>assert.throws(()=>playback.plan([{time:5},{time:4}] ),/ascending/));
+
 if(process.exitCode)process.exit(1);console.log(`TOTAL ${count} PASS`);

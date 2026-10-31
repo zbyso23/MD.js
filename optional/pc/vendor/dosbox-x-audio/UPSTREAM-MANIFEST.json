@@ -1,0 +1,244 @@
+{
+  "upstream": "https://github.com/joncampbell123/dosbox-x",
+  "revision": "UNVERIFIED (user-provided reference sources; no commit provenance supplied)",
+  "files": [
+    {
+      "path": "include/dma.h",
+      "sha256": "fe0fe0300ae49e14a22b0368504c45786670fe412aafc9927d776f5d9ffd2fec",
+      "license": "GPL-2.0-or-later",
+      "revision": null,
+      "note": "User-supplied 2026-10-24; upstream commit not independently verified"
+    },
+    {
+      "path": "src/hardware/8255.cpp",
+      "sha256": "c4469a39434377573a0d173dc94442db3963f3ebdb54e6b46ef629f00b31c865",
+      "license": "UNKNOWN (no explicit header in supplied file)",
+      "bytes": 8979
+    },
+    {
+      "path": "src/hardware/adlib.cpp",
+      "sha256": "f34284cf32b711df58e3ee0e3349faebad7d3012a26ce4cc73cd4d3c1025aae3",
+      "license": "GPL-2.0-or-later (source header)",
+      "bytes": 50971
+    },
+    {
+      "path": "src/hardware/adlib.h",
+      "sha256": "82d1aa81b6da78c36c0cad8e8b7593983470d14fcc83fb3f228bab51ea37ce28",
+      "license": "GPL-2.0-or-later (source header)",
+      "bytes": 5639
+    },
+    {
+      "path": "src/hardware/dbopl.cpp",
+      "sha256": "f25fd1ad953c2f6a8ba4030d0ae583dfb76b5e6b3212e36b24d712ae63635f07",
+      "license": "GPL-2.0-or-later",
+      "revision": null,
+      "note": "User-supplied 2026-10-24; upstream commit not independently verified"
+    },
+    {
+      "path": "src/hardware/dbopl.h",
+      "sha256": "63985cee9a04d77a7b9bcde35d77b931c0a7558019655632ab6df213453d0159",
+      "license": "GPL-2.0-or-later",
+      "revision": null,
+      "note": "User-supplied 2026-10-24; upstream commit not independently verified"
+    },
+    {
+      "path": "src/hardware/dma.cpp",
+      "sha256": "c76ebcf3e57fd2c9a73e438ab6b6ca592fe7a188fcb56320302db4ca93896fbc",
+      "license": "GPL-2.0-or-later",
+      "revision": null,
+      "note": "User-supplied 2026-10-24; upstream commit not independently verified"
+    },
+    {
+      "path": "src/hardware/iohandler.cpp",
+      "sha256": "0d023f8a50fdd14dd373ab52057dcef9121aea6e79ae4464197e7facc9a4f6e9",
+      "license": "GPL-2.0-or-later (source header)",
+      "bytes": 29277
+    },
+    {
+      "path": "src/hardware/mixer.cpp",
+      "sha256": "a89c6ad3db41b5d69ef2ae744c5095a42d14a7e541c949c069660999f4e1de81",
+      "license": "GPL-2.0-or-later (source header)",
+      "bytes": 43853
+    },
+    {
+      "path": "src/hardware/opl.cpp",
+      "sha256": "beb33df9411c224cd82f4de6ebc86d0669bb8d330a3f5f16246e8770e2036e47",
+      "license": "GPL-2.0-or-later (source header)",
+      "bytes": 50891
+    },
+    {
+      "path": "src/hardware/opl.h",
+      "sha256": "88ea5643e3405dafca39b63c5232f2ec25f1fac1f23eeaaaf5fe0b63404b55dd",
+      "license": "LGPL-2.1-or-later",
+      "revision": null,
+      "note": "User-supplied 2026-10-24; upstream commit not independently verified"
+    },
+    {
+      "path": "src/hardware/parport/Makefile.am",
+      "sha256": "f88aad8839d39f060d3e8602fca00a6482d4c2615b3a2c764b12d0546b51adeb",
+      "license": "UNVERIFIED (no explicit license in file header)",
+      "revision": null,
+      "note": "User-supplied parport.zip 2026-10-24; no pinned upstream revision confirmed"
+    },
+    {
+      "path": "src/hardware/parport/directlpt.cpp",
+      "sha256": "36fd269807849714176d6aea7ab9a628eb89ad5ad4763f67317087f38676d691",
+      "license": "GPL-2.0-or-later (header claimed; verify)",
+      "revision": null,
+      "note": "User-supplied parport.zip 2026-10-24; no pinned upstream revision confirmed"
+    },
+    {
+      "path": "src/hardware/parport/directlpt.h",
+      "sha256": "7abe352274cd1194a2e6abe349bc3ae14f537c7ce5718f9bc18d682015a2f8e3",
+      "license": "GPL-2.0-or-later (header claimed; verify)",
+      "revision": null,
+      "note": "User-supplied parport.zip 2026-10-24; no pinned upstream revision confirmed"
+    },
+    {
+      "path": "src/hardware/parport/extlpt.cpp",
+      "sha256": "1bc4d44fa3db2e97e02cc10f9d36ef882af84623f8f988f742842d60d06fef18",
+      "license": "GPL-2.0-or-later (header claimed; verify)",
+      "revision": null,
+      "note": "User-supplied parport.zip 2026-10-24; no pinned upstream revision confirmed"
+    },
+    {
+      "path": "src/hardware/parport/extlpt.h",
+      "sha256": "c4230ed91b969835516278e94fa8c0fc8902e21fc16ddaf3e712b79028a7fb02",
+      "license": "GPL-2.0-or-later (header claimed; verify)",
+      "revision": null,
+      "note": "User-supplied parport.zip 2026-10-24; no pinned upstream revision confirmed"
+    },
+    {
+      "path": "src/hardware/parport/filelpt.cpp",
+      "sha256": "0262c2a74cc8962a00039e4a6b72d2f0312805dd1809f2af40aa855f51177c64",
+      "license": "GPL-2.0-or-later (header claimed; verify)",
+      "revision": null,
+      "note": "User-supplied parport.zip 2026-10-24; no pinned upstream revision confirmed"
+    },
+    {
+      "path": "src/hardware/parport/filelpt.h",
+      "sha256": "485055ba7ca7786cf016db8f9eee34385ea55f4b7368debf03b09d93cb84f527",
+      "license": "GPL-2.0-or-later (header claimed; verify)",
+      "revision": null,
+      "note": "User-supplied parport.zip 2026-10-24; no pinned upstream revision confirmed"
+    },
+    {
+      "path": "src/hardware/parport/parport.cpp",
+      "sha256": "15639e6bf7f8934df86d188b7cc3d568cb7566caea04eea55445fad01bf1e87a",
+      "license": "GPL-2.0-or-later (header claimed; verify)",
+      "revision": null,
+      "note": "User-supplied parport.zip 2026-10-24; no pinned upstream revision confirmed"
+    },
+    {
+      "path": "src/hardware/parport/printer.cpp",
+      "sha256": "b2aeb131b366e08c67e6444f03742295eea97bc6e7a986a06691633bf460856f",
+      "license": "GPL-2.0-or-later (header claimed; verify)",
+      "revision": null,
+      "note": "User-supplied parport.zip 2026-10-24; no pinned upstream revision confirmed"
+    },
+    {
+      "path": "src/hardware/parport/printer.h",
+      "sha256": "c35bef2a9748bbe2c8d565e436f20df17b219e32d42925a8c83dff2e42423556",
+      "license": "GPL-2.0-or-later (header claimed; verify)",
+      "revision": null,
+      "note": "User-supplied parport.zip 2026-10-24; no pinned upstream revision confirmed"
+    },
+    {
+      "path": "src/hardware/parport/printer_charmaps.cpp",
+      "sha256": "170e53c17275f2588d481890019599d03c89fbb43b38b9181451b69987fba65c",
+      "license": "UNVERIFIED (no explicit license in file header)",
+      "revision": null,
+      "note": "User-supplied parport.zip 2026-10-24; no pinned upstream revision confirmed"
+    },
+    {
+      "path": "src/hardware/parport/printer_charmaps.h",
+      "sha256": "50c76aab514426eedce22828f6c7dce3421fe6a5d4f825854cf5f8dbb4d94e5a",
+      "license": "GPL-2.0-or-later (header claimed; verify)",
+      "revision": null,
+      "note": "User-supplied parport.zip 2026-10-24; no pinned upstream revision confirmed"
+    },
+    {
+      "path": "src/hardware/parport/printer_if.h",
+      "sha256": "4a2fb6af2704d124aa57fc633420f51cbb07dad28f166a83f6eb27075d874eae",
+      "license": "UNVERIFIED (no explicit license in file header)",
+      "revision": null,
+      "note": "User-supplied parport.zip 2026-10-24; no pinned upstream revision confirmed"
+    },
+    {
+      "path": "src/hardware/parport/printer_redir.cpp",
+      "sha256": "c5729345dfaf7057643457ff60f5bf7458b14a26809dda213813c774d0c399cd",
+      "license": "GPL-2.0-or-later (header claimed; verify)",
+      "revision": null,
+      "note": "User-supplied parport.zip 2026-10-24; no pinned upstream revision confirmed"
+    },
+    {
+      "path": "src/hardware/parport/printer_redir.h",
+      "sha256": "243e470a6b519e4b8844ec572791798e59f3bddbcc0bcf2f07755a580689c572",
+      "license": "UNVERIFIED (no explicit license in file header)",
+      "revision": null,
+      "note": "User-supplied parport.zip 2026-10-24; no pinned upstream revision confirmed"
+    },
+    {
+      "path": "src/hardware/pcspeaker.cpp",
+      "sha256": "aa1b3a2db5a2fc414704a431e97dcf50eac268dae05574efc2a15d75920e07b5",
+      "license": "GPL-2.0-or-later (source header)",
+      "bytes": 26002
+    },
+    {
+      "path": "src/hardware/sblaster.cpp",
+      "sha256": "8858e52a8bc676366b354ac485ad6d62e0e65f0b68e85648db1244545ebd207c",
+      "license": "GPL-2.0-or-later (source header)",
+      "bytes": 176533
+    },
+    {
+      "path": "src/hardware/timer.cpp",
+      "sha256": "1a2b42a4901cfef813434836b367b697f573922831d8d2a6c931b9be8d5612e6",
+      "license": "GPL-2.0-or-later (source header)",
+      "bytes": 49486
+    },
+    {
+      "path": "src/hardware/vga.cpp",
+      "sha256": "0e7554c5bf3fd6c8b63d33bbad6919c5f90cd02083c8aeadcd1c68b17dcdbd0d",
+      "license": "GPL-2.0-or-later (source header)",
+      "bytes": 81939
+    },
+    {
+      "path": "src/hardware/vga_attr.cpp",
+      "sha256": "a1eb5e97aa6f4896a6e6349dad842b234318f267c41ff7b2997f5eda35f21369",
+      "license": "GPL-2.0-or-later (source header)",
+      "bytes": 17500
+    },
+    {
+      "path": "src/hardware/vga_crtc.cpp",
+      "sha256": "5318ee32824bf89621217b5d4af1b06a4e7e9f5784d950ef08d8283542e73d1a",
+      "license": "GPL-2.0-or-later (source header)",
+      "bytes": 18489
+    },
+    {
+      "path": "src/hardware/vga_dac.cpp",
+      "sha256": "b439808b4974bb9ceca12b8de39c3f44cd0bef7269f823aff32765ce71ed8a2a",
+      "license": "GPL-2.0-or-later (source header)",
+      "bytes": 17521
+    },
+    {
+      "path": "src/hardware/vga_draw.cpp",
+      "sha256": "bfab8185fe66b3a3583e4b12be35c8a3e0a8224f690dc14e3d3d1bac07776d6f",
+      "license": "GPL-2.0-or-later (source header)",
+      "bytes": 362640
+    },
+    {
+      "path": "src/hardware/vga_gfx.cpp",
+      "sha256": "7e29520e6118ddb635d7245d4dc192365bc6ebde9aba7c56c1f2a6f4d55a3520",
+      "license": "GPL-2.0-or-later (source header)",
+      "bytes": 10936
+    },
+    {
+      "path": "src/hardware/vga_memory.cpp",
+      "sha256": "48c9b0720b5378bb12ff4c8b1e7d6b08989a459594ba6c009fbfc16228772f7a",
+      "license": "GPL-2.0-or-later (source header)",
+      "bytes": 116886
+    }
+  ],
+  "verification": "SHA-256 hashes certify only the received ZIP, not its purported upstream revision.",
+  "note": "Only 16 received source files were hashed. No upstream commit identifier was included with src.zip. Upstream pin 029bd65c5dcc7cdc7f2e14e35278620d9707d969 has NOT been byte-hash verified."
+}

@@ -118,6 +118,7 @@ class PCBios {
  }
  diskService(cpu){
   const fn=this.ah(cpu),dl=cpu.get8(2),fdd=this.m.fdd,disk=fdd.disks[dl];
+  if(dl>=0x80){this.ideDiskService(cpu,fn,dl);return;}
   const success=()=>{this.lastDiskStatus=0;this.setAH(cpu,0);this.cf(cpu,false);this.m.write8(BDA.FDD_STATUS,0);};
   const fail=code=>{this.lastDiskStatus=code;this.setAH(cpu,code);this.cf(cpu,true);this.m.write8(BDA.FDD_STATUS,code);};
   if(fn===0){success();return;}
@@ -140,6 +141,25 @@ class PCBios {
   if(fn===2){for(let i=0;i<byteCount;i++)cpu.write8(S.ES,bx+i,disk.data[start*512+i]);}
   if(fn===3){for(let i=0;i<byteCount;i++)disk.data[start*512+i]=cpu.read8(S.ES,bx+i);}
   cpu.put8(0,count);success();
+ }
+ ideDiskService(cpu,fn,dl){
+  const ide=this.m.ide;
+  const success=()=>{this.lastDiskStatus=0;this.setAH(cpu,0);this.cf(cpu,false);};
+  const fail=code=>{this.lastDiskStatus=code;this.setAH(cpu,code);this.cf(cpu,true);};
+  if(dl!==0x80||!ide||!ide.image){fail(0x80);return;}
+  if(fn===0){success();return;}
+  if(fn===1){this.setAH(cpu,this.lastDiskStatus);this.cf(cpu,!!this.lastDiskStatus);return;}
+  const g=ide.geometry;
+  if(fn===8){const c=Math.min(1024,g.cylinders)-1;cpu.put8(5,c&255);cpu.put8(1,(g.sectors&63)|((c>>>2)&0xc0));cpu.put8(6,g.heads-1);cpu.put8(2,1);success();return;}
+  if(fn===0x15){this.setAH(cpu,3);this.cf(cpu,false);return;}
+  if(fn!==2&&fn!==3&&fn!==4){fail(1);return;}
+  const n=cpu.get8(0),cl=cpu.get8(1),cyl=cpu.get8(5)|((cl&0xc0)<<2),sec=cl&63,head=cpu.get8(6),bx=cpu.r[R.BX];
+  const first=((cyl*g.heads+head)*g.sectors+sec-1),length=n*512;
+  if(n===0||n>127||sec<1||sec>g.sectors||head>=g.heads||cyl>=g.cylinders||first<0||first+n>ide.capacity){fail(4);return;}
+  if(bx+length>0x10000){fail(9);return;}
+  if(fn===2){for(let j=0;j<n;j++){const sector=ide.readSector(first+j);for(let i=0;i<512;i++)cpu.write8(S.ES,bx+j*512+i,sector[i]);}}
+  else if(fn===3){for(let j=0;j<n;j++){const sector=new Uint8Array(512);for(let i=0;i<512;i++)sector[i]=cpu.read8(S.ES,bx+j*512+i);ide.writeSector(first+j,sector);}}
+  cpu.put8(0,n);success();
  }
  videoService(cpu){
   const v=this.m.video,fn=this.ah(cpu),al=cpu.get8(0),bh=cpu.get8(7),bl=cpu.get8(3),ch=cpu.get8(5),cl=cpu.get8(1),dh=cpu.get8(6),dl=cpu.get8(2);

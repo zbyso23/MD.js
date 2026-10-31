@@ -24,6 +24,13 @@ class PC16CPU {
   this.lastFault=null;this.instructionStartIP=this.ip;this.segAccess=new Uint8Array(4);this.segAccess.fill(0x93);this.segAccess[S.CS]=0x9b;this.nullSegment=new Uint8Array(4);
  }
  get protected(){return !!(this.msw&1);}
+ // 80286 real-mode FLAGS bits 12..15 read as zero and POPF cannot set them.
+ // Without this, 8086-compatible DEBUG v2.50 misdetects a 386 and runs 66h.
+ visibleFlags(){return (this.profile==='at'&&!this.protected)?(this.flags&0x0fff)|2:this.flags|2;}
+ restoreFlags(value){
+  this.flags=(value|2)&0xffff;
+  if(this.profile==='at'&&!this.protected)this.flags&=0x0fff;
+ }
  get cpl(){return this.s[S.CS]&3;}
  get iopl(){return (this.flags>>>12)&3;}
  requireSupervisor(label){if(this.protected&&this.cpl!==0)this.protectionFault(13,0,'286 privileged '+label+' requires CPL 0');}
@@ -156,7 +163,7 @@ class PC16CPU {
    const addr=n*4;
    off=this.m.read16Physical(addr);sel=this.m.read16Physical(addr+2);
   }
-  this.push(this.flags);this.push(this.s[S.CS]);this.push(returnIP);
+  this.push(this.visibleFlags());this.push(this.s[S.CS]);this.push(returnIP);
   // Trap gate preserves IF; interrupt gate clears it. Both clear TF.
   this.flags&=~F.TF;if(interruptGate)this.flags&=~F.IF;
   this.farJump(sel,off);this.halted=false;
@@ -430,11 +437,12 @@ class PC16CPU {
    case 0x90:break;
    case 0x98:this.r[R.AX]=(this.get8(0)&0x80)?(0xff00|this.get8(0)):this.get8(0);break; // CBW
    case 0x99:this.r[R.DX]=(this.r[R.AX]&0x8000)?0xffff:0;break; // CWD
-   case 0x9b:break; // WAIT, no 8087 fitted
+   case 0x9b:break; // FWAIT: preview FPU executes synchronously; no simulated busy latency
    case 0xd8:case 0xd9:case 0xda:case 0xdb:case 0xdc:case 0xdd:case 0xde:case 0xdf:
-    // 8086 ESC to absent 8087: CPU still consumes ModR/M and displacement,
-    // while the uncoupled coprocessor sees no command. DEBUG.COM probes 8087 via ESC.
-    this.modrm();break;
+    // Optional 80287XL teaching subset on AT; XT/absent FPU preserve ESC consumption.
+    if(this.profile==='at'&&this.m.fpu&&this.m.fpu.enabled)this.m.fpu.execute(op,this);
+    else this.modrm();
+    break;
    case 0xd7:{const addr=(this.r[R.BX]+this.get8(0))&0xffff;this.put8(0,this.read8(this.segOverride===null?S.DS:this.segOverride,addr));break;} // XLAT
    case 0xce:if(this.flags&F.OF)this.interrupt(4,true);break; // INTO
    case 0x9a: { // CALL FAR imm16:16
@@ -489,14 +497,14 @@ class PC16CPU {
    case 0xf8:this.flags&=~F.CF;break;
    case 0xf9:this.flags|=F.CF;break;
    case 0xf5:this.flags^=F.CF;break;
-   case 0x9c:this.push(this.flags);break;
+   case 0x9c:this.push(this.visibleFlags());break;
    case 0x9d:{
     const requested=this.pop();let mask=0xffff;
     if(this.protected){
      if(this.cpl!==0)mask&=~0x3000; // Only ring0 can change IOPL
      if(this.cpl>this.iopl)mask&=~F.IF;
     }
-    this.flags=(((this.flags&~mask)|(requested&mask))|2)&65535;
+    this.restoreFlags((this.flags&~mask)|(requested&mask));
     break;
    }
    case 0x9e:this.flags=(this.flags&~(F.SF|F.ZF|F.AF|F.PF|F.CF))|((this.get8(4))&(F.SF|F.ZF|F.AF|F.PF|F.CF));break;
@@ -557,7 +565,7 @@ class PC16CPU {
    case 0xca:t=this.fetch16();ip=this.pop();seg=this.pop();this.farJump(seg,ip);this.r[R.SP]=(this.r[R.SP]+t)&65535;break;
    case 0xcd:n=this.fetch8();this.interrupt(n,true);break;
    case 0xcc:this.interrupt(3,true);break;
-   case 0xcf:ip=this.pop();seg=this.pop();this.flags=(this.pop()|2)&65535;this.farJump(seg,ip);break;
+   case 0xcf:ip=this.pop();seg=this.pop();this.restoreFlags(this.pop());this.farJump(seg,ip);break;
    case 0xe0:case 0xe1:case 0xe2:case 0xe3:
     t=this.fetch8();if(t&128)t-=256;
     if(op===0xe3){v=this.r[R.CX]===0;}else{

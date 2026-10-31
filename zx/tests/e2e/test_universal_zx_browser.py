@@ -4,7 +4,8 @@ import asyncio,re,os
 from pathlib import Path
 from playwright.async_api import async_playwright
 BASE=Path(__file__).resolve().parents[3]
-ROM=Path(os.environ.get('MDJS_TEST_ZX_ROM','/mnt/data/seBasic321.rom'))
+# Personal ZIP has a local ROM; public/source-only builds can explicitly supply one.
+ROM=Path(os.environ['MDJS_TEST_ZX_ROM']).expanduser() if os.environ.get('MDJS_TEST_ZX_ROM') else BASE/'zx/roms/zx48.rom'
 async def main():
  async with async_playwright() as p:
   b=await p.chromium.launch(executable_path='/usr/bin/chromium',headless=True,args=['--no-sandbox','--disable-dev-shm-usage'])
@@ -37,6 +38,6 @@ async def main():
    assert await page.evaluate('window.__zxWidget.machine.mem[0x5000]')==0
    assert not errors,errors
    print('ZX OPAQUE-ORIGIN PASS: ROM via File API + JSON restore Z80 + 48KiB RAM; ROM excluded from snapshot')
-  else:print('ZX ROM test skipped (no user-provided test ROM)')
+  else:print('ZX ROM SKIP: no local personal ROM; provide MDJS_TEST_ZX_ROM for full ZX state test')
   await b.close()
 asyncio.run(main())

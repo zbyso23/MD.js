@@ -10,7 +10,7 @@ async def run():
   # Blocks UI
   content=(ROOT/'optional/blockly/index.html').read_text()
   content=content.replace('<link rel="stylesheet" href="MD-Blocks.css">', '<style>'+(ROOT/'optional/blockly/MD-Blocks.css').read_text()+'</style>')
-  for name in ['MD-Blocks.js','MD-Blocks-UI.js']:
+  for name in ['MD-Blocks.js','Blocks-Playback.js','MD-Blocks-UI.js']:
    content=content.replace('<script src="'+name+'"></script>','<script>'+(ROOT/'optional/blockly'/name).read_text()+'</script>')
   await page.set_content(content)
   print('BLOCKS boot errors',errors)

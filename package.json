@@ -1,6 +1,6 @@
 {
   "name": "mdjs-ultra",
-  "version": "0.8.2-ux-shell",
+  "version": "0.8.2-phase4e-hardening-20261029",
   "private": true,
   "description": "MD.js Ultra: standalone Markdown, Mermaid, Charts and optional ZX, Blockly/Arduino, PC (XT and 286) labs",
   "scripts": {
@@ -17,7 +17,7 @@
     "test:zx:real:http": "python3 zx/tests/e2e/test_zx_browser.py --real",
     "test:blocks": "node optional/blockly/tests/test.mjs",
     "test:ultra:browser": "python3 test/e2e/test_ultra_browser.py",
-    "test:release": "npm test && npm run test:blocks && npm run test:zx:unit && npm run test:pc:phase1 && npm run test:pc:browser && npm run test:pc:phase2:browser && npm run test:runtime:browser && npm run test:ultra:browser && npm run test:ux:browser",
+    "test:release": "npm test && npm run test:blocks && npm run test:zx:unit && npm run test:pc:phase1 && npm run test:pc:browser && npm run test:pc:phase2:browser && npm run test:runtime:browser && npm run test:ultra:browser && npm run test:ux:browser && npm run test:ux:shell && npm run test:pc:phase3:compat && npm run test:pc:phase4a && npm run test:pc:phase4b && npm run test:pc:phase4d && npm run test:pc:phase4e:hardening",
     "test:pc:phase1": "node --test optional/pc/tests/*.test.cjs",
     "test:pc:phase2:video": "node --test optional/pc/tests/video-phase2-v078.test.cjs",
     "test:pc:phase2:floppy": "node --test optional/pc/tests/floppy-phase2-v078.test.cjs",
@@ -26,8 +26,22 @@
     "test:runtime:browser": "python3 optional/pc/tests/test_universal_browser.py && python3 zx/tests/e2e/test_universal_zx_browser.py",
     "test:pc": "npm run test:pc:phase1 && npm run test:pc:browser",
     "test:zx:personal-rom": "python3 zx/tests/e2e/test_embedded_rom_v077.py",
-    "test:ux:browser": "python3 optional/blockly/tests/test_dnd_browser.py && python3 zx/tests/e2e/test_keyboard_ux_browser.py && python3 optional/pc/tests/test_video_browser.py",
-    "test:ux:shell": "python3 test/e2e/test_ux_shell_v082.py"
+    "test:ux:browser": "python3 optional/blockly/tests/browser.py && python3 optional/blockly/tests/test_dnd_browser.py && python3 optional/blockly/tests/test_education_playback_browser.py && python3 zx/tests/e2e/test_keyboard_ux_browser.py && python3 optional/pc/tests/test_video_browser.py",
+    "test:ux:shell": "python3 test/e2e/test_ux_shell_v082.py",
+    "test:stabilize": "npm test && npm run test:blocks && npm run test:zx:unit && npm run test:pc:phase1 && npm run test:ux:shell && npm run test:runtime:browser",
+    "test:stabilization2": "npm run test:blocks && npm run test:pc:phase1 && python3 optional/blockly/tests/test_education_playback_browser.py && python3 optional/blockly/tests/browser.py && python3 optional/pc/tests/test_freedos_browser.py",
+    "test:pc:phase3:preflight": "node --test optional/pc/phase3/*.test.cjs",
+    "phase3:source-gate": "node optional/pc/phase3/check-audio-sources.cjs",
+    "test:pc:phase3:speaker": "node --test optional/pc/phase3/speaker-3a.test.cjs && python3 optional/pc/phase3/test_speaker_browser.py",
+    "test:pc:phase3:bc": "node --test optional/pc/phase3/covox-opl2-3bc.test.cjs",
+    "test:pc:phase3:d": "node --test optional/pc/phase3/sb2-dma-3d-preview.test.cjs",
+    "test:pc:phase3:browser": "python3 optional/pc/phase3/test_audio_browser.py",
+    "test:pc:phase3:tune": "node --test optional/pc/phase3/tune-fat12.test.cjs && python3 optional/pc/phase3/test_tune_dos_browser.py",
+    "test:pc:phase3:compat": "npm run test:pc:phase3:preflight && npm run test:pc:phase3:browser && npm run test:pc:phase3:tune",
+    "test:pc:phase4b": "node --test optional/pc/tests/ide-phase4b.test.cjs && python3 optional/pc/tests/test_ide_phase4_browser.py",
+    "test:pc:phase4a": "node --test optional/pc/tests/vga-*.test.cjs && python3 optional/pc/tests/test_vga_phase4_browser.py && python3 optional/pc/tests/test_vga_dos_com_browser.py",
+    "test:pc:phase4d": "node --test optional/pc/tests/phase4d-debug-audio.test.cjs && python3 optional/pc/tests/test_phase4d_debug_browser.py && python3 optional/pc/tests/test_vga_dos_com_browser.py && python3 optional/pc/phase3/test_tune_dos_browser.py",
+    "test:pc:phase4e:hardening": "node --test optional/pc/tests/hardening-regressions-20261029.test.cjs optional/pc/tests/pc-integration-hardening-20261029.test.cjs optional/pc/tests/mandel-geometry-regression.test.cjs && python3 optional/pc/tests/test_mandel_dos_browser.py"
   },
   "dependencies": {},
   "devDependencies": {}

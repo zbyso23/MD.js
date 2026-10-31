@@ -90,9 +90,29 @@ class FDD765 {
   this.result=[st0,st1,st2,cyl,head,sec,n];this.interrupt(st0,cyl);
  }
  snapshot(codec){return {dor:this.dor,cyl:[...this.cyl],status:this.status,cmd:[...this.cmd],expected:this.expected,result:[...this.result],lastInterrupt:{...this.lastInterrupt},disks:this.disks.map(d=>d?{name:d.name,bytes:codec.bytesToBase64(d.data)}:null)};}
- restore(data,codec){if(!data||!Array.isArray(data.disks)||data.disks.length!==2)throw Error('Invalid FDD snapshot');
-  for(let i=0;i<2;i++){const d=data.disks[i];if(d){const bytes=codec.base64ToBytes(d.bytes,1474560);this.mount(i,bytes,d.name);} }
-  this.dor=data.dor&255;this.cyl=data.cyl.slice(0,2);this.cmd=Array.isArray(data.cmd)?data.cmd.slice(0,9):[];this.result=Array.isArray(data.result)?data.result.slice(0,7):[];this.expected=Number.isInteger(data.expected)?data.expected:0;this.lastInterrupt=data.lastInterrupt&&typeof data.lastInterrupt==='object'?{...data.lastInterrupt}:{st0:0x80,cyl:0};
+ restore(data,codec){
+  if(!data||!Array.isArray(data.disks)||data.disks.length!==2)throw Error('Invalid FDD snapshot');
+  // Decode and validate ALL incoming media before mutating the live controller.
+  // An invalid B: must never silently replace a valid A: or lose an ejected drive.
+  const drives=data.disks.map(d=>{
+   if(d===null)return null;
+   if(!d||typeof d!=='object')throw Error('Invalid FDD drive metadata');
+   const bytes=codec.base64ToBytes(d.bytes,1474560);
+   const g=GEOMETRIES.find(x=>x.bytes===bytes.length);
+   if(!g)throw RangeError('Unsupported floppy geometry in snapshot');
+   return {data:new Uint8Array(bytes),geometry:{...g},name:String(d.name||'floppy.img').slice(0,128)};
+  });
+  const validBytes=(v,n)=>Array.isArray(v)&&v.length===n&&v.every(x=>Number.isInteger(x)&&x>=0&&x<=255);
+  if(!validBytes(data.cyl,2)||!validBytes(data.cmd,Array.isArray(data.cmd)?data.cmd.length:-1)||data.cmd.length>9||
+     !validBytes(data.result,Array.isArray(data.result)?data.result.length:-1)||data.result.length>7||
+     !Number.isInteger(data.dor)||data.dor<0||data.dor>255||
+     !Number.isInteger(data.expected)||data.expected<0||data.expected>9)throw Error('Invalid FDD controller state');
+  const last=data.lastInterrupt;
+  if(!last||!Number.isInteger(last.st0)||!Number.isInteger(last.cyl))throw Error('Invalid FDD interrupt state');
+  const status=Number.isInteger(data.status)&&data.status>=0&&data.status<=255?data.status:0;
+  this.disks=drives;this.updateEquipment();
+  this.dor=data.dor;this.status=status;this.cyl=[...data.cyl];this.cmd=[...data.cmd];
+  this.result=[...data.result];this.expected=data.expected;this.lastInterrupt={st0:last.st0,cyl:last.cyl};
  }
 }
 const api={FDD765,GEOMETRIES};if(typeof module!=='undefined'&&module.exports)module.exports=api;root.MDPC_FLOPPY=api;

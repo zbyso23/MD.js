@@ -1,0 +1,102 @@
+{
+  "upstream": "https://github.com/joncampbell123/dosbox-x",
+  "target_revision": "029bd65c5dcc7cdc7f2e14e35278620d9707d969",
+  "required": [
+    {
+      "path": "src/hardware/pcspeaker.cpp",
+      "reason": "PC Speaker gate and PIT2 output",
+      "phase": "3A"
+    },
+    {
+      "path": "src/hardware/8255.cpp",
+      "reason": "XT PPI / port 61h interaction",
+      "phase": "3A"
+    },
+    {
+      "path": "src/hardware/timer.cpp",
+      "reason": "PIT 8253 channels and timing",
+      "phase": "3A"
+    },
+    {
+      "path": "src/hardware/dma.cpp",
+      "reason": "8237 DMA controller; SB2 DMA channel 1",
+      "phase": "3D"
+    },
+    {
+      "path": "src/hardware/iohandler.cpp",
+      "reason": "Port registration and CPU I/O semantics",
+      "phase": "3A"
+    },
+    {
+      "path": "src/hardware/mixer.cpp",
+      "reason": "Mixer and audio clock design",
+      "phase": "3A"
+    },
+    {
+      "path": "src/hardware/adlib.cpp",
+      "reason": "AdLib 0x388/0x389 and OPL device glue",
+      "phase": "3C"
+    },
+    {
+      "path": "src/hardware/adlib.h",
+      "reason": "AdLib interfaces",
+      "phase": "3C"
+    },
+    {
+      "path": "src/hardware/opl.cpp",
+      "reason": "OPL2 FM emulation",
+      "phase": "3C"
+    },
+    {
+      "path": "src/hardware/opl.h",
+      "reason": "OPL2 interfaces",
+      "phase": "3C"
+    },
+    {
+      "path": "src/hardware/dbopl.cpp",
+      "reason": "Alternative OPL2 implementation used by DOSBox-X",
+      "phase": "3C"
+    },
+    {
+      "path": "src/hardware/dbopl.h",
+      "reason": "DBOPL interface and constants",
+      "phase": "3C"
+    },
+    {
+      "path": "src/hardware/sblaster.cpp",
+      "reason": "Sound Blaster 2.0 DSP/DMA/IRQ reference",
+      "phase": "3D"
+    },
+    {
+      "path": "src/hardware/parport/parport.cpp",
+      "reason": "LPT/Covox port data-path reference",
+      "phase": "3B"
+    }
+  ],
+  "recommended": [
+    {
+      "path": "src/hardware/disney.cpp",
+      "reason": "Distinguish Disney Sound Source from passive Covox (do not conflate)"
+    },
+    {
+      "path": "include/dma.h",
+      "reason": "DMA transfer flags/API"
+    },
+    {
+      "path": "include/timer.h",
+      "reason": "Timer interface"
+    },
+    {
+      "path": "include/pic.h",
+      "reason": "PIC IRQ interface (check existing vendor pic.h first)"
+    },
+    {
+      "path": "include/mixer.h",
+      "reason": "Mixer callbacks"
+    }
+  ],
+  "already_available_reference": [
+    "optional/pc/vendor/dosbox-x-reference/pic.cpp",
+    "optional/pc/vendor/dosbox-x-reference/pic.h"
+  ]
+}

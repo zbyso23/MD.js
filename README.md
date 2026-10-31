@@ -1,3 +1,30 @@
+# MD.js Ultra — Phase 4A VGA preview (24. 10. 2026)
+
+**Current working milestone:** XT still offers CGA/Hercules; AT/80286 additionally offers **VGA** with 320×200×256 (13h), 640×480×16 planar (12h), VGA 6-bit DAC and a bounded sequencer/graphics/attribute register subset. Browser runtime remains original unbundled HTML/CSS/JavaScript, no WASM, 386 or runtime npm; installed system RAM is at most 1 MiB. This is **Phase 4A preview**, not full Gate 4 (AT IDE remains unimplemented and VGA is not cycle accurate).
+
+**Try it:** open `optional/pc/index.html`, select **AT · 80286**, then **VGA**. After FreeDOS boots, type `VGA13` or `VGA12`; press any key to return to the DOS text prompt. The two programs are genuine **39-byte** and **33-byte** guest DOS `.COM` binaries in the embedded 720KiB FAT12 image. `TUNE` still plays the Phase 3 AdLib melody. The CPU Test Lab drawer also contains isolated VGA 13h/12h demos. The display selector separates `Raw pixely` from opt-in `Historický CRT 4:3`, without mutating video RAM; 12h is 4:3 natively.
+
+**Verification:** `npm run test:pc:phase4a` performs VGA unit, FAT12 preservation, two browser display modes, aspect and real FreeDOS VGA12/VGA13 execution. Previous Markdown/Blocks/ZX/PC/FreeDOS/TUNE/audio regression suites have separately passed; see [`PHASE4-VGA-4A-REPORT.md`](PHASE4-VGA-4A-REPORT.md). Source files from DOSBox-X are reference-only with checksums; exact original upstream revision remains **unverified**. The personal ZIP includes user-provided ROM/FreeDOS/DEBUG, with public redistribution rights not established.
+
+**Next:** AT IDE/ATA source-first: need `src/hardware/ide.cpp` and matching headers/BIOS integration from an identifiable compatible-licensed upstream revision. After supplying those, the IDE gate can begin. VGA graphics registers, timers/scanout and historical hardware accuracy will also need additional compatibility work. No unsupported release gate is marked complete.
+
+---
+
+# MD.js Ultra v0.8.2 — aktuální stav (24. 10. 2026)
+
+**Historický stav Phase 3A:** PC Speaker PIT2/port 61h → PCM → WebAudio opt-in now has real guest-x86 tests for XT/AT. This is a *limited mode2/mode3* implementation, not full audio compatibility or a released Gate 3. See [PHASE3-3A-PC-SPEAKER.md](PHASE3-3A-PC-SPEAKER.md). Supplied DOSBox-X C++ references are reference-only; the exact upstream commit and `8255.cpp` redistribution terms remain unverified.
+
+
+Čistý browser JavaScript/HTML/CSS bez runtime npm, bundleru a WASM. Aktuální PC Workbench (XT/AT) startuje FreeDOS; DEBUG.COM je testován na XT, ne na AT. Součástí je UX Shell pro PC, ZX a Blocks Lite.
+
+**Čerstvý audit stabilizace:** `npm run test:stabilize` (unit a browserový UX/runtime smoke). Celá regresní matice: `npm run test:release`. Testovací Node/Python/Playwright nejsou runtime závislosti. Běžný provoz má fungovat i z `file://`, ale přímé otevření v některých CI Chromium prostředích blokuje administrativní politika — samotné opaque-origin E2E není náhradou za certifikaci `file://`.
+
+**Známé limity (dřívější v0.8.2):** HGC 720×348 `raw 1×` měl nekorigovaný poměr pixelů; ve Phase 4A je dostupná volitelná prezentační korekce CRT 4:3. CPU není cycle-accurate ani plný 286. Původní ROM/DEBUG/FreeDOS osobní binární podklady nejsou automaticky licencované pro veřejnou redistribuci. Viz `UX-SHELL-RELEASE-v0.8.2.md`, `PC-PHASE2-FREEDOS-DEBUG-GATE-v0.8.0.md` a `LICENSING.md`.
+
+**Historické milníky níže jsou zachovány jako release notes své doby, nikoli jako tvrzení o současném stavu.**
+
+---
+
 > **Novinka v0.8.2:** UX Shell, přesné měřítko HGC/CGA a vysouvací panely. Viz [UX-SHELL-RELEASE-v0.8.2.md](UX-SHELL-RELEASE-v0.8.2.md).
 
 # MD.js Ultra v0.8.0 — Phase 2 FreeDOS & DEBUG release (23 October 2026)
@@ -19,7 +46,7 @@ See `PC-PHASE2-FREEDOS-DEBUG-GATE-v0.8.0.md` for tests, scope and limitations.
 
 # MD.js Ultra v0.7.8 — Phase 2 CGA/Hercules + FDD milestone
 
-**Latest release:** video and floppy hardware now work as native, readable JavaScript in the optional PC Workbench. Both XT and AT execute BIOS `INT 10h` text/graphics and can load/execute a real guest boot sector from a raw floppy image via `INT 13h` and `INT 19h`. **FreeDOS has NOT been booted yet; Gate 2 is open.**
+**Historický milník v0.7.8:** video and floppy hardware now work as native, readable JavaScript in the optional PC Workbench. Both XT and AT execute BIOS `INT 10h` text/graphics and can load/execute a real guest boot sector from a raw floppy image via `INT 13h` and `INT 19h`. **FreeDOS has NOT been booted yet; Gate 2 is open.**
 
 - **Display:** `PC-Video.js` implements CGA text/4-color/mono graphics and Hercules 720×348 monochrome, mapped video RAM, video ports, and a Canvas screen reading the true VRAM buffer.
 - **Floppy:** `PC-Floppy.js` implements A:/B:, image uploads, limited NEC 765 I/O, DMA2/IRQ6, CHS BIOS services, boot-sector execution and transferable JSON media snapshots. No copyright-protected disk images are bundled.
@@ -184,3 +211,11 @@ See [`UX-STABILIZATION-v0.8.1.md`](UX-STABILIZATION-v0.8.1.md) for a detailed ch
 - Blocks Lite: fully original Pointer Events drag-and-drop editor; **not embedded Google Blockly**.
 
 Run `npm run test:ux:browser` for the added real Chromium checks. The existing `npm run test:release` retains all previous gates.
+
+
+### Stabilization 2 — browser UX / Arduino teaching playback / AT boot (23 October 2026)
+
+- Blocks Lite now **visibly replays** virtual I/O events instead of instantly showing the last state after three cycles. Default teaching pace: **2 seconds per virtual timestamp transition** (selectable 1.2 / 2 / 3.5s), deliberate slow presentation; immutable interpreter trace remains deterministic. Pause, step, input/preset timer cancellation added.
+- The PC Workbench's XT/AT profile selector, Reset, and video adapter change now boot the embedded FreeDOS image automatically. The AT profile clearly notes that the provided DEBUG.COM uses an unsupported 386 detection path; 286 emulation is **not** upgraded to 386.
+- New deterministic timing tests and a real Chromium LED timing gate; old tests adapted to the current UX. For details and limitations see `STABILIZATION-2-UX.md`.
+- Caution: unrelated hard-gates still open, including authentic `file://` cross-browser certification, full 286 protected-mode/TSS semantics, and Hercules historical CRT aspect ratio.

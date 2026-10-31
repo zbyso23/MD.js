@@ -20,18 +20,23 @@ async def inject_standalone(page,htmlfile):
   await page.add_script_tag(content=thing.read_text() if kind=='src' else thing)
 
 async def test_pc(page):
+ # Controls in v0.8.2 are moved to live DOM drawers; do not bypass clickability.
+ async def drawer_click(drawer, selector):
+  await page.locator(f'.ux-commandbar [data-ux-target="{drawer}"]').click()
+  await page.locator(selector).click()
+  await page.locator(f'#ux-pc-{drawer} .ux-close').click()
  await page.locator('#pc-pause').click()
  await page.locator('#reset').click()
- await page.locator('#boot').click()
+ await drawer_click('tests', '#boot')
  assert '[ISOLATED] BOOT ROM' in await page.locator('#trace').inner_text()
  assert 'REAL MODE' in await page.locator('#mode').inner_text()
  await page.locator('#machine').select_option('at')
- await page.locator('#pm').click()
+ await drawer_click('tests', '#pm')
  assert '[CPU TEST · isolated] 286 LGDT / LMSW / FAR JMP: PASS' in await page.locator('#trace').inner_text()
  assert 'REAL MODE' in await page.locator('#mode').inner_text()
  # State export/import round trip on LIVE PC (diagnostics never alter it).
  await page.evaluate('window.__mdPCUniversal.machine.ram[0x2000]=0x5a')
- async with page.expect_download() as dl:await page.locator('#pc-export-json').click()
+ async with page.expect_download() as dl:await drawer_click('state', '#pc-export-json')
  download=await dl.value;path=Path(await download.path());doc=json.loads(path.read_text())
  assert doc['machine']=='pc' and doc['payload']['profile']=='at'
  await page.locator('#reset').click()
@@ -39,16 +44,16 @@ async def test_pc(page):
  await page.locator('#pc-json-file').set_input_files(str(path))
  await page.wait_for_function('window.__mdPCUniversal.machine.ram[0x2000]===0x5a',timeout=6000)
  assert 'REAL MODE' in await page.locator('#mode').inner_text()
- await page.locator('#pc-save-local').click()
+ await drawer_click('state', '#pc-save-local')
  storage_status=await page.locator('#pc-storage-status').inner_text()
  if 'uložen' in storage_status:
   await page.locator('#reset').click()
-  await page.locator('#pc-load-local').click()
+  await drawer_click('state', '#pc-load-local')
   assert await page.evaluate('window.__mdPCUniversal.machine.ram[0x2000]')==0x5a
  else:
   assert 'localStorage selhal' in storage_status
  await page.evaluate("(doc)=>{document.querySelector('#pc-persistence details').open=true;document.getElementById('pc-json-paste').value=JSON.stringify(doc)}",doc)
- await page.locator('#pc-import-paste').click()
+ await drawer_click('state', '#pc-import-paste')
  assert await page.evaluate('window.__mdPCUniversal.machine.ram[0x2000]')==0x5a
  worker=await page.evaluate("async()=>await MDUltraRuntime.workerJSON({hello:'world'})")
  assert json.loads(worker['text'])=={'hello':'world'}

@@ -81,3 +81,41 @@ Guest divide faults `#DE` (vector 0) and 286 signed `BOUND` faults `#BR` (vector
 Added BCD/ASCII, far pointer and far call, 286 arithmetic and segment permission operations, and AT two-PIC cascaded interrupt tests. The 286 segment cache survives the initial real→protected transition; descriptors subsequently loaded in protected mode enforce null selector, access rights, privilege and expand-down limits. Invalid accesses currently raise host `CPUFault`, **not** proper guest `#GP`/`#SS`/`#NP`. The second 8259 handles PIC ICW1–4, EOI and AT IRQ8–15 through IRQ2. Remaining timer and DMA timing are approximations; this is **not** a complete AT chipset.
 
 Full status: `../../PC-PHASE1-HARDENING-v0.7.5.md`.
+
+
+## Phase 3B/3C/3D hardware previews (October 2026)
+
+The PC Workbench now includes opt-in audio demos for **Covox on LPT1 378h**,
+**AdLib OPL2 on 388h/389h**, and **Sound Blaster 2.0 DSP at 220h + 8-bit DMA1/IRQ5**,
+alongside Phase 3A PC Speaker. Each demo runs real guest x86 I/O on an isolated
+PCMachine and does not alter the running FreeDOS disk/CPU state. Audio is generated
+by the pure-JS emulated devices and is played only after a user click.
+
+Important: all three are **limited previews**, not complete hardware
+compatibility. OPL2 is a native JS nine-channel two-operator FM implementation
+with approximate envelopes (not a port of DBOPL), without rhythm mode. SB2
+implements a restricted 8-bit DSP command subset and guest-RAM DMA1 playback,
+not full ISA timings. The source provenance/revision gate is intentionally
+open pending independent upstream verification; see `PHASE3-3B-3C-3D-PREVIEW.md`.
+
+Run `npm run test:pc:phase3:preflight` and `npm run test:pc:phase3:browser`
+for deterministic device tests and Chromium guest/browser smoke. The project
+continues to require no build step or npm packages at runtime.
+
+## Phase 3 — Real FreeDOS AdLib TUNE.COM compatibility milestone
+
+The personal 720KiB FAT12 FreeDOS image includes **TUNE.COM**, a **137-byte**
+real-mode 8086 binary that plays C4–E4–G4–C5–G4–E4–C4 through AdLib/YM3812
+`OUT` instructions to `388h` and `389h`. It uses BIOS `INT 1Ah` clock ticks for
+visible spacing, sends key-off between notes, and exits with DOS `INT 21h/4Ch`.
+
+Start FreeDOS, click **Zapnout zvuk**, then type `TUNE` at the `A:\>` prompt.
+Source: `phase3/TUNE.s` (GNU as 16-bit Intel syntax); binary: `phase3/TUNE.COM`.
+The binary is already stored on the embedded disk; **nothing is auto-executed**.
+Build steps are optional **developer tools only**; production runs unbundled JS.
+
+`npm run test:pc:phase3:tune` checks FAT12 file contents and actual XT/AT DOS
+execution in Chromium, seven note changes, PCM samples and return to DOS.
+This is a limited device compatibility milestone, **not** a hardware-accurate
+OPL2/SB2 final gate. Original DBOPL envelopes, rhythm, SB2 DSP breadth,
+source provenance and cross-browser file:// are still open.

@@ -9,7 +9,7 @@ ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'pc-phase1-browser.png'
 async def main():
     page_src=(ROOT/'index.html').read_text()
-    for name in ('PC-Core.js','PC-Video.js','PC-BIOS.js','PC-Floppy.js','PC-Machine.js','PC-EmbeddedAssets.js'):
+    for name in ('PC-Core.js','PC-Video.js','PC-VGA.js','PC-BIOS.js','PC-Floppy.js','PC-IDE.js','PC-FPU287.js','PC-Audio.js','PC-OPL2.js','PC-SB2.js','PC-Machine.js','PC-Audio-Output.js','PC-EmbeddedAssets.js'):
         body=(ROOT/name).read_text().replace('</script','<\\/script')
         page_src=page_src.replace(f'<script src="{name}"></script>',f'<script>{body}</script>')
     async with async_playwright() as p:

@@ -7,7 +7,7 @@ ROOT=Path(__file__).resolve().parents[1]
 BASE=ROOT.parents[1]
 async def main():
  html=(ROOT/'index.html').read_text(encoding='utf-8')
- for name in ('PC-Core.js','PC-Video.js','PC-BIOS.js','PC-Floppy.js','PC-Machine.js','PC-EmbeddedAssets.js'):
+ for name in ('PC-Core.js','PC-Video.js','PC-VGA.js','PC-BIOS.js','PC-Floppy.js','PC-IDE.js','PC-FPU287.js','PC-Audio.js','PC-OPL2.js','PC-SB2.js','PC-Machine.js','PC-Audio-Output.js','PC-EmbeddedAssets.js'):
   html=html.replace(f'<script src="{name}"></script>',f'<script>{(ROOT/name).read_text(encoding="utf-8")}</script>')
  html=html.replace('<script src="../../MD-Runtime.js"></script>',f'<script>{(BASE/"MD-Runtime.js").read_text(encoding="utf-8")}</script>')
  async with async_playwright() as p:
@@ -38,7 +38,7 @@ async def main():
   await page.keyboard.type('Q');await page.keyboard.press('Enter')
   await ready('XT DEBUG Q returns DOS','-Q','A:\\>')
   await page.locator('#machine').select_option('at')
-  await page.evaluate('window.__mdPCUniversal.startFreeDOS()')
+  assert 'DEBUG.COM' in await page.locator('#pc-profile-note').inner_text()
   await ready('AT FreeDOS prompt','FreeCom version','A:\\>')
   await page.evaluate("window.__mdPCUniversal.queueText('DIR\\n')")
   await ready('AT directory listing','DEBUG    COM','A:\\>')

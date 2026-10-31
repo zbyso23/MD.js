@@ -3,7 +3,7 @@
 **An optional, self-contained HTML/ES6 programming playground, on `feature/blockly-lite`.**
 No npm, imports, web services, hardware access or execution of arbitrary source code in the browser. This is a **toy I/O simulation**, not a CPU/AVR emulator, circuit simulator, electric safety verifier, or physical Arduino IDE.
 
-Open `index.html` directly in a modern browser. Start with **🧪 Playground**, click **▶ Simulovat 3 cykly**, and adjust the virtual inputs. The controls affect the *interpreted allowlisted JSON block program*, not executable JS strings. A sensor change updates the simulated outputs while simulation is active.
+Open `index.html` directly in a modern browser. Start with **🧪 Playground**, click **▶ Přehrát 3 cykly**, and adjust the virtual inputs. Events are now actually animated: the standard educational playback holds each state transition for at least **2 seconds** (adjustable to 1.2 or 3.5 seconds), regardless of real Arduino speed. **Ⅱ Pozastavit** freezes the board and **⏭ Další krok** walks through the event timeline manually. The controls affect the *interpreted allowlisted JSON block program*, not executable JS strings. Changing a sensor during animation restarts the deterministic three-cycle timeline with new inputs. The model never executes generated source.
 
 ## Virtual UNO lab
 
@@ -50,3 +50,7 @@ g++ -std=c++11 -fsyntax-only -x c++ \
 ## Roadmap (deferred)
 
 Optional drag-and-drop block connectors, richer editable branching, more electronic components, lessons and real toolchain/export tests. **Do not** turn this into a full Arduino electrical/AVR emulator or widen the MD.js runtime. Mini-3D, CAD, G-code and Micro JS-Torch live elsewhere or remain deferred.
+
+### Stabilization-2 regression gates
+
+`node tests/test.mjs` now includes playback planning/timing edge cases. `python3 tests/test_education_playback_browser.py` checks actual LED transitions, pause, single-step, and timer cleanup in Chromium. `python3 tests/browser.py` checks the Arduino full board, while `python3 tests/test_dnd_browser.py` covers real Pointer Events. These are separate from AVR/physical Arduino correctness.

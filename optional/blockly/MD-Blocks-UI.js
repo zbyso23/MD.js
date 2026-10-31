@@ -3,6 +3,7 @@
  */
 (function(){'use strict';
   let program=MDBlocks.playground(), language='javascript', cancel=0, active=false, buttonHeld=false;
+  let replay=null, replayIndex=0, replayTimer=0, replayHistory=[], boardState=null;
   let undoStack=[],redoStack=[],zoom=1,drag=null,dragGhost=null,dropTarget=null;
   const by=id=>document.getElementById(id);
   const types=['print','set','change','repeat','if','pinMode','write','delay','readDigital','readAnalog','map','writeVar','pwm','servo','stepper'];
@@ -125,12 +126,12 @@
     }e.preventDefault();
   }
   function pointerCancel(){finishDrag();}
-  function refresh(){const host=by('blocks');host.replaceChildren();
+  function refresh(){if(!active&&replay){clearTimer();replay=null;emptyBoard();}const host=by('blocks');host.replaceChildren();
     for(const [key,title,desc] of [['setup','SETUP','Spouští se jednou'],['loop','LOOP','Běží opakovaně']]){
       const scope=el('div','scope');scope.append(el('div','scope-header',title+' · '+desc));scope.append(makeEditor(program[key],[key]));host.append(scope);
     }
     renderToolbox();by('blocks').style.zoom=String(zoom);by('zoom-level').textContent=Math.round(zoom*100)+' %';updateUndoButtons();
-    try{const src=MDBlocks.generate(program,language);by('source').textContent=src;if(active)renderResult();else by('console').textContent='Připraveno · '+MDBlocks.validate(program).count+' bloků.';}
+    try{const src=MDBlocks.generate(program,language);by('source').textContent=src;if(active)startPlayback();else if(!replay)by('console').textContent='Připraveno · '+MDBlocks.validate(program).count+' bloků.';}
     catch(e){by('source').textContent='CHYBA: '+e.message;by('console').textContent='Oprav blok: '+e.message;}
   }
   by('undo').addEventListener('click',()=>{if(!undoStack.length)return;redoStack.push(deepCopy(program));program=undoStack.pop();refresh();});
@@ -139,38 +140,79 @@
   by('zoom-out').addEventListener('click',()=>{zoom=Math.max(.7,Math.round((zoom-.1)*10)/10);refresh();});
   by('zoom-reset').addEventListener('click',()=>{zoom=1;refresh();});
   function inputs(){return {digital:{2:buttonHeld?1:0,3:by('switch-in').checked?1:0},analog:{A0:Number(by('pot-in').value),A1:Number(by('mic-in').value)}};}
-  function renderResult(){
-    let result;
-    try{result=MDBlocks.simulate(program,3,inputs());}
-    catch(e){by('console').textContent='STOP: '+e.message;return;}
-    const pwm=result.actuators.pwm,servo=result.actuators.servo,stepper=result.actuators.stepper;
-    by('led').classList.toggle('on',result.pins['13']==='HIGH'||result.pins.LED_BUILTIN==='HIGH');
+  function clearTimer(){cancel++;if(replayTimer)clearTimeout(replayTimer);replayTimer=0;}
+  function emptyBoard(){
+    boardState={pins:Object.create(null),pwm:0,servo:90,stepper:0};
+    by('led').classList.remove('on');by('pwm-led').style.opacity='0.25';
+    by('pwm-value').textContent='PWM 0/255';
+    by('servo-needle').style.transform='rotate(0deg)';by('servo-value').textContent='90°';
+    by('stepper-rotor').style.transform='rotate(0deg)';by('stepper-value').textContent='0 kroků';
+    by('simtime').textContent='Virtuální čas: 0 ms';
+  }
+  function describe(e){return '['+e.time+' ms] '+(e.kind==='print'?e.text:e.kind==='write'?'D'+e.pin+' = '+e.state:e.kind==='sensor'?e.source+' → '+e.name+' = '+e.value:e.kind==='pwm'?'PWM D9 = '+e.value:e.kind==='servo'?'Servo = '+e.value+'°':e.kind==='stepper'?'Stepper '+e.steps+' → '+e.position:e.kind==='var'?e.name+' = '+e.value:e.kind==='mode'?'pin '+e.pin+' mode '+e.mode:e.kind);}
+  function showGroup(group){
+    for(const e of group.events){
+      replayHistory.push(describe(e));
+      if(e.kind==='write')boardState.pins[e.pin==='LED_BUILTIN'?'13':e.pin]=e.state;
+      if(e.kind==='pwm')boardState.pwm=e.value;
+      if(e.kind==='servo')boardState.servo=e.value;
+      if(e.kind==='stepper')boardState.stepper=e.position;
+    }
+    const {pwm,servo,stepper}=boardState;
+    by('led').classList.toggle('on',boardState.pins['13']==='HIGH');
     by('pwm-led').style.opacity=String(0.25+0.75*pwm/255);
     by('pwm-value').textContent='PWM '+pwm+'/255';
     by('servo-needle').style.transform='rotate('+(-90+servo)+'deg)';
     by('servo-value').textContent=servo+'°';
     by('stepper-rotor').style.transform='rotate('+(stepper*1.8)+'deg)';
     by('stepper-value').textContent=stepper+' kroků';
-    by('simtime').textContent='Virtuální čas: '+result.virtualTimeMs+' ms · '+result.steps+' kroků simulace';
-    const msg=result.trace.slice(-25).map(e=>'['+e.time+' ms] '+(e.kind==='print'?e.text:e.kind==='write'?'D'+e.pin+' = '+e.state:e.kind==='sensor'?e.source+' → '+e.name+' = '+e.value:e.kind==='pwm'?'PWM D9 = '+e.value:e.kind==='servo'?'Servo = '+e.value+'°':e.kind==='stepper'?'Stepper '+e.steps+' → '+e.position:e.kind==='var'?e.name+' = '+e.value:e.kind==='mode'?'pin '+e.pin+' mode '+e.mode:e.kind));
-    by('console').textContent=msg.join('\n')+'\n✓ Hotovo (bezpečná simulace)';
+    by('simtime').textContent='Virtuální čas: '+group.time+' ms · krok '+replayIndex+'/'+replay.length;
+    by('console').textContent=replayHistory.slice(-25).join('\n');
+    by('playback-status').textContent='Krok '+replayIndex+'/'+replay.length+' · čas programu '+group.time+' ms · výukové tempo (ne reálný čas)';
   }
-  by('run').addEventListener('click',()=>{cancel++;active=true;renderResult();});
-  by('stop').addEventListener('click',()=>{cancel++;active=false;by('console').textContent+='\n■ Simulace pozastavena';});
-  function inputChanged(){by('pot-value').textContent=by('pot-in').value;by('mic-value').textContent=by('mic-in').value;if(active)renderResult();}
+  function prepareReplay(){
+    clearTimer();active=false;replayHistory=[];replayIndex=0;replay=null;emptyBoard();
+    try{
+      const r=MDBlocks.simulate(program,3,inputs());
+      replay=MDBlocksPlayback.plan(r.trace,Number(by('teaching-pace').value));
+      by('playback-status').textContent='Připraveno: '+replay.length+' časových kroků / 3 cykly · '+r.virtualTimeMs+' ms programu';
+      return true;
+    }catch(e){by('console').textContent='STOP: '+e.message;by('playback-status').textContent='Chyba simulace';return false;}
+  }
+  function advance(){
+    if(!replay||replayIndex>=replay.length){active=false;by('playback-status').textContent='✓ Dokončeno · 3 cykly. Přehrát znovu nebo krokovat.';return false;}
+    showGroup(replay[replayIndex++]);
+    if(replayIndex===replay.length){active=false;by('playback-status').textContent='✓ Dokončeno · 3 cykly ('+replayIndex+' kroků).';}
+    return true;
+  }
+  function scheduleNext(){
+    if(!active||!replay||replayIndex>=replay.length)return;
+    const ms=replay[replayIndex-1].dwellMs, token=cancel;
+    replayTimer=setTimeout(()=>{replayTimer=0;if(token!==cancel||!active)return;advance();scheduleNext();},ms);
+  }
+  function startPlayback(){
+    if(!prepareReplay())return;
+    active=true;
+    if(advance())scheduleNext();
+  }
+  by('run').addEventListener('click',startPlayback);
+  by('stop').addEventListener('click',()=>{clearTimer();active=false;by('playback-status').textContent='Ⅱ Pozastaveno · stav desky zachován. Další krok pokračuje.';by('console').textContent+='\nⅡ Animace pozastavena';});
+  by('single-step').addEventListener('click',()=>{clearTimer();active=false;if(!replay||replayIndex===replay.length){if(!prepareReplay())return;}advance();});
+  by('teaching-pace').addEventListener('change',()=>{if(active)startPlayback();else {clearTimer();replay=null;by('playback-status').textContent='Tempo změněno · připraveno k přehrání.';}});
+  function inputChanged(){by('pot-value').textContent=by('pot-in').value;by('mic-value').textContent=by('mic-in').value;if(active)startPlayback();else if(replay){clearTimer();replay=null;emptyBoard();by('playback-status').textContent='Vstup změněn · znovu spusť simulaci.';}}
   by('btn-in').addEventListener('click',()=>{buttonHeld=!buttonHeld;by('btn-in').setAttribute('aria-pressed',String(buttonHeld));by('btn-in').textContent=buttonHeld?'● D2 tlačítko DRŽENO':'○ D2 tlačítko';inputChanged();});
   by('switch-in').addEventListener('change',inputChanged);
   by('pot-in').addEventListener('input',inputChanged);
   by('mic-in').addEventListener('input',inputChanged);
-  by('preset').addEventListener('change',()=>{active=false;cancel++;saveUndo();program=by('preset').value==='blink'?MDBlocks.demo():MDBlocks.playground();refresh();});
+  by('preset').addEventListener('change',()=>{clearTimer();active=false;replay=null;emptyBoard();saveUndo();program=by('preset').value==='blink'?MDBlocks.demo():MDBlocks.playground();refresh();});
   by('theme').addEventListener('click',()=>document.body.classList.toggle('dark'));
-  by('reset').addEventListener('click',()=>{cancel++;saveUndo();program=by('preset').value==='blink'?MDBlocks.demo():MDBlocks.playground();refresh();});
+  by('reset').addEventListener('click',()=>{clearTimer();active=false;replay=null;emptyBoard();saveUndo();program=by('preset').value==='blink'?MDBlocks.demo():MDBlocks.playground();refresh();});
   document.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click',()=>{language=b.dataset.lang;document.querySelectorAll('[data-lang]').forEach(x=>x.setAttribute('aria-selected',String(x===b)));refresh();}));
   function download(name,content,mime){const url=URL.createObjectURL(new Blob([content],{type:mime}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
-  by('save').addEventListener('click',()=>{try{MDBlocks.validate(program);download('blocks-lite.json',JSON.stringify(program,null,2),'application/json');}catch(e){alert(e.message);}});
+  by('save').addEventListener('click',()=>{try{MDBlocks.validate(program);const d=new Date(),stamp=[d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0'),String(d.getHours()).padStart(2,'0'),String(d.getMinutes()).padStart(2,'0'),String(d.getSeconds()).padStart(2,'0')].join('');download('blocks-lite_'+stamp+'.json',JSON.stringify(program,null,2),'application/json');}catch(e){alert(e.message);}});
   by('load').addEventListener('click',()=>by('file').click());
-  by('file').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;if(f.size>100000){alert('Max 100 KiB');return;}try{const obj=JSON.parse(await f.text());MDBlocks.validate(obj);cancel++;saveUndo();program=obj;refresh();}catch(err){alert('Invalid workspace: '+err.message);}e.target.value='';});
+  by('file').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;if(f.size>100000){alert('Max 100 KiB');return;}try{const obj=JSON.parse(await f.text());MDBlocks.validate(obj);clearTimer();active=false;replay=null;emptyBoard();saveUndo();program=obj;refresh();}catch(err){alert('Invalid workspace: '+err.message);}e.target.value='';});
   by('copy').addEventListener('click',()=>navigator.clipboard.writeText(by('source').textContent).catch(()=>alert('Clipboard není dostupný (potřebuje HTTPS nebo localhost).')));
   if (new URLSearchParams(location.search).get('preset') === 'blink') { by('preset').value = 'blink'; program = MDBlocks.demo(); }
-  refresh();
+  emptyBoard();refresh();
 })();

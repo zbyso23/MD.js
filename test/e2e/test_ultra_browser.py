@@ -61,14 +61,15 @@ def run():
     assert page.locator('a[href*="preset=blink"]').count()==1
     assert page.locator('a[href*="preset=playground"]').count()==1
     assert page.locator('script[src*="MinZX"]').count()==0
-    load_local(page,'optional/blockly/index.html',['optional/blockly/MD-Blocks.js','optional/blockly/MD-Blocks-UI.js'])
+    load_local(page,'optional/blockly/index.html',['optional/blockly/MD-Blocks.js','optional/blockly/Blocks-Playback.js','optional/blockly/MD-Blocks-UI.js'])
     page.locator('#preset').select_option('blink')
     assert page.locator('#preset').input_value()=='blink'
     assert page.locator('#blocks .block').count()>0
     page.locator('#preset').select_option('playground')
     assert page.locator('#preset').input_value()=='playground'
     page.locator('#run').click()
-    assert 'Hotovo' in page.locator('#console').inner_text()
+    assert 'krok 1/' in page.locator('#simtime').inner_text()
+    assert 'Připraveno' not in page.locator('#playback-status').inner_text()
     assert not errors,errors
     browser.close()
     print('BROWSER PASS: 4 charts + short GFM table + 3-way sort + filter + SVG export + optional routes + Arduino/Blockly')
