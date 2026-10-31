@@ -3,7 +3,8 @@
 <body>
 <header><div><div class="eyebrow">MD.js ULTRA · OPTIONAL ENV</div><h1>Blocks Lite <span>Arduino Playground</span></h1><p>Programuj bloky → JS / Python / Arduino C++ · hraj si se senzory a motory · 100% offline</p></div><div class="header-actions"><button id="theme" class="ghost">◐ Téma</button><select id="preset" aria-label="Lekce"><option value="playground">🧪 Playground</option><option value="blink">💡 Blink</option></select><button id="reset">↺ Reset lekce</button><button id="load">↑ Import JSON</button><button id="save">↓ Export JSON</button><input id="file" type="file" accept=".json,application/json" hidden></div></header>
 <main>
- <section class="workspace" aria-label="Vizuální editor"><div class="section-head"><h2>01 — Bloky programu</h2><span class="hint">Ovládání ↑ ↓ i klávesnicí · vnořené bloky</span></div><div id="blocks"></div></section>
+ <section class="workspace" aria-label="Vizuální editor"><div class="section-head"><h2>01 — Bloky programu</h2><span class="hint">Originální Pointer DnD · myš / dotyk · zacvakávání · bez knihovny</span></div><div class="editor-actions"><button id="undo" disabled>↶ Undo</button><button id="redo" disabled>↷ Redo</button><button id="zoom-out">−</button><span id="zoom-level">100 %</span><button id="zoom-in">+</button><button id="zoom-reset">1:1</button></div>
+  <div class="editor-grid"><nav id="toolbox" aria-label="Toolbox bloků"></nav><div id="blocks" aria-label="Drag-and-drop pracovní plocha"></div></div></section>
  <aside class="right"><section class="code-panel"><div class="section-head"><h2>02 — Překlad</h2><span class="hint">Z exportu se nic automaticky nespouští</span></div><div role="tablist" class="tabs"><button role="tab" data-lang="javascript" aria-selected="true">JavaScript</button><button role="tab" data-lang="python">Python</button><button role="tab" data-lang="arduino">Arduino C++</button></div><pre class="code" id="source" tabindex="0" aria-label="Generovaný kód"></pre><button id="copy" class="ghost">⧉ Kopírovat kód</button></section>
  <section class="sim-panel"><div class="section-head"><h2>03 — Virtuální deska</h2><span class="hint">Bez skutečného hardware</span></div><div class="board"><div class="board-name">UNO · SIMULATED</div><div id="led" class="led" aria-label="Virtuální LED"></div><div class="board-label">LED D13</div><div class="board-time" id="simtime">Virtuální čas: 0 ms</div></div>
     <div class="devices" aria-label="Virtuální elektronika">
@@ -14,5 +15,5 @@
       <div class="device device-out"><strong>⟳ Stepper D4–D7</strong><div class="output-row"><div class="rotor" id="stepper-rotor">✦</div><output id="stepper-value">0 kroků</output></div></div>
     </div>
     <div class="run-actions"><button id="run" class="primary">▶ Simulovat 3 cykly</button><button id="stop" class="ghost">■ Stop animace</button></div><pre id="console" class="console" aria-live="polite">Připraveno. Stiskni Spustit simulaci.</pre></section></aside>
-</main><footer>Blocks Lite v0.2 · Arduino Toy Lab · žádný eval, žádné importy, žádné přímé řízení fyzického hardware · žádný assembler</footer>
+</main><footer>Blocks Lite v0.8.1 · Original Native Drag & Drop Arduino Toy Lab · žádný eval, žádné importy, žádné přímé řízení fyzického hardware · žádný assembler</footer>
 <script src="MD-Blocks.js"></script><script src="MD-Blocks-UI.js"></script></body></html>

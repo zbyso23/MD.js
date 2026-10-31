@@ -1,6 +1,6 @@
 {
   "name": "mdjs-ultra",
-  "version": "0.8.0-phase2-freedos",
+  "version": "0.8.1-ux-stabilization",
   "private": true,
   "description": "MD.js Ultra: standalone Markdown, Mermaid, Charts and optional ZX, Blockly/Arduino, PC (XT and 286) labs",
   "scripts": {
@@ -17,7 +17,7 @@
     "test:zx:real:http": "python3 zx/tests/e2e/test_zx_browser.py --real",
     "test:blocks": "node optional/blockly/tests/test.mjs",
     "test:ultra:browser": "python3 test/e2e/test_ultra_browser.py",
-    "test:release": "npm test && npm run test:blocks && npm run test:zx:unit && npm run test:pc:phase1 && npm run test:pc:browser && npm run test:pc:phase2:browser && npm run test:runtime:browser && npm run test:ultra:browser",
+    "test:release": "npm test && npm run test:blocks && npm run test:zx:unit && npm run test:pc:phase1 && npm run test:pc:browser && npm run test:pc:phase2:browser && npm run test:runtime:browser && npm run test:ultra:browser && npm run test:ux:browser",
     "test:pc:phase1": "node --test optional/pc/tests/*.test.cjs",
     "test:pc:phase2:video": "node --test optional/pc/tests/video-phase2-v078.test.cjs",
     "test:pc:phase2:floppy": "node --test optional/pc/tests/floppy-phase2-v078.test.cjs",
@@ -25,7 +25,8 @@
     "test:pc:browser": "python3 optional/pc/tests/test_browser.py",
     "test:runtime:browser": "python3 optional/pc/tests/test_universal_browser.py && python3 zx/tests/e2e/test_universal_zx_browser.py",
     "test:pc": "npm run test:pc:phase1 && npm run test:pc:browser",
-    "test:zx:personal-rom": "python3 zx/tests/e2e/test_embedded_rom_v077.py"
+    "test:zx:personal-rom": "python3 zx/tests/e2e/test_embedded_rom_v077.py",
+    "test:ux:browser": "python3 optional/blockly/tests/test_dnd_browser.py && python3 zx/tests/e2e/test_keyboard_ux_browser.py && python3 optional/pc/tests/test_video_browser.py"
   },
   "dependencies": {},
   "devDependencies": {}

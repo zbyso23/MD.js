@@ -23,32 +23,35 @@ async def test_pc(page):
  await page.locator('#pc-pause').click()
  await page.locator('#reset').click()
  await page.locator('#boot').click()
- assert 'HALTED' in await page.locator('#mode').inner_text()
+ assert '[ISOLATED] BOOT ROM' in await page.locator('#trace').inner_text()
+ assert 'REAL MODE' in await page.locator('#mode').inner_text()
  await page.locator('#machine').select_option('at')
  await page.locator('#pm').click()
- assert 'PROTECTED MODE' in await page.locator('#mode').inner_text()
+ assert '[CPU TEST · isolated] 286 LGDT / LMSW / FAR JMP: PASS' in await page.locator('#trace').inner_text()
+ assert 'REAL MODE' in await page.locator('#mode').inner_text()
+ # State export/import round trip on LIVE PC (diagnostics never alter it).
+ await page.evaluate('window.__mdPCUniversal.machine.ram[0x2000]=0x5a')
  async with page.expect_download() as dl:await page.locator('#pc-export-json').click()
  download=await dl.value;path=Path(await download.path());doc=json.loads(path.read_text())
- assert doc['machine']=='pc' and doc['payload']['cpu']['msw']&1
+ assert doc['machine']=='pc' and doc['payload']['profile']=='at'
  await page.locator('#reset').click()
- assert 'REAL MODE' in await page.locator('#mode').inner_text()
+ assert await page.evaluate('window.__mdPCUniversal.machine.ram[0x2000]')==0
  await page.locator('#pc-json-file').set_input_files(str(path))
- await page.wait_for_function("document.querySelector('#mode').textContent.includes('PROTECTED MODE')",timeout=6000)
- assert 'PROTECTED MODE' in await page.locator('#mode').inner_text()
+ await page.wait_for_function('window.__mdPCUniversal.machine.ram[0x2000]===0x5a',timeout=6000)
+ assert 'REAL MODE' in await page.locator('#mode').inner_text()
  await page.locator('#pc-save-local').click()
  storage_status=await page.locator('#pc-storage-status').inner_text()
  if 'uložen' in storage_status:
   await page.locator('#reset').click()
   await page.locator('#pc-load-local').click()
-  assert 'PROTECTED MODE' in await page.locator('#mode').inner_text()
+  assert await page.evaluate('window.__mdPCUniversal.machine.ram[0x2000]')==0x5a
  else:
   assert 'localStorage selhal' in storage_status
  await page.evaluate("(doc)=>{document.querySelector('#pc-persistence details').open=true;document.getElementById('pc-json-paste').value=JSON.stringify(doc)}",doc)
  await page.locator('#pc-import-paste').click()
- assert 'PROTECTED MODE' in await page.locator('#mode').inner_text()
+ assert await page.evaluate('window.__mdPCUniversal.machine.ram[0x2000]')==0x5a
  worker=await page.evaluate("async()=>await MDUltraRuntime.workerJSON({hello:'world'})")
  assert json.loads(worker['text'])=={'hello':'world'}
- # Trigger a real fetch fallback, not a stub claiming success.
  fallback=await page.evaluate("async()=>{let x=await MDUltraRuntime.loadBytes('./404-NOT-THERE',{timeoutMs:500});return {source:x.source,hasBytes:!!x.bytes}}")
  assert fallback=={'source':'manual','hasBytes':False}
  return worker['worker']

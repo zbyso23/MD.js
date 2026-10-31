@@ -5,13 +5,19 @@
 </style></head><body><main class="container">
 <div class="top"><div><a class="back" href="../../index.html">← MD.js Ultra</a><div class="eyebrow">PC Environment · Phase 2 / FreeDOS</div><h1>8086 / 80286 Workbench</h1><p class="lede">Čistý JavaScript: XT a AT, Hercules/CGA grafické adaptéry, mapované VRAM, BIOS INT 10h a historicky věrné bankování bitových map.</p></div><span class="badge">GPLv3 · LOCAL · NO AUTORUN</span></div>
 <div class="notice"><strong>Debug bring-up pro XT + Hercules je připraven.</strong> Do osobního balíku je vložena vestavěná 720&nbsp;KiB bootovací FreeDOS disketa pro A:, rozšířená o <code>DEBUG.COM</code>. Po resetu se automaticky připojí do A:. Vývojový obraz FreeDOS spouští přímo příkazový řádek bez instalačního menu. Jde o omezenou kompatibilní emulaci, nikoli úplný historický BIOS a POST.</div>
-<div class="actions"><label for="machine">Profil</label><select id="machine"><option value="xt" selected>XT · 8086 ISA / 8088 cíl</option><option value="at">AT · 80286</option></select><button id="reset">Reset</button><button id="step">CPU krok</button><button id="pc-run" class="primary">▶ Pokračovat</button><button id="pc-pause">Ⅱ Pauza</button><label for="video-adapter">Video</label><select id="video-adapter"><option value="cga">CGA</option><option value="hercules" selected>Hercules · amber</option></select><button id="video-text-demo" class="primary">INT 10h · text demo</button><button id="video-cga-demo">CGA · 320×200</button><button id="video-herc-demo">Hercules · 720×348</button><button id="video-render">Obnovit obraz</button><button id="boot" class="primary">Boot ROM</button><button id="pm">286 Protected Mode demo</button><button id="cpu-demo">ModR/M + REP demo</button><button id="alu-demo">ALU / SHIFT demo</button><button id="idt-demo">286 IDT demo</button><button id="de-demo">#DE · dělení nulou</button><button id="br-demo">286 #BR · BOUND</button><button id="bcd-demo">8086 BCD demo</button><button id="irq10-demo">286 IRQ10 / 2× PIC</button><button id="pit">PIT → IRQ0</button></div>
+<div class="actions" aria-label="Diagnostiky CPU běží izolovaně; video ukázky mění aktivní stroj"><label for="machine">Profil</label><select id="machine"><option value="xt" selected>XT · 8086 ISA / 8088 cíl</option><option value="at">AT · 80286</option></select><button id="reset">Reset</button><button id="step">CPU krok</button><button id="pc-run" class="primary">▶ Pokračovat</button><button id="pc-pause">Ⅱ Pauza</button><label for="video-adapter">Video</label><select id="video-adapter"><option value="cga">CGA</option><option value="hercules" selected>Hercules · amber</option></select><button id="video-text-demo" class="primary">INT 10h · text demo</button><button id="video-cga-demo">CGA · 320×200</button><button id="video-herc-demo">Hercules · 720×348</button><button id="video-render">Překreslit VRAM</button><button id="boot" class="primary">Boot ROM</button><button id="pm">286 Protected Mode demo</button><button id="cpu-demo">ModR/M + REP demo</button><button id="alu-demo">ALU / SHIFT demo</button><button id="idt-demo">286 IDT demo</button><button id="de-demo">#DE · dělení nulou</button><button id="br-demo">286 #BR · BOUND</button><button id="bcd-demo">8086 BCD demo</button><button id="irq10-demo">286 IRQ10 / 2× PIC</button><button id="pit">PIT → IRQ0</button></div>
 <section class="panel" aria-label="Grafická karta a obrazovka">
 <h2>Emulovaný monitor · přímý obraz z VRAM</h2>
 <p class="muted" id="video-status">Hercules amber text 80×25 · standardní RAM/video prostor je oddělen</p>
 <div id="video-shell" class="screen-shell hercules" tabindex="0" role="application" aria-label="Hercules monitor. Klikněte pro ovládání klávesnicí DOSu."><canvas id="video-screen" width="640" height="200" aria-label="CGA nebo Hercules obrazovka"></canvas></div>
 <div class="actions"><button id="pc-key-focus">⌨ Klávesnice → DOS</button><label for="pc-key-text">Příkaz / text</label><input id="pc-key-text" type="text" placeholder="DEBUG, DIR, R, A 100…" style="flex:1;min-width:170px"><button id="pc-key-send">Odeslat + ENTER</button></div><p id="pc-boot-progress" class="muted" role="status">Připravuji FreeDOS 720 KB + DEBUG…</p>
 <p class="muted">Režimy CGA 0–6, Hercules text a bitmapový HGC. Hercules používá jantarový monitor skin s jemným phosphor fade/glow efektem. Textové glyfy kreslí prohlížeč (zatím bez originálního 8×8/9×14 ROM fontu). Emulace není cycle-accurate; retrace signál je zjednodušený.</p>
+</section>
+<section class="panel" aria-label="Izolovaná video diagnostika">
+<h2>Testovací video monitor · izolovaná diagnostika</h2>
+<p class="muted">CGA, Hercules a BIOS INT 10h dema kreslí sem. Běžící FreeDOS nahoře nikdy nemažou.</p>
+<canvas id="video-demo-screen" width="640" height="200" style="display:block;width:100%;max-width:100%;height:auto;background:#000;image-rendering:pixelated;border:4px solid #425866;border-radius:8px"></canvas>
+<p id="video-demo-status" class="muted">Samostatná diagnostika čeká na spuštění.</p>
 </section>
 <section class="panel" id="pc-floppy" aria-label="Disketové mechaniky">
 <h2>FDD A: / B: · NEC 765 + BIOS INT 13h</h2>
@@ -72,9 +78,9 @@ function mountEmbeddedBootDisk(notify=true){const payload=window.MDPC_EMBEDDED&&
 function reboot(p){pauseCPU();machine=new PCMachine(p,{videoAdapter:el('video-adapter').value});messages=[];inputQueue.length=0;trace(`${p.toUpperCase()} RESET · ${fmt(machine.cpu.s[S.CS])}:${fmt(machine.cpu.ip)} · hidden CS base ${fmt(machine.cpu.base[S.CS],6)}`);mountEmbeddedBootDisk(true);refresh();}
 function cpuStep(){const c=machine.cpu,at=fmt(c.s[S.CS])+':'+fmt(c.ip),op=machine.read8(c.physical(S.CS,c.ip));const count=c.steps;c.step();trace(`${at} [${fmt(op,2)}] → ${fmt(c.s[S.CS])}:${fmt(c.ip)}  ${c.halted?'HALT':''}  #${count+1}`);}
 el('machine').addEventListener('change',e=>reboot(e.target.value));el('reset').addEventListener('click',()=>reboot(el('machine').value));
-el('step').addEventListener('click',()=>safe(cpuStep));el('boot').addEventListener('click',()=>safe(()=>{const result=machine.run(2000);trace(`BOOT ROM: ${result.executed} instructions · ${result.halted?'HALTED':'budget exhausted'} · AX=${fmt(machine.cpu.reg('AX'))}`);}));
+el('step').addEventListener('click',()=>safe(cpuStep));el('boot').addEventListener('click',()=>safe(()=>{const m=new PCMachine(machine.profile,{videoAdapter:machine.video.adapter}),result=m.run(2000);trace(`[ISOLATED] BOOT ROM: ${result.executed} instructions · ${result.halted?'HALTED':'budget exhausted'} · AX=${fmt(m.cpu.reg('AX'))}`);}));
 el('showmemory').addEventListener('click',refresh);el('address').addEventListener('change',drawMemory);
-el('pit').addEventListener('click',()=>safe(()=>{machine.pic.mask=0xfe;machine.pit.reload[0]=10;machine.pit.value[0]=10;machine.pit.advance(10);trace(`PIT ticks=10 → IRQ0 ${machine.pic.pending()===0?'REQUESTED':'not pending'}`);}));
+el('pit').addEventListener('click',()=>safe(()=>{const m=new PCMachine(machine.profile,{videoAdapter:machine.video.adapter});m.pic.mask=0xfe;m.pit.reload[0]=10;m.pit.value[0]=10;m.pit.advance(10);trace(`[ISOLATED] PIT ticks=10 → IRQ0 ${m.pic.pending()===0?'REQUESTED':'not pending'}`);}));
 function protectedDemo(m){const c=m.cpu;c.loadSegment(S.CS,0);c.ip=0x2000;c.loadSegment(S.DS,0);c.loadSegment(S.SS,0);c.r[R.SP]=0x7000;
  m.ram.set([0x0f,0x01,0x16,0,7,0xb8,1,0,0x0f,0x01,0xf0,0xea,0,0,8,0],0x2000);
  m.ram.set([23,0,0,8,0,0],0x700);m.ram.set([255,255,0,0x30,0,0x9a,0,0],0x808);m.ram.set([0xb8,0x34,0x12,0xf4],0x3000);
@@ -92,9 +98,10 @@ function cpuMemoryDemo(m){
  return {ok,result};
 }
 el('cpu-demo').addEventListener('click',()=>safe(()=>{
- const p=el('machine').value;reboot(p);const demo=cpuMemoryDemo(machine);
- el('address').value='00520';trace(`CPU ModR/M + REP ${p.toUpperCase()}: ${demo.ok?'PASS':'FAIL'}; AX=${fmt(machine.cpu.r[R.AX])}; [0526]=${fmt(machine.read16Physical(0x526))}; [0540..0542]=${[0x540,0x541,0x542].map(a=>fmt(machine.read8(a),2)).join(' ')}`);
+ const m=diagnosticMachine(),p=m.profile,demo=cpuMemoryDemo(m);
+ trace(`ISOLATED CPU ModR/M + REP ${p.toUpperCase()}: ${demo.ok?'PASS':'FAIL'}; AX=${fmt(m.cpu.r[R.AX])}; [0526]=${fmt(m.read16Physical(0x526))}; [0540..0542]=${[0x540,0x541,0x542].map(a=>fmt(m.read8(a),2)).join(' ')}`);
 }));
+function diagnosticMachine(profile=machine.profile){return new PCMachine(profile,{videoAdapter:machine.video.adapter});}
 function aluDemo(m){
  const c=m.cpu;c.loadSegment(S.CS,0);c.ip=0x2000;
  c.loadSegment(S.DS,0);c.loadSegment(S.SS,0);c.r[R.SP]=0x7000;
@@ -139,22 +146,25 @@ function idtDemo(m){
  return {ok:result.halted&&c.ip===0x2003&&c.r[R.SP]===0x7000,steps:result.executed};
 }
 el('alu-demo').addEventListener('click',()=>safe(()=>{
- const p=el('machine').value;reboot(p);const r=aluDemo(machine);
- trace(`Pure JS ALU / SHIFT ${p.toUpperCase()}: ${r.ok?'PASS':'FAIL'} AX=${fmt(machine.cpu.reg('AX'))} steps=${r.steps}`);
+ const m=diagnosticMachine(),r=aluDemo(m);
+ trace(`[CPU TEST · isolated] ALU / SHIFT ${m.profile.toUpperCase()}: ${r.ok?'PASS':'FAIL'} AX=${fmt(m.cpu.reg('AX'))} steps=${r.steps}`);
 }));
 el('idt-demo').addEventListener('click',()=>safe(()=>{
- el('machine').value='at';reboot('at');const r=idtDemo(machine);
- trace(`286 Protected IDT interrupt gate / IRET: ${r.ok?'PASS':'FAIL'} IP=${fmt(machine.cpu.ip)} steps=${r.steps}`);
+ const m=diagnosticMachine('at'),r=idtDemo(m);
+ trace(`[CPU TEST · isolated] 286 Protected IDT gate / IRET: ${r.ok?'PASS':'FAIL'} IP=${fmt(m.cpu.ip)} steps=${r.steps}`);
 }));
 el('de-demo').addEventListener('click',()=>safe(()=>{
- const p=el('machine').value;reboot(p);const r=divideFaultDemo(machine);
- trace(`#DE INT 00h ${p.toUpperCase()}: ${r.ok?'PASS':'FAIL'} | AX=${fmt(machine.cpu.reg('AX'))} | resume IP=${fmt(machine.cpu.lastFault?.returnIP??0)} | guest IRET`);
+ const m=diagnosticMachine(),r=divideFaultDemo(m);
+ trace(`[CPU TEST · isolated] #DE INT 00h ${m.profile.toUpperCase()}: ${r.ok?'PASS':'FAIL'} AX=${fmt(m.cpu.reg('AX'))} resume IP=${fmt(m.cpu.lastFault?.returnIP??0)}`);
 }));
 el('br-demo').addEventListener('click',()=>safe(()=>{
- el('machine').value='at';reboot('at');const r=boundsFaultDemo(machine);
- trace(`286 BOUND #BR INT 05h: ${r.ok?'PASS':'FAIL'} | repaired AX=${fmt(machine.cpu.reg('AX'))} | resumed by guest IRET`);
+ const m=diagnosticMachine('at'),r=boundsFaultDemo(m);
+ trace(`[CPU TEST · isolated] 286 BOUND #BR: ${r.ok?'PASS':'FAIL'} repaired AX=${fmt(m.cpu.reg('AX'))}`);
 }));
-el('pm').addEventListener('click',()=>safe(()=>{el('machine').value='at';reboot('at');const r=protectedDemo(machine);el('address').value='00800';trace(`286 LGDT → LMSW → FAR JMP selector 0008 → ${r.halted?'HALT':'RUNNING'} AX=${fmt(machine.cpu.reg('AX'))}, base(CS)=${fmt(machine.cpu.base[S.CS],6)}`);}));
+el('pm').addEventListener('click',()=>safe(()=>{
+ const m=diagnosticMachine('at'),r=protectedDemo(m);
+ trace(`[CPU TEST · isolated] 286 LGDT / LMSW / FAR JMP: ${r.halted?'PASS':'FAIL'} AX=${fmt(m.cpu.reg('AX'))} CS base=${fmt(m.cpu.base[S.CS],6)}`);
+}));
 function bcdDemo(m){
  const c=m.cpu;c.loadSegment(S.CS,0);c.ip=0x2000;
  m.ram.set([0xb0,9,0x04,9,0x27,0xf4],0x2000);
@@ -172,12 +182,12 @@ function irq10Demo(m){
  return {ok:delivered&&r.halted&&c.r[R.SP]===0x7000&&m.pic.isr===0&&m.picSlave.isr===0,steps:r.executed};
 }
 el('bcd-demo').addEventListener('click',()=>safe(()=>{
- const p=el('machine').value;reboot(p);const r=bcdDemo(machine);
- trace(`8086 BCD DAA ${p.toUpperCase()}: ${r.ok?'PASS':'FAIL'} | 09+09 → ${fmt(machine.cpu.get8(0),2)} | guest instructions=${r.steps}`);
+ const m=diagnosticMachine(),r=bcdDemo(m);
+ trace(`[CPU TEST · isolated] 8086 BCD DAA ${m.profile.toUpperCase()}: ${r.ok?'PASS':'FAIL'} 09+09 → ${fmt(m.cpu.get8(0),2)} instructions=${r.steps}`);
 }));
 el('irq10-demo').addEventListener('click',()=>safe(()=>{
- el('machine').value='at';reboot('at');const r=irq10Demo(machine);
- trace(`286 cascaded PIC IRQ10 → INT 72h → guest EOIs + IRET: ${r.ok?'PASS':'FAIL'} | instructions=${r.steps}`);
+ const m=diagnosticMachine('at'),r=irq10Demo(m);
+ trace(`[CPU TEST · isolated] 286 cascaded PIC IRQ10: ${r.ok?'PASS':'FAIL'} instructions=${r.steps}`);
 }));
 el('selftest').addEventListener('click',()=>safe(()=>{const report=[];
  for(const p of ['xt','at']){const m=new PCMachine(p),r=m.run(100);report.push(`${p.toUpperCase()}: ${r.halted&&m.cpu.reg('AX')===640?'PASS':'FAIL'}`);}
@@ -190,47 +200,44 @@ el('selftest').addEventListener('click',()=>safe(()=>{const report=[];
  report.push(`286 BOUND #BR: ${boundsFaultDemo(new PCMachine('at')).ok?'PASS':'FAIL'}`);
  let cap=false;try{new PCMachine('at',{conventional:640*1024,extended:385*1024});}catch(e){cap=true;}report.push(`1 MiB RAM cap: ${cap?'PASS':'FAIL'}`);
  el('testresult').textContent=report.join(' | ');trace(report.join('  ·  '));}));
-// Phase-2 video acceptance demos: CPU executes real guest instructions and BIOS INT 10h.
-function runGuestAt(bytes,address=0x2800){
- const c=machine.cpu;c.halted=false;c.loadSegment(S.CS,0);c.ip=address;
+// All guest video demos are isolated from the live FreeDOS virtual machine.
+function runGuestAt(m,bytes,address=0x2800){
+ const c=m.cpu;c.halted=false;c.loadSegment(S.CS,0);c.ip=address;
  c.loadSegment(S.DS,0);c.loadSegment(S.SS,0);c.loadSegment(S.ES,0);c.r[R.SP]=0x7000;
- machine.ram.set(bytes,address);return machine.run(500);
+ m.ram.set(bytes,address);return m.run(500);
+}
+function showVideoDiagnostic(m,detail){
+ m.video.render(el('video-demo-screen').getContext('2d'));
+ el('video-demo-status').textContent=`${m.profile.toUpperCase()} · ${m.video.adapter.toUpperCase()} · ${detail}`;
 }
 function videoTextDemo(){
- reboot(el('machine').value);
- const v=machine.video,txt='MD.js Ultra  -  '+(v.adapter==='cga'?'CGA':'HERCULES')+'  XT / AT';
+ const m=diagnosticMachine(),v=m.video,txt='MD.js Ultra - '+(v.adapter==='cga'?'CGA':'HERCULES')+' XT / AT';
  const bytes=[0xb8,v.adapter==='cga'?3:7,0,0xcd,0x10];
- for(const ch of txt){bytes.push(0xb8,ch.charCodeAt(0),0x0e,0xcd,0x10);}
- bytes.push(0xf4);const result=runGuestAt(bytes);
- trace(`BIOS INT 10h · ${txt.length} characters / guest real-mode IRQ calls · ${result.halted?'PASS':'FAIL'}`);
+ for(const ch of txt)bytes.push(0xb8,ch.charCodeAt(0),0x0e,0xcd,0x10);
+ bytes.push(0xf4);const r=runGuestAt(m,bytes);
+ showVideoDiagnostic(m,`BIOS INT 10h · text demo · ${r.halted?'PASS':'FAIL'}`);
+ trace(`[VIDEO TEST · isolated] ${txt} · ${r.halted?'PASS':'FAIL'}`);
 }
 function videoCgaDemo(){
- el('video-adapter').value='cga';reboot(el('machine').value);
- // MOV AX,0004 ; INT 10h ; MOV AX,B800 ; MOV ES,AX ; MOV DI,0000 ; MOV AX,1B1B ; MOV CX,0040 ; REP STOSW ; HLT
- const result=runGuestAt([0xb8,4,0,0xcd,0x10,0xb8,0,0xb8,0x8e,0xc0,0xbf,0,0,0xb8,0x1b,0x1b,0xb9,0x40,0,0xf3,0xab,0xf4]);
- // Exercise the real VRAM banks with a JS diagnostic pattern (no image bitmap/asset).
- const v=machine.video;for(let y=4;y<200;y++)for(let x=0;x<320;x++){
-  const color=((x>>5)+(y>>4))&3;v.setPixel(x,y,color);
- }
- // Guest uses INT 10h AH=0Ch to draw a white pixel.
- const r=runGuestAt([0xb8,3,0x0c,0xb9,40,0,0xba,40,0,0xcd,0x10,0xf4],0x2900);
- trace(`CGA guest mode 04h / ES:B800 / REP STOSW / INT10 pixel 40,40 → ${result.halted&&r.halted?'PASS':'FAIL'}`);
+ const m=diagnosticMachine();m.video=m.video.adapter==='cga'?m.video:new window.MDPC_VIDEO.PCVideo(m,'cga');
+ const r=runGuestAt(m,[0xb8,4,0,0xcd,0x10,0xb8,0,0xb8,0x8e,0xc0,0xbf,0,0,0xb8,0x1b,0x1b,0xb9,0x40,0,0xf3,0xab,0xf4]);
+ const v=m.video;for(let y=4;y<200;y++)for(let x=0;x<320;x++)v.setPixel(x,y,((x>>5)+(y>>4))&3);
+ const px=runGuestAt(m,[0xb8,3,0x0c,0xb9,40,0,0xba,40,0,0xcd,0x10,0xf4],0x2900);
+ showVideoDiagnostic(m,`CGA 320×200, INT 10h · ${r.halted&&px.halted?'PASS':'FAIL'}`);
+ trace(`[VIDEO TEST · isolated] CGA guest B800/REP STOSW/INT10 pixel: ${r.halted&&px.halted?'PASS':'FAIL'}`);
 }
 function videoHercDemo(){
- el('video-adapter').value='hercules';reboot(el('machine').value);
- // Real x86 instructions set HGC configuration and graphics mode through OUT DX,AL.
- const r=runGuestAt([0xba,0xbf,3,0xb0,3,0xee,0xba,0xb8,3,0xb0,0x0a,0xee,0xf4]);
- const v=machine.video;
- for(let y=0;y<348;y++)for(let x=0;x<720;x++){
-  if(((x>>4)^(y>>3))%13===0 || Math.abs(y-(x*347/719))<2 || Math.abs(y-347+(x*347/719))<2)v.setPixel(x,y,1);
- }
- trace(`Hercules HGC guest OUT 03BFh/03B8h + 4 banked VRAM: ${r.halted&&v.isGraphics?'PASS':'FAIL'}`);
+ const m=diagnosticMachine();m.video=m.video.adapter==='hercules'?m.video:new window.MDPC_VIDEO.PCVideo(m,'hercules');
+ const r=runGuestAt(m,[0xba,0xbf,3,0xb0,3,0xee,0xba,0xb8,3,0xb0,0x0a,0xee,0xf4]);
+ const v=m.video;for(let y=0;y<348;y++)for(let x=0;x<720;x++)if(((x>>4)^(y>>3))%13===0 || Math.abs(y-x*347/719)<2 || Math.abs(y-347+x*347/719)<2)v.setPixel(x,y,1);
+ showVideoDiagnostic(m,`Hercules 720×348, HGC OUT ports · ${r.halted&&v.isGraphics?'PASS':'FAIL'}`);
+ trace(`[VIDEO TEST · isolated] Hercules banked VRAM ${r.halted&&v.isGraphics?'PASS':'FAIL'}`);
 }
 el('video-adapter').addEventListener('change',()=>safe(()=>reboot(el('machine').value)));
 el('video-text-demo').addEventListener('click',()=>safe(videoTextDemo));
 el('video-cga-demo').addEventListener('click',()=>safe(videoCgaDemo));
 el('video-herc-demo').addEventListener('click',()=>safe(videoHercDemo));
-el('video-render').addEventListener('click',()=>safe(()=>trace('Video framebuffer repainted from mapped VRAM.')));
+el('video-render').addEventListener('click',()=>safe(()=>trace('VRAM repainted (no reset, no state changes).')));
 
 // Cooperative guest CPU runner: bounded per animation frame, no compiler or server needed.
 function pauseCPU(){running=false;if(frameId)cancelAnimationFrame(frameId);frameId=0;}

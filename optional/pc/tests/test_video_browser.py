@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Phase 2 actual Chromium guest INT 10h, CGA/HGC VRAM and canvas end-to-end tests."""
+"""Chromium gate: video diagnostics must not alter active FreeDOS, all demo canvases render."""
 import asyncio
 from pathlib import Path
 from playwright.async_api import async_playwright
@@ -15,31 +15,35 @@ async def main():
   page=await browser.new_page(viewport={'width':1300,'height':1200},device_scale_factor=1,accept_downloads=True)
   errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
   await page.set_content(html,wait_until='load')
-  await page.locator('#pc-pause').click()
-  await page.locator('#video-adapter').select_option('cga')
+  await page.wait_for_function("!window.__mdPCUniversal.running && document.querySelector('#pc-boot-progress').textContent.includes('DOS/DEBUG')",timeout=90000)
+  async def state():
+   return await page.evaluate('''()=>{const m=window.__mdPCUniversal.machine;return {
+      profile:m.profile,mode:m.video.mode,adapter:m.video.adapter,
+      regs:Array.from(m.cpu.r),segments:Array.from(m.cpu.s),ip:m.cpu.ip,steps:m.cpu.steps,
+      ram:Array.from(m.ram.slice(0x100,0x120)),vram:Array.from(m.video.vram.slice(0,160)),
+      disk:Array.from(m.fdd.disks[0].data.slice(0x1800,0x1820))
+     };}''')
+  before=await state()
+  for key in ('alu-demo','bcd-demo','cpu-demo','idt-demo','pm','de-demo','br-demo','irq10-demo','pit','boot'):
+   await page.locator('#'+key).click()
+   assert await state()==before,'Unexpected live-PC mutation: '+key
+  await page.locator('#video-render').click()
+  assert await state()==before,'Redraw mutated active PC state'
   await page.locator('#video-text-demo').click()
-  status=await page.locator('#video-status').inner_text()
-  assert 'CGA' in status,status
-  assert 'PASS' in await page.locator('#trace').inner_text()
-  assert await page.evaluate("window.__mdPCUniversal.machine.read8(0xb8000)")==ord('M')
+  assert 'PASS' in await page.locator('#video-demo-status').inner_text()
+  assert await state()==before
   await page.locator('#video-cga-demo').click()
-  assert 'CGA | GRAPHICS' in await page.locator('#video-status').inner_text()
-  assert 'PASS' in await page.locator('#trace').inner_text()
-  assert await page.evaluate('window.__mdPCUniversal.machine.video.getPixel(40,40)')==3
-  assert await page.locator('#video-screen').evaluate('(e)=>e.width')==320
+  assert 'CGA 320×200' in await page.locator('#video-demo-status').inner_text()
+  assert 'PASS' in await page.locator('#video-demo-status').inner_text()
+  assert await page.locator('#video-demo-screen').evaluate('(e)=>e.width')==320
+  assert await state()==before
   await page.locator('#video-herc-demo').click()
-  assert 'HERCULES | GRAPHICS' in await page.locator('#video-status').inner_text()
-  assert 'PASS' in await page.locator('#trace').inner_text()
-  assert await page.locator('#video-screen').evaluate('(e)=>e.width')==720
-  assert await page.locator('#video-screen').evaluate('(e)=>e.height')==348
-  async with page.expect_download() as dl:await page.locator('#pc-export-json').click()
-  archive=await dl.value;path=Path(await archive.path())
-  await page.locator('#video-adapter').select_option('cga')
-  await page.locator('#pc-json-file').set_input_files(str(path))
-  await page.wait_for_function("document.querySelector('#video-status').textContent.includes('HERCULES')",timeout=6000)
-  assert await page.evaluate('window.__mdPCUniversal.machine.video.getPixel(0,0)')==1
+  assert 'Hercules 720×348' in await page.locator('#video-demo-status').inner_text()
+  assert 'PASS' in await page.locator('#video-demo-status').inner_text()
+  assert await page.locator('#video-demo-screen').evaluate('(e)=>e.width')==720
+  assert await state()==before
   assert not errors,errors
   await page.screenshot(path=str(ROOT/'pc-phase2-video-browser.png'),full_page=True)
-  print('PASS: real Chromium INT10 text + graphics, CGA B8000, Hercules B0000, rendered Canvas 720x348, video JSON export/import, no browser errors')
+  print('PASS: 13 isolated CPU/video diagnostics preserve running FreeDOS RAM, VRAM, registers, disk and CPU steps')
   await browser.close()
 asyncio.run(main())

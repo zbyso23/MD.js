@@ -172,3 +172,13 @@ See `PC-PHASE1-NATIVE-JS-CPU-v0.7.3.md` for precise limitations and reproducible
 Phase 1 remains **OPEN**, with real running improvements in `optional/pc/`: 8086 BCD/ASCII adjustments, `CBW/CWD`, `XLAT`, `INTO`, far `CALL`, `LES/LDS`, AAM/AAD, 286 immediate `IMUL`, `INS/OUTS`, `ARPL`, `VERR/VERW`; more faithful 286 descriptor cache/segment access checks; full 8259 ICW initialization and AT slave-PIC IRQ8–15 cascade (IRQ10 E2E). These are not a substitute for exhaustive CPU conformance tests.
 
 The new Workbench **BCD** and **AT IRQ10** demos run machine instructions in the user's browser. The original project remains **uncompiled**: no transpilation, bundling, WebAssembly, or C++ runtime dependency. See [`PC-PHASE1-HARDENING-v0.7.5.md`](PC-PHASE1-HARDENING-v0.7.5.md) for verified tests and explicit unresolved Gate 1 blockers.
+
+## Update v0.8.1 — PC/ZX/Blocks Lite UX stabilization
+
+See [`UX-STABILIZATION-v0.8.1.md`](UX-STABILIZATION-v0.8.1.md) for a detailed changelog and verification status.
+
+- PC Workbench CPU and video diagnostics use isolated temporary emulators instead of resetting live FreeDOS.
+- ZX: physical key alias mapping, 40-key virtual keyboard and user-optional OpenSE BASIC keyword shortcuts.
+- Blocks Lite: fully original Pointer Events drag-and-drop editor; **not embedded Google Blockly**.
+
+Run `npm run test:ux:browser` for the added real Chromium checks. The existing `npm run test:release` retains all previous gates.

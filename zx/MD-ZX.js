@@ -73,13 +73,102 @@ function mount(host){
   frame.appendChild(canvas);top.appendChild(frame);
   const overlay=element('button','mdzx-power','▶ Start ZX');overlay.type='button';frame.appendChild(overlay);
   const foot=element('div','mdzx-foot');const status=element('span','mdzx-status','OFF · ZX Spectrum 48K');
-  foot.appendChild(status);top.appendChild(foot);shell.appendChild(top);
+  foot.appendChild(status);top.appendChild(foot);
+  const kbToggle=button('⌨ ZX klávesnice','Zobrazit nebo skrýt virtuální klávesnici',()=>{
+    keyboardPanel.hidden=!keyboardPanel.hidden;
+    kbToggle.setAttribute('aria-expanded',String(!keyboardPanel.hidden));
+  });
+  kbToggle.setAttribute('aria-expanded','false');foot.appendChild(kbToggle);
+  const keyboardPanel=element('div','mdzx-virtual-keyboard');keyboardPanel.hidden=true;
+  const shortcutLabel=element('label','mdzx-key-mode');
+  const classicShortcuts=element('input');classicShortcuts.type='checkbox';classicShortcuts.checked=true;
+  shortcutLabel.append(classicShortcuts,document.createTextNode(' Sinclair K zkratky v OpenSE BASIC: J→LOAD, P→PRINT, R→RUN, K→LIST, G→GO TO (na prázdném řádku)'));
+  keyboardPanel.append(shortcutLabel);
+  const shortcutMap={74:'LOAD ',80:'PRINT ',82:'RUN',75:'LIST',71:'GO TO '};
+  let keyMacroBusy=false;
+  const pauseKey=(ms)=>new Promise(ok=>setTimeout(ok,ms));
+  function atEmptyBasicLine(){if(!ready||!machine||!classicShortcuts.checked)return false;
+    const mem=machine.mem,ptr=mem[0x5c59]|(mem[0x5c5a]<<8);
+    return ptr>=0x5c00&&ptr<0xfffe&&mem[ptr]===13;
+  }
+  async function typeKeywordByMatrix(word){if(!ready||!machine||keyMacroBusy)return false;
+    keyMacroBusy=true;const kb=machine._keyb;
+    try{for(const c of word){if(disposed||!ready)break;
+       const code=c===' '?32:c.toUpperCase().charCodeAt(0);
+       if(!kb.kctable[code])continue;
+       // Use guest ULA matrix for each key, never write to BASIC RAM directly.
+       kb.setSource('keyword-macro',[code],true);await pauseKey(90);
+       kb.setSource('keyword-macro',[code],false);await pauseKey(75);
+    }}finally{kb.setSource('keyword-macro',[],false);keyMacroBusy=false;}
+    return true;
+  }
+  // Browser accelerator capture is best effort only: tabs/OS may reserve them.
+  canvas.addEventListener('keydown',e=>{
+    const reserved=e.key==='F5'||(e.ctrlKey&&['r','w'].includes(e.key.toLowerCase()));
+    if(reserved){if(e.cancelable)e.preventDefault();e.stopPropagation();}
+  },true);
+  canvas.addEventListener('keydown',e=>{
+    if(e.repeat||e.altKey||e.ctrlKey||e.metaKey||e.shiftKey||!e.code?.startsWith('Key'))return;
+    const code=e.code.charCodeAt(3);const keyword=shortcutMap[code];
+    if(keyword&&atEmptyBasicLine()){
+      if(e.cancelable)e.preventDefault();e.stopImmediatePropagation();
+      typeKeywordByMatrix(keyword);
+    }
+  },true);
+  canvas.addEventListener('keyup',e=>{
+    if(classicShortcuts.checked&&shortcutMap[e.code?.charCodeAt(3)]&&keyMacroBusy){
+      e.preventDefault();e.stopImmediatePropagation();
+    }
+  },true);
+  keyboardPanel.setAttribute('aria-label','Virtuální klávesnice ZX Spectrum 48K');
+  const rows=[
+    [['1',49,''],['2',50,''],['3',51,''],['4',52,''],['5',53,'←'],['6',54,'↓'],['7',55,'↑'],['8',56,'→'],['9',57,''],['0',48,'DELETE']],
+    [['Q',81,''],['W',87,''],['E',69,''],['R',82,'RUN'],['T',84,''],['Y',89,''],['U',85,''],['I',73,''],['O',79,''],['P',80,'PRINT']],
+    [['A',65,''],['S',83,''],['D',68,''],['F',70,''],['G',71,'GO TO'],['H',72,''],['J',74,'LOAD'],['K',75,'LIST'],['L',76,''],['ENTER',13,'']],
+    [['CAPS SHIFT',16,''],['Z',90,''],['X',88,''],['C',67,''],['V',86,''],['B',66,''],['N',78,''],['M',77,''],['SYM SHIFT',17,''],['SPACE',32,'']]
+  ];
+  const virtualButtons=[];
+  for(const row of rows){const line=element('div','mdzx-key-row');
+    for(const [name,code,keyword] of row){const key=element('button','mdzx-key');key.type='button';
+      key.dataset.keyCode=String(code);key.setAttribute('aria-label',name+(keyword?' '+keyword:''));
+      key.append(element('span','mdzx-key-name',name));if(keyword)key.append(element('small','mdzx-key-word',keyword));
+      let pointer=null;
+      key.addEventListener('pointerdown',e=>{if(!ready||!machine)return;
+        pointer=e.pointerId;key.setPointerCapture(pointer);
+        if(shortcutMap[code]&&atEmptyBasicLine()){typeKeywordByMatrix(shortcutMap[code]);}
+        else machine._keyb.pressVirtual(code,true,pointer);
+        key.classList.add('down');e.preventDefault();});
+      const release=e=>{if(pointer===null)return;
+        if(machine&&machine._keyb)machine._keyb.pressVirtual(code,false,pointer);
+        pointer=null;key.classList.remove('down');e.preventDefault();};
+      key.addEventListener('pointerup',release);key.addEventListener('pointercancel',release);
+      key.addEventListener('lostpointercapture',release);
+      virtualButtons.push(key);line.appendChild(key);
+    }keyboardPanel.appendChild(line);
+  }
+  const quick=element('div','mdzx-quick-keys');
+  for(const [label,codes] of [['DELETE',[16,48]],['←',[16,53]],['↓',[16,54]],['↑',[16,55]],['→',[16,56]],['BREAK',[16,32]]]){
+    const key=button(label,'ZX CAPS SHIFT combination',()=>{});
+    let source=null;
+    key.addEventListener('pointerdown',e=>{if(!ready||!machine)return;
+      source='quick:'+label+':'+e.pointerId;
+      machine._keyb.setSource(source,codes,true);
+      key.classList.add('down');key.setPointerCapture(e.pointerId);e.preventDefault();});
+    const release=()=>{if(!source)return;const token=source;source=null;
+      // Keep keys registered long enough for the 50 Hz ZX guest scanner to see a tap.
+      setTimeout(()=>{machine?._keyb?.setSource(token,codes,false);key.classList.remove('down');},85);
+    };
+    key.addEventListener('pointerup',release);key.addEventListener('pointercancel',release);
+    quick.append(key);
+  }
+  keyboardPanel.append(quick);
+  top.appendChild(keyboardPanel);shell.appendChild(top);
   const work=element('div','mdzx-workbench');
   const tools=element('div','mdzx-tools');
   const info=element('p','mdzx-info','48K · locally installed ROM · MIT Z80 core · user media stays local');
   const regs=element('pre','mdzx-regs','CPU not started');
   const mem=element('pre','mdzx-memory','Memory 4000–407F');
-  const readme=element('p','mdzx-readme','Klikni na obrazovku pro aktivaci klávesnice. SHIFT → CAPS SHIFT, CTRL → SYMBOL SHIFT. Standardní TAP loader experimentálně přes ROM trap 0556.');
+  const readme=element('p','mdzx-readme','OpenSE BASIC používá textový tokenizer; volitelné Sinclair K zkratky umožňují jedním J napsat LOAD přes virtuální ZX matici. Klikni na obrazovku pro aktivaci klávesnice. Backspace → CAPS SHIFT + 0, šipky → CAPS SHIFT + 5–8. SHIFT → CAPS SHIFT, CTRL → SYMBOL SHIFT. Na původní ROM J v režimu K znamená LOAD. Standardní TAP loader experimentálně přes ROM trap 0556.');
   const input=element('input','mdzx-file');input.type='file';input.accept='.sna,.tap,.rom,.scr';input.hidden=true;
   shell.appendChild(input);
   const log=element('div','mdzx-log','');log.setAttribute('role','status');
@@ -224,7 +313,7 @@ function mount(host){
     machine.cpu.run_instruction();
     machine._screen.update(machine.mem,false);inspect();say('STEP');
   }));
-  tools.appendChild(button('↻ Reset','Reset CPU',()=>{if(ready){machine.reset();tape&&(tape.cursor=0);say('SOFT RESET');inspect();}}));
+  tools.appendChild(button('↻ Reset','Reset CPU',()=>{if(ready){machine._keyb?.releaseAll();machine.reset();tape&&(tape.cursor=0);say('SOFT RESET');inspect();}}));
   tools.appendChild(button('↑ Load file','Open .sna/.tap/.rom/.scr file',()=>input.click()));
   tools.appendChild(button('↓ Save SNA','Download 48K snapshot',()=>{
     if(!ready)return say('START first');
@@ -363,7 +452,7 @@ function mount(host){
     }catch(e){say('ERROR: '+e.message);}
   });
   const inspectTimer=setInterval(()=>{if(shell.isConnected&&document.fullscreenElement===shell&&machine)inspect();},500);
-  return {shell,exportJSONState,applyJSONState,get machine(){return machine;},get state(){return disposed?'DESTROYED':(ready?(paused?'PAUSED':'RUNNING'):(booting?'BOOTING':'OFF'));},start,readTAP,
+  return {shell,keyboardPanel,exportJSONState,applyJSONState,get machine(){return machine;},get state(){return disposed?'DESTROYED':(ready?(paused?'PAUSED':'RUNNING'):(booting?'BOOTING':'OFF'));},start,readTAP,
     unmount(){
       if(disposed)return;disposed=true;clearInterval(inspectTimer);
       if(scrPreview)scrPreview.destroy();

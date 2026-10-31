@@ -12,3 +12,23 @@
 .rotor{width:53px;height:53px;border:5px solid #8195a7;background:#46566d;border-radius:50%;display:grid;place-items:center;font-size:28px;color:#ddd;transition:transform .25s}
 #preset{border:1px solid var(--border);border-radius:9px;background:var(--panel);color:var(--text);padding:8px;font:inherit}
 @media(max-width:530px){.devices{grid-template-columns:1fr}.device-input{grid-column:span 1}}
+
+/* MD.js Ultra ORIGINAL native Blocks Lite pointer-based editor, NOT embedded Blockly. */
+.editor-actions{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:0 0 12px}.editor-actions button{font-size:12px;padding:6px 10px}.editor-actions span{font:600 12px ui-monospace,monospace;color:var(--muted);margin-right:8px}
+.editor-grid{display:grid;grid-template-columns:minmax(155px,210px) minmax(0,1fr);gap:10px;min-height:560px}
+#toolbox{background:var(--bg);border-radius:12px;border:1px solid var(--border);padding:9px;overflow:auto;max-height:790px}
+.toolbox-group{border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:10px}.toolbox-group summary{font-weight:750;font-size:12px;padding:6px 0;cursor:pointer}
+.toolbox-item{display:block;text-align:left;width:100%;border-radius:5px 12px 12px 5px;margin:5px 0;padding:10px 7px;touch-action:none;user-select:none;font-size:12px;border-left:5px solid #4f7ee5;background:#eaf2ff;color:#243c60}
+.toolbox-item.logic{border-left-color:#9165d0;background:#f4ecff;color:#40295d}.toolbox-item.hardware{border-left-color:#30a774;background:#e7f7ef;color:#194c37}
+#blocks{min-width:0;max-height:790px;overflow:auto;background:radial-gradient(circle,var(--border) .7px,transparent 1px);background-size:19px 19px;border:1px solid var(--border);padding:12px;border-radius:12px;overscroll-behavior:contain}
+.scope{background:color-mix(in srgb,var(--panel) 89%,transparent);padding:12px;margin:0 0 16px}.scope-header{font-size:12px;font-weight:750;color:var(--muted);margin-bottom:10px}
+.block{border-radius:5px 13px 13px 5px;position:relative;margin:0 0 3px;padding:7px 7px 7px 3px;box-shadow:0 3px 0 #00000013}
+.block-body{gap:6px;align-items:center}.block-title{min-width:0;white-space:nowrap}
+.block-field{display:inline-flex;align-items:center;gap:4px;font:11px/1.4 system-ui}.block .drag-handle{touch-action:none;user-select:none;cursor:grab;border:0;font-size:18px;line-height:1;padding:3px 4px;color:inherit;background:transparent}
+.block .drag-handle:active{cursor:grabbing}.block .ctl{display:flex;gap:2px}
+.block .nested{border:2px solid #ae8bd2;border-radius:6px 6px 10px 10px;margin:8px 3px 1px 15px;padding:5px 7px;background:#ffffff30;min-height:45px}
+.nest-label{font-size:10px;color:#655078;font-weight:650;margin-bottom:5px}
+.drop-slot{height:13px;margin:1px 0;position:relative;opacity:.34;font-size:0;border-radius:7px;border:1px dashed #718fbb;cursor:crosshair;transition:height .13s,opacity .13s,background .13s}
+.drop-slot:hover,.drop-slot:focus-visible,.drop-slot.drop-active{height:33px;opacity:1;font:11px/30px system-ui;text-align:center;color:#2456a6;background:#bbd8ff;border-color:#4685d8}
+.drag-ghost{position:fixed;top:0;left:0;padding:11px 19px;min-width:130px;z-index:999999;pointer-events:none;white-space:nowrap;background:#d8e5ff;color:#233b66;border:2px solid #6b94d9;border-radius:5px 15px 15px 5px;box-shadow:0 9px 25px #0005}
+@media(max-width:1060px){.editor-grid{grid-template-columns:160px minmax(0,1fr)}}@media(max-width:520px){.editor-grid{grid-template-columns:110px minmax(0,1fr)}.toolbox-item{font-size:10px;padding:8px 4px}.block-field input{width:65px}.block-title{white-space:normal}}
