@@ -17,8 +17,9 @@ with sync_playwright() as pw:
  page=browser.new_page(viewport={'width':1280,'height':900},accept_downloads=True)
  errors=[];page.on('pageerror',lambda e:errors.append(str(e)))
  page.set_content(html,wait_until='load');page.wait_for_function('window.__mdPCUniversal && !window.__mdPCUniversal.running',timeout=120000)
- # Preserve guest edits to the embedded FreeDOS A: while resetting XT and switching into AT.
- page.evaluate('''() => {const m=__mdPCUniversal.machine; m.fdd.writeSector(0,79,1,9,new Uint8Array(512).fill(0x4b));}''')
+ # The built-in boot disk is RO; explicitly unlock it for this persistence test.
+ assert page.evaluate('__mdPCUniversal.machine.fdd.disks[0].writeProtected') is True
+ page.evaluate('''() => {const m=__mdPCUniversal.machine; m.fdd.setWriteProtected(0,false);m.fdd.writeSector(0,79,1,9,new Uint8Array(512).fill(0x4b));m.fdd.setWriteProtected(0,true);}''')
  page.locator('#reset').click()
  page.wait_for_function('!__mdPCUniversal.running',timeout=120000)
  assert page.evaluate('__mdPCUniversal.machine.fdd.readSector(0,79,1,9)[0]')==0x4b

@@ -1,0 +1,6 @@
+Optional distribution candidates; not shipped in this checkpoint:
+* mininasm.com (pts/mininasm, 8086 DOS, check BSD-2-Clause notice)
+* NASM 0.98.39 8086 host (license check and size)
+* TE DOS tiny editor or Insight debugger (license/8086 validation)
+* Small-C + Small-Assembler + YLink + libraries (license notices, memory, size)
+Do not label files as installed without obtaining/test-running the real files.

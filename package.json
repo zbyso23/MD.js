@@ -1,6 +1,6 @@
 {
   "name": "mdjs-ultra",
-  "version": "0.8.2-phase4ijk-xt-fractals-instruction-media-hardening",
+  "version": "0.8.2-phase4l-xt286-development-disk-bootstrap",
   "private": true,
   "description": "MD.js Ultra: standalone Markdown, Mermaid, Charts and optional ZX, Blockly/Arduino, PC (XT and 286) labs",
   "scripts": {
@@ -17,7 +17,7 @@
     "test:zx:real:http": "python3 zx/tests/e2e/test_zx_browser.py --real",
     "test:blocks": "node optional/blockly/tests/test.mjs",
     "test:ultra:browser": "python3 test/e2e/test_ultra_browser.py",
-    "test:release": "npm test && npm run test:blocks && npm run test:zx:unit && npm run test:pc:phase1 && npm run test:pc:browser && npm run test:pc:phase2:browser && npm run test:runtime:browser && npm run test:ultra:browser && npm run test:ux:browser && npm run test:ux:shell && npm run test:pc:phase3:compat && npm run test:pc:phase4a && npm run test:pc:phase4b && npm run test:pc:phase4d && npm run test:pc:phase4e:hardening && npm run test:pc:closure && npm run test:pc:disk-images && npm run test:pc:phase4i && npm run test:pc:phase4j && npm run test:pc:phase4k",
+    "test:release": "npm test && npm run test:blocks && npm run test:zx:unit && npm run test:pc:phase1 && npm run test:pc:browser && npm run test:pc:phase2:browser && npm run test:runtime:browser && npm run test:ultra:browser && npm run test:ux:browser && npm run test:ux:shell && npm run test:pc:phase3:compat && npm run test:pc:phase4a && npm run test:pc:phase4b && npm run test:pc:phase4d && npm run test:pc:phase4e:hardening && npm run test:pc:closure && npm run test:pc:disk-images && npm run test:pc:phase4i && npm run test:pc:phase4j && npm run test:pc:phase4k && npm run test:pc:devdisk",
     "test:pc:phase1": "node --test optional/pc/tests/*.test.cjs",
     "test:pc:phase2:video": "node --test optional/pc/tests/video-phase2-v078.test.cjs",
     "test:pc:phase2:floppy": "node --test optional/pc/tests/floppy-phase2-v078.test.cjs",
@@ -48,7 +48,8 @@
     "test:pc:quick-media": "node --test optional/pc/tests/file-to-disk-20261029.test.cjs && python3 optional/pc/tests/test_quick_media_browser_20261029.py",
     "test:pc:phase4i": "node --test optional/pc/tests/xt-fractals-phase4i.test.cjs && python3 optional/pc/tests/test_xt_fractals_browser_phase4i.py",
     "test:pc:phase4j": "node --test optional/pc/tests/cpu-arithmetic-oracle-phase4j.test.cjs optional/pc/tests/fpu-instruction-hardening-phase4j.test.cjs && python3 optional/pc/tests/test_fpucheck_dos_browser_phase4j.py",
-    "test:pc:phase4k": "node --test optional/pc/tests/media-resilience-phase4k.test.cjs && python3 optional/pc/tests/test_disk_images_browser_20261029.py"
+    "test:pc:phase4k": "node --test optional/pc/tests/media-resilience-phase4k.test.cjs && python3 optional/pc/tests/test_disk_images_browser_20261029.py",
+    "test:pc:devdisk": "node --test optional/pc/tests/devdisk-bootstrap.test.cjs && python3 optional/pc/tests/test_dev_disk_browser.py"
   },
   "dependencies": {},
   "devDependencies": {}

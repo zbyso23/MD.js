@@ -131,3 +131,11 @@ Disk reliability: malformed IDE snapshot restore is atomic, FDD A:/B: can be wri
 New gates: `npm run test:pc:phase4i`, `npm run test:pc:phase4j`, `npm run test:pc:phase4k`; they are included in `test:release`.
 
 The AT/286 FreeDOS disk now also contains `FPUCHECK.COM` (85 bytes). It prints `80287XL FPU NOT ENABLED` if the option is off, and `80287XL FPU OK` after an x87 arithmetic/integer-store self-check when enabled. This path has a real FreeDOS Chromium regression.
+
+### Developer floppy B: (Phase 4L bootstrap)
+
+A: FreeDOS and B: developer 720KiB FAT12 are **automatically inserted read-only** on the first start of both XT and AT/286. The source image is `x86DEV-720K-XT286.img`; the offline classic script `PC-EmbeddedAssets.js` includes the same bytes as Base64 and needs no fetch/server. Switching profiles and resetting preserves media/eject decisions. Use **Obnovit vývojovou B: (RO)** to explicitly restore the built-in image.
+
+Available *real* executables on B: are `EDIT.COM` (original 8086 DOS line-oriented text editor) and `DEBUG.COM`. Examples `HELLO.ASM`, `HELLO.C`, and `DEVHELP.TXT` are also included. **This bootstrap is NOT the promised complete C compiler/linker/assembler disk**: upstream DOS binaries were not available in this execution environment. Verified locally acquired binaries can be injected via `optional/pc/devtools/build_devdisk.js --tool NAME.COM=/path/...`, subject to FAT12 capacity and licensing checks.
+
+Since RO media cannot hold outputs, press **Pracovní kopie B: (RW)** to make an explicit writable copy for XT or AT; export it afterward to preserve your work. On AT, a separate writable IDE C: is also available. The original embedded B: remains unmodified. Example: `B:EDIT B:HELLO.ASM`, then `:L` to list and `:Q` to quit. `:W` saves only on writable media. The DOS FreeDOS kernel may show a critical-error prompt if a protected disk is targeted for writing.

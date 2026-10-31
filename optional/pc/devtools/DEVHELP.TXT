@@ -1,0 +1,29 @@
+MD.js ULTRA - DEVELOPMENT DISK B: (XT/286)
+======================================
+THIS EDITION IS A BOOTSTRAP. NO C COMPILER/LINKER OR MININASM
+BINARY HAS BEEN INCLUDED. DO NOT ASSUME THEY ARE PRESENT.
+
+Current real DOS programs:
+  EDIT.COM       8086-compatible BASIC LINE TEXT EDITOR
+  DEBUG.COM      FreeDOS debugger, supports A/U/R/G/Q
+
+  B:EDIT B:HELLO.ASM       load and VIEW the example
+  :L                       list text
+  :D                       delete last line
+  :C                       clear text
+  :W                       save (needs a WRITABLE target drive)
+  :Q                       quit
+
+Disk A: FreeDOS and B: Developer disk are READ-ONLY by default.
+Therefore DO NOT SAVE OVER B: -- this is intentional.
+For the XT you may temporarily replace B: with a writable
+working disk via the PC Workbench FDD controls, or edit files
+on the host and import them. For 286 a writable IDE C: is ideal.
+The built-in DEBUG assembler may be used via DEBUG -> A.
+
+Future external tools to install when verified:
+ mininasm.com, NASM16, DOS Small-C compiler, assembler,
+ linker, runtime libraries, optionally Insight debugger.
+Do not install unsupported binaries just to fill disk space.
+This disk intentionally has plenty of free workspace after
+mounting a writable copy.
