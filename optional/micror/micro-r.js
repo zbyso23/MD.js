@@ -17,7 +17,19 @@ const numeric=()=>root.MDNumerical||(typeof require==='function'?require('./nume
 const isMissing=v=>v===null||v===undefined||(typeof v==='number'&&Number.isNaN(v));
 const withoutNA=(x,remove)=>{const v=arr(x);if(!remove&&v.some(isMissing))throw Error('Missing values: use na.rm=TRUE');return v.filter(a=>!isMissing(a));};
 function modelFormula(formula,data){if(!isFrame(data))throw Error('lm formula requires data frame');const parts=formula.split('~');if(parts.length!==2)throw Error('Expected y ~ predictors');const target=parts[0].trim(),rhs=parts[1].trim();if(!/^[A-Za-z][\w.]*$/.test(target))throw Error('Invalid response variable');let terms=[];for(const piece of rhs.split('+').map(x=>x.trim())){if(!piece)continue;if(piece==='1'||piece==='0'||piece==='-1')continue;if(piece.includes('*')){let m=piece.split('*').map(x=>x.trim());if(m.length!==2)throw Error('Only two-way interactions supported');for(const t of [m[0],m[1],m[0]+':'+m[1]])if(!terms.includes(t))terms.push(t);}else if(!terms.includes(piece))terms.push(piece);}if(terms.length>30)throw Error('Too many predictors');let intercept=!/(?:^|\+)\s*(?:0|-1)\s*(?:\+|$)/.test(rhs);if(!terms.length&&!intercept)throw Error('Empty model');let xs=[],ys=[],omitted=0;for(const row of data.rows){let yy=row[target],values=[],bad=isMissing(yy);if(!bad&&typeof yy!=='number')throw Error('Response must be numeric');for(const term of terms){let factors=term.split(':');if(factors.some(k=>!data.columns.includes(k)))throw Error('Unknown predictor '+term);let vals=factors.map(k=>row[k]);if(vals.some(isMissing)){bad=true;break;}if(vals.some(v=>typeof v!=='number'))throw Error('Categorical predictors not yet supported: '+term);values.push(vals.reduce((a,b)=>a*b,1));}if(bad){omitted++;continue;}xs.push(intercept?[1,...values]:values);ys.push(yy);}if(!xs.length)throw Error('No complete observations');const fit=numeric().leastSquares(xs,ys);return {kind:'lm',formula,n:fit.n,omitted,terms:intercept?['(Intercept)',...terms]:terms,coefficients:fit.coefficients,r2:fit.r2,adjR2:fit.adjR2,residuals:fit.residuals,fitted:fit.fitted,sse:fit.sse,dfResidual:fit.dfResidual};}
+const m2=()=>numeric();
 const functions={
+ fft:x=>m2().fft(nums(x)),ifft:x=>m2().ifft(x),fft_mag:x=>m2().fft(nums(x)).map(z=>Math.hypot(z.re,z.im)),
+ hann:n=>m2().window(scalar(n),'hann'),hamming:n=>m2().window(scalar(n),'hamming'),
+ sine:(freq,rate,n)=>m2().signal('sine',scalar(freq),scalar(rate),scalar(n)),
+ square:(freq,rate,n)=>m2().signal('square',scalar(freq),scalar(rate),scalar(n)),
+ saw:(freq,rate,n)=>m2().signal('saw',scalar(freq),scalar(rate),scalar(n)),
+ convolve:(a,b)=>m2().convolve(nums(a),nums(b)),
+ integrate_poly:(coeff,a,b,n=256)=>m2().integrate(x=>nums(coeff).reduce((z,c,i)=>z+c*x**i,0),scalar(a),scalar(b),scalar(n)),
+ derivative_poly:(coeff,x)=>m2().derivative(t=>nums(coeff).reduce((z,c,i)=>z+c*t**i,0),scalar(x)),
+ ode_decay:(rate,y0,dt,steps)=>m2().ode((t,y)=>[-scalar(rate)*y[0]],0,[scalar(y0)],scalar(dt),scalar(steps),'rk4').map(p=>p.y[0]),
+ spectrum:(x,rate)=>{const a=nums(x),sp=m2().fft(a),half=Math.floor(a.length/2)+1;return {chart:'spectrum',x:Array.from({length:half},(_,i)=>i*scalar(rate)/a.length),y:sp.slice(0,half).map(z=>Math.hypot(z.re,z.im)/a.length)};},
+
  lm_formula:modelFormula,coef:m=>{if(m.kind!=='lm')throw Error('Expected lm model');return Object.fromEntries(m.terms.map((k,i)=>[k,m.coefficients[i]]));},
  residuals:m=>{if(m.kind!=='lm')throw Error('Expected lm model');return m.residuals;},fitted:m=>{if(m.kind!=='lm')throw Error('Expected lm model');return m.fitted;},
  predict:(m,d)=>{if(m.kind!=='lm')throw Error('Expected lm model');if(d===undefined)return m.fitted;throw Error('predict(newdata) is not available yet; use fitted(model)');},
@@ -55,5 +67,5 @@ const run=(src,initial={})=>{if(src.length>10000)throw Error('Program too long')
  else if(match){let [,dest,y,x,frame]=match;if(!Object.prototype.hasOwnProperty.call(env,frame))throw Error('Unknown data frame: '+frame);const result=modelFormula(y+' ~ '+x,env[frame]);if(dest)env[dest]=result;out.push({line:n+1,source:line,value:dest?{assignment:dest,value:result}:result});}
  else out.push({line:n+1,source:line,value:parse(line,env)});}
 catch(e){throw Error('Line '+(n+1)+': '+e.message);}}return {env,outputs:out};};
-root.MDMicroR={run,functions,makeFrame,isFrame,column,version:'5.2'};if(typeof module!=='undefined'&&module.exports)module.exports=root.MDMicroR;
+root.MDMicroR={run,functions,makeFrame,isFrame,column,version:'5.3'};if(typeof module!=='undefined'&&module.exports)module.exports=root.MDMicroR;
 })(typeof window!=='undefined'?window:globalThis);

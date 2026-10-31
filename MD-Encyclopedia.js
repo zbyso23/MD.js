@@ -30,7 +30,7 @@
    const back=button('←','', 'Předchozí článek'),forward=button('→','','Další článek'),close=button('✕ Zavřít');close.setAttribute('aria-label','Zavřít encyklopedii');
    head.append(back,forward,close);dialog.appendChild(head);
    const tabs=div('md-ency-tabs');tabs.setAttribute('role','tablist');tabs.setAttribute('aria-label','Hlavní sekce');
-   const mdButton=button('📝 Markdown'),asmButton=button('⌨ Assembler');for(const b of [mdButton,asmButton]){b.setAttribute('role','tab');tabs.appendChild(b)}
+   const sectionNames=['Markdown','KaTeX','Micro R','Numerical M2','Assembler'];const sectionButtons=Object.fromEntries(sectionNames.map(name=>[name,button(({Markdown:'📝',KaTeX:'∑','Micro R':'📊','Numerical M2':'∿',Assembler:'⌨'})[name]+' '+name)]));const mdButton=sectionButtons.Markdown,asmButton=sectionButtons.Assembler;for(const name of sectionNames){const b=sectionButtons[name];b.setAttribute('role','tab');tabs.appendChild(b)}
    const search=document.createElement('input');search.className='md-ency-search';search.id='md-ency-search';search.type='search';search.placeholder='Hledat název, instrukci, příklad…';search.setAttribute('aria-label','Vyhledat v aktuální sekci');tabs.appendChild(search);
    const count=div('md-ency-count');count.setAttribute('role','status');count.setAttribute('aria-live','polite');tabs.appendChild(count);dialog.appendChild(tabs);
    const main=div('md-ency-main'),categories=div('md-ency-categories'),results=div('md-ency-results'),reader=div('md-ency-reader');
@@ -68,7 +68,7 @@
        const url=URL.createObjectURL(new Blob([c.source],{type:'text/plain;charset=utf-8'}));
        const a=document.createElement('a');a.href=url;const stamp=new Date();const ts=stamp.getFullYear()+String(stamp.getMonth()+1).padStart(2,'0')+String(stamp.getDate()).padStart(2,'0')+String(stamp.getHours()).padStart(2,'0')+String(stamp.getMinutes()).padStart(2,'0')+String(stamp.getSeconds()).padStart(2,'0');a.download=c.filename.replace(/(\.[^.]+)?$/,('_'+ts+'$1'));reader.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
      });top.appendChild(download);}
-     if(c.id==='p4x-micror'){const lab=button(L('📊 Otevřít Micro R Lab','📊 Open Micro R Lab'));lab.addEventListener('click',()=>{const url=new URL('optional/micror/index.html',scriptBase);root.open(url.href,'_blank','noopener');});top.appendChild(lab);}
+     if(c.section==='Micro R'||c.section==='Numerical M2'||c.id==='p4x-micror'){const lab=button(L('📊 Otevřít Micro R Lab','📊 Open Micro R Lab'));lab.addEventListener('click',()=>{const url=new URL('optional/micror/index.html',scriptBase);root.open(url.href,'_blank','noopener');});top.appendChild(lab);}
      const print=button(L('🖨 Tisk','🖨 Print'));print.addEventListener('click',()=>root.print());top.appendChild(print);reader.appendChild(top);
      const article=div('md-ency-article');reader.appendChild(article);renderer.mount(article,bodyOf(c));if(root.MDMathPlugin)root.MDMathPlugin.render(article);
      reader.scrollTop=0;
@@ -76,13 +76,13 @@
    function select(id,track=true){const c=lessons.find(c=>c.id===id);if(!c)return;
      if(c.section!==section){section=c.section;category='Vše';search.value='';}
      if(track&&history[historyPos]!==id){history=history.slice(0,historyPos+1);history.push(id);historyPos=history.length-1;}
-     current=id;categoriesRender();renderResults();renderReader();mdButton.setAttribute('aria-selected',String(section==='Markdown'));asmButton.setAttribute('aria-selected',String(section==='Assembler'));back.disabled=historyPos<=0;forward.disabled=historyPos>=history.length-1;
+     current=id;categoriesRender();renderResults();renderReader();for(const name of sectionNames)sectionButtons[name].setAttribute('aria-selected',String(section===name));back.disabled=historyPos<=0;forward.disabled=historyPos>=history.length-1;
    }
    function render(choose=false){const matches=renderResults();if(choose||!matches.some(c=>c.id===current)){if(matches.length)select(matches[0].id);else{current=null;reader.replaceChildren(cleanText(L('Žádný článek ve výsledcích.','No article in results.')));}}
-     categoriesRender();mdButton.setAttribute('aria-selected',String(section==='Markdown'));asmButton.setAttribute('aria-selected',String(section==='Assembler'));
+     categoriesRender();for(const name of sectionNames)sectionButtons[name].setAttribute('aria-selected',String(section===name));
    }
    function chooseSection(v){section=v;category='Vše';search.value='';current=null;render(true);search.focus();}
-   mdButton.addEventListener('click',()=>chooseSection('Markdown'));asmButton.addEventListener('click',()=>chooseSection('Assembler'));
+   for(const name of sectionNames)sectionButtons[name].addEventListener('click',()=>chooseSection(name));
    search.addEventListener('input',()=>render());
    back.addEventListener('click',()=>{if(historyPos>0)select(history[--historyPos],false);});forward.addEventListener('click',()=>{if(historyPos<history.length-1)select(history[++historyPos],false);});
    function open(){if(!overlay.hidden)return;lastFocus=document.activeElement;overlay.hidden=false;trigger.setAttribute('aria-expanded','true');if(!current)select(lessons[0].id);render();search.focus({preventScroll:true});}
