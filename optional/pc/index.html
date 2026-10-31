@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MD.js Ultra · FreeDOS XT / Hercules Amber</title>
 <style>
-:root{color-scheme:dark;font:14px/1.55 system-ui,-apple-system,'Segoe UI',sans-serif;background:#091420;color:#e6f4f5}*{box-sizing:border-box}body{margin:0}button,select,input{font:inherit}button,select{cursor:pointer}button{border:1px solid #426276;border-radius:9px;padding:10px 13px;color:#eaf8f3;background:#22394b;font-weight:650}button:hover{background:#315369}button.primary{background:#23b5a6;color:#05282d;border-color:#32d2bf}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #ecca78}select,input{background:#152c3b;color:#fff;border:1px solid #426276;border-radius:8px;padding:9px}.container{max-width:1260px;margin:0 auto;padding:26px 20px 70px}.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.eyebrow{color:#65d6be;font-weight:800;text-transform:uppercase;font-size:11px;letter-spacing:.16em}.back{color:#a3cbd2;text-decoration:none}h1{font-size:clamp(28px,4vw,44px);line-height:1.1;margin:8px 0}h2{font-size:17px;margin:0 0 12px}.lede{color:#aec5cd;max-width:760px}.badge{border:1px solid #64858c;color:#c9d8dc;padding:6px 9px;border-radius:30px;white-space:nowrap;font-size:11px}.notice{background:#24353a;border-left:4px solid #edbf69;padding:13px 15px;margin:18px 0 21px;color:#e7e5dc;border-radius:6px}.actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:14px 0 20px}.layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:15px}.panel{border:1px solid #2b485c;background:linear-gradient(150deg,#102637,#101d2d);border-radius:15px;padding:17px;min-width:0}.wide{grid-column:1/-1}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:#172e3f;padding:12px;border-radius:9px}.stat .meta{color:#94bbc0;font-size:11px}.stat .num{font-size:18px;font-weight:750;letter-spacing:.02em}.registers{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.register{display:flex;justify-content:space-between;gap:5px;border:1px solid #2b5060;border-radius:8px;padding:7px;background:#122c3b;font-family:ui-monospace,monospace}.register b{color:#77dfcc}.register span{color:#eefaff}.muted{color:#8eafbb}.memory{font-family:ui-monospace,Consolas,monospace;font-size:12px;white-space:pre;overflow:auto;max-height:285px;margin:0;line-height:1.7;color:#c4ede9}.trace{font-family:ui-monospace,Consolas,monospace;font-size:12px;white-space:pre-wrap;word-break:break-word;margin:0;min-height:100px;max-height:285px;overflow:auto;color:#b8d8e2}.split{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.check{margin:0;display:inline-flex;gap:7px;align-items:center;color:#aacbd0}.ok{color:#77dec1}.error{color:#f5a99c}.screen-shell{display:block;position:relative;max-width:100%;overflow:hidden;border:6px solid #263c45;border-radius:8px;background:#000}.screen-shell canvas{display:block;max-width:100%;width:100%;height:auto;image-rendering:pixelated;background:#000}.screen-shell.hercules{background:#140b02;border-color:#5d4120;box-shadow:0 0 0 1px rgba(255,191,102,.16) inset,0 0 20px rgba(255,180,90,.18), inset 0 0 34px rgba(255,170,70,.08)}.screen-shell.hercules::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(to bottom, rgba(255,196,120,.05) 0 1px, rgba(0,0,0,0) 1px 3px);opacity:.34;pointer-events:none}.screen-shell.hercules::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 35%, rgba(255,204,128,.18), rgba(255,140,40,.04) 44%, rgba(0,0,0,.20) 100%);mix-blend-mode:screen;pointer-events:none}.screen-shell.cga{background:#000;border-color:#263c45;box-shadow:none}footer{margin-top:22px;color:#91a6b4;font-size:12px}@media(max-width:850px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:510px){.registers{grid-template-columns:repeat(2,1fr)}.top{flex-direction:column}.stat .num{font-size:15px}}
+:root{color-scheme:dark;font:14px/1.55 system-ui,-apple-system,'Segoe UI',sans-serif;background:#091420;color:#e6f4f5}*{box-sizing:border-box}body{margin:0}button,select,input,textarea{font:inherit}button,select{cursor:pointer}button{border:1px solid #426276;border-radius:9px;padding:10px 13px;color:#eaf8f3;background:#22394b;font-weight:650}button:hover{background:#315369}button.primary{background:#23b5a6;color:#05282d;border-color:#32d2bf}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #ecca78}select,input{background:#152c3b;color:#fff;border:1px solid #426276;border-radius:8px;padding:9px}.container{max-width:1260px;margin:0 auto;padding:26px 20px 70px}.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.eyebrow{color:#65d6be;font-weight:800;text-transform:uppercase;font-size:11px;letter-spacing:.16em}.back{color:#a3cbd2;text-decoration:none}h1{font-size:clamp(28px,4vw,44px);line-height:1.1;margin:8px 0}h2{font-size:17px;margin:0 0 12px}.lede{color:#aec5cd;max-width:760px}.badge{border:1px solid #64858c;color:#c9d8dc;padding:6px 9px;border-radius:30px;white-space:nowrap;font-size:11px}.notice{background:#24353a;border-left:4px solid #edbf69;padding:13px 15px;margin:18px 0 21px;color:#e7e5dc;border-radius:6px}.actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:14px 0 20px}.layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:15px}.panel{border:1px solid #2b485c;background:linear-gradient(150deg,#102637,#101d2d);border-radius:15px;padding:17px;min-width:0}.wide{grid-column:1/-1}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:#172e3f;padding:12px;border-radius:9px}.stat .meta{color:#94bbc0;font-size:11px}.stat .num{font-size:18px;font-weight:750;letter-spacing:.02em}.registers{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.register{display:flex;justify-content:space-between;gap:5px;border:1px solid #2b5060;border-radius:8px;padding:7px;background:#122c3b;font-family:ui-monospace,monospace}.register b{color:#77dfcc}.register span{color:#eefaff}.muted{color:#8eafbb}.memory{font-family:ui-monospace,Consolas,monospace;font-size:12px;white-space:pre;overflow:auto;max-height:285px;margin:0;line-height:1.7;color:#c4ede9}.trace{font-family:ui-monospace,Consolas,monospace;font-size:12px;white-space:pre-wrap;word-break:break-word;margin:0;min-height:100px;max-height:285px;overflow:auto;color:#b8d8e2}.split{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.check{margin:0;display:inline-flex;gap:7px;align-items:center;color:#aacbd0}.ok{color:#77dec1}.error{color:#f5a99c}.screen-shell{display:block;position:relative;max-width:100%;overflow:hidden;border:6px solid #263c45;border-radius:8px;background:#000}.screen-shell canvas{display:block;max-width:100%;width:100%;height:auto;image-rendering:pixelated;background:#000}.screen-shell.hercules{background:#140b02;border-color:#5d4120;box-shadow:0 0 0 1px rgba(255,191,102,.16) inset,0 0 20px rgba(255,180,90,.18), inset 0 0 34px rgba(255,170,70,.08)}.screen-shell.hercules::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(to bottom, rgba(255,196,120,.05) 0 1px, rgba(0,0,0,0) 1px 3px);opacity:.34;pointer-events:none}.screen-shell.hercules::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 35%, rgba(255,204,128,.18), rgba(255,140,40,.04) 44%, rgba(0,0,0,.20) 100%);mix-blend-mode:screen;pointer-events:none}.screen-shell.cga{background:#000;border-color:#263c45;box-shadow:none}footer{margin-top:22px;color:#91a6b4;font-size:12px}@media(max-width:850px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:510px){.registers{grid-template-columns:repeat(2,1fr)}.top{flex-direction:column}.stat .num{font-size:15px}}
 
 /* Larger monitor-first layout; true pixel scale controlled separately */
 .container{max-width:1600px;padding:14px clamp(12px,2vw,34px) 34px}.top{align-items:center}.top h1{font-size:clamp(22px,2.3vw,31px);margin:2px 0}.top .lede{font-size:12px;margin:6px 0;max-width:520px}.notice{font-size:12px;margin:8px 0}.container > .actions{padding:7px 0;margin:9px 0}.container>.actions>button,.container>.actions>select{padding:8px 10px}
@@ -28,6 +28,15 @@
 <summary style="cursor:pointer;font-weight:800;color:#8be8d1">⌨ Developer Workbench 4N · XT + AT/286 · edit / build / run</summary>
 <p class="muted">Vestavěná B: je read-only. Pro ukládání zdrojáků a překlad spusť nejprve <strong>Pracovní kopie B: (RW)</strong>; vytvořený IMG po práci exportuj.</p>
 <div class="actions"><button id="dev-copy" class="primary">1. Připravit pracovní B: (RW)</button><button id="dev-edit">2. Otevřít IDE HELLO.C</button><button id="dev-build">3. BUILD HELLO</button><button id="dev-run">4. Spustit HELLO.EXE</button><button id="dev-export">↓ Exportovat pracovní B:</button></div>
+<div id="pc-paste-tools" style="margin:14px 0 8px;padding:12px;border:1px solid #416776;border-radius:10px;background:#102e3a">
+<label for="pc-paste-code" style="display:block;font-weight:750;margin-bottom:6px">📋 Paste Code → emulovaná klávesnice XT / 286</label>
+<textarea id="pc-paste-code" rows="9" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" style="display:block;width:100%;min-height:140px;background:#091923;color:#d9fbe6;border:1px solid #527586;border-radius:7px;padding:10px;font:13px/1.5 ui-monospace,Consolas,monospace;resize:vertical;tab-size:4" placeholder="Vlož sem ASCII C/ASM kód. Otevři nejprve prázdný editor B:IDE B:PASTE.C, potom spusť Vycvakat.
+#include &lt;stdio.h&gt;
+void main(void) { printf(&quot;Hello!\n&quot;); }"></textarea>
+<div class="actions" style="margin:10px 0 6px"><button id="pc-paste-open">Otevřít IDE PASTE.C</button><button class="primary" id="pc-paste-start">⌨ Vycvakat do DOS editoru</button><button id="pc-paste-pause" disabled>Ⅱ Pozastavit</button><button id="pc-paste-stop" disabled>■ Zastavit</button><label for="pc-paste-speed">Tempo</label><select id="pc-paste-speed"><option value="1">1 znak / snímek</option><option value="2" selected>2 znaky / snímek</option><option value="4">4 znaky / snímek</option></select><label class="check" for="pc-paste-fold"><input type="checkbox" id="pc-paste-fold"> Převést diakritiku → ASCII</label></div>
+<progress id="pc-paste-progress" value="0" max="1" style="width:100%;height:10px" aria-label="Průběh přenosu znaků do DOSu"></progress>
+<p id="pc-paste-status" class="muted" role="status" aria-live="polite" style="margin:6px 0">Otevři prázdný IDE.COM (vhodná je pracovní RW kopie B:). Přenos posílá jednotlivé klávesy přes BIOS INT 16h, nikoli přímo do diskety.</p>
+</div>
 <p class="muted">DOS editor: šipky, Home/End, PgUp/PgDn, Backspace, Del, F1 nápověda, F3/Ctrl+S uložit, Esc/F10 zavřít. Původní řádkový EDIT.COM zůstává. F2 otevře encyklopedii Markdown/Assembler v prohlížeči; ikona je dostupná stále.</p>
 </details>
 <div class="actions"><button id="pc-key-focus">⌨ Klávesnice → DOS</button><label for="pc-key-text">Příkaz / text</label><input id="pc-key-text" type="text" placeholder="TUNE, DEBUG, DIR, R, A 100…" style="flex:1;min-width:170px"><button id="pc-key-send">Odeslat + ENTER</button></div><div class="actions" aria-label="Fáze 3: PC Speaker, Covox, AdLib OPL2 a SB 2.0 (omezená kompatibilita)"><button id="audio-enable">🔊 Zapnout PC zvuk</button><button id="audio-mute">Ztlumit</button><button id="audio-speaker-demo">♫ PC Speaker</button><button id="audio-covox-demo">♫ Covox</button><button id="audio-opl-demo">♫ AdLib / OPL2</button><button id="audio-sb-demo">♫ Sound Blaster 2.0</button></div><p class="muted" id="audio-status" role="status" aria-live="polite">Audio: vypnuto. Fáze 3B/3C/3D preview — ne úplná hardwarová kompatibilita.</p><p id="pc-boot-progress" class="muted" role="status">Připravuji FreeDOS 720 KB + DEBUG…</p><p id="pc-profile-note" class="muted" role="status" aria-live="polite">XT: FreeDOS a DEBUG.COM dostupný. Přepnutí profilu znovu zavede A: a nabootuje DOS.</p>
@@ -90,6 +99,7 @@ self.onmessage = function(event){
 <script src="PC-Machine.js"></script>
 <script src="PC-Audio-Output.js"></script>
 <script src="PC-EmbeddedAssets.js"></script>
+<script src="PC-Paste.js"></script>
 <script>
 (()=>{'use strict';
 const {PCMachine}=window.MDPC_MACHINE,{R,S}=window.MDPC_CPU, runtime=window.MDUltraRuntime;
@@ -97,6 +107,38 @@ const el=id=>document.getElementById(id),fmt=(n,w=4)=>((n>>>0).toString(16).toUp
 const audioOutput=new window.MDPC_AUDIO_OUTPUT.PCWebAudioOutput();const diskImages=window.MDPC_DISK_IMAGES;
 let machine=new PCMachine('xt',{videoAdapter:'hercules'});let retainedIDE=null,mediaInitialized=false;let messages=['PC Lab initialized. XT + Hercules amber + embedded FreeDOS/DEBUG A:.'];
 let running=false,frameId=0,lastVideoRefresh=0,autoStopAtPrompt=false;const inputQueue=[];
+let pasteJob=null;
+const pasteStatus=(msg)=>{el('pc-paste-status').textContent=msg;};
+function editorVisible(){
+ if(machine.video.isGraphics)return false;
+ let row='';for(let col=0;col<80;col++){const cell=machine.video.readCell(0,col);row+=cell&&cell.char>=32?String.fromCharCode(cell.char):' ';}
+ return row.includes('DOS SOURCE EDITOR');
+}
+function pasteButtons(){const active=!!pasteJob;
+ el('pc-paste-start').disabled=active;el('pc-paste-open').disabled=active;
+ el('pc-paste-pause').disabled=!active;el('pc-paste-stop').disabled=!active;
+ el('pc-paste-pause').textContent=active&&pasteJob.paused?'▶ Pokračovat':'Ⅱ Pozastavit';
+}
+function cancelPaste(message){if(!pasteJob)return;
+ // Keys already in the guest BIOS keyboard buffer cannot be retracted safely.
+ pasteJob=null;pasteButtons();if(message)pasteStatus(message);
+}
+function pasteFrame(){
+ const job=pasteJob;if(!job||job.paused)return;
+ if(!editorVisible()){
+  cancelPaste('Přenos zastaven: DOS editor již není na obrazovce. Neodeslaný text zůstal v HTML poli.');return;
+ }
+ if(inputQueue.length!==0||machine.bios.peekKey(false)!==null)return;
+ if(job.pos>=job.keys.length){
+  el('pc-paste-progress').value=job.keys.length;
+  cancelPaste(`Hotovo: ${job.keys.length} kláves zpracováno emulovaným DOS editorem. Ulož pomocí F3, potom exportuj pracovní B: IMG.`);return;
+ }
+ const batch=Math.min(Number(el('pc-paste-speed').value)||1,job.keys.length-job.pos);
+ for(let i=0;i<batch;i++)inputQueue.push(job.keys[job.pos++]);
+ el('pc-paste-progress').value=job.pos;
+ if((job.pos&15)===0||job.pos===job.keys.length)pasteStatus(`Vycvakávám ${job.pos}/${job.keys.length} kláves (${Math.round(100*job.pos/job.keys.length)} %). F3 uloží do pracovní B:.`);
+}
+
 const trace=s=>{messages.push(s);if(messages.length>160)messages.shift();};
 function refresh(){const c=machine.cpu,state=c.snapshot();
  const regs=['AX','BX','CX','DX','SP','BP','SI','DI'];const seg=['ES','CS','SS','DS'];
@@ -125,6 +167,7 @@ function mountEmbeddedDeveloperDisk(notify=true){
  return true;
 }
 function reboot(p,bootDOS=false){
+ cancelPaste('Přenos zrušen resetem / přepnutím profilu.');
  el('fpu-enabled').disabled=p!=='at';el('fpu-clock').disabled=p!=='at';el('fpu-precision').disabled=p!=='at';
  if(p==='xt'&&el('video-adapter').value==='vga'){el('video-adapter').value='cga';trace('VGA je dostupná pouze na AT/286; XT přepnut na CGA.');}
  pauseCPU();autoStopAtPrompt=false;
@@ -334,18 +377,18 @@ function cpuFrame(){if(!running)return;frameId=0;
  try{
   // Keep the guest clock near the audible queue; never silently discard a tune.
   if(audioOutput.enabled&&audioOutput.pendingSeconds>0.35){frameId=requestAnimationFrame(cpuFrame);return;}
-  pumpKeyboard();const r=machine.run(45000);pumpKeyboard();if(audioOutput.enabled)audioOutput.enqueue(machine.audio.takePCM());
-  if(r.halted){pauseCPU(false);el('pc-boot-progress').textContent='CPU HLT · stroj pozastaven';refresh();return;}
+  pasteFrame();pumpKeyboard();const r=machine.run(45000);pumpKeyboard();if(audioOutput.enabled)audioOutput.enqueue(machine.audio.takePCM());
+  if(r.halted){cancelPaste('Přenos zastaven: CPU HLT.');pauseCPU(false);el('pc-boot-progress').textContent='CPU HLT · stroj pozastaven';refresh();return;}
   const line=lastTextLine();
   if(autoStopAtPrompt&&((/^[A-Z]:\\>\s*$/.test(line))||line==='-')){
    autoStopAtPrompt=false;stopAtDOSPrompt();el('pc-boot-progress').textContent='DOS/DEBUG připraven · '+line+' · Klikni do monitoru a piš.';refresh();return;
   }
   const now=performance.now();if(now-lastVideoRefresh>110){lastVideoRefresh=now;refresh();el('pc-boot-progress').textContent=`CPU běží · ${machine.cpu.steps.toLocaleString('cs-CZ')} instrukcí · ${machine.bios.get32(0x46c)} BIOS ticků`}
- }catch(e){pauseCPU();trace('GUEST ERROR: '+e.message);el('pc-boot-progress').textContent='Emulátor zastaven: '+e.message;refresh();return;}
+ }catch(e){cancelPaste('Přenos zastaven: chyba emulace.');pauseCPU();trace('GUEST ERROR: '+e.message);el('pc-boot-progress').textContent='Emulátor zastaven: '+e.message;refresh();return;}
  frameId=requestAnimationFrame(cpuFrame);
 }
 function startCPU(stopAtPrompt=false){if(stopAtPrompt)autoStopAtPrompt=true;if(running)return;running=true;frameId=requestAnimationFrame(cpuFrame);}
-function startFreeDOS(){pauseCPU();autoStopAtPrompt=false;const b=machine.bootFloppy(0);autoStopAtPrompt=true;el('pc-boot-progress').textContent='Boot FreeDOS z A: · '+fmt(b.cs)+':'+fmt(b.ip);startCPU(true);}
+function startFreeDOS(){cancelPaste('Přenos zrušen novým bootem FreeDOSu.');pauseCPU();autoStopAtPrompt=false;const b=machine.bootFloppy(0);autoStopAtPrompt=true;el('pc-boot-progress').textContent='Boot FreeDOS z A: · '+fmt(b.cs)+':'+fmt(b.ip);startCPU(true);}
 const KEY_SCANS={Enter:0x1c,Backspace:0x0e,Tab:0x0f,Escape:0x01,Space:0x39,Digit1:0x02,Digit2:0x03,Digit3:0x04,Digit4:0x05,Digit5:0x06,Digit6:0x07,Digit7:0x08,Digit8:0x09,Digit9:0x0a,Digit0:0x0b,Minus:0x0c,Equal:0x0d,BracketLeft:0x1a,BracketRight:0x1b,Backslash:0x2b,Semicolon:0x27,Quote:0x28,Backquote:0x29,Comma:0x33,Period:0x34,Slash:0x35,Space:0x39};
 'QWERTYUIOP'.split('').forEach((x,i)=>KEY_SCANS['Key'+x]=[0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,0x18,0x19][i]);
 'ASDFGHJKL'.split('').forEach((x,i)=>KEY_SCANS['Key'+x]=[0x1e,0x1f,0x20,0x21,0x22,0x23,0x24,0x25,0x26][i]);
@@ -410,7 +453,7 @@ el('audio-covox-demo').addEventListener('click',()=>playSoundDiagnostic('Covox L
 el('audio-opl-demo').addEventListener('click',()=>playSoundDiagnostic('AdLib OPL2 388h/389h',oplDiagnosticGuest));
 el('audio-sb-demo').addEventListener('click',()=>playSoundDiagnostic('SB 2.0 DMA1+IRQ5',sbDiagnosticGuest));
 el('pc-run').addEventListener('click',()=>startCPU());
-el('pc-pause').addEventListener('click',()=>{pauseCPU();el('pc-boot-progress').textContent='CPU pozastaven · '+machine.cpu.steps.toLocaleString('cs-CZ')+' instrukcí';});
+el('pc-pause').addEventListener('click',()=>{cancelPaste('Přenos zastaven ručním pozastavením CPU.');pauseCPU();el('pc-boot-progress').textContent='CPU pozastaven · '+machine.cpu.steps.toLocaleString('cs-CZ')+' instrukcí';});
 el('dev-copy').addEventListener('click',()=>el('fdd-devwork').click());
 function developerDOSCommand(command,needsWrite){
  const prompt=lastTextLine();
@@ -422,9 +465,27 @@ el('dev-edit').addEventListener('click',()=>developerDOSCommand('B:IDE B:HELLO.C
 el('dev-build').addEventListener('click',()=>developerDOSCommand('B:BUILD HELLO',true));
 el('dev-run').addEventListener('click',()=>developerDOSCommand('B:HELLO.EXE',false));
 el('dev-export').addEventListener('click',()=>{el('fdd-drive').value='1';el('fdd-export').click();});
+el('pc-paste-open').addEventListener('click',()=>developerDOSCommand('B:IDE B:PASTE.C',false));
+el('pc-paste-start').addEventListener('click',()=>{
+ if(pasteJob)return;
+ if(!editorVisible()){pasteStatus('Nejprve otevři IDE.COM na monitoru (tlačítko Otevřít IDE PASTE.C). Nic se neodeslalo do DOS promptu.');return;}
+ if(inputQueue.length||machine.bios.peekKey(false)!==null){pasteStatus('V DOS klávesnicové frontě jsou ještě znaky. Počkej na jejich zpracování.');return;}
+ try{const data=window.MDPC_PASTE.prepare(el('pc-paste-code').value,el('pc-paste-fold').checked);
+  pasteJob={keys:data.keys,pos:0,paused:false};
+  el('pc-paste-progress').max=data.characters;el('pc-paste-progress').value=0;
+  pasteStatus(`Připraveno ${data.characters} znaků / ${data.bytes} DOS bajtů`+(data.folded?` · převedeno ${data.folded} znaků s diakritikou`: '')+'. Vycvakávám…');
+  pasteButtons();startCPU(false);
+ }catch(e){pasteStatus('Nelze přenést: '+e.message);}
+});
+el('pc-paste-pause').addEventListener('click',()=>{if(!pasteJob)return;pasteJob.paused=!pasteJob.paused;
+ pasteButtons();pasteStatus(pasteJob.paused?'Přenos pozastaven. DOS zůstává spuštěný.':'Přenos pokračuje.');if(!pasteJob.paused)startCPU(false);
+});
+el('pc-paste-stop').addEventListener('click',()=>cancelPaste('Přenos zastaven uživatelem. Již odeslané znaky zůstávají v DOS editoru; několik znaků může být ve frontě BIOSu.'));
+
 el('pc-key-focus').addEventListener('click',()=>el('video-shell').focus());
 el('video-shell').addEventListener('click',()=>el('video-shell').focus());
 el('video-shell').addEventListener('keydown',e=>{
+ if(pasteJob){e.preventDefault();e.stopPropagation();return;}
  const extended={ArrowUp:0x48,ArrowDown:0x50,ArrowLeft:0x4b,ArrowRight:0x4d,Home:0x47,End:0x4f,PageUp:0x49,PageDown:0x51,Delete:0x53,F1:0x3b,F3:0x3d,F10:0x44};
  if(e.metaKey||e.altKey)return;
  if(!e.ctrlKey && extended[e.key]){inputQueue.push(extended[e.key]<<8);e.preventDefault();e.stopPropagation();startCPU(true);return;}
@@ -433,7 +494,7 @@ el('video-shell').addEventListener('keydown',e=>{
  if(c<0||c>127||e.ctrlKey)return;
  const scan=KEY_SCANS[e.code]||0;inputQueue.push((scan<<8)|c);e.preventDefault();e.stopPropagation();startCPU(true);
 });
-el('pc-key-send').addEventListener('click',()=>{queueText(el('pc-key-text').value+'\n');el('pc-key-text').value='';});
+el('pc-key-send').addEventListener('click',()=>{if(pasteJob){pasteStatus('Nejdřív zastav přenos Paste Code.');return;}queueText(el('pc-key-text').value+'\n');el('pc-key-text').value='';});
 el('pc-key-text').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();el('pc-key-send').click();}});
 
 // FDD workflow: user supplies raw sectors; nothing is fetched or executed automatically.
@@ -467,6 +528,7 @@ el('fdd-create').addEventListener('click',()=>safe(()=>{
 el('fdd-devwork').addEventListener('click',()=>safe(()=>{const b=machine.fdd.disks[1];if(!b)throw Error('Nejdříve obnov vývojovou B:');const copy=machine.fdd.exportImage(1);machine.mountDisk(1,copy,'x86DEV-WORK-720K.img');machine.fdd.setWriteProtected(1,false);el('fdd-drive').value='1';reboot(machine.profile,true);fddStatus('B: pracovní kopie vývojové diskety RW; originál B: zůstává v aplikaci beze změny. Exportuj si IMG!');}));
 el('fdd-devrestore').addEventListener('click',()=>safe(()=>{mountEmbeddedDeveloperDisk(true);el('fdd-drive').value='1';reboot(machine.profile,true);fddStatus('B: restored default developer 720K read-only image.');}));
 el('fdd-boot').addEventListener('click',()=>safe(()=>{
+ cancelPaste('Přenos zrušen novým bootem diskety.');
  const boot=machine.bootFloppy(0);trace(`A: FreeDOS boot ${fmt(boot.cs)}:${fmt(boot.ip)}`);startCPU(true);
 }));
 el('fdd-eject').addEventListener('click',()=>safe(()=>{const d=driveIndex();machine.fdd.eject(d);fddStatus(`${d?'B':'A'}: ejected`);}));
@@ -535,7 +597,7 @@ el('ide-new').addEventListener('click',()=>safe(()=>{if(!machine.ide)throw Error
 const PC_SAVE_KEY='mdjs-ultra:pc:phase1';
 const status=(msg)=>{el('pc-storage-status').textContent=msg;trace(msg);refresh();};
 function currentSnapshot(){return runtime.wrapState('pc',machine.exportState(runtime));}
-function importPCSnapshot(doc){pauseCPU();const data=runtime.parseState(doc,'pc');const candidate=PCMachine.fromState(data,runtime);el('fpu-enabled').checked=candidate.fpu.enabled;el('fpu-clock').value=String(candidate.fpu.cpuHz);el('fpu-precision').value=candidate.fpu.precisionMode||'binary64';
+function importPCSnapshot(doc){cancelPaste('Přenos zrušen importem snapshotu.');pauseCPU();const data=runtime.parseState(doc,'pc');const candidate=PCMachine.fromState(data,runtime);el('fpu-enabled').checked=candidate.fpu.enabled;el('fpu-clock').value=String(candidate.fpu.cpuHz);el('fpu-precision').value=candidate.fpu.precisionMode||'binary64';
  retainedIDE=candidate.ide&&candidate.ide.image?{bytes:candidate.ide.exportImage(),name:candidate.ide.name}:null;
  audioOutput.flush();candidate.audio.setCapture(audioOutput.enabled);machine=candidate;el('machine').value=machine.profile;el('video-adapter').value=machine.video.adapter;messages=['Snapshot restored: '+machine.profile.toUpperCase()];el('pc-profile-note').textContent=machine.profile==='at'?'AT / 80286: DEBUG.COM podporováno s korektním 286 FLAGS.':'XT: DEBUG.COM dostupný.';refresh();syncFDDWriteProtection();return machine;
 }
@@ -557,7 +619,7 @@ el('pc-json-file').addEventListener('change',async(e)=>{
  importPCSnapshot(json);status('PC: JSON snapshot úspěšně obnoven.');}catch(err){status('PC: Import odmítnut: '+err.message);}
 });
 el('pc-import-paste').addEventListener('click',()=>safe(()=>{importPCSnapshot(el('pc-json-paste').value);status('PC: stav obnoven z vloženého JSON.');}));
-window.__mdPCUniversal={get audioOutput(){return audioOutput;},speakerDiagnosticGuest,get machine(){return machine;},currentSnapshot,importPCSnapshot,startFreeDOS,startCPU,pauseCPU,queueText,get running(){return running;}};
+window.__mdPCUniversal={get pasteJob(){return pasteJob;},editorVisible,get audioOutput(){return audioOutput;},speakerDiagnosticGuest,get machine(){return machine;},currentSnapshot,importPCSnapshot,startFreeDOS,startCPU,pauseCPU,queueText,get running(){return running;}};
 reboot('xt');startFreeDOS();
 })();
 </script><script src="PC-UX.js"></script>

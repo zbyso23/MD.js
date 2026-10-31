@@ -1,6 +1,6 @@
 {
   "name": "mdjs-ultra",
-  "version": "0.8.2-phase4o-f2-encyclopedia",
+  "version": "0.8.2-phase4q-test-hardening",
   "private": true,
   "description": "MD.js Ultra: standalone Markdown, Mermaid, Charts and optional ZX, Blockly/Arduino, PC (XT and 286) labs",
   "scripts": {
@@ -17,7 +17,7 @@
     "test:zx:real:http": "python3 zx/tests/e2e/test_zx_browser.py --real",
     "test:blocks": "node optional/blockly/tests/test.mjs",
     "test:ultra:browser": "python3 test/e2e/test_ultra_browser.py",
-    "test:release": "npm test && npm run test:blocks && npm run test:zx:unit && npm run test:pc:phase1 && npm run test:pc:browser && npm run test:pc:phase2:browser && npm run test:runtime:browser && npm run test:ultra:browser && npm run test:ux:browser && npm run test:ux:shell && npm run test:pc:phase3:compat && npm run test:pc:phase4a && npm run test:pc:phase4b && npm run test:pc:phase4d && npm run test:pc:phase4e:hardening && npm run test:pc:closure && npm run test:pc:disk-images && npm run test:pc:phase4i && npm run test:pc:phase4j && npm run test:pc:phase4k && npm run test:pc:devdisk && npm run test:pc:phase4m && npm run test:pc:phase4n && npm run test:encyclopedia",
+    "test:release": "npm test && npm run test:blocks && npm run test:zx:unit && npm run test:pc:phase1 && npm run test:pc:browser && npm run test:pc:phase2:browser && npm run test:runtime:browser && npm run test:ultra:browser && npm run test:ux:browser && npm run test:ux:shell && npm run test:pc:phase3:compat && npm run test:pc:phase4a && npm run test:pc:phase4b && npm run test:pc:phase4d && npm run test:pc:phase4e:hardening && npm run test:pc:closure && npm run test:pc:disk-images && npm run test:pc:phase4i && npm run test:pc:phase4j && npm run test:pc:phase4k && npm run test:pc:devdisk && npm run test:pc:phase4m && npm run test:pc:phase4n && npm run test:encyclopedia && npm run test:pc:paste && npm run test:pc:phase4q",
     "test:pc:phase1": "node --test optional/pc/tests/*.test.cjs",
     "test:pc:phase2:video": "node --test optional/pc/tests/video-phase2-v078.test.cjs",
     "test:pc:phase2:floppy": "node --test optional/pc/tests/floppy-phase2-v078.test.cjs",
@@ -53,8 +53,11 @@
     "test:pc:phase4m": "node --test optional/pc/tests/devdisk-bootstrap.test.cjs && python3 optional/pc/tests/test_dev_toolchain_browser_phase4m.py xt && python3 optional/pc/tests/test_dev_toolchain_browser_phase4m.py at",
     "test:pc:phase4n": "node --test optional/pc/tests/developer-workbench-phase4n.test.cjs && python3 optional/pc/tests/test_4n_browser.py xt && python3 optional/pc/tests/test_4n_browser.py at",
     "test:encyclopedia:unit": "node --test optional/pc/tests/encyclopedia-phase4o.test.cjs",
-    "test:encyclopedia:browser": "python3 optional/pc/tests/test_encyclopedia_browser_phase4o.py",
-    "test:encyclopedia": "npm run test:encyclopedia:unit && npm run test:encyclopedia:browser"
+    "test:encyclopedia:browser": "python3 optional/pc/tests/test_encyclopedia_inline_phase4q.py",
+    "test:encyclopedia": "npm run test:encyclopedia:unit && npm run test:encyclopedia:browser",
+    "test:pc:paste": "node --test optional/pc/tests/paste-keyboard-phase4p.test.cjs && python3 optional/pc/tests/test_paste_code_browser_phase4p.py xt && python3 optional/pc/tests/test_paste_code_browser_phase4p.py at",
+    "test:encyclopedia:browser:http": "python3 optional/pc/tests/test_encyclopedia_browser_phase4o.py",
+    "test:pc:phase4q": "node --test optional/pc/tests/phase4q-*.test.cjs"
   },
   "dependencies": {},
   "devDependencies": {}

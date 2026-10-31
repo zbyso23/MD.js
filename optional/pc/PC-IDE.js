@@ -47,7 +47,12 @@ class PCIDE {
   if(this.remaining>0){this.transfer=this.command===0x20?this.readSector(this.lba):new Uint8Array(SECTOR);this.status=0x58;this.irq();}
   else{this.transfer=null;this.status=0x50;this.irq();}
  }
- readData(){if(!this.transfer||this.command===0x30){this.fail();return 0xff;}const val=this.transfer[this.index++];if(this.index===SECTOR)this.nextSector();return val;}
+ readData(){if(!this.transfer||this.command===0x30){this.fail();return 0xff;}const val=this.transfer[this.index++];if(this.index===SECTOR){
+  // IDENTIFY DEVICE is a single 512-byte payload, not a sector transfer.
+  // It must not decrement count or advance the guest task-file CHS/LBA registers.
+  if(this.command===0xec){this.transfer=null;this.index=0;this.remaining=0;this.status=0x50;}
+  else this.nextSector();
+ }return val;}
  writeData(val){if(!this.transfer||this.command!==0x30){this.fail();return;}this.transfer[this.index++]=val&255;if(this.index===SECTOR){this.writeSector(this.lba,this.transfer);this.nextSector();}}
  read8(port){switch(port){case 0x1f0:return this.readData();case 0x1f1:return this.error;case 0x1f2:return this.count;case 0x1f3:return this.sector;case 0x1f4:return this.cylinderLo;case 0x1f5:return this.cylinderHi;case 0x1f6:return this.drive;case 0x1f7:this.irqPending=false;return this.status;case 0x3f6:return this.status;default:return null;}}
  read16(port){if(port!==0x1f0)return null;const lo=this.readData(),hi=this.readData();return lo|(hi<<8);}

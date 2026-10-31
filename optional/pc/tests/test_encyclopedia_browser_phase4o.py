@@ -17,7 +17,7 @@ def check_page(page,filename):
     assert page.locator('#md-ency-overlay').is_hidden(),filename
     page.locator('#md-ency-trigger').click()
     assert page.locator('#md-ency-overlay').is_visible(),filename
-    assert page.locator('#md-ency-search').is_focused(),filename
+    assert page.evaluate('document.activeElement === document.querySelector("#md-ency-search")'),filename
     page.get_by_role('tab',name='⌨ Assembler').click()
     assert page.locator('#md-ency-overlay').get_by_role('tab',name='⌨ Assembler').get_attribute('aria-selected')=='true'
     page.locator('#md-ency-search').fill('Mandelbrot')
@@ -45,7 +45,7 @@ with sync_playwright() as p:
     page.keyboard.press('F2')
     assert page.locator('#md-ency-overlay').is_visible()
     page.keyboard.press('Escape')
-    assert page.locator('#video-shell').is_focused(), 'guest keyboard focus restored'
+    assert page.evaluate('document.activeElement === document.querySelector("#video-shell")'), 'guest keyboard focus restored'
     print('PASS guest monitor F2 / focus')
     page.locator('#pc-key-text').fill('DIR')
     page.locator('#pc-key-text').focus()

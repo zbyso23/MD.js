@@ -228,3 +228,11 @@ F2 or the fixed `📖 Encyklopedie` button opens a common overlay in the landing
 Verified source transcriptions: `optional/pc/phase4/HGCFRAC.s`, `CGAFRAC.s`, `MANDEL.s` and `optional/pc/phase3/TUNE.s` are byte-identical to the 4O lessons; each has a source download button. Other hardware chapters explicitly state when they are reference-only rather than guest-tested.
 
 `npm run test:encyclopedia:unit` covers structure and source provenance. `npm run test:encyclopedia:browser` checks F2/Esc, categories, search, guest focus restore and native host inputs on Chromium. This executor's administrator policies prohibit Chromium navigation to `file://` **and** localhost, so the browser test cannot certify UI here. The implementation uses classic `<script src>` and local embedded data, with no `fetch`, modules, WASM or bundling; test `file://` in an unrestricted user's browser. See `PHASE4O-F2-ENCYCLOPEDIA-SPEC.md` for the gap list.
+
+## Phase 4P — PC Paste Code (XT/286)
+
+A browser textarea in the PC **Developer Workbench** now simulates paced BIOS
+keyboard input into the **real DOS IDE.COM**. Requires the editor to be visibly
+running; offers progress, speed, pause/resume/cancel, explicit ASCII/diacritic
+handling. Save with F3 on the optional writable B: copy. Offline `file://` script,
+no WASM or external API. See `PHASE4P-PASTE-CODE.md` and run `npm run test:pc:paste`.
