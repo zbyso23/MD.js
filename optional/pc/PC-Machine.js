@@ -110,7 +110,7 @@ class PCMachine {
   this.fdd=new FDD765(this);this.ide=profile==='at'?new PCIDE(this):null;
   if(profile==='xt'&&opts.fpuEnabled)throw new Error('80287XL requires AT/286');
   this.cpuHz=profile==='at'?(opts.cpuHz||12000000):4770000;
-  this.fpu=new PCFPU287(profile==='at'&&!!opts.fpuEnabled,profile==='at'?this.cpuHz:12000000);
+  this.fpu=new PCFPU287(profile==='at'&&!!opts.fpuEnabled,profile==='at'?this.cpuHz:12000000,opts.fpuPrecision||'binary64');
   this.conventional=opts.conventional??640*1024;
   this.extended=opts.extended??(profile==='at'?384*1024:0);
   if(!Number.isSafeInteger(this.conventional)||this.conventional<64*1024||this.conventional>640*1024||this.conventional%1024||!Number.isSafeInteger(this.extended)||this.extended<0||this.extended%1024||this.conventional+this.extended>1024*1024||(profile==='xt'&&this.extended))throw new RangeError('Installed system RAM maximum is 1 MiB; XT conventional only');
