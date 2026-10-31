@@ -43,7 +43,7 @@ body.projector-view{background:#080e19}body.projector-view .mast,body.projector-
   <section class="pane" aria-label="Editor Markdown">
     <div class="pane-head"><span>01 — Markdown editor</span><button id="reset" type="button">Obnovit ukázku</button></div>
     <textarea id="source" spellcheck="false" aria-label="Zdroj Markdown"></textarea>
-    <nav class="preset-bar" aria-label="Ukázky"><button type="button" class="preset" data-example="overview">Všechno</button><button type="button" class="preset" data-example="flow">Flowchart</button><button type="button" class="preset" data-example="sequence">Sequence</button><button type="button" class="preset" data-example="pie">Mermaid Pie</button><button type="button" class="preset" data-example="charts">Grafy Mini</button><button type="button" class="preset" data-example="class">Class</button><button type="button" class="preset" data-example="timeline">Timeline</button><button type="button" class="preset" data-example="security">Útočný text</button><button type="button" class="preset" data-example="extended">Extended F4</button><button type="button" class="preset" data-example="docux">DocUX F4.5</button></nav>
+    <nav class="preset-bar" aria-label="Ukázky"><button type="button" class="preset" data-example="overview">Všechno</button><button type="button" class="preset" data-example="katex">∑ KaTeX Showcase</button><button type="button" class="preset" data-example="flow">Flowchart</button><button type="button" class="preset" data-example="sequence">Sequence</button><button type="button" class="preset" data-example="pie">Mermaid Pie</button><button type="button" class="preset" data-example="charts">Grafy Mini</button><button type="button" class="preset" data-example="class">Class</button><button type="button" class="preset" data-example="timeline">Timeline</button><button type="button" class="preset" data-example="security">Útočný text</button><button type="button" class="preset" data-example="extended">Extended F4</button><button type="button" class="preset" data-example="docux">DocUX F4.5</button></nav>
   </section>
   <section class="pane" aria-label="Náhled Markdown"><div class="pane-head"><span>02 — Reader / Live preview</span><span id="status" role="status" aria-live="polite">Ready</span></div><div class="preview-wrap"><article id="preview" class="md-root" data-md-theme="light"></article></div></section>
 </main>
@@ -51,6 +51,37 @@ body.projector-view{background:#080e19}body.projector-view .mast,body.projector-
 <script>
 'use strict';
 const samples = {
+  katex: String.raw`# KaTeX Showcase — Math & Science
+
+**Inline:** Energy is $E=mc^2$ and the sampling interval is $T=1/f_s$.
+
+## Calculus
+
+$$\int_0^{\pi}\sin(x)\,dx = 2$$
+
+## Matrices
+
+$$\begin{bmatrix}a&b\\c&d\end{bmatrix}\begin{bmatrix}x\\y\end{bmatrix}=\begin{bmatrix}ax+by\\cx+dy\end{bmatrix}$$
+
+## Fourier transform (FFT)
+
+$$X_k=\sum_{n=0}^{N-1}x_n e^{-i2\pi kn/N}$$
+
+## Statistics
+
+$$\bar{x}=\frac1n\sum_{i=1}^n x_i,\qquad s^2=\frac{1}{n-1}\sum_{i=1}^n(x_i-\bar{x})^2$$
+
+## Piecewise
+
+$$f(x)=\begin{cases}-x&x<0\\x&x\ge 0\end{cases}$$
+
+**Try:** modify the source, toggle Reader/Projector, and Print. Math inside fenced code stays literal:
+
+~~~text
+$E=mc^2$
+~~~
+`,
+
   charts: String.raw`# Charts Mini
 
 ## Sloupce a popisky os
@@ -368,6 +399,7 @@ const md = new MD({ mode:'extended' });
 function redraw() {
   try {
     md.mount(preview, source.value);
+    if (window.MDMathPlugin) window.MDMathPlugin.render(preview);
     const drawn = preview.querySelectorAll('figure.md-diagram').length;
     const fallback = preview.querySelectorAll('pre.md-diagram-fallback').length;
     status.textContent = `${drawn} diagramů · ${fallback} fallback`; status.style.color = '#a9efdb';

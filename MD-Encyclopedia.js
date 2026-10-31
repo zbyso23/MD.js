@@ -11,7 +11,7 @@
  }
  function mount(){
    if(!supports||document.getElementById('md-ency-overlay'))return null;
-   const lessons=source.map(c=>Object.assign({},c,{_search:norm([c.title,c.title_en,c.summary,c.summary_en,c.body,c.body_en,c.category,c.section].join(' ')),_keywords:norm([c.title,c.title_en,c.category].join(' ')).split(/[^a-z0-9]+/).filter(Boolean)}));
+   const lessons=source.filter(c=>!c.hidden_from_navigation).map(c=>Object.assign({},c,{_search:norm([c.title,c.title_en,c.summary,c.summary_en,c.body,c.body_en,c.category,c.section].join(' ')),_keywords:norm([c.title,c.title_en,c.category].join(' ')).split(/[^a-z0-9]+/).filter(Boolean)}));
    let section='Markdown',category='Vše',current=null,previous=null,history=[],historyPos=-1,lang='cs';
    const L=(cs,en)=>lang==='cs'?cs:en;
    const titleOf=c=>lang==='en'?(c.title_en||c.title):c.title;
