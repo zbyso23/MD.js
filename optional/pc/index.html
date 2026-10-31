@@ -16,12 +16,18 @@
 @media(max-width:800px){.ux-screen-viewport{overflow-x:auto}.container{padding:10px}.top .lede{display:none}}
 </style><link rel="stylesheet" href="../../MD-UX-Shell.css"></head><body><main class="container">
 <div class="top"><div><a class="back" href="../../index.html">← MD.js Ultra</a><div class="eyebrow">PC Environment · Phase 2 / FreeDOS</div><h1>8086 / 80286 Workbench</h1><p class="lede">Čistý JavaScript: XT a AT, Hercules/CGA grafické adaptéry, mapované VRAM, BIOS INT 10h a historicky věrné bankování bitových map.</p></div><span class="badge">GPLv3 · LOCAL · NO AUTORUN</span></div>
-<div class="notice"><strong>Debug bring-up pro XT + Hercules je připraven.</strong> Do osobního balíku je vložena vestavěná 720&nbsp;KiB bootovací FreeDOS disketa pro A:, rozšířená o <code>DEBUG.COM</code>. Po resetu se automaticky připojí do A:. Vývojová disketa B: (EDIT/DEBUG + ukázky) se také vloží automaticky; obě vestavěné diskety jsou pouze pro čtení. Vývojový obraz FreeDOS spouští přímo příkazový řádek bez instalačního menu. Jde o omezenou kompatibilní emulaci, nikoli úplný historický BIOS a POST.</div>
+<div class="notice"><strong>Debug bring-up pro XT + Hercules je připraven.</strong> Do osobního balíku je vložena vestavěná 720&nbsp;KiB bootovací FreeDOS disketa pro A:, rozšířená o <code>DEBUG.COM</code>. Po resetu se automaticky připojí do A:. Vývojová disketa B: (IDE/EDIT, Small-C + ASM + YLINK, DEBUG, BUILD.BAT) se také vloží automaticky; obě vestavěné diskety jsou pouze pro čtení. Vývojový obraz FreeDOS spouští přímo příkazový řádek bez instalačního menu. Jde o omezenou kompatibilní emulaci, nikoli úplný historický BIOS a POST.</div>
 <div class="actions" aria-label="Diagnostiky CPU běží izolovaně; video ukázky mění aktivní stroj"><label for="machine">Profil</label><select id="machine"><option value="xt" selected>XT · 8086 ISA / 8088 cíl</option><option value="at">AT · 80286</option></select><label for="fpu-enabled">80287XL (preview)</label><input type="checkbox" id="fpu-enabled" disabled title="Zapne x87 výukovou podmnožinu na AT/286; přesnost zvol samostatně"><label for="fpu-precision">x87 přesnost</label><select id="fpu-precision" disabled title="Experimentální extended80 používá BigInt; nepokrývá kompletní 80287XL instrukce ani výjimky"><option value="binary64">Rychlá binary64 (výchozí)</option><option value="extended80">80bitová mantisa (experimentální)</option></select><label for="fpu-clock">CPU/FPU takt</label><select id="fpu-clock" disabled><option value="12000000">12 MHz</option><option value="16000000">16 MHz</option></select><button id="reset">↻ Reset + boot</button><button id="step">CPU krok</button><button id="pc-run" class="primary">▶ Pokračovat</button><button id="pc-pause">Ⅱ Pauza</button><label for="video-adapter">Video</label><select id="video-adapter"><option value="cga">CGA</option><option value="hercules" selected>Hercules · amber</option><option value="vga">VGA · AT/286 (12h/13h)</option></select><button id="video-text-demo" class="primary">INT 10h · text demo</button><button id="video-cga-demo">CGA · 320×200</button><button id="video-herc-demo">Hercules · 720×348</button><button id="video-vga13-demo">VGA 13h · 256 barev</button><button id="video-vga12-demo">VGA 12h · 16 barev</button><button id="video-render">Překreslit VRAM</button><button id="boot" class="primary">Boot ROM</button><button id="pm">286 Protected Mode demo</button><button id="cpu-demo">ModR/M + REP demo</button><button id="alu-demo">ALU / SHIFT demo</button><button id="idt-demo">286 IDT demo</button><button id="de-demo">#DE · dělení nulou</button><button id="br-demo">286 #BR · BOUND</button><button id="bcd-demo">8086 BCD demo</button><button id="irq10-demo">286 IRQ10 / 2× PIC</button><button id="pit">PIT → IRQ0</button></div>
 <section class="panel" aria-label="Grafická karta a obrazovka">
 <h2>Emulovaný monitor · přímý obraz z VRAM</h2>
 <p class="muted" id="video-status">Hercules amber text 80×25 · standardní RAM/video prostor je oddělen</p>
 <div id="video-shell" class="screen-shell hercules" tabindex="0" role="application" aria-label="Hercules monitor. Klikněte pro ovládání klávesnicí DOSu."><canvas id="video-screen" width="640" height="200" aria-label="CGA, Hercules nebo VGA obrazovka"></canvas></div>
+<details id="pc-dev-workbench" class="panel" style="margin:10px 0;border-color:#498c86">
+<summary style="cursor:pointer;font-weight:800;color:#8be8d1">⌨ Developer Workbench 4N · XT + AT/286 · edit / build / run</summary>
+<p class="muted">Vestavěná B: je read-only. Pro ukládání zdrojáků a překlad spusť nejprve <strong>Pracovní kopie B: (RW)</strong>; vytvořený IMG po práci exportuj.</p>
+<div class="actions"><button id="dev-copy" class="primary">1. Připravit pracovní B: (RW)</button><button id="dev-edit">2. Otevřít IDE HELLO.C</button><button id="dev-build">3. BUILD HELLO</button><button id="dev-run">4. Spustit HELLO.EXE</button><button id="dev-export">↓ Exportovat pracovní B:</button></div>
+<p class="muted">DOS editor: šipky, Home/End, PgUp/PgDn, Backspace, Del, F1 nápověda, F3/Ctrl+S uložit, Esc/F10 zavřít. Původní řádkový EDIT.COM zůstává. F2 encyklopedie patří až do Phase 4O.</p>
+</details>
 <div class="actions"><button id="pc-key-focus">⌨ Klávesnice → DOS</button><label for="pc-key-text">Příkaz / text</label><input id="pc-key-text" type="text" placeholder="TUNE, DEBUG, DIR, R, A 100…" style="flex:1;min-width:170px"><button id="pc-key-send">Odeslat + ENTER</button></div><div class="actions" aria-label="Fáze 3: PC Speaker, Covox, AdLib OPL2 a SB 2.0 (omezená kompatibilita)"><button id="audio-enable">🔊 Zapnout PC zvuk</button><button id="audio-mute">Ztlumit</button><button id="audio-speaker-demo">♫ PC Speaker</button><button id="audio-covox-demo">♫ Covox</button><button id="audio-opl-demo">♫ AdLib / OPL2</button><button id="audio-sb-demo">♫ Sound Blaster 2.0</button></div><p class="muted" id="audio-status" role="status" aria-live="polite">Audio: vypnuto. Fáze 3B/3C/3D preview — ne úplná hardwarová kompatibilita.</p><p id="pc-boot-progress" class="muted" role="status">Připravuji FreeDOS 720 KB + DEBUG…</p><p id="pc-profile-note" class="muted" role="status" aria-live="polite">XT: FreeDOS a DEBUG.COM dostupný. Přepnutí profilu znovu zavede A: a nabootuje DOS.</p>
 <p class="muted">Režimy CGA 0–6, Hercules text a bitmapový HGC. Hercules používá jantarový monitor skin s jemným phosphor fade/glow efektem. Textové glyfy kreslí prohlížeč (zatím bez originálního 8×8/9×14 ROM fontu). Emulace není cycle-accurate; retrace signál je zjednodušený.</p>
 </section>
@@ -403,12 +409,27 @@ el('audio-opl-demo').addEventListener('click',()=>playSoundDiagnostic('AdLib OPL
 el('audio-sb-demo').addEventListener('click',()=>playSoundDiagnostic('SB 2.0 DMA1+IRQ5',sbDiagnosticGuest));
 el('pc-run').addEventListener('click',()=>startCPU());
 el('pc-pause').addEventListener('click',()=>{pauseCPU();el('pc-boot-progress').textContent='CPU pozastaven · '+machine.cpu.steps.toLocaleString('cs-CZ')+' instrukcí';});
+el('dev-copy').addEventListener('click',()=>el('fdd-devwork').click());
+function developerDOSCommand(command,needsWrite){
+ const prompt=lastTextLine();
+ if(machine.video.isGraphics||running||!(/^[A-Z]:\\>\s*$/.test(prompt))){el('pc-boot-progress').textContent='Vývojový příkaz: nejprve dokonči spuštěný DOS program a vrať se na prompt.';return;}
+ if(needsWrite&&(!machine.fdd.disks[1]||machine.fdd.disks[1].writeProtected)){el('pc-boot-progress').textContent='BUILD: nejprve vytvoř pracovní B: (RW), vestavěná B: je pouze pro čtení.';return;}
+ queueText(command+'\n');el('video-shell').focus();
+}
+el('dev-edit').addEventListener('click',()=>developerDOSCommand('B:IDE B:HELLO.C',false));
+el('dev-build').addEventListener('click',()=>developerDOSCommand('B:BUILD HELLO',true));
+el('dev-run').addEventListener('click',()=>developerDOSCommand('B:HELLO.EXE',false));
+el('dev-export').addEventListener('click',()=>{el('fdd-drive').value='1';el('fdd-export').click();});
 el('pc-key-focus').addEventListener('click',()=>el('video-shell').focus());
 el('video-shell').addEventListener('click',()=>el('video-shell').focus());
 el('video-shell').addEventListener('keydown',e=>{
+ const extended={ArrowUp:0x48,ArrowDown:0x50,ArrowLeft:0x4b,ArrowRight:0x4d,Home:0x47,End:0x4f,PageUp:0x49,PageDown:0x51,Delete:0x53,F1:0x3b,F3:0x3d,F10:0x44};
+ if(e.metaKey||e.altKey)return;
+ if(!e.ctrlKey && extended[e.key]){inputQueue.push(extended[e.key]<<8);e.preventDefault();e.stopPropagation();startCPU(true);return;}
+ if(e.ctrlKey && e.key.toLowerCase()==='s'){inputQueue.push(0x1f13);e.preventDefault();e.stopPropagation();startCPU(true);return;}
  let c=(e.key==='Enter'?13:e.key==='Backspace'?8:e.key==='Tab'?9:e.key==='Escape'?27:e.key.length===1?e.key.charCodeAt(0):-1);
- if(c<0||c>127||e.ctrlKey||e.metaKey)return;
- const scan=KEY_SCANS[e.code]||0;inputQueue.push((scan<<8)|c);e.preventDefault();startCPU(true);
+ if(c<0||c>127||e.ctrlKey)return;
+ const scan=KEY_SCANS[e.code]||0;inputQueue.push((scan<<8)|c);e.preventDefault();e.stopPropagation();startCPU(true);
 });
 el('pc-key-send').addEventListener('click',()=>{queueText(el('pc-key-text').value+'\n');el('pc-key-text').value='';});
 el('pc-key-text').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();el('pc-key-send').click();}});

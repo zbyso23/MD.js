@@ -8,7 +8,7 @@ then export your working image; the original always stays immutable.
 
 ## Programs in the developer B:
 
-`EDIT.COM` (small DOS line editor with source `EDIT.S`), `DEBUG.COM`,
+`IDE.COM` (full-screen DOS source editor, `IDE.S`), `BUILD.BAT` (one-command Small-C build), `README4N.TXT` (on-disk usage), `EDIT.COM` (original line editor, `EDIT.S`), `DEBUG.COM`,
 `CC.EXE` (Small-C 2.5), `ASM.EXE` (Small-Assembler 1.2), `YLINK.EXE` (1.2),
 `CLIB.LIB`, `STDIO.H`, `HELLO.C`, `DEVHELP.TXT`, `NOTICE.TXT`.
 
@@ -24,6 +24,23 @@ HELLOC
 
 Output: `Hello from 16-bit DOS C!`, real 4,896-byte MZ EXE.
 `CC` generates `HELLO.ASM` from `HELLO.C` on the writable B: copy.
+
+## Phase 4N workflow (XT and AT/286)
+
+From the default read-only B: click **Pracovní kopie B: (RW)** in the Developer Workbench. The original built-in disk remains immutable.
+
+```dos
+B:
+IDE HELLO.C
+BUILD HELLO
+HELLO.EXE
+```
+
+`IDE.COM` is a true 16-bit DOS program: arrow keys/Home/End/Page keys, Backspace/Delete, insert, CRLF, F1 help, F3/Ctrl-S save, Esc/F10 quit (double Esc/F10 to discard unsaved changes), capped at 16 KiB ASCII. No syntax highlighting, Unicode, undo/redo or filesystem browsing. It writes with DOS INT 21h to the explicitly writable copy. Host shortcuts are on the Developer Workbench menu; the host forwards extended BIOS scan codes when its video shell has keyboard focus. Export the writable B: as IMG at the end.
+
+`BUILD.BAT` compiles the basename via CC -> ASM -> YLINK and produces a DOS EXE. It changes to B: so that invoking `B:BUILD HELLO` from an A: prompt also works. `DEBUG HELLO.EXE` is available for stepping; this doesn't claim an integrated symbolic debugger.
+
+Phase 4O / F2 encyclopedia is **planned only**; see `PHASE4O-F2-ENCYCLOPEDIA-SPEC.md` in the project root.
 
 ## Rebuild 720-KiB image and embedded offline payload
 

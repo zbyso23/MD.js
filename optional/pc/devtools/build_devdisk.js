@@ -6,7 +6,7 @@
 const fs=require('fs'),path=require('path');
 const PC=path.resolve(__dirname,'..');
 const {packFiles}=require(path.join(PC,'PC-Disk-Images.js'));
-const required=['EDIT.COM','DEBUG.COM','HELLO.C','DEVHELP.TXT','NOTICE.TXT'];
+const required=['IDE.COM','EDIT.COM','BUILD.BAT','README4N.TXT','DEBUG.COM','HELLO.C','DEVHELP.TXT','NOTICE.TXT'];
 const verified=['CC.EXE','ASM.EXE','YLINK.EXE','CLIB.LIB','STDIO.H'];
 const files=required.map(name=>({name,data:fs.readFileSync(name==='DEBUG.COM'?path.join(PC,'DEBUG.COM'):path.join(__dirname,name))}));
 const useBundle=process.argv.includes('--bundle-verified');
