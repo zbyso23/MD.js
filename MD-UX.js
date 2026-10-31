@@ -119,10 +119,12 @@
     }
     let opened=[];
     const beforePrint=()=>{
+      container.dataset.mdPrinting="true";
+      container.dataset.mdPrinting="true";
       opened=Array.from(container.querySelectorAll('details')).map(el=>[el,el.open]);
       opened.forEach(pair=>{pair[0].open=true;});
     };
-    const afterPrint=()=>{opened.forEach(pair=>{pair[0].open=pair[1];});opened=[];};
+    const afterPrint=()=>{opened.forEach(pair=>{pair[0].open=pair[1];});opened=[];delete container.dataset.mdPrinting;};
     const fullChange=()=>fullState();
     const esc=e=>{if(e.key==='Escape'&&fallbackFull){fallbackFull=false;container.dataset.mdFullscreen='false';fullState();}};
     if(root.addEventListener){root.addEventListener('beforeprint',beforePrint);root.addEventListener('afterprint',afterPrint);}

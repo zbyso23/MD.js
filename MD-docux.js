@@ -100,7 +100,17 @@
       const panel=document.createElement('div'); panel.id=uid+'-panel-'+i;
       panel.className='md-code-tabpanel'; panel.dataset.mdLabel=tab.label; panel.setAttribute('role','tabpanel');panel.setAttribute('aria-labelledby',b.id);
       const block=document.createElement('pre'); block.className='md-code md-code-syntax-lang-'+tab.lang;
-      const content=document.createElement('code'); content.textContent=tab.lines.join('\n').replace(/\n$/,''); block.appendChild(content);
+      const content=document.createElement('code');
+      const codeText=tab.lines.join('\n').replace(/\n$/,'');
+      // Reuse the exact same safe tokenizer as regular fenced code blocks.
+      // No direct untrusted HTML is introduced; the highlighter escapes tokens.
+      const preview=new root.MD({mode:'extended'}).parse('```'+tab.lang+'\n'+codeText+'\n```');
+      const isolated=document.createElement('div');isolated.innerHTML=preview;
+      const colored=isolated.querySelector('pre.md-code code');
+      if(colored) content.innerHTML=colored.innerHTML;
+      else content.textContent=codeText;
+      block.appendChild(content);
+      const badge=document.createElement('span');badge.className='md-code-syntax-lang-label';badge.setAttribute('aria-hidden','true');badge.textContent=tab.lang.toUpperCase();block.insertBefore(badge,content);
       panel.appendChild(block); panels.push(panel); frame.appendChild(panel);
     });
     frame.insertBefore(nav,frame.firstChild);

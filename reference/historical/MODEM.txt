@@ -1,0 +1,162 @@
+
+                        +------------------------------+
+                        |  Sériový přenos dat, modemy  |
+                        +------------------------------+
+                                Miroslav Němeček
+
+Sériový  přenos dat je přenos informací pomocí jednoho signálového kanálu. Data
+se  přenášejí  postupně po jednotlivých bitech. Pokud jsou okamžiky přechodu od
+jednoho  přenášeného  bitu  k  dalšímu  od sebe vždy stejně vzdáleny, pak jde o
+přenos   synchronní.   Jsou-li  vzdálenosti  bitů  různé,  jedná  se  o  přenos
+asynchronní.  Zvláštním  případem  asynchronního  přenosu  dat  je  přenos  dat
+arytmický  - jednotlivé znaky jsou přenášeny asynchronně, avšak jednotlivé bity
+uvnitř  znaku jsou přenášeny synchronně. Tato metoda se používá pro asynchronní
+přenos dat nejčastěji.
+
+Při  synchronním  přenosu  dat  se  synchronizace  mezi  vysílačem a přijímačem
+zabezpečuje  nejčastěji pomocí synchronizačních znaků vysílaných v době, kdy se
+nepřenášejí  data.  Pro  udržení  synchronizace  během  vysílání  dat  je nutno
+zabezpečit  dostatečný  počet  změn  v datech. Z toho důvodu se používá častěji
+zabezpečení  dat pomocí liché parity, která zajistí minimálně jednu změnu během
+vysílání jednoho bajtu dat.
+
+U  asynchronního  přenosu  se  k zabezpečení synchronizace vysílá před datovými
+bity tzv. START bit (délka 1) a za datovými bity STOP bit (délka 1, 1.5, 2):
+
+       |     "0"  "1"  "1"  "1"  "0"  "0"  "1"  "0"  "1"  "1"
+  HIGH | ---+    +--------------+         +----+    +-------------------
+       |    |    |    |    |    |         |    |    |    |         |
+  LOW  |    +----+    |    |    +---------+    +----+    |         |
+      -+----|----|----|----|----|----|----|----|----|----|---------|---
+            START  d0   d1   d2   d3   d4   d5   d6 PARITA STOP bit
+             bit
+
+Při  příjmu se přijímač synchronizuje na začátek START bitu. Po daných časových
+intervalech  se  testují  jednotlivé datové bity. Pokud není po datových bitech
+detekován STOP bit, hlásí přijímač chybu rámu (FRAME ERROR).
+
+Při plně duplexním (obousměrném) přenosu dat se mohou data přenášet oběma směry
+současně. Při poloduplexním provozu dat se data přenášejí pouze v jednom směru,
+využívají  se  stejně  jako  při  duplexním  provozu  dvě  signálové cesty. Při
+simplexním  provozu  se  využívá pouze jedna signálová cesta, data se přenášejí
+pouze v jednom směru.
+
+Řídicí znaky CCITT 5:
+
+ 0  00h  NUL  prázdný znak
+ 1  01h  SOH  začátek záhlaví zprávy
+ 2  02h  STX  konec záhlaví zprávy a začátek textu
+ 3  03h  ETX  konec přenášeného textu
+ 4  04h  EOT  konec přenosu zprávy
+ 5  05h  ENQ  dotaz - žádost o odpověď příjemce dat
+ 6  06h  ACK  potvrzení - kladná odpověď příjemce dat
+ 7  07h  BEL  akustický signál
+ 8  08h  BS   posun zpět o jeden znak v téže řádce
+ 9  09h  HT   posun na další horizontální tabelátor
+10  0Ah  LF   posun o řádek dále
+11  0Bh  VT   posun na další vertikální tabelátor
+12  0Ch  FF   přechod na novou stránku
+13  0Dh  CR   návrat vozu na první znak aktuálního řádku
+14  0Eh  SO   alternativní sada znaků
+15  0Fh  SI   základní sada znaků
+16  10h  DLE  změna registru dat (mění význam následujících znaků)
+17  11h  DC1  řízení zařízení (zapnutí)
+18  12h  DC2  řízení zařízení (rozběh)
+19  13h  DC3  řízení zařízení (vypnutí)
+20  14h  DC4  řízení zařízení (zastavení)
+21  15h  NAK  záporné potvrzení příjemce dat
+22  16h  SYN  synchronizační znak pro synchronní přenos dat
+23  17h  ETB  konec přenášeného bloku
+24  18h  CAN  označení nesprávnosti předcházejících dat
+25  19h  EM   konec záznamového média
+26  1Ah  SUB  náhrada chybného znaku
+27  1Bh  ESC  přepnutí registru dat (mění význam následujících znaků)
+28  1Ch  FS   oddělovač souborů
+29  1Dh  GS   oddělovač skupin dat
+30  1Eh  RS   oddělovač záznamů
+31  1Fh  US   oddělovač jednotek záznamových informací
+32  20h  SP   mezera
+127 7Fh  DEL  zrušení předcházejícího znaku
+
+
+Signály V.24:
+-------------
+
+102 - signálová zem
+103 - vysílaná data (výstup)
+104 - přijímaná data (vstup)
+105 - výzva k vysílání
+106 - připravenost k vysílání
+107 - zařízení připraveno
+108/1 - připojení měniče signálu na vedení
+108/2 - pohotovost koncového zařízení k přenosu dat
+109 - dostatečná úroveň signálu
+111 - volba přenosové rychlosti modemu
+114 - hodiny vysílače
+115 - hodiny přijímače
+125 - volací signál
+126 - volba vysílacího kmitočtu
+
+Vývody V.24 (RS-232C):
+----------------------
+ 1 (AA 101)       stínění
+ 2 (BA 103) TxD   vysílaná data (výstup)
+ 3 (BB 104) RxD   přijímaná data (vstup)
+ 4 (CA 105) RTS   požadavek vysílání (výstup)
+ 5 (CB 106) CTS   uvolněn k vysílání (vstup)
+ 6 (CC 107) DSR   protistanice připravena (vstup)
+ 7 (AB 102) GND   signálová zem
+ 8 (CF 109) DCD   detekce signálu přijímací linky
+ 9                rezervováno
+10                rezervováno
+11                u  BSC nestandardní signál Select Standby pro ovládání funkce
+                  BACKUP modemu
+12 SCF            sekundární detektor stavu přijímací linky
+13 SCB            sekundární připraven k vysílání
+14 SBA            sekundární vysílaná data
+15 DB       TxC   hodiny vysílače
+16 SBB            sekundární přijímaná data
+17 DD       RxC   hodiny přijímače
+18                u BSC nestandardní signál TEST pro funkci MODEM WRAP
+19 SCA            sekundární požadavek vysílání
+20 (CD 108) DTR   data terminal připraven (výstup)
+21 CG             detekce úrovně signálu
+22 (CE 125) RI    indikátor zvonku (vstup)
+23 (CH/CI)  RtSel volba rychlosti datových signálů (výstup)
+
+
+Paralelní port LPT:
+-------------------
+  1    STB      Strobe - data pro tiskárnu jsou platná (výstup)
+2-9    D0-D7    data (výstup)
+ 10    ACK      Acknowledge - tiskárna převzala data (vstup)
+ 11    BUSY     Busy - tiskárna není připravena k převzetí dat (vstup)
+ 12    PE       Paper End - konec papíru (vstup)
+ 13    SELECT   Select - výběr tiskárny (výstup)
+ 14    AF       Auto Feed - automatické odstránkování (výstup)
+ 15    ERROR    Error - chyba tiskárny (vstup)
+ 16    INIT     Init - inicializace tiskárny (výstup)
+ 17    SELIN    Select Input - vstup výběru (vstup)
+18-25  GND      Ground - zem
+
+BAZE = 378h (LPT1), 278h (LPT2), 3BCh (LPT3)
+
+
+BAZE+0:  zápis - data pro tiskárnu
+         čtení - poslední vyslaný bajt na tiskárnu
+
+BAZE+1:  čtení - bit 0: nepoužit, vždy 0
+                 bit 1: nepoužit, vždy 0
+                 bit 2: nepoužit, vždy 0
+                 bit 3: ERROR (0=chyba tiskárny)
+                 bit 4: /SELECT (1=tiskárna aktivována)
+                 bit 5: PAPER OUT (1=konec papíru)
+                 bit 6: ACK (1=zpracovává znak, 0=připravena pro další znak)
+                 bit 7: /BUSY (1=tiskárna připravena, 0=tiskárna nepřipravena)
+
+BAZE+2:  zápis - bit 0: STROBE (1=data na výstupu jsou platná)
+                 bit 1: AUTO FEED (1=automatický LF po každém CR)
+                 bit 2: /INIT (0=RESET tiskárny)
+                 bit 3: SELECT (1=výběr tiskárny)
+                 bit 4: IRQ ENABLE (1=povoleno přerušení od tiskárny)
+                 bit 5 až bit 7: nevyužito

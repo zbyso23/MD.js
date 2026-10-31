@@ -1,0 +1,96 @@
+<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MD.js Ultra — Charts & Tables</title><link rel="stylesheet" href="../MD.css"><style>body{font:14px system-ui,sans-serif;margin:0;background:#dce6ef;color:#243650}.header{padding:14px 24px;background:#12243e;color:#fff;display:flex;gap:16px;align-items:center;justify-content:space-between}.header a{color:#a8dfda}.layout{display:grid;grid-template-columns:minmax(290px,35%) minmax(340px,65%);gap:16px;padding:16px}.pane{border:1px solid #bcc7d9;border-radius:12px;overflow:hidden;background:white}.pane h2{margin:0;padding:13px 16px;background:#e7eff7;font-size:13px}textarea{box-sizing:border-box;width:100%;min-height:79vh;border:0;background:#17263d;color:#c5ecf1;resize:vertical;font:13px/1.55 ui-monospace,monospace;padding:18px}.viewer{padding:8px 16px 30px;max-height:85vh;overflow:auto}article{padding:16px 22px}.links{font-size:12px;color:#d6eced}@media(max-width:900px){.layout{grid-template-columns:1fr}textarea{min-height:300px}.viewer{max-height:none}}</style>
+<link rel="stylesheet" href="../MD-Encyclopedia.css">
+</head><body>
+<div class="header"><b>MD.js Ultra · Charts Mini + Sortable Tables</b><span class="links"><a href="../index.html">← Ultra Home</a> · <a href="index.html">Markdown editor</a></span></div>
+<main class="layout"><section class="pane"><h2>01 / Markdown source</h2><textarea id="source" spellcheck="false" aria-label="Markdown source"></textarea></section><section class="pane"><h2>02 / Interactive Document</h2><div class="viewer"><article id="article" class="md-root" data-md-theme="light"></article></div></section></main>
+<script src="../MD.js"></script><script src="../MD-diagrams.js"></script><script src="../MD-Charts.js"></script><script src="../MD-docux.js"></script><script src="../MD-UX.js"></script>
+<script>
+const input=String.raw`# Charts Mini 📊
+
+Čtyři jednoduché typy grafů. **Klikni na hlavičku tabulky** pro řazení nebo použij filtr.
+
+## 1. Svislé sloupce
+
+~~~chart
+type: bar
+title: Běhy benchmarku
+x: Test
+ y: MiB/s
+data:
+Parser: 23
+Diagrams: 15
+Charts: 11
+Blockly: 18
+~~~
+
+## 2. Vodorovné sloupce
+
+~~~chart
+type: bar-horizontal
+title: Doba realizace
+x: Hodiny
+y: Komponenta
+data:
+Z80: 18
+Markdown: 8
+Arduino: 13
+Charts: 4
+~~~
+
+## 3. Čárový graf
+
+~~~chart
+type: line
+title: Testovací série
+x: Iterace
+y: Počet testů
+data:
+T1: 5
+T2: 9
+T3: 12
+T4: 18
+T5: 21
+~~~
+
+## 4. Koláč
+
+~~~chart
+type: pie
+title: Rozdělení výukového času
+unit: hodiny
+data:
+ZX: 8
+Blockly: 6
+Arduino: 4
+Dokumentace: 2
+~~~
+
+## 5. Opravená řaditelná tabulka
+
+| Projekt | Testů | Cena |
+|:--|--:|--:|
+| ZX | 31 | 12 |
+| Blockly | 49 | 0 |
+| Core | 170 | 4 |
+| Grafy | 12 | 1 |
+
+## 6. Neplatný graf → bezpečný zdroj
+
+~~~chart
+type: free-js
+onload: alert(1)
+~~~
+
+*Žádný externí renderer, žádný eval a žádná runtime závislost.*`;
+const source=document.getElementById('source'),article=document.getElementById('article');source.value=input;
+const md=new MD({mode:'extended'});let debounce=0;
+const draw=()=>{md.mount(article,source.value);window.dispatchEvent(new Event('resize'));};source.addEventListener('input',()=>{clearTimeout(debounce);debounce=setTimeout(draw,120);});draw();
+</script>
+<script src="../MD-Encyclopedia-Data.js"></script>
+<link rel="stylesheet" href="../optional/math/vendor/katex.min.css">
+<link rel="stylesheet" href="../optional/math/math.css">
+<script src="../optional/math/vendor/katex.min.js"></script>
+<script src="../optional/math/minichem.js"></script>
+<script src="../optional/math/math.js"></script>
+<script src="../MD-Encyclopedia.js"></script>
+</body></html>

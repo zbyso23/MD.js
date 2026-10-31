@@ -1,0 +1,4 @@
+.md-math-error{color:#c65743} .md-math-block{display:block;text-align:center;max-width:100%;overflow-x:auto;overflow-y:hidden;padding:.55em 0}.md-math-inline{display:inline-block;vertical-align:middle}.md-math-source{font-family:monospace;white-space:pre-wrap}
+/* Preserve accessible MathML, but never show it as a second visual equation. */
+.md-math-inline .katex-mathml, .md-math-block .katex-mathml {position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip-path:inset(50%)!important;white-space:nowrap!important;}
+.md-math-block { max-width:100%; overflow-x:auto; overflow-y:hidden; }

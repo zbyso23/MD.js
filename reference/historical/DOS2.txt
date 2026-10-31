@@ -1,0 +1,4296 @@
+ 
++-------------------------------------------------------------------------+
+|                                                                         |
+|                                                                         |
+|                     D   O   S      -      s l u ž b y                   |
+|                                                                         |
+|                                                                         |
++-------------------------------------------------------------------------+
+                            (c) Miroslav Němeček
+
+
+    Služby modulu operačního systému DOS se vyvolávají instrukcí INT 21H, v
+registru AH je přitom uloženo číslo požadované funkce. V dalších registrech
+jsou  uloženy  parametry podle požadavků funkce. Ovlivnění dalších registrů
+je  závislé  na prováděné operaci; obsah registru AL je zničen téměř každou
+funkcí.
+
+Pozn.: Z  důvodů  slučitelnosti  se  staršími verzemi DOSu jsou možné ještě
+       další dvě možnosti volání služeb DOSu:
+
+         1.- Umístit  číslo  funkce  do  AH  a  provést  vzdálené volání na
+             relativní  adresu  0050H  v prefixu programového segmentu PSP.
+             Tuto metodu nelze použít pro verze DOS nižší než 2.0.
+
+         2.- Do  registru  CL  umístit  číslo  funkce  a  ostatní  registry
+             nastavit  podle  funkčních  specifikací. Pak se provede volání
+             uvnitř  programového  segmentu  na  paměťové místo 0005H. Toto
+             paměťové  místo  obsahuje  vzdálené  volání dispečera funkce v
+             DOS.  Při použití této metody se vždy zruší obsah registru AX.
+             Tato  metoda  je použitelná jen pro volání funkcí 00H až 24H a
+             používala  se u starších programů typu COM. Pro nově vytvořené
+             programy je nevhodná.
+
+    Pokud  je  u  dané  služby uveden příklad (ukázkový program), lze tento
+příklad  použít  v makroassembleru MASM s tím, že ukázková část programu se
+včlení  do jednotné struktury programu (tato struktura slouží jako příklad,
+je  zároveň uložena jako zdrojový soubor pro nové programy vúC:\ASSEMB\ pod
+názvem SOURCE.ASM):
+
+(Pozn.: Příklady  jsou  zjednodušeny  vypouštěním  instrukcí  nastavujících
+        registry  před  každou  funkcí, neboť zůstávají nastaveny předešlou
+        funkcí.  Při  běžném  psaní  programu je však vhodné tyto instrukce
+        psát  důsledně,  neboť  se  tím sníží chybovost při zápisu programu
+        nebo při jeho pozdější modifikaci.)
+
+
+===========================================================================
+
+COMMENT %
+               poznámka - obsahuje popis programu
+        %
+
+;--------------------------------------------------------------------------
+;                            Segment zásobníku
+;--------------------------------------------------------------------------
+
+stack    SEGMENT   stack
+
+         DW        256 DUP(?)               ; zásobník
+
+stack    ENDS
+
+;--------------------------------------------------------------------------
+;                            Programový segment
+;--------------------------------------------------------------------------
+
+code     SEGMENT   page
+         ASSUME    cs:code,ds:code,ss:stack
+
+start:                                      ; hlavní tělo programu
+         mov       ax,SEG code              ; segment dat=segment programu
+         mov       ds,ax                    ; nastavení datového segmentu
+
+         ; ..............................................
+         ;  PROGRAM - zde je umístěn program z příkladu
+         ; ..............................................
+
+         mov       ah,4ch                   ; ukončení programu
+         int       21h
+
+code     ENDS
+
+         END       start               ; startovací adresa programu
+
+===========================================================================
+
+
+
+    K překladu programu lze použít následující příkazový soubor:
+
+
+IF NOT EXIST C:\ASSMEB\SOURCE\%1.ASM COPY C:\ASSEMB\SOURCE.ASM
+                                                    C:\ASSMEB\SOURCE\%1.ASM
+:START
+C:\ASSEMB\EDITOR C:\ASSEMB\SOURCE\%1.ASM
+C:\ASSEMB\MASM C:\ASSEMB\SOURCE\%1 /Z;
+IF ERRORLEVEL == 1 GOTO START
+C:\ASSEMB\LINK %1,C:\ASSEMB\EXEC\%1;
+IF ERRORLEVEL == 1 GOTO START
+DEL %1.OBJ
+
+
+    Makroassembler  (MASM.EXE),  spojovací  program  (LINK.EXE) a příkazový
+soubor  (ASM.BAT)  jsou umístěny na disku C: v adresáři C:\ASSEMB. Zdrojový
+text  programu  (text  v běžném ASCII formátu a s rozšířením jména .ASM) je
+uložen  v adresáři C:\ASSEMB\SOURCE, přeložený program je uložen v adresáři
+C:\ASSEMB\EXEC.    Překlad    se    spustí   zapsáním   příkazového   řádku
+C:\ASSEMB>ASMújméno_programu  (bez udání rozšíření souboru). Program EDITOR
+je  editor  sloužící k editaci textu programu. Pokud je vyvolán nový (ještě
+neexistující)  soubor  .ASM, použije se zdrojový text (uvedený výše), který
+je uložen v adresáři C:\ASSEMB\ pod jménem SOURCE.ASM.
+
+
+
+Seznam systémových funkcí DOS:
+
+
+Funkce 00H ( 0) - přerušení programu
+Funkce 01H ( 1) - vstup znaku z klávesnice s echem
+Funkce 02H ( 2) - výstup znaku
+Funkce 03H ( 3) - pomocný vstup znaku
+Funkce 04H ( 4) - pomocný výstup znaku
+Funkce 05H ( 5) - výstup znaku na tiskárnu
+Funkce 06H ( 6) - přímý vstup/výstup znaku na konzolu
+Funkce 07H ( 7) - řízený vstup znaku z konzoly bez echa
+Funkce 08H ( 8) - vstup znaku z konzoly bez echa
+Funkce 09H ( 9) - tisk řetězce
+Funkce 0AH (10) - vstup textu do bufferu
+Funkce 0BH (11) - test stavu standradního vstupu
+Funkce 0CH (12) - vymazání vstupního bufferu a provedení funkce klávesnice
+Funkce 0DH (13) - reset disku
+Funkce 0EH (14) - výběr aktivního disku
+Funkce 0FH (15) - otevření souboru s použitím FCB
+Funkce 10H (16) - uzavření souboru s použitím FCB
+Funkce 11H (17) - nalezení prvního vyhovujícího souboru s použitím FCB
+Funkce 12H (18) - nalezení dalšího vyhovujícího souboru s použitím FCB
+Funkce 13H (19) - zrušení souboru s použitím FCB
+Funkce 14H (20) - sekvenční čtení ze souboru s použitím FCB
+Funkce 15H (21) - sekvenční zápis do souboru s použitím FCB
+Funkce 16H (22) - vytvoření souboru s použitím FCB
+Funkce 17H (23) - přejmenování souboru s použitím FCB
+Funkce 18H (24) - rezervováno
+Funkce 19H (25) - poskytnutí aktivního disku
+Funkce 1AH (26) - nastavení adresy diskových přenosů (DTA)
+Funkce 1BH (27) - poskytnutí informace FAT přihlášeného disku
+Funkce 1CH (28) - poskytnutí informace FAT specifikovaného disku
+Funkce 1DH (29) - rezervováno
+Funkce 1EH (30) - rezervováno
+Funkce 1FH (31) - rezervováno
+Funkce 20H (32) - rezervováno
+Funkce 21H (33) - čtení s přímým přístupem s použitím FCB
+Funkce 22H (34) - zápis s přímým přístupem s použitím FCB
+Funkce 23H (35) - poskytnutí velikosti souboru s použitím FCB
+Funkce 24H (36) - nastavení položky relativního záznamu s použitím FCB
+Funkce 25H (37) - nastavení vektoru přerušení
+Funkce 26H (38) - vytvoření programového segmentu
+Funkce 27H (39) - čtení bloku s přímým přístupem s použitím FCB
+Funkce 28H (40) - zápis bloku s přímým přístupem s použitím FCB
+Funkce 29H (41) - rozbor jména souboru
+Funkce 2AH (42) - poskytnutí systémového data
+Funkce 2BH (43) - nastavení systémového data
+Funkce 2CH (44) - poskytnutí systémového času
+Funkce 2DH (45) - nastavení systémového času
+Funkce 2EH (46) - nastavení nebo resetování přepínače VERIFY
+Funkce 2FH (47) - poskytnutí adresy diskových přenosů (DTA)
+Funkce 30H (48) - poskytnutí čísla verze DOS
+Funkce 31H (49) - přerušení a ponechání rezidentním
+Funkce 32H (50) - rezervováno
+Funkce 33H (51) - poskytnutí nebo nastavení statutu BREAK
+Funkce 34H (52) - rezervováno
+Funkce 35H (53) - poskytnutí vektoru přerušení
+Funkce 36H (54) - poskytnutí volného místa disku
+Funkce 37H (55) - rezervováno
+Funkce 38H (56) - poskytnutí nebo nastavení národnostně závislých informací
+Funkce 39H (57) - vytvoření adresáře (MKDIR)
+Funkce 3AH (58) - zrušení adresáře (RMDIR)
+Funkce 3BH (59) - změna adresáře (CHDIR)
+Funkce 3CH (60) - vytvoření souboru (CREAT)
+Funkce 3DH (61) - otevření souboru
+Funkce 3EH (62) - uzavření identifikátoru souboru
+Funkce 3FH (63) - čtení ze souboru nebo zařízení s použitím identif. soub.
+Funkce 40H (64) - zápis do souboru nebo zařízení s použitím identif. soub.
+Funkce 41H (65) - zrušení souboru (UNLINK)
+Funkce 42H (66) - přemístění ukazatele souboru (LSEEK)
+Funkce 43H (67) - poskytnutí nebo nastavení atributů souboru (CHMOD)
+Funkce 44H (68) - vstupně/výstupní ovládání zařízení (IOCTL)
+Funkce 4400H (68- 0) - IOCTL: poskytnutí informací o zařízení
+Funkce 4401H (68- 1) - IOCTL: nastavení informací o zařízení
+Funkce 4402H (68- 2) - IOCTL: čtení ze znakového zařízení
+Funkce 4403H (68- 3) - IOCTL: zápis na znakové zařízení
+Funkce 4404H (68- 4) - IOCTL: čtení z blokového zařízení
+Funkce 4405H (68- 5) - IOCTL: zápis na blokové zařízení
+Funkce 4406H (68- 6) - IOCTL: poskytnutí vstupního statutu
+Funkce 4407H (68- 7) - IOCTL: poskytnutí výstupního statutu
+Funkce 4408H (68- 8) - IOCTL: je zařízení výměnné ?               › DOS 3.0
+Funkce 4409H (68- 9) - IOCTL: je logické zařízení dálkové ?       › DOS 3.1
+Funkce 440AH (68-10) - IOCTL: je identif. dálkového zařízení ?    › DOS 3.1
+Funkce 440BH (68-11) - IOCTL: změna čítače opakování pro sdílení  › DOS 3.0
+Funkce 440DH (68-13) - IOCTL: generování požadavku IOCTL          › DOS 3.2
+Funkce 440EH (68-14) - IOCTL: poskytnutí logického disku          › DOS 3.2
+Funkce 440FH (68-15) - IOCTL: nastavení logického disku           › DOS 3.2
+Funkce 45H (69) - zdvojení identifikátoru souboru (DUP)
+Funkce 46H (70) - nucené zdvojení identifikátoru souboru (FORCDUP)
+Funkce 47H (71) - poskytnutí aktivního adresáře
+Funkce 48H (72) - přidělení paměti
+Funkce 49H (73) - uvolnění přidělené paměti
+Funkce 4AH (74) - modifikace přidělené paměti (SETBLOCK)
+Funkce 4BH (75) - načtení nebo provedení programu (EXEC)
+Funkce 4CH (76) - ukončení procesu (EXIT)
+Funkce 4DH (77) - poskytnutí návratového kódu podprocesu (WAIT)
+Funkce 4EH (78) - nalezení prvního vyhovujícího souboru (FIND FIRST)
+Funkce 4FH (79) - nalezení dalšího vyhovujícího souboru (FIND NEXT)
+Funkce 50H (80) - rezervováno
+Funkce 51H (81) - rezervováno
+Funkce 52H (82) - rezervováno
+Funkce 53H (83) - rezervováno
+Funkce 54H (84) - poskytnutí informace o nastavení VERIFY
+Funkce 55H (85) - rezervováno
+Funkce 56H (86) - přejmenování souboru
+Funkce 57H (87) - poskytnutí nebo nastavení data a času souboru
+Funkce 59H (89) - poskytnutí rozšiřujících chybových informací    › DOS 3.0
+Funkce 5AH (90) - vytvoření jedinečného souboru                   › DOS 3.0
+Funkce 5BH (91) - vytvoření nového souboru                        › DOS 3.0
+Funkce 5CH (92) - zamknutí/odemknutí přístupu k souboru           › DOS 3.0
+Funkce 5DH (93) - rezervováno
+Funkce 5E00H (94-0) - poskytnutí jména zařízení                   › DOS 3.1
+Funkce 5E02H (94-2) - nastavení inicializačního řetězce tiskárny  › DOS 3.1
+Funkce 5E03H (94-3) - poskytnutí inicializačního řetězce tiskárny › DOS 3.1
+Funkce 5F02H (95-2) - poskytnutí položky výpisu přesměrování      › DOS 3.1
+Funkce 5F03H (95-3) - přesměrování zařízení                       › DOS 3.1
+Funkce 5F04H (95-4) - zrušení přesměrování                        › DOS 3.1
+Funkce 60H (96) - rezervováno
+Funkce 61H (97) - rezervováno
+Funkce 62H (98) - poskytnutí adresy prefixu program. segmentu     › DOS 3.0
+
+
+
+
+Rozdělení funkcí do oblastí:
+
+Systémové informace:
+
+38H - číslo verze operačního systému DOS
+2AH - systémové datum
+2CH - systémový čas
+19H - aktivní disk
+47H - aktivní adresář
+38H - národnostně závislé informace
+
+2FH - současná adresa diskových přenosů DTA
+62H - současná adresa prefixu programového segmentu PSP
+35H - čtení hodnoty vektoru přerušení
+4DH - kód ukončení procesu
+59H - rozšiřující chybové informace
+44H - ovládání I/O zařízení (statut zařízení/souborů)
+
+54H - nastavení přepínače módu VERIFY
+33H - nastavení přepínače kontroly Ctrl-Break
+
+37H - nastavení přepínače znaků (QUERY)
+34H - adresa statutu pozadí DOS
+
+36H, 1BH, 1CH - velikost disku, volné bajty
+32H - podpůrné informace o disku
+
+57H - čas/datum souboru
+
+4EH, 4FH, 11H, 12H - hledání souboru
+
+
+
+Znakové vstupy/výstupy:
+
+01H, 3FH (BX=0) - vstup z klávesnice
+08H - vstup z klávesnice (bez echa)
+07H - nefiltrovaný vstup z klávesnice (bez echa)
+0BH - poskytnutí vstupního statutu
+0CH - vymazání vyrovnávací paměti klávesnice a vstup znaku z klávesnice
+0AH, 3FH (BX=0) - vstup řetězce znaků z klávesnice
+06H - vstup a výstup na konzolu
+
+02H, 40H (BX=1,2) - zobrazení jednoho znaku
+09H, 40H (BX=1,2) - zobrazení řetězce znaků
+
+03H, 3FH (BX=3) - vstup z přídavného zařízení (sériový port)
+04H, 40H (BX=3) - výstup na přídavné zařízení (sériový port)
+
+05H, 40H (BX=4) - výstup na tiskárnu
+INT 2FH - přepínatelné funkce
+
+
+Vstupně/výstupní operace s použitím FCB:
+
+(lze využít pouze aktivní adresář)
+
+29H - rozbor popisu souboru v textovém tvaru na tvar FCB
+11H, 12H - prohledávání aktivního adresáře
+
+16H - vytvoření souboru
+0FH - otevření souboru
+10H - uzavření souboru
+13H - zrušení souboru
+
+14H - sekvenční čtení ze souboru
+15H - sekvenční zápis do souboru
+
+21H - čtení záznamu s přímým přístupem
+27H - vícenásobné čtení záznamu s přímým přístupem
+22H - zápis záznamu s přímým přístupem
+28H - vícenásobný zápis záznamu s přímým přístupem
+24H - nastavení položky FCB relativní záznam
+
+
+Vstupně/výstupní operace s použitím identifikátoru souboru:
+
+3CH - vytvoření souboru
+5BH - vytvoření nového souboru (nesmí existovat)
+5AH - vytvoření jedinečného/dočasného souboru
+
+3DH - otevření souboru
+3EH - uzavření souboru
+41H - zrušení souboru
+
+42H - nastavení ukazatele pro čtení/zápis
+3FH - čtení ze souboru/zařízení
+40H - zápis do souboru/zařízení
+44H - řízení  vstupně/výstupních  zařízení  IOCTL  (lze  použít k testování
+      konce souboru
+
+45H - duplikování identifikátoru souboru
+46H - přesměrování I/O identifikátoru souboru
+
+
+Práce s adresáři a se soubory:
+
+39H - vytvoření nového adresáře
+3AH - zrušení adresáře
+3BH - nastavení nového aktivního adresáře
+47H - poskytnutí aktivního adresáře
+
+0EH - nastavení aktivního disku
+19H - poskytnutí aktivního disku
+
+56H, 17H - přejmenování souboru
+57H - nastavení/informace o času a data souboru
+42H, 23H - informace o velikosti souboru
+28H - nastavení velikosti souboru (s použitím funkce 42H)
+43H - změna/poskytnutí atributů souboru
+
+5CH - zamčení/odemknutí přístupu k souboru
+
+4EH, 4FH - hledání souboru podle jména ASCIIZ
+11H, 12H - hledání souboru v adresáři podle FCB
+
+29H - rozklad textu (jména souboru) do položky FCB
+
+
+Řízení procesů:
+
+4BH - vykonání synovského procesu
+26H - vytvoření prefixu programového segmentu (PSP)
+62H - poskytnutí adresy prefixu programového segmentu (PSP) procesu
+
+31H, INT 27H - ukončení programu s jeho uchováním v paměti
+
+00H, INT 20H - tradiční ukončení programu (kompatibilní)
+
+4CH - ukončení programu a předání výstupního kódu otcovskému procesu
+4DH - poskytnutí výstupního kódu ukončeného procesu
+
+INT 23H - přerušení pomocí kláves <Ctrl>-<Break> (<Ctrl>-C)
+INT 24H - přerušení při kritické chybě
+
+
+Funkce pro ovládání paměti:
+
+48H - přidělení bloku paměti procesu (nebo určení největšího bloku paměti)
+49H - uvolnění přidělených bloků paměti
+4AH - zvětšení/změnšení bloků paměti
+
+INT 12H - navrácení celkové paměti systému
+
+
+Doplňující funkce:
+
+1AH - nastavení adresy diskových přenosů DTA
+25H - nastavení vektoru přerušení
+0EH - nastavení aktivního disku DOS
+
+5CH - zamčení/odemknutí přístupu k souborům
+5EH - doplňující funkce pro práci v síti
+5FH - přesměrování síťového zařízení
+
+0DH - reset disku (vyprázdnění vyrovnávací paměti)
+29H - rozklad textu na jména souboru v FCB
+
+2BH - nastavení systémového data
+2DH - nastavení systémového času
+57H - poskytnutí času/data souboru
+
+2EH - nastavení statutu verifikace
+37H - přepínání znaků QUERY
+
+38H - nastavení aktivní země
+
+44H - komunikační kanály k ovládání zařízení
+
+
+
+
+
+ F u n k c e   0 0 H  ( 0 )  - přerušení programu
+
+    vstup:    AH = 00H
+              CS = adresa segmentu prefixu programového segmentu PSP
+
+    výstup:   žádný
+
+    Funkce ukončuje program a navrací řízení do DOS.
+
+    DOS  přeruší program, vyprázdní buffery souborů, navrátí obsahy vektorů
+INT  22H,  INT  23H  a  INT  24H  z prefixu programového segmentu PSP - tj.
+výstupní  adresy  (vektory)  pro  ukončení (adr. 0AH), <Ctrl>-<Break> (adr.
+0EH)  a kritické chyby (adr. 12H) a předá řízení na adresu vektoru ukončení
+programu v PSP (návrat do otcovského procesu).
+
+    Před  vyvoláním  služby  nejdříve  uzavřete  všechny  soubory. Potom se
+přesvědčte, zda CS obsahuje adresu segmentu PSP.
+
+Pozn.: Tato  funkce  je  volána  pomocí přerušení INT 20H a pracuje stejným
+       způsobem.  Služba  je  historickým pozůstatkem nemající žádné výhody
+       oproti   funkci  4CH  (ukončení  programu)  a  zůstává  pouze  kvůli
+       slučitelnosti  se  staršími programy. Proto používejte raději funkci
+       4CH, která umožňuje navrátit chybový kód použitelný jiným programem.
+
+
+
+
+ F u n k c e   0 1 H  ( 1 )  - vstup znaku z klávesnice s echem
+
+    vstup:    AH = 01H
+
+    výstup:   AL = přečtený znak ze standardního vstupu
+
+    Funkce čte znak ze standardního vstupního zařízení (obvykle klávesnice)
+a  provede  též  jeho echo (tj. kopírování znaku i na výstup) na standardní
+výstupní zařízení (obvykle obrazovka). Funkce čeká na příchod znaku
+
+    Pokud je stisknuta klávesa se speciální funkcí (např. kurzorové klávesy
+a  pod.),  navrátí funkce v AL nejdříve kód 00H; opětným voláním funkce lze
+přečíst orientační kód klávesy (viz tabulka kódů kláves).
+
+    Při  duplikování  znaku na displej se provádějí řídící kódy BEL (07H) =
+pípnutí, BS (08H) = krok kurzoru zpět a vymazání posledního znaku, HT (09H)
+=  tabelátor,  LF  (0AH) = přesun na následující řádek, FF (0CH) = vymazání
+obrazovky, CR (0DH) = přechod na začátek řádku a při nainstalovaném driveru
+obrazovky ANSI.SYS též ESC (1BH) = speciální řídící funkce.
+
+    Kombinace  kláves  <Ctrl>-<Break>  nebo  <Ctrl>-C  vygeneruje přerušení
+INTú23H (uživatelské přerušení).
+
+
+
+
+ F u n k c e   0 2 H  ( 2 )  - výstup znaku
+
+    vstup:    AH = 02H
+              DL = znak k výstupu
+
+    výstup:   žádný
+
+    Funkce vyšle znak uložený v registru DL na standardní výstupní zařízení
+(obvykle obrazovka).
+
+Pozn.: Pokud  je  stisknuta  kombinace kláves <Ctrl>-<Break> nebo <Ctrl>-C,
+       provede  funkce  přerušení  INT  23H.  Test  kláves se provádí až po
+       zobrazení znaku.
+
+       Při  výstupu  znaku se provádějí řídící kódy BEL (07H) = pípnutí, BS
+       (08H)  =  krok  kurzoru zpět a vymazání posledního znaku, HT (09H) =
+       tabelátor,  LF  (0AH)  =  přesun  na  následující  řádek, FF (0CH) =
+       vymazání  obrazovky,  CR  (0DH)  =  přechod  na  začátek řádku a při
+       nainstalovaném  driveru obrazovky ANSI.SYS též ESC (1BH) = speciální
+       řídící funkce.
+
+       Výstup zadaného řetězce textu - viz funkce 09H.
+
+Příklad: Následující program převede malá písmena na velká a zobrazí je.
+
+         cyklus:   mov       ah,8           ; funkce vstupu znaku z kláv.
+                   int       21h            ; vstup znaku z klávesnice
+                   cmp       al,27          ; klávesa <Esc>
+                   jz        konec          ; ukončení programu
+                   cmp       al,"a"         ; je menší než "a" ?
+                   jl        neprev         ; je menší - nepřevádět
+                   cmp       al,"z"         ; je větší než "z" ?
+                   jg        neprev         ; je větší než "z" - nepřevádět
+                   sub       al,20h         ; převod malého písm. na velké
+         neprev:   mov       ah,2           ; funkce výstupu na displej
+                   mov       dl,al          ; znak k výstupu na displej
+                   int       21h            ; výstup znaku na displej
+                   jmp       cyklus         ; další znak
+         konec:                             ; následuje ukončení programu
+
+
+
+ F u n k c e   0 3 H  ( 3 )  - vstup znaku z přídavného zařízení
+
+    vstup:    AH = 03H
+
+    výstup:   AL = přečtený znak z přídavného zařízení
+
+    Funkce  čte  znak  (čeká  na  jeho  příchod) ze standardního přídavného
+zařízení  AUX.  Standardním  přídavným zařízením (označení AUX) je normálně
+první  sériový  port  COM1.  Vstup  nepoužívá vyrovnávací paměť, není řízen
+přerušením  a  probíhá  formou  čekání  na  příchod  znaku.  Při zpracování
+přicházejících   znaků   je   proto   nutné,  aby  aplikační  program  mezi
+jednotlivými  vstupy  neprováděl  prodlevy,  neboť by mohlo dojít ke ztrátě
+dat.  Měl by si zajistit vhodnou formou komunikačního protokolu, aby mu byl
+vysílán  pouze  určitý počet bajtů, které si nejdříve ukládá do vyrovnávací
+paměti  a  až  přijde  přesně  definovaný  počet  bajtů, provede zpracování
+přijatých  dat  a vyzve protější zařízení k vyslání dalšího balíku dat.
+
+    Při  startu systému inicializuje DOS první sériový port COM1 na hodnotu
+2400  baud,  8údatových  bitů,  jeden  stop bit, žádná parita. Povelem MODE
+(externí příkaz operačního systému) lze tyto hodnoty měnit.
+
+Pozn.: Pokud  je  detekována  kombinace  kláves  <Ctrl>-<Break> (<Ctrl>-C),
+       potom je vygenerováno přerušení INT 23H.
+
+       Vstup  znaku  není  ukládán  do bufferu a není řízen přes přerušení;
+       pokud váš program není schopen číst znaky plnou rychlostí, mohou být
+       data ztracena.
+
+       Funkce  neumožňuje  monitorování  stavu  komunikačního portu (zda je
+       připraven  přijatý  znak).  Pro  větší  kontrolu nad portem použijte
+       přerušení  INT 14H ROM-BIOSu. Viz též popis adaptéru sériových portů
+       a přerušení INT 0CH a INT 0BH.
+
+
+
+ F u n k c e   0 4 H  ( 4 )  - výstup znaku na přídavné zařízení
+
+    vstup:    AH = 04H
+              DL = znak k výstupu na přídavné zařízení
+
+    výstup:   žádný
+
+    Tato  funkce  umožňuje  výstup  znaku, jehož ASCII hodnota je uložena v
+registru DL, na standardní přídavné zařízení AUX. Přitom čeká, až je vyslán
+předcházející  znak  (tj. až je vyprázdněn vysílací buffer a až je protější
+zařízení připraveno přijmout znak).
+
+    Standardním  přídavným  zařízením  (označení  AUX)  je  normálně  první
+sériový   port   COM1.  Výstup  nepoužívá  vyrovnávací  paměť,  není  řízen
+přerušením  a  probíhá  formou čekání na vyslání předcházejícího znaku. Zda
+bude  aplikační program ponechávat mezi jednotlivými vyslanými znaky mezery
+vzniklé  jinými činnostmi programu, je věcí aplikačního programu a má pouze
+vliv  na  zpomalení  přenosu.  Pouze  při  synchronním režimu provozu by se
+neměly objevovat meziznakové mezery.
+
+    Při  startu systému inicializuje DOS první sériový port COM1 na hodnotu
+2400  baud,  8údatových  bitů,  jeden  stop bit, žádná parita. Povelem MODE
+(externí příkaz operačního systému) lze tyto hodnoty měnit.
+
+Pozn.: Pokud  je  detekována  kombinace  kláves  <Ctrl>-<Break> (<Ctrl>-C),
+       potom je vygenerováno přerušení INT 23H.
+
+       Funkce  neumožňuje  monitorování  stavu komunikačního portu (zda byl
+       vyslán  předcházející  znak). Pro větší kontrolu nad portem použijte
+       přerušení  INT 14H ROM-BIOSu. Viz též popis adaptéru sériových portů
+       a přerušení INT 0CH a INT 0BH.
+
+
+
+
+ F u n k c e   0 5 H  ( 5 )  - výstup znaku na tiskárnu
+
+    vstup:    AH = 05H
+              DL = znak k výstupu na tiskárnu
+
+    výstup:   žádný
+
+    Funkce  vyšle  znak,  jehož  ASCII hodnota je uložena v registru DL, na
+standardní  tiskové  zařízení  PRN, kterým je normálně první paralelní port
+tiskárny (LPT1).
+
+Pozn.: Pokud  je  zařízení  (tiskárna)  zaneprázdněno,  funkce  čeká  až je
+       připraveno přijmout znak.
+
+       Povel   operačního  systému  MODE  umožňuje  přesměrovat  standardní
+       tiskový výstup PRN na sériový port.
+
+       Pokud  je  detekována  kombinace  kláves  <Ctrl>-<Break> (<Ctrl>-C),
+       potom je vygenerováno přerušení INT 23H.
+
+Příklad: Následující program tiskne na tiskárnu řádky ASCII znaků.
+
+                   mov       bl,32          ; počáteční znak k tisku
+                   mov       ah,5           ; funkce pro tisk znaku
+         radek:    mov       cx,80          ; počet znaků na řádek
+                   mov       dl,bl          ; znak k tisku
+         znak:     int       21h            ; tisk znaku na tiskárnu
+                   inc       dl             ; zvýšení znaku
+                   loop      znak           ; další znak na řádku k tisku
+                   mov       dl,13          ; znak CR
+                   int       21h            ; tisk znaku CR
+                   mov       dl,10          ; znak LF
+                   int       21h            ; tisk znaku LF
+                   inc       bl             ; zvýšení znaku pro další řádek
+                   cmp       bl,128-80      ; je již zakázaný znak ?
+                   jl        radek          ; tisk dalšího řádku
+                                            ; konec programu
+
+
+
+ F u n k c e   0 6 H  ( 6 )  - přímý vstup/výstup znaku na konzolu
+
+    vstup:    AH = 06H
+              DL = FFH            - vstup znaku z klávesnice (nečeká)
+                   jiná hodnota   - znak k výstupu na displej
+
+    výstup:   AL = znak z klávesnice (pokud je vstup z klávesnice DL=FFH)
+              ZF = (ovlivněn, pokud je vstup z klávesnice - tj. DL=FFH)
+                   0 (NZ) - přijat znak z klávesnice (AL = znak)
+                   1 (ZR) - není připraven znak z kávesnice (AL = 0)
+
+    Pokud  je  v  registru  DL  uložena  hodnota  FFH, je prováděn vstup ze
+standardního  vstupního  zařízení  (obvykle  klávesnice), nečeká na příchod
+znaku.  Funkce  testuje, zda je připraven znak ze vstupního zařízení. Pokud
+ano,  je  znak  uložen do registru AL a je vynulován příznak nuly ZF. Pokud
+není  připraven znak, je příznak ZF nastaven a obsah registru AL je nulový.
+Při vstupu znaku není prováděno echo na výstupní zařízení (displej).
+
+    Pokud  je v registru DL uložena jiná hodnota než FFH, je obsah registru
+považován  za  znak,  který  má  být vyslán na standardní výstupní zařízení
+(displej).
+
+    Pokud  je  při vstupu znaku navrácena v registru AL nula (a pokud je to
+platný  znak,  tj.  příznak ZF je vynulován - tj. platí podmínka NZ), jde o
+zvláštní  řídící  znak  (např.  funkční  nebo  kurzorová  klávesa).  Druhým
+vyvoláním   této  funkce  je  navrácena  druhá  část  speciálního  znaku  -
+orientační kód klávesy (viz tabulku kódů kláves).
+
+    Funkce neprovádí detekci kombinace kláves <Ctrl>-<Break> (<Ctrl>-C).
+
+    Při  výstupu  znaku  se  provádějí  řídící kódy BEL (07H) = pípnutí, BS
+(08H)  =  krok  kurzoru  zpět  a  vymazání  posledního  znaku,  HT  (09H) =
+tabelátor,  LF  (0AH)  =  přesun  na následující řádek, FF (0CH) = vymazání
+obrazovky, CR (0DH) = přechod na začátek řádku a při nainstalovaném driveru
+obrazovky ANSI.SYS též ESC (1BH) = speciální řídící funkce.
+
+Příklad: Následující příklad vypisuje na obrazovce kódy kláves v HEX tvaru.
+         Pokud  je  stisknuta  speciální klávesa (generuje první bajt = 0),
+         zobrazí  se  nejdříve  znak  "*" a potom její orientační kód v HEX
+         tvaru. Ukončení programu je možné pomocí klávesy <Esc>.
+
+         cyklus:  mov       ah,6            ; funkce vstupu znaku z konzoly
+                  mov       dl,0ffh
+                  int       21h             ; vstup znaku z konzoly
+                  jz        cyklus          ; nebyl zadán žádný znak (čeká)
+                  test      al,al           ; test - je AL = 0 ?
+                  jnz       cykl2           ; AL není = 0
+                  mov       dl,'*'          ; označení rozšířeného kódu
+                  jmp       short cykl3     ; tisk prefixu "*"
+         cykl2:   cmp       al,27           ; je znak <Esc> ?
+                  jz        konec           ; konec programu
+                  call      bajt            ; tisk bajtu v AL v HEX tvaru
+                  mov       dl,13           ; znak CR
+                  int       21h             ; tisk znaku CR
+                  mov       dl,10           ; znak LF
+         cykl3:   int       21h             ; tisk znaku LF
+                  jmp       short cyklus
+                                            ; podprogram tisku bajtu HEX
+         bajt:    push      ax              ; znak k výstupu
+                  ror       al,1            ; rotace AL o 4 bity vpravo
+                  ror       al,1
+                  ror       al,1
+                  ror       al,1
+                  call      hex             ; tisk znaku HEX
+                  pop       ax              ; návrat znaku k tisku
+         hex:     and       al,0fh          ; nižší tetráda znaku
+                  add       al,90h          ; převod na znak HEX
+                  daa
+                  adc       al,40h
+                  daa
+                  mov       ah,6            ; funkce pro výstup znaku
+                  mov       dl,al           ; znak k výstupu na konzolu
+                  int       21h             ; výstup znaku na konzolu
+                  ret
+         konec:                             ; konec programu
+
+
+
+
+ F u n k c e   0 7 H  ( 7 )  - řízený vstup znaku z konzoly bez echa
+
+    vstup:    AH = 07H
+
+    výstup:   AL = znak ze standardního vstupního zařízení
+
+    Funkce  čeká  na  příchod  znaku  se  standardního  vstupního  zařízení
+(obvykle   konzola).   Neprovádí   echo   a   nekontroluje   zadání  kláves
+<Ctrl>-<Break>  (<Ctrl>-C)  -  při  zadání  kombinace kláves <Ctrl>-<Break>
+(<Ctrl>-C) navrátí hodnotu kódu 03H.
+
+    Pokud  je při vstupu znaku navrácena v registru AL nula, jde o zvláštní
+řídící  znak  (např. funkční nebo kurzorová klávesa). Druhým vyvoláním této
+funkce  je  navrácena druhá část speciálního znaku - orientační kód klávesy
+(viz tabulku kódů kláves).
+
+    Použijte funkci DOS 0BH k testování vstupního statutu.
+
+
+
+ F u n k c e   0 8 H  ( 8 )  - vstup znaku z konzoly bez echa
+
+    vstup:    AH = 08H
+
+    výstup:   AL = znak z konzoly
+
+    Funkce  čeká  na  příchod  znaku  se  standardního  vstupního  zařízení
+(obvykle   konzola).   Neprovádí   echo,   kontroluje  však  zadání  kláves
+<Ctrl>-<Break> (<Ctrl>-C).
+
+    Pokud  je při vstupu znaku navrácena v registru AL nula, jde o zvláštní
+řídící  znak  (např. funkční nebo kurzorová klávesa). Druhým vyvoláním této
+funkce  je  navrácena druhá část speciálního znaku - orientační kód klávesy
+(viz tabulku kódů kláves).
+
+Pozn.: Jediný  rozdíl mezi touto funkcí a funkcí 07H je ten, že tato funkce
+       provádí  kontrolu zadání kombinace kláves <Ctrl>-<Break> (<Ctrl>-C),
+       při detekci této kombinace kláves provede přerušení INT 23H.
+
+
+
+
+ F u n k c e   0 9 H  ( 9 )  - tisk řetězce
+
+    vstup:    AH = 09H
+              DS:DX = ukazatel na textový řetězec ukončený znakem $
+
+    výstup:   žádný
+
+    Funkce  vyšle  zadaný  řetězec  znaků  na standardní výstupní zařízení.
+Řetězec  musí  být  ukončen  znakem  $ (symbol dolaru). Tento znak není již
+zobrazen.  Funkce  není  tedy  vhodná pro zobrazení řetězců, které obsahují
+symbol  dolaru  $,  všechny ostatní znaky, včetně řídících, jsou zobrazeny.
+Kúvýstupu  textu  včetně  znaku  dolaru  $  můžete  použít  funkci  DOS 40H
+(súidentifikátorem souboru BX=0), která umožňuje výstup textu zadané délky.
+
+    Při  výstupu  znaku  se  provádějí  řídící kódy BEL (07H) = pípnutí, BS
+(08H)  =  krok  kurzoru  zpět  a  vymazání  posledního  znaku,  HT  (09H) =
+tabelátor,  LF  (0AH)  =  přesun  na následující řádek, FF (0CH) = vymazání
+obrazovky, CR (0DH) = přechod na začátek řádku a při nainstalovaném driveru
+obrazovky ANSI.SYS též ESC (1BH) = speciální řídící funkce. Normální způsob
+odřádkování  textu  (tj. přechod na nový řádek) je vyslání dvojice řídících
+kódů CR (0DH) a LF (0AH).
+
+    Funkce   provádí   kontrolu   zadání  kombinace  kláves  <Ctrl>-<Break>
+(<Ctrl>-C), při detekci této kombinace kláves provede přerušení INT 23H.
+
+Příklad: Tento příklad vytiskne na obrazovce jednoduchý obrazec.
+
+                   mov       dx,offset text ; text k tisku
+                   mov       cx,10          ; počet řádků k tisku
+                   mov       ah,9           ; funkce tisku řetězce
+         cyklus:   int       21h            ; tisk řetězce od adresy DS:DX
+                   inc       dx             ; zvýšení ukazatele řetězce
+                   loop      cyklus         ; další řádek k tisku
+                   mov       ah,4ch         ; ukončení programu
+                   int       21h
+
+         text      db        '0123456789',13,10,'$'   ; tisknutý řetězec
+
+
+
+
+ F u n k c e   0 A H  ( 1 0 ) - vstup textu ze vstupního zařízení
+
+    vstup:    AH = 0AH
+              DS:DX = ukazatel  na  vstupní  vyrovnávací paměť
+
+    výstup:   žádný (návrat informací ve vstupním bufferu)
+              (navráceno AL = ukončovací znak 0DH)
+
+    Funkce  čte  řetězec  znaků  ze  standardního  vstupního zařízení až po
+zadání  klávesy  <Enter>  (znak  s kódem 0DH = 13) nebo po zaplnění vstupní
+vorovnávací  paměti  (tj.  je zadán počet znaků MAX-1, kde MAX je maximální
+počet  znaků  nastavený  v  prvním  bajtu vyrovnávací paměti). Při zadávání
+znaků  ze  vstupního  zařízení  (klávesnice) provádí echo znaků na výstupní
+zařízení  (displej).  Znaky  (včetně ukončovacího znaku <Enter> = 0DH) jsou
+ukládány do bufferu DS:DX počínaje offsetem 02H (třetí bajt).
+
+    Struktura vstupního bufferu textu:
+
+         offset 00H (1.bajt): (hodnota  1  až 254) maximální počet znaků ve
+                              vyrovnávací  paměti  včetně  znaku CR (0DH) -
+                              tuto  hodnotu  musí  uživatel  nastavit  před
+                              vyvoláním funkce.
+         offset 01H (2.bajt): skutečný  počet zadaných znaků textu bez CR -
+                              tato hodnota je nastavena funkcí
+         offset 02H (3.bajt): vyrovnávací   paměť;  musí  být  alespoň  tak
+                              dlouhá, jak udává 1.bajt.
+
+    Maximální  počet  zadaných znaků je omezen velikostí vstupního bufferu,
+která  je  udána  prvním  bajtem vstupního bufferu DS:DX (max. 255 zadaných
+znaků včetně CR). Tuto hodnotu nastavuje uživatel před vyvoláním funkce.
+
+    Při návratu je v bufferu DS:DX na offsetu 1 (tj. druhý bajt vyrovnávací
+paměti)  navrácen  počet  platných znaků, které byly zaznamenány do bufferu
+(bez koncového znaku CR - 0DH). Text je vždy ukončen znakem CR
+
+    Funkce   provádí   kontrolu   zadání  kombinace  kláves  <Ctrl>-<Break>
+(<Ctrl>-C), při detekci této kombinace provede přerušení INT 23H.
+
+Pozn.: Bějem  zadávání  textu  pomocí  této  funkce  jsou aktivní editovací
+       povely  DOS.  Znaky  obsažené  v  bufferu  (včetně bajtu délky) před
+       voláním   funkce  jsou  použity  jako  dočasné  a  povely  DOS  mají
+       následující  účinek: Klávesa <Esc> zobrazí znak \ a obnovuje editaci
+       (navrátí  ji  do původního stavu), <F3> zobrazí celý dočasně uložený
+       text  až  po  konec, <F5> zobrazí znak @ a uloží současný řádek jako
+       dočasný  (tj.  lze  jej editovat), klávesy <-- a --> ruší a obnovují
+       znak z dočasného textu atd.
+
+       Pokud  se  buffer  naplní  do kapacity bez jednoho bajtu, DOS odmítá
+       všechny  zadávané  znaky  kromě  ukončovací  klávesy  <Enter> (resp.
+       některých povelů editoru), ozývá se zvukový signál chyby.
+
+
+
+ F u n k c e   0 B H  ( 1 1 ) - test stavu standardního vstupu
+
+    vstup:    AH = 0BH
+
+    výstup:   AL = FFH  - je připraven znak ze vstupního zařízení
+                   00H  - není připraven znak ze vstupního zařízení
+
+    Funkce  kontroluje,  zda  je  připraven  znak ze standardního vstupního
+zařízení  (konzoly).  Může být použita ke kontrole připravenosti znaku před
+vstupem znaku z konzoly, který čeká na zadání znaku (funkce 01H, 07H, 08H).
+
+    Funkce   provádí   kontrolu   zadání  kombinace  kláves  <Ctrl>-<Break>
+(<Ctrl>-C),  při  detekci  této  kombinace  provede přerušení INT 23H. Tato
+funkce   je  nejvhodnější  metodou  k  testování  zadání  kombinace  kláves
+<Ctrl>-<Break>  (<Ctrl>-C)  při  dlouhých výpočtech programu které normálně
+neprovádějí žádné vstupně/výstupní operace, neboť nemá žádné další vedlejší
+účinky.
+
+
+
+
+ F u n k c e   0 C H  ( 1 2 ) - vymazání vstup. bufferu a provedení funkce
+
+    vstup:    AH = 0CH
+              AL = funkce, která se má provést (01H, 06H, 07H, 08H, 0AH)
+                   jakákoliv jiná hodnota - neprovádí se další zpracování
+
+    výstup:   AL = zadaný znak (pokud vztažná funkce nebyla 0AH)
+                 = 0, pokud nebyla v AL žádná funkce klávesnice
+
+    Funkce  vymaže všechny znaky ze vstupní vyrovnávací paměti znaků, potom
+provede specifikovanou funkci vstupu (číslo funkce v registru AL). Použijte
+tuto  funkci  pokud  si  chcete  být  jisti,  že program přijme nový znak z
+klávesnice aniž by použil znaky zadané během dřívějších operací. Obvykle se
+tato  funkce  používá  např. při ohlášení chybového stavu a čekání na další
+volby uživatele.
+
+Pozn.: Při  zadání  funkce  06H  nemusí provádět funkce pouze vstup znaku z
+       klávesnice,  ale  může  provést  i výstup znaku na výstupní zařízení
+       (viz detaily funkce 06H).
+
+       Pokud  chcete  vynulovat  vstupní  buffer  bez  provedení  jakékoliv
+       operace (bez čtení znaku), zadejte funkci AL = 06H a DL = 0FFH (test
+       připravenosti znaku z klávesnice).
+
+
+
+
+ F u n k c e   0 D H  ( 1 3 ) - reset disku
+
+    vstup:    AH = 0DH
+
+    výstup:   žádný
+
+    Funkce  vyprázdní  všechny  vyrovnávací  paměti  souborů,  soubory však
+neuzavírá.  Zapisuje  modifikované  vyrovnávací  paměti  na  disk  a označí
+všechny  vnitřní  vyrovnávací  paměti  jako volné. K zajištění uložení změn
+položky  souboru  v adresáři použijte před vyvoláním této funkce některou z
+funkcí  pro  uzavření souboru (10H nebo 3EH). Funkce se nemusí vyvolat před
+výměnou  disku,  jestliže  všechny  soubory,  v  nichž došlo ke změně, byly
+uzavřeny. Obvykle se tato funkce používá k zajištění známého stavu systému.
+Tuto funkci by měly volat programy obsluhující <Ctrl>-<Break>.
+
+
+
+
+ F u n k c e   0 E H  ( 1 4 ) - výběr aktivního disku
+
+    vstup:    AH = 0EH
+              DL = číslo aktivního disku (0 = A, 1 = B atd.)
+
+    výstup:   AL = počet logických disků v systému
+
+    Funkce nastaví aktivní disk a navrátí počet disků v systému libovolného
+typu, včetně pevných disků a logických disků.
+
+Pozn.: Disketová  jednotka  v  jednodisketovém  systému  se počítá jako dva
+       logické disky A: a B:.
+
+       DOS  verze  3.x  a  pozdější  verze  hlásí  5 logických disků, pokud
+       neobsahuje CONFIG.SYS jiné přiřazení pomocí LASTDRIVE.
+
+       K  určení  počtu  fyzických  disketových jednotek v systému použijte
+       přerušení  INT  11H  (17).  K  určení  počtu pevných disků v systému
+       použijte přerušení INT 13H (19)/funkci 08H.
+
+       Použijte  funkci  DOS  19H  (poskytnutí  aktivního  disku), pokud se
+       chcete přesvědčit o správnosti operace.
+
+
+
+
+ F u n k c e   0 F H  ( 1 5 ) - otevření souboru s použitím FCB
+
+    vstup:    AH = 0FH
+              DS:DX = ukazatel na neotevřený FCB souboru
+
+    výstup:   AL = 00H - soubor úspěšně otevřen (a FCB správně vyplněn)
+                   FFH - soubor nenalezen nebo jej nelze otevřít
+
+    Funkce  otevře existující soubor s použitím FCB souboru. DS:DX obsahuje
+adresu  neotevřeného  řídícího  bloku  FCB.  Jmenovaný  soubor  se  hledá v
+aktivním  adresáři aktivního disku nebo disku specifikovaného v položce FCB
+(tj.  první  bajt  FCB:  0=aktivní  disk; 1=A; 2=B; ...). Nalezne-li se pro
+soubor  vyhovující adresářová položka, AL vrátí hodnotu 0, soubor se otevře
+v  kompatibilním přístupovém módu (viz funkce DOS 3DH - otevření souboru) a
+FCB se vyplní následovně:
+
+    - Je-li  kód  diskové  jednotky 0 (implicitní disk), změní se příslušná
+      položka FCB na aktivní použitý disk (1=A, 2=B, atd.).
+
+    - Položka aktivní blok se vynuluje.
+
+    - Délka záznamu se nastaví na sytémovou implicitní hodnotu 128 (80H).
+
+    - Délka  souboru,  datum  a čas posledního zápisu do souboru se nastaví
+      podle adresářové položky.
+
+    Před  provedením sekvenční diskové operace se souborem se musí nastavit
+položka  aktivní záznam. Před provedením diskové operace s přímým přístupem
+se  souborem  se  musí  nastavit  položka  relativní  záznam. Nevyhovuje-li
+implicitní  délka  záznamu  128  bajtů, je nutno ji nastavit na požadovanou
+délku před provedením následující diskové operace.
+
+
+
+
+ F u n k c e   1 0 H  ( 1 6 ) - uzavření souboru s použitím FCB
+
+    vstup:    AH = 10H
+              DS:DX = ukazatel na otevřený FCB souboru
+
+    výstup:   AL = 00H - soubor úspěšně uzavřen
+                   FFH - soubor nenalezen
+
+
+    Funkce  uzavře  soubor  a  uloží jeho adresářovou položku do adresáře s
+použitím FCB. Tato funkce se musí vyvolat po provedených změnách v souboru,
+aby se aktualizovala adresářová položka.
+
+    Položka  adresáře  musí být na svém původním místě v současném aktivním
+adresáři a disku, z kterého byl soubor otevřen.
+
+    Je-li  pro  soubor  nalezena  odpovídající adresářová položka, umístění
+souboru  se  porovná  s  odpovídajícími položkami v FCB. Pokud je to nutné,
+aktualizuje  se adresářová položka podle FCB a vyrovnávací paměť souboru se
+vyprázdní. AL vrátí hodnotu 0.
+
+Pozn.: Pokud  uzavíráte soubor na disketě, DOS se snaží nejdříve určit, zda
+       byla  v disketové jednotce vyměněna disketa. Pokud ano, navrací v AL
+       hodnotu  0FFH.  Určování  výměny disket není spolehlivé v dřívějších
+       verzích  DOS  než  3.0;  použití  této  funkce  v DOS 2.x při výměně
+       diskety může mít za následek zničení obsahu diskety.
+
+
+
+ F u n k c e   1 1 H  ( 1 7 ) - nalezení prvního souboru s použitím FCB
+
+    vstup:    AH = 11H
+              DS:DX = ukazatel na neotevřený FCB souboru
+
+    výstup:   AL = 00H - soubor nalezen (a DTA vyplněna)
+                   FFH - žádný soubor nenalezen
+
+    Funkce  hledá  v  aktivním  adresáři  první vyhovující soubor. DS:DX je
+adresa  neotevřeného FCB, který může obsahovat konvenční znaky (tj. * a ?).
+K  prohledávání skrytých nebo systémových souborů musí DX ukazovat na první
+bajt rozšířeného FCB.
+•
+Pozn.: Předpokládané  použití  této služby je ovládání souborů obsahujících
+       maskovací znaky "?" ve svém jméně (univerzální znak - na této pozici
+       může být uveden jakýkoliv znak). Tato funkce zahájí porces hledání a
+       funkce  12H  (18)  pokračuje  v  hledání  následujících vyhovujících
+       souborů.
+
+       Funkci  29H  (rozložené  jméno  souboru)  lze  použít  pro vytváření
+       neotevřeného FCB souboru v přípravě pro hledání.
+
+       Pokud  je  soubor nalezen, vytvoří se na současné adrese pro diskové
+       přenosy   (DTA)   neotevřený   FCB   stejného  typu  (normální  nebo
+       rozšířený).  Před  voláním této funkce je potřeba se přesvědčit, zda
+       je dostatek místa rezervovaného na DTA pro CFB; pokud není, je nutno
+       nastavit pomocí funkce 1AH novou adresu DTA.
+
+       Pokud funkce hledání používá rozšířený FCB (FCBE), je FCBE uložen na
+       adrese  DTA s nastaveným bitem identifikátoru (offset -7) na hodnotu
+       0FFH.
+
+       Rozsah  hledání můžete řídit zadáním bajtu atributů v rozšířeném FCB
+       (offset  -1).  Pokud  je bajt atributů nastaven na 00H, hledá funkce
+       pouze  normální soubory (tj. mohou mít nastaven pouze atribut "pouze
+       čtení"  a/nebo  "archivní"). Pokud je v bajtu atributu specifikována
+       nějaká  kombinace  atributů "skrytý soubor", "systémový soubor" nebo
+       "adresář",  budou  se  vyhledávat  normální  soubory  a také všechny
+       soubory  s  těmito  atributy. Pokud je v bajtu atributů specifikován
+       atribut   "návěští  disku",  bude  funkce  hledat  pouze  položku  s
+       atributem  "návěští  disku".  Atributy  "pouze  čtení"  a "archivní"
+       nemají vliv na hledání.
+
+         Struktura bajtu atributů souboru:
+        +-+-+-+-+-+-+-+-+
+        |7 6 5 4 3 2 1 0|
+        +++++++++++++++++ bit
+         | | | | | | | +-> 0 (  1): pouze čtení souboru (Read-only "R/O")
+         | | | | | | +---> 1 (  2): skrytý soubor (Hidden "HID")
+         | | | | | +-----> 2 (  4): systémový soubor (System "SYS")
+         | | | | +-------> 3 (  8): návěští disku (Volume Label "VOL")
+         | | | +---------> 4 ( 16): adresář (Directory "DIR")
+         | | +-----------> 5 ( 32): archivní soubor (Archive "ARC")
+         | +-------------> 6 ( 64): rezervováno (musí být nastaven na 0)
+         +---------------> 7 (128): rezervováno (musí být nastaven na 0)
+
+            - bližší popis atributů viz "Adresářová položka"
+
+       FCB  jsou pozůstatky z DOS 1. Je výhodnější použít k hledání souborů
+       funkce 4EH a 4FH.
+
+
+
+
+ F u n k c e   1 2 H  ( 1 8 ) - nalezení dalšího souboru s použitím FCB
+
+    vstup:    AH = 12H
+              DS:DX = ukazatel  na  neotevřený FCB souboru specifikovaný ve
+                      funkci 11H nebo 12H
+
+    výstup:   AL = 00H - další soubor nalezen
+                   FFH - soubor nenalezen
+
+    Funkce  hledá  v  aktivním  adresáři  další  vyhovující  soubor.  DS:DX
+obsahuje adresu FCB specifikovaného v předchozím hledání pomocí funkce 11H.
+Funkce  12H  se  používá  po  funkci  11H  (vyhledání  prvního vyhovujícího
+souboru) k nalezení dalších vyhovujících adresářových položek.
+
+Varování: Informace  potřebné  funkcí  12H  jsou  zničeny  jakoukoliv jinou
+          operací  používající  vytváření  FCB  souboru  (jako např. funkce
+          11H).  Proto,  pokud chcete hledat více souborů a provádět v nich
+          též  vstupně/výstupní  operace, musíte uložit informace k hledání
+          tak, že uložíte FCB.
+
+
+Příklad: Následující  příklad  provádí  výpis souborů aktivního adresáře na
+         aktivním  disku (podobně jako příkaz DIR) na obrazovku a to v pěti
+         sloupcích.
+
+              mov       ah,1ah              ; funkce nastavení DTA
+              mov       dx,offset buffer    ; adresa bufferu jako DTA
+              int       21h                 ; nastavení adresy DTA
+              mov       ah,11h              ; funkce nalezení první položky
+              mov       dx,offset fcb       ; adresa FCB
+              int       21h                 ; nalezení první položky FCB
+              inc       al                  ; je AL=FFH ? (tj. nenalezen)
+              mov       dx,offset neni      ; textchybového hlášení
+              jz        konec1              ; není soubor v adresáři
+    vypis:    mov       si,offset buffer+1  ; adresa FCB nalezeného souboru
+              mov       cx,8                ; počet znaků jména
+              mov       ah,2                ; funkce výstupu znaku
+    jmeno:    mov       dl,[si]             ; znak jména souboru k tisku
+              int       21h                 ; tisk znaku na displej
+              inc       si                  ; další znak jména souboru
+              loop      jmeno               ; další znak jména
+              mov       dl,"."              ; oddělovací znak tečky
+              int       21h                 ; tisk oddělovací tečku
+              mov       cx,3                ; počet znaků rozšíření souboru
+    typ:      mov       dl,[si]             ; znak typu souboru k tisku
+              int       21h                 ; tisk znaku typu souboru
+              inc       si                  ; další znak typu souboru
+              loop      typ                 ; tisk dalšího znaku typu
+              mov       dl," "              ; oddělovací mezera
+              int       21h                 ; tisk 4 oddělovacích mezer
+              int       21h
+              int       21h
+              int       21h
+              mov       ah,12h              ; funkce vyhledání dalšího s.
+              mov       dx,offset fcb       ; adresa FCB
+              int       21h                 ; nalezení dalšího souboru
+              inc       al                  ; je AL=FFH ? (tj. nenalezen)
+              jnz       vypis               ; je další soubor
+              mov       dx,offset tiskcr    ; odřádkování textu
+    konec1:   mov       ah,9                ; funkce tisku textu
+              int       21h                 ; tisk textu
+              jmp       konec               ; konec programu
+
+    neni      db        'V adresáři není žádný soubor.'
+    tiskcr    db        13,10,'$'
+    fcb       db        0,"???????????"
+              db        25 dup (0)
+    buffer    db        128 dup (0)
+
+    konec:                                      ; konec programu
+
+
+
+
+ F u n k c e   1 3 H  ( 1 9 ) - zrušení souboru s použitím FCB
+
+    vstup:    AH = 13H
+              DS:DX = ukazatel na neotevřený FCB souboru
+
+    výstup:   AL = 00H - soubor nalezen a zrušen
+                   FFH - soubor nenalezen
+
+    Funkce  zruší  všechny  soubory  s  aktivním  adresáři,  které  splňují
+podmínky dané FCB souboru.
+
+   Při práci v síti vyžaduje tato funkce přístupová práva vytváření CREATE.
+
+Pozn.: Specifikace  souboru  může obsahovat znaky "?" nahrazující jakýkoliv
+       znak ve specifikaci jména souboru.
+
+       Soubory read-only nebudou touto funkcí zrušeny.
+
+
+
+
+
+ F u n k c e   1 4 H  ( 2 0 ) - sekvenční čtení ze souboru s použitím FCB
+
+    vstup:    AH = 14H
+              DS:DX = ukazatel na otevřený FCB
+
+    výstup:   AL = 00H - čtení proběhlo úspěšně
+                   01H - nalezen konec souboru, žádná data nepřečtena
+                   02H - prostor DTA příliš malý (nebo přelom segmentu)
+                   03H - nalezen konec souboru, přečtena část dat
+
+    Funkce  čte  sekvenčně  následující záznam souboru do bufferu na adrese
+DTA,  po  čtení  inkrementuje  ukazatele v FCB souboru na další záznam (tj.
+inkrementuje aktivní blok a aktivní záznam). Před vyvoláním funkce musí být
+v FCB nastaveny položky aktivní blok a aktivní záznam.
+
+    Při práci v síti vyžaduje tato funkce přístupová práva čtení READ.
+
+Pozn.: Čísko  sekvenčního  záznamu  je  odvozeno  z  hodnot aktivního bloku
+       (offset  0CH)  a  aktivního záznamu (offset 20H) v FCB souboru. Tyto
+       položky  FCB  jsou  automaticky  zaznamenány po operaci čtení. Počet
+       čtených bajtů je použit z položky velikosti záznamu na offsetu 0EH v
+       FCB.
+
+       Data  jsou čtena do bufferu na adrese označené jako Adresa diskového
+       přenosu  DTA.  Pokud by přenos dat mohl způsobit přetečení segmentu,
+       je vygenerována chyba 2.
+
+       Pokud  je  nalezen konec souboru ještě před načtením celého záznamu,
+       je zbytek záznamu doplněn nulami až do plné velikosti záznamu.
+
+Příklad: Následující  program  vypíše  na obrazovku z aktivního adresáře na
+         aktivním  disku  textový  soubor  DIRINFO  (pokud existuje), který
+         obsahuje  informace o nastaveném adresáři (tento informační soubor
+         používá též Norton Commander).
+
+              mov       ah,1AH              ; funkce nastavení DTA
+              mov       dx,offset buffer    ; adresa bufferu
+              int       21h                 ; nastavení adresy DTA
+              mov       ah,0fh              ; funkce otevření souboru
+              mov       dx,offset fcb       ; adresa fcb
+              int       21h                 ; otevření souboru
+              inc       al                  ; je AL = FFH ? (tj. nenalezen)
+              jz        konec               ; konec programu
+              mov       [fcb+14],1          ; nastavení délky záznamu na 1
+    cteni:    mov       dx,offset fcb       ; adresa fcb
+              mov       ah,14h              ; funkce sekvenčního čtení
+              int       21h                 ; sekvenční čtení záznamu
+              or        al,al               ; je správné čtení ?
+              jnz       zavri               ; konec - uzavreni souboru
+              mov       dl,[buffer]         ; přečtený znak
+              cmp       dl,1ah              ; je znak konce souboru ?
+              je        zavri               ; konec souboru - uzavři
+              mov       ah,2                ; funkce výstupu znaku
+              int       21h                 ; zobrazení znaku
+              jmp       short cteni         ; další znak ze souboru
+    zavri:    mov       ah,10h              ; funkce uzavření souboru
+              mov       dx,offset fcb       ; adresa fcb
+              int       21h                 ; uzavření souboru
+              jmp       short konec         ; konec programu
+
+    fcb       db        0,"DIRINFO    "     ; položka FCB souboru
+              db        25 dup (0)
+    buffer    db        1 dup (?)           ; zásobník 1 znaku
+
+    konec:                                  ; konec programu
+
+
+
+
+
+ F u n k c e   1 5 H  ( 2 1 ) - sekvenční zápis do souboru s použitím FCB
+
+    vstup:    AH = 15H
+              DS:DX = ukazatel na otevřený FCB
+
+    výstup:   AL = 00H - zápis proběhl úspěšně
+                   01H - disk je plný
+                   02H - prostor DTA příliš malý (nebo přelom segmentu)
+
+    Funkce zapisuje sekvenčně data z bufferu na adrese DTA do následujícího
+záznamu  souboru,  po  zápisu inkrementuje ukazatele v FCB souboru na další
+záznam (tj. inkrementuje aktivní blok a aktivní záznam).
+
+    Při práci v síti vyžaduje tato funkce přístupová práva zápisu WRITE.
+
+Pozn.: Čísko  sekvenčního  záznamu  je  odvozeno  z  hodnot aktivního bloku
+       (offset  0CH)  a  aktivního záznamu (offset 20H) v FCB souboru. Tyto
+       položky  FCB  jsou  automaticky zaznamenány po operaci zápisu. Počet
+       zapisovaných  bajtů je použit z položky velikosti záznamu na offsetu
+       0EH v FCB.
+
+       Data  jsou  zapisována  na  disk  z  bufferu na adrese označené jako
+       Adresa  diskového  přenosu  DTA.  Pokud  by přenos dat mohl způsobit
+       přetečení segmentu, je vygenerována chyba 2.
+
+       Pokud zapisovaná data nevyplní zapisovaný sektor, DOS ukládá data do
+       bufferu pro evenuální zápis pokud jsou data v bufferu nashromážděna.
+
+       Pokud  má specifikovaný soubor nastaven atribut ochrany proti zápisu
+       Read-Only, zápis se neprovede.
+
+Příklad: Program  zde  uvedený  odstraňuje tabelátory z textového souboru a
+         nahrazuje  je  odpovídajícím  počtem  mezer.  Převáděný  soubor se
+         zadává  při  vyvolání  programu  jako  parametr za jménem programu
+         (používá  se  položka  FCB  na adrese 005CH v prefixu programového
+         segmentu).  Soubor  musí  být v aktivním adresáři (v aktivním nebo
+         uvedeném  disku).  Jako  výstupní  soubor  se  (pro  jednoduchost)
+         vytvoří  soubor  stejně  pojmenovaný  jako  zdrojový soubor, ale s
+         označením typu $$$.
+
+                                            ; program používá FCB souboru
+                                            ; na adrese ES:005CH
+         mov       ax,es                    ; datový segment
+         mov       ds,ax                    ; datový segment
+         mov       ax,cs                    ; segment programu
+         mov       es,ax                    ; segment programu
+         mov       si,5ch                   ; zdrojová adresa
+         mov       di,offset fcb            ; cílová adresa
+         mov       cx,12                    ; počet znaků jména
+         rep       movsb                    ; přenos jména souboru
+         mov       si,5ch                   ; zdrojová adresa FCB
+         mov       di,offset fcbout         ; výstupní soubor
+         mov       cx,9                     ; délka - jen jméno
+         rep       movsb                    ; přenos jména souboru
+         mov       ax,cs                    ; segment programu
+         mov       ds,ax                    ; segment programu
+         mov       dx,offset buffer         ; buffer znaku souboru
+         mov       ah,1ah                   ; funkce nastavení adresy DTA
+         int       21h                      ; nastavení adresy DTA
+         mov       dx,offset fcb            ; adresa FCB souboru k převodu
+         mov       ah,0fh                   ; funkce pro otevření souboru
+         int       21h                      ; otevření souboru
+         inc       al                       ; byl soubor nalezen ?
+         jz        hlaseni                  ; chybové hlášení
+         mov       word ptr [fcb+14],1      ; délka záznamu = 1 znak
+         mov       ah,16h                   ; funkce vytvoření souboru
+         mov       dx,offset fcbout         ; výstupní soubor
+         int       21h                      ; vytvoření souboru
+         inc       al                       ; je volné místo ?
+         jz        hlaseni                  ; není místo v adresáři
+         mov       word ptr [fcbout+14],1   ; délka záznamu = 1 znak
+prevod:  mov       ah,14h                   ; funkce sekvenčního čtení
+         mov       dx,offset fcb            ; adresa fcb souboru
+         int       21h                      ; čtení znaku ze souboru
+         or        al,al                    ; je chyba ?
+         jnz       zavri                    ; konec - uzavři soubor
+         mov       al,[buffer]              ; znak ze souboru
+         mov       cx,1                     ; počet znaků k zápisu
+         cmp       al,0ah                   ; znak LF ?
+         je        zapis                    ; zápis znaku LF
+         cmp       al,0dh                   ; je znak CR ?
+         jne       nenicr                   ; není znak CR
+         mov       word ptr [pozice],0      ; vynulování pozice
+         jmp       short zapis              ; zápis znaku
+nenicr:  inc       word ptr [pozice]        ; zvýšení pozice
+         cmp       al,9                     ; znak tabelátoru ?
+         jne       zapis                    ; není - zápis znaku
+         dec       word ptr [pozice]        ; návrat pozice
+         mov       ax,[pozice]              ; pozice znaku
+         and       ax,0fff8h                ; nastavení na předchozí tabel.
+         add       ax,8                     ; nastavení na další tabelátor
+         mov       bx,ax                    ; úschova nové pozice
+         sub       ax,[pozice]              ; počet znaků k tabelaci
+         mov       [pozice],bx              ; nová pozice
+         mov       cx,ax                    ; počet vložených mezer
+         mov       al,' '                   ; oddělovací znak mezery
+zapis:   mov       [buffer],al              ; znak k zápisu do souboru
+         mov       dx,offset fcbout         ; výstupní soubor
+         mov       ah,15h                   ; funkce zápisu znaku
+znak:    int       21h                      ; zápis znaku
+         or        al,al                    ; je chyba ?
+         jnz       hlaseni                  ; chyba - hlášení chyby
+         loop      znak                     ; zápis dalšího znaku
+         jmp       short prevod             ; další znak k převodu
+zavri:   mov       ah,10h                   ; funkce uzavření souboru
+         mov       dx,offset fcb            ; adresa fcb
+         int       21h                      ; uzavření souboru
+         mov       dx,offset fcbout         ; záložní fcb
+         int       21h
+         jmp       short konec
+hlaseni: mov       dx,offset chyba
+         mov       ah,9
+         int       21h
+         jmp       short konec
+
+chyba    db        'Chyba !',13,10,'$'      ; chybové hlášení
+pozice   dw        0                        ; čítač pozice na řádku
+buffer   db        1                        ; buffer znaku
+fcbout   db        0,'        $$$'          ; výstupní soubor
+         db        25 dup (?)
+fcb      db        0,'           '          ; převáděný soubor
+         db        25 dup (?)
+konec:                                      ; konec programu
+
+
+
+
+
+ F u n k c e   1 6 H  ( 2 2 ) - vytvoření souboru s použitím FCB
+
+    vstup:    AH = 16H
+              DS:DX = ukazatel na neotevřený FCB souboru
+
+    výstup:   AL = 00H - soubor úspěšně vytvořen
+                   FFH - soubor nevytvořen (plný adresář)
+
+    Funkce  vytvoří a otevře nový soubor s použitím FCB souboru nebo otevře
+již existující soubor s tím, že jej zkrátí na nulovou délku.
+
+   Při práci v síti vyžaduje tato funkce přístupová práva vytváření CREATE.
+
+Pozn.: Použitím  rozšířeného  FCB  můžete  přiřadit  souboru  při  otevření
+       speciální atributy.
+
+       Otevřenému  souboru  je přiřazena nulová délka. Proto se tato funkce
+       používá k otevření výstupního souboru, zatímco funkce 0FH se používá
+       k otevření souboru ke čtení.
+
+       Tato  funkce je pozůstatkem z DOS v1.0. Výhodnější je použít novější
+       funkci k vytvoření souboru, jako je např. funkce 3CH.
+
+
+
+ F u n k c e   1 7 H  ( 2 3 ) - přejmenování souboru s použitím FCB
+
+    vstup:    AH = 17H
+              DS:DX = ukazatel na FCB, který má být modifikován
+
+    výstup:   AL = 00H - operace proběhla úspěšně
+                   FFH - operace  neúspěšná (položka nenalezena nebo cílový
+                         soubor již existuje)
+
+   Při práci v síti vyžaduje tato funkce přístupová práva vytváření CREATE.
+
+    Funkce  mění  jména  všech  souborů podle zadané specifikace v aktivním
+adresáři  na druhá specifikovaná jména. Specifikace nového jména souboru je
+umístěna  v  FCB šest bajtů od konce prvního jména (tj. na offsetu 11H=17 v
+FCB).
+
+Pozn.: V  prvním  i  druhém  jméně souboru lze použít znaky "?" nahrazující
+       jakýkoliv  znak  (v  druhém jméně má znak "?" ten význam, že znak na
+       odpovídající pozici jména nebude změněn).
+
+       Funkce  nepřejménuje soubor na jméno, které v adresáři již existuje;
+       v tom případě se funkce přeruší a navrátí AL = FFH.
+
+       Soubory  s  nastavenou  ochranou  proti  zápisu  nelze  touto funkcí
+       přejmenovat.
+
+
+
+ F u n k c e   1 8 H  ( 2 4 ) - rezervováno
+
+
+
+
+ F u n k c e   1 9 H  ( 2 5 ) - poskytnutí aktivního disku
+
+    vstup:    AH = 19H
+
+    výstup:   AL = číslo aktivního disku (0 = A, 1 = B, atd.)
+
+    Funkce navrátí číslo aktivního disku.
+
+Pozn.: Číslo  disku  navrácené  touto  funkcí  je o 1 menší než čísla disků
+       uváděná  v jiných funkcích (např. FCB souboru); mnoho funkcí používá
+       0 k označení aktivního disku.
+
+
+
+
+ F u n k c e   1 A H  ( 2 6 ) - nastavení adresy diskového přenosu (DTA)
+
+    vstup:    AH = 1AH
+              DS:DX = nová adresa diskových přenosů DTA
+
+    výstup:   žádný
+
+    Adresa   diskového  přenosu  DTA  (Disk  Transfer  Address)  je  adresa
+vyrovnávací  paměti,  do  které  jsou  ukládána  (nebo z ní čtena) data při
+diskovém  přenosu  ze  souboru  (do  souboru).  Diskové  přenosy se nemohou
+přepisovat  z  konce  segmentu  na  začátek,  ani nemohou přetéct do jiného
+segmentu.  Proto  služby  pro  přenosy  dat  v těchto případech hlásí chybu
+nedostačující velikosti prostoru DTA.
+
+Pozn.: Pokud není nastavena DTA jinak, používá DOS jako aktivní DTA prostor
+       o  délce  128  bajtů  na offsetu 80H v prefixu programového segmentu
+       (PSP).
+
+       Rezervujte  dostatečný prostor bufferu; pokud DOS zjistí, že by data
+       při přenosu přetekla přes okraj segmentu, abortuje diskový přenos.
+
+       Tato  funkce  se  používá  s operacemi čtení a zápisu pomocí FCB a s
+       operacemi  pro  nalezení prvního a následujícího souboru používající
+       FCB.
+
+
+
+ F u n k c e   1 B H  ( 2 7 ) - poskytnutí informací FAT aktivního disku
+
+    vstup:    AH = 1BH
+
+    výstup:   AL = počet sektorů na blok
+              CX = velikost sektoru v bajtech
+              DX = celkový počet bloků disku
+              DS:BX = ukazatel na bajt popisovače média (identifikátor FAT)
+
+    zničené registry: DS
+
+    Funkce  navrací  charakteristiku  média  a  bajt  popisovače  média pro
+aktivní disk (bajt popisovače média specifikuje typ diskové jednotky).
+
+    Bajt popisovače média (identifikační bajt FAT):
+
+    Bajt popisovače média je omezen na hodnoty F0H až FFH.
+ 
+ +-------+---------------------------------------------------+
+ |  FFH  |    oboustranná disketa 5 1/4", 8 sektorů          |
+ +-------+---------------------------------------------------+
+ |  FEH  |    jednostranná disketa 5 1/4", 8 sektorů nebo    |
+ |       |    jednostranná disketa 8", 26 sektorů nebo       |
+ |       |    jednostranná disketa 8", 8 sektorů             |
+ +-------+---------------------------------------------------+
+ |  FDH  |    oboustranná disketa 5 1/4", 9 sektorů nebo     |
+ |       |    jednostranná disketa 8", 26 sektorů            |
+ +-------+---------------------------------------------------+
+ |  FCH  |    jednostranná disketa, 9 sektorů                |
+ +-------+---------------------------------------------------+
+ |  F9H  |    oboustranná disketa 5 1/4", 15 sektorů         |
+ |       |    oboustranná disketa 3 1/2", 9 sektorů          |
+ +-------+---------------------------------------------------+
+ |  F8H  |    pevný disk                                     |
+ +-------+---------------------------------------------------+
+ |  F0H  |    oboustranná disketa 3 1/2", 18 sektorů nebo    |
+ |       |    jiný nedefinovatelný typ média                 |
+ +-------+---------------------------------------------------+
+
+    Další  informace  o typu média obdržíte pomocí přerušení INT 25H, které
+umožňuje čtení bloku parametrů BIOS (BPB) ze zaváděcího sektoru disku.
+
+Pozn.: Tato funkce mění hodnotu registru DS, proto ji před vyvoláním funkce
+       uschovejte pomocí PUSH DS.
+
+
+
+
+ F u n k c e   1 C H  ( 2 8 ) - poskytnutí informací FAT specifik. disku
+
+    vstup:    AH = 1CH
+              DL = číslo disku (0 = aktivní, 1 = A, 2 = B, atd.)
+
+    výstup:   AL = počet sektorů na blok
+              CX = velikost sektoru v bajtech
+              DX = celkový počet bloků disku
+              DS:BX = ukazatel na bajt popisovače média (identifikátor FAT)
+
+    zničené registry: DS
+
+    Funkce  navrací  charakteristiku  média  a  bajt  popisovače  média pro
+aktivní disk (bajt popisovače média specifikuje typ diskové jednotky).
+
+    Bajt popisovače média (identifikační bajt FAT):
+
+    Bajt popisovače média je omezen na hodnoty F0H až FFH.
+  
+ +-------+---------------------------------------------------+
+ |  FFH  |    oboustranná disketa 5 1/4", 8 sektorů          |
+ +-------+---------------------------------------------------+
+ |  FEH  |    jednostranná disketa 5 1/4", 8 sektorů nebo    |
+ |       |    jednostranná disketa 8", 26 sektorů nebo       |
+ |       |    jednostranná disketa 8", 8 sektorů             |
+ +-------+---------------------------------------------------+
+ |  FDH  |    oboustranná disketa 5 1/4", 9 sektorů nebo     |
+ |       |    jednostranná disketa 8", 26 sektorů            |
+ +-------+---------------------------------------------------+
+ |  FCH  |    jednostranná disketa, 9 sektorů                |
+ +-------+---------------------------------------------------+
+ |  F9H  |    oboustranná disketa 5 1/4", 15 sektorů         |
+ |       |    oboustranná disketa 3 1/2", 9 sektorů          |
+ +-------+---------------------------------------------------+
+ |  F8H  |    pevný disk                                     |
+ +-------+---------------------------------------------------+
+ |  F0H  |    oboustranná disketa 3 1/2", 18 sektorů nebo    |
+ |       |    jiný nedefinovatelný typ média                 |
+ +-------+---------------------------------------------------+
+
+    Další  informace  o typu média obdržíte pomocí přerušení INT 25H, které
+umožňuje čtení bloku parametrů BIOS (BPB) ze zaváděcího sektoru disku.
+
+Pozn.: Tato funkce mění hodnotu registru DS, proto ji před vyvoláním funkce
+       uschovejte pomocí PUSH DS.
+
+
+
+
+ F u n k c e   1 D H  ( 2 9 ) - rezervováno
+
+
+
+
+ F u n k c e   1 E H  ( 3 0 ) - rezervováno
+
+
+
+
+ F u n k c e   1 F H  ( 3 1 ) - rezervováno
+
+
+
+
+ F u n k c e   2 0 H  ( 3 2 ) - rezervováno
+
+
+
+
+ F u n k c e   2 1 H  ( 3 3 ) - čtení s přímým přístupem s použitím FCB
+
+    vstup:    AH = 21H
+              DS:DX = ukazatel na otevřený FCB
+
+    výstup:   AL = 00H - čtení proběhlo úspěšně
+                   01H - nalezen konec souboru, žádná data nepřečtena
+                   02H - prostor DTA příliš malý (přelom segmentu)
+                   03H - nalezen konec souboru, přečtena část dat
+
+    Funkce  čte  specifikovaný  záznam  souboru  do  bufferu na adrese DTA.
+Záznam  je  specifikován  v  FCB nastavením čísla náhodného záznamu (offset
+21H)  a  velikostí  záznamu  (offset 0EH), z těchto údajů je odvozeno číslo
+bloku se záznamem a číslo záznamu v bloku.
+
+    Při práci v síti vyžaduje tato funkce přístupová práva čtení READ.
+
+Pozn.: Položka  náhodného  záznamu  není  po této operaci uložena. Proto je
+       nutné,  aby  program  nastavil  položku  náhodného záznamu vždy před
+       vyvoláním  této  funkce.  Funkce  27H, která je obdobou této funkce,
+       ukládá  automaticky  položku  náhodného záznamu (funkce 27H může též
+       číst záznam vícenásobně).
+
+       Data  jsou čtena do bufferu na adrese označené jako Adresa diskového
+       přenosu  DTA.  Pokud by přenos dat mohl způsobit přetečení segmentu,
+       je vygenerována chyba 2.
+
+       Pokud  je  nalezen konec souboru ještě před načtením celého záznamu,
+       je zbytek záznamu doplněn nulami až do plné velikosti záznamu.
+
+
+
+
+
+ F u n k c e   2 2 H  ( 3 4 ) - zápis s přímým přístupem s použitím FCB
+
+    vstup:    AH = 22H
+              DS:DX = ukazatel na otevřený FCB
+
+    výstup:   AL = 00H - zápis proběhl úspěšně
+                   01H - disk je plný
+                   02H - prostor DTA příliš malý (přelom segmentu)
+
+    Funkce  zapisuje  specifikovaný  záznam  z  bufferu  na  adrese  DTA do
+souboru. Záznam je specifikován číslem náhodného záznamu (offset 21H v FCB)
+a  velikostí  záznamu  (offset 0EH v FCB). Aktivní blok a aktivní záznam v
+bloku jsou odvozeny z čísla náhodného záznamu a velikosti záznamu.
+
+    Při práci v síti vyžaduje tato funkce přístupová práva zápisu WRITE.
+
+Pozn.: Položka  náhodného  záznamu  není  po této operaci uložena. Proto je
+       nutné,  aby  program  nastavil  položku  náhodného záznamu vždy před
+       vyvoláním  této  funkce.  Funkce  28H, která je obdobou této funkce,
+       ukládá  automaticky  položku  náhodného záznamu (funkce 28H může též
+       zapisovat záznam vícenásobně).
+
+       Data  jsou  zapisována  z  bufferu  na  adrese  označené jako Adresa
+       diskového  přenosu  DTA. Pokud by přenos dat mohl způsobit přetečení
+       segmentu, je vygenerována chyba 2.
+
+       Pokud  je  nalezen konec souboru ještě před načtením celého záznamu,
+       je zbytek záznamu doplněn nulami až do plné velikosti záznamu.
+
+       Pokud  má specifikovaný soubor nastaven atribut ochrany proti zápisu
+       Read-Only, zápis se neprovede.
+
+       Je-li  délka  záznamu  menší  než  sektor  (512  bajtů), zapisují se
+       záznamy  do  vyrovnávací  paměti  dokud není k zápisu připraven celý
+       sektor.
+
+
+
+
+
+ F u n k c e   2 3 H  ( 3 5 ) - poskytnutí velikosti souboru s použitím FCB
+
+    vstup:    AH = 23H
+              DS:DX = ukazatel na neotevřený FCB
+
+    výstup:   AL = 00H - pokud byl požadovaný soubor nalezen
+                   FFH - pokud nebyl nalezen žádný vyhovující soubor
+
+    Funkce hlásí velikost souboru jako počet záznamů (zaokrouhleno nahoru).
+Počet záznamů je navracen v položce FCB relativní záznam (offset 21H).
+
+Pozn.: Tato  funkce  má  stejný  účinek,  jakoby  bylo požadováno nastavení
+       ukazatele  relativního  záznamu  na  konec souboru, příští operace s
+       přímým  přístupem  by  probíhala  za  konec souboru (nový záznam při
+       zápisu).
+
+       Před  voláním  funkce  musíte  nastavit  položku  velikosti  záznamu
+       (offset  0EH)  v FCB. Pokud chcete určit velikost souboru v bajtech,
+       mastavte položku velikosti záznamu na hodnotu 1.
+
+       K   určení   velikosti   souboru  s  použitím  funkcí  používajících
+       identifikátory  souboru  použijte  funkci  LSEEK (funkce 42H), která
+       nastaví ukazatel na konec souboru.
+
+
+
+
+
+ F u n k c e   2 4 H   ( 3 6 ) - nastavení relativ. záznamu s použitím FCB
+
+    vstup:    AH = 24H
+              DS:DX = ukazatel na neotevřený FCB
+
+    výstup:   žádný
+
+    Funkce  nastaví položku relativního záznamu v FCB tak, aby souhlasila s
+nastavením položek aktivního bloku a aktivního záznamu v FCB.
+
+Pozn.: Tato  funkce usnadňuje přepínání ze sekvenčních operací na operace s
+       přímým  přístupem.  Zpětné  přepnutí  je  možné tím způsobem, že při
+       operacích  s  přímým  přístupem  DOS  automaticky  nastavuje položky
+       aktivního bloku a aktivního záznamu v FCB.
+
+
+
+
+
+ F u n k c e   2 5 H   ( 3 7 ) - nastavení vektoru přerušení
+
+    vstup:    AH = 25H
+              AL = číslo přerušení
+              DS:DX = adresa nového ovladače přerušení
+
+    výstup:   žádný
+
+Pozn.: Před  voláním  funkce  25H  si  můžete  vyžádat  informaci  o adrese
+       současného  ovladače  přerušení  (pomocí  funkce  35H),  aby byl váš
+       program  schopen  navrátit  původní  adresu  ovladače  přerušení při
+       ukončení  programu.  Toto  je  preferovaná cesta k nastavení vektoru
+       přerušení. Nepoužívejte nastavení adresy přerušení přímo v paměti !
+
+
+
+
+
+ F u n k c e   2 6 H   ( 3 8 ) - vytvoření programového segmentu
+
+    vstup:    AH = 26H
+              DX = adresa segmentu nového prefixu programového segmentu
+              CS:0 = prefix program. segmentu, z kterého se zkopírují inf.
+
+    výstup:   žádný
+
+    Funkce  vytvoří  nový  prefix  programového  segmentu  (PSP),  aby byly
+votvořeny podmínky k oddělenému načtení podprogramu a jeho spuštění. PSP na
+začátku segmentu současného kódu programu se zkopíruje do prvních 256 bajtů
+nového  segmentu  specifikovaného  v  registru  DX.  Nový  PSP  se uloží se
+současným   nastavením   vektorů  přerušení  INTú22h,  INTú23H  a  INTú24H.
+Informace  o  velikosti  paměti na relativní adrese 06H nového PSP se uloží
+souhlasně podle skutečného stavu volné paměti.
+
+Pozn.: Tato  funkce  je  u  verzí  DOS  2.0 a vyšších nahrazena funkcí EXEC
+       (funkce 4BH); tato funkce by neměla být používána.
+
+
+
+
+ F u n k c e   2 7 H   ( 3 9 ) - čtení bloku s přímým přístupem s použ. FCB
+
+    vstup:    AH = 27H
+              CX = počet záznamů ke čtení
+              DS:DX = ukazatel na otevřený FCB
+
+    výstup:   AL = 00H - čtení proběhlo úspěšně
+                   01H - nalezen konec souboru, poslední záznam vcelku
+                   02H - prostor DTA příliš malý (přelom segmentu)
+                   03H - nalezen konec souboru, přečtena část dat
+              CX = počet skutečně přečtených záznamů
+
+    Funkce  čte  jeden  nebo  více  záznamů  do  paměti na současnou adresu
+diskových  přenosů  DTA.  Počet záznamů specifikuje registr CX. Je-li počet
+záznamů  nastaven  na  0,  ukončí  se funkce bez čtení jakéhokoliv záznamu.
+Čtení  začíná na relativní adrese záznamu (offset 21H). Velikost záznamů je
+specifikována položkou velikosti záznamu (offset 0EH). Položky aktivní blok
+a  aktivní  záznam  se  nastaví  odpovídajícím způsobem k položce relativní
+záznam.
+
+    Při práci v síti vyžaduje tato funkce přístupová práva čtení READ.
+
+Pozn.: Použijte  funkci 1AH k nastavení adresy diskových přenosů DTA. Pokud
+       by  přenos  dat  mohl  způsobit  přetečení segmentu, je vygenerována
+       chyba 2.
+
+       Pokud  je  nalezen konec souboru ještě před načtením celého záznamu,
+       je zbytek záznamu doplněn nulami až do plné velikosti záznamu.
+
+       Po  načtení  požadovaného  záznamu  uloží  tato funkce novou hodnotu
+       položky  relativního záznamu a položky aktivní blok a aktivní záznam
+       tak,  že  ukazují  na  nový záznam. Funkce 21H je jednodušší obměnou
+       této funkce, kromě toho, že funkce 21H neukládá automaticky posledně
+       jmenované  tři  položky  a  může  číst  pouze  jeden záznam na jedno
+       volání.
+
+
+
+
+
+ F u n k c e   2 8 H   ( 4 0 ) - zápis bloku s přímým přístupem s použ. FCB
+
+    vstup:    AH = 28H
+              CX = počet záznamů k zápisu
+              DS:DX = ukazatel na otevřený FCB
+
+    výstup:   AL = 00H - zápis proběhl úspěšně
+                   01H - disk je plný
+                   02H - prostor DTA příliš malý (přelom segmentu)
+              CX = počet zapsaných záznamů
+
+    Funkce  zapisuje  jeden  nebo více záznamů ze současné adresy diskových
+přenosů  DTA na disk. Počet záznamů specifikuje registr CX. Zápis začíná na
+relativní  adrese  záznamu  (offset 21H). Velikost záznamů je specifikována
+položkou  velikosti  záznamu  (offset  0EH). Položky aktivní blok a aktivní
+záznam se nastaví odpovídajícím způsobem k položce relativní záznam.
+
+    Při práci v síti vyžaduje tato funkce přístupová práva zápisu WRITE.
+
+Pozn.: Použijte  funkci 1AH k nastavení adresy diskových přenosů DTA. Pokud
+       by  přenos  dat  mohl  způsobit  přetečení segmentu, je vygenerována
+       chyba 2.
+
+       Pokud  zapisovaný záznam nezaplní celý sektor (512 Bajtů), DOS uloží
+       data do vyrovnávací paměti a uloží sektor až po jeho naplnění (resp.
+       až ve chvíli, kdy je požadován přístup na jiný sektor než který je v
+       paměti).
+
+       Pokud  specifikovaný soubor má nastaven atribut "pouze čtení", zápis
+       se neprovede.
+
+       Pokud  specifikujete  hodnotu  v  CX  =  0  (počet  záznamů), funkce
+       nezapíše   žádný  záznam,  avšak  zkrátí  délku  souboru  na  pozici
+       specifikovanou  číslem  relativního záznamu. Tato funkce se používá,
+       pokud  chcete logicky zrušit záznamy za koncem souboru a uvolnit tak
+       místo na disku.
+
+       Po  zápisu  požadovaného  záznamu  uloží  tato  funkce novou hodnotu
+       položky  relativního záznamu a položky aktivní blok a aktivní záznam
+       tak,  že  ukazují  na  nový záznam. Funkce 22H je jednodušší obměnou
+       této funkce, kromě toho, že funkce 22H neukládá automaticky posledně
+       jmenované  tři  položky a může zapisovat pouze jeden záznam na jedno
+       volání.
+
+
+
+
+ F u n k c e   2 9 H   ( 4 1 ) - rozbor jména souboru
+
+    vstup:    AH = 29H
+              DS:SI = ukazatel na řetězec, který má být rozebrán
+              ES:DI = ukazatel na neotevřenou položku FCB
+              AL = parametry rozboru:
+                   bit 0 - zkoumání od posledního odděl. znaku (ingorován)
+                       1 - identifikační  bajt  disku  v FCB je modifikován
+                           pouze  pokud  je  disk specifikován v příkazovém
+                           řádku
+                       2 - jméno  souboru v FCB je modifikováno pouze pokud
+                           je  jméno  souboru  specifikováno  v  příkazovém
+                           řádku
+                       3 - rozšíření  jména  souboru  v FCB je modifikováno
+                           pouze   pokud   je   rozšíření   jména   souboru
+                           specifikováno v příkazovém řádku
+                       4-7 ignorovány
+
+    výstup:   AL = FFH - funkce neproběhla úspěšně
+                   00H - funkce úspěšná, nenalezeny žádné maskovací znaky
+                   01H - funkce úspěšná, nalezeny maskovací znaky (?,*)
+              DS:SI = první bajt po řetězci, který se rozebíral
+              ES:DI = nový neotevřený FCB
+
+    Funkce  29H  provádí  rozbor  příkazového řádku pro specifikaci souboru
+pomocí  formy d:JMÉNO_SOUBORU.TYP. Pokud je nalezeno jméno souboru, vytvoří
+se  FCB.  Jinak  funkce  navrací v AL hodnotu FFH. Funkce umožňuje programu
+nastavit  aktivní  disk,  jméno  souboru  a rozšíření (typ) jména souboru a
+ponechat na uživateli, aby změnil tyto aktivní hodnoty.
+
+Pozn.: DS:SI ukazuje na lokaci řetězce specifikace souboru, jehož rozbor má
+       být  proveden  (text  z příkazového řádku). ES:DI ukazuje na lokaci,
+       kde  bude  vytvořen  nový FCB. V nižší tetrádě registru AL (tj. jeho
+       nižší čtyři bity) jsou specifikovány parametry pro rozbor:
+
+         - bit 0: Pokud  je  nastaven  na  1, hledá se jméno souboru i přes
+                  počáteční  oddělovací znaky souborů (např. mezera). Pokud
+                  je  nastaven  na  0, předpokládá se, že jméno specifikace
+                  souboru začíná na prvním bajtu příkazového řádku.
+
+         - bit 1: Pokud je nastaven na 1, nastaví funkce bajt disku pouze v
+                  případě, že povelový řádek obsahuje specifikaci disku. To
+                  umožňuje programu definovat svůj vlastní implicitní disk.
+                  Pokud je nastaven na 0, je disk nastavem na specifikovaný
+                  disk nebo na implicitní disk (hodnota 0).
+
+         - bit 2: Pokud  je nastaven na 1, změní funkce jméno souboru v FCB
+                  pouze  v  případě,  že  nalezne  platné  jméno  souboru v
+                  příkazovém  řádku.  To  umožňuje  programu  nastavit  své
+                  implicitní    jméno    souboru,   které   může   uživatel
+                  předefinovat. Pokud je bit nastaven na 0 a není v řetězci
+                  specifikováno  jméno souboru, nastaví se jméno souboru na
+                  8 mezer.
+
+         - bit 3: Pokud  je  nastaven  na  1,  změní funkce rozšíření jména
+                  souboru   v  FCB  pouze  v  případě,  že  nalezne  platné
+                  rozšíření  jména souboru v příkazovém řádku. Pokud je bit
+                  nastaven  na  0  a  není  v  řetězci  specifikováno jméno
+                  souboru, nastaví se jméno souboru na 3 mezery.
+
+
+       Pokud  funkce  nalezne  ve  specifikaci jména souboru maskovací znak
+       "*",  nahradí  zbytek  jména  souboru  nebo  rozšíření jména souboru
+       maskovacími znaky "?". Pokud je zbytek rozboru úspěšný, navrátí v AL
+       hodnotu   01H   informující   program,   že   musí   použít   funkce
+       nalezni_první/nalezni_další (tj. funkce 11H a 12H).
+
+       Pokud  operace  neproběhne  úspěšně,  navrátí AL hodnotu FFH a druhý
+       bajt FCB (ES:DI+1) bude prázdný.
+
+       Funkce  29H  nemůže  pracovat  s  popisem cest souborů. Soubory jsou
+       popsány  pouze  ve  tvaru d:jméno.typ (d=označení disku; jméno=jméno
+       souboru; typ=typ souboru, rozšíření jména souboru).
+
+       Jako oddělovače jména souboru se používají znaky:
+         : . ; , = + / " [ ] < > | mezera tabelátor
+
+       Ukončovací  znaky  jména  souboru  zahrnují všechny oddělovací znaky
+       plus  jakýkoliv  řídící  znak  (tj. znak s kódem menším než 20H=32).
+       Jméno souboru nemůže obsahovat ukončovací znak jména souboru.
+
+
+
+
+ F u n k c e   2 A H   ( 4 2 ) - poskytnutí systémového data
+
+    vstup:    AH = 2AH
+
+    výstup:   AL = den v týdnu (0 - 6; 0 = neděle)
+              CX = rok (1980 - 2099)
+              DH = měsíc (1 - 12)
+              DL = den (1 - 31)
+
+Pozn.: Příručky  k  DOS 2.00 a 2.10 nesrávně uvádí, že funkce 2CH navrací v
+       registru AL den v týdnu.
+
+       Číselné údaje jsou v binární formě.
+
+
+
+
+ F u n k c e   2 B H   ( 4 3 ) - nastavení systémového data
+
+    vstup:    AH = 2BH
+              CX = rok (1980 - 2099)
+              DH = měsíc (1 - 12)
+              DL = den (1 - 31)
+
+    výstup:   AL = 00H - bylo zadáno správné datum
+                   FFH - bylo zadáno neplatné datum
+
+Pozn.: Číselné údaje jsou v binární formě.
+
+
+
+
+ F u n k c e   2 C H   ( 4 4 ) - poskytnutí systémového času
+
+    vstup:    AH = 2CH
+
+    výstup:   CH = hodina (0 - 23)
+              CL = minuta (0 - 59)
+              DH = sekunda (0 - 59)
+              DL = setina sekundy (0 - 99)
+
+Pozn.: V   mnoha   systémech   je   položka  setiny  sekundy  (registr  DL)
+       zaokrouhlována po částech 1/18.2 sekundy.
+
+       V  některých systémech, jejichž hodiny neumožňují provádět krokování
+       po setinách sekundy, může být hodnota v DL nedefinovatelná.
+
+       Číselné údaje jsou v binární formě.
+
+
+
+
+ F u n k c e   2 D H   ( 4 5 ) - nastavení systémového času
+
+    vstup:    AH = 2CH
+              CH = hodina (0 - 23)
+              CL = minuta (0 - 59)
+              DH = sekunda (0 - 59)
+              DL = setina sekundy (0 - 99)
+
+    výstup:   AL = 00H - bylo zadán správný čas
+                   FFH - bylo zadán neplatný čas
+
+Pozn.: Číselné údaje jsou v binární formě.
+
+
+
+
+
+ F u n k c e   2 E H   ( 4 6 ) - zapnutí nebo vypnutí přepínače VERIFY
+
+    vstup:    AH = 2EH
+              AL = 00H - vypnutí přepínače VERIFY
+                   01H - zapnutí přepínače VERIFY
+              DL = 00H
+
+    výstup:   žádný
+
+    Funkce  2EH  umožňuje  zapnout  nebo  vypnout přepínač VERIFY. Pokud je
+přepínač  VERIFY  zapnut  (AL  = 01H), čte DOS bajty kontrolního součtu CRC
+(Cyclic  Redundancy  Check) právě zapisovaných dat a ověřuje, zda jsou data
+správně  zapsána.  Nastavení  tohoto  přepínače  tedy  nezpůsobí  ověřování
+správnosti  zápisu  dat  kontrolním  čtením  dat  po zápisu (a porovnáním s
+původními  daty),  provádí  pouze  kontrolu  čitelnosti  dat pomocí ověření
+kontrolního  součtu. Tento přepínač je vhodné zapnout při zápisu kritických
+dat  na  disk,  v  běžném provozu je vhodnější jej vypnout, neboť zpomaluje
+provádění diskových operací.
+
+Pozn.: U verzí DOS 1 a 2 musí být DL nastaven před voláním funkce na 0.
+
+       Síťové disky nepodporují funkci pro verifikaci dat.
+
+       K  zjištění  stavu  přepínače VERIFY použijte funkci 54H (poskytnutí
+       nastavení přepínače VERIFY).
+
+
+
+
+
+ F u n k c e   2 F H   ( 4 7 ) - poskytnutí adresy diskových přenosů (DTA)
+
+    vstup:    AH = 2FH
+
+    výstup:   ES:BX = adresa současně nastavené adresy DTA
+
+Pozn.: Pokud  není  použita  funkce 1AH (nastavení adresy diskových přenosů
+       DTA),  je automaticky nastavena jako DTA vyrovnávací paměť na adrese
+       80H v prefixu programového segmentu PSP a o délce 128 bajtů.
+
+
+
+
+
+ F u n k c e   3 0 H   ( 4 8 ) - poskytnutí čísla verze DOS
+
+    vstup:    AH = 30H
+
+    výstup:   AL = hlavní číslo verze operačního systému DOS
+              AH = doplňkové číslo verze operačního systému DOS
+
+Pozn.: DOS verze 1.x navrací v AL hodnotu 00H.
+
+       Je  třeba  si uvědomit, že např. verze 2.1 je uložena jako 02H (2) a
+       0AH (10), tj. jako 2.10 a ne jako 02H a 01H (= 2.01).
+
+Příklad: Pokud  je  tato  funkce  vyvolána  např.  pod  DOS 2.11, v AL bude
+         navrácena hodnota 02H a v AH bude hodnota 0BH (= 11).
+
+
+
+
+
+ F u n k c e   3 1 H   ( 4 9 ) - ukončení procesu a jeho uchování v paměti
+
+    vstup:    AH = 31H
+              AL = návratový kód
+              DX = velikost rezidentní části (v odstavcích)
+
+    výstup:   neexistuje návrat
+
+    Funkce  přeruší  právě  probíhající  proces, avšak ponechá jeho určitou
+část  rezidentně  v  paměti. Funkce 31H je rozšířením přerušení DOS INT 27H
+(přerušení  s  uchováním  kódu  programu v paměti); umožňuje dvě doplňující
+funkce:  umožňuje  ponechat  v  paměti  rezidentně  více než 64K a umožňuje
+navrátit nadřazenému procesu návratový kód.
+
+Pozn.: Tato   funkce   neuvolňuje   žádnou  paměť,  která  byla  přemístěna
+       přerušeným procesem pomocí funkce 48H (přidělení paměti).
+
+       Nadřazený  proces  může  obdržet  návratový  kód přerušeného procesu
+       pomocí  funkce  4DH  nebo v příkazovém souboru DOS testováním pomocí
+       funkce ERRORLEVEL.
+
+       Otevřené soubory nejsou touto funkcí uzavřeny.
+
+
+
+
+ F u n k c e   3 2 H   ( 5 0 ) - rezervováno
+
+
+
+ F u n k c e   3 3 H   ( 5 1 ) - poskytnutí nebo nastavení statutu BREAK
+
+    vstup:    AH = 33H
+              AL = 00H - poskytnutí statutu BREAK
+                   01H - nastavení statutu BREAK
+              DL = 00H - vypnutí příznaku BREAK (pouze při AL = 01H)
+                   01H - zapnutí příznaku BREAK (pouze při AL = 01H)
+
+    výstup:   DL = 00H - BREAK je vypnut (pouze při AL = 00H)
+                   01H - BREAK je zapnut (pouze při AL = 00H)
+
+    Operační  systém  DOS verze 2.00 a pozdější umožňuje rozšířit provádění
+kontroly  stisku  kombinace kláves <Ctrl>-<Break> (<Ctrl>-C) kromě vstupů a
+výstupů  na  konzolu  (tj.  funkce  01H  - 0CH) také na testování při všech
+ostatních  vstupně/výstupních  operacích.  K  zapnutí  kontroly  při  všech
+vstupně/výstupních operacích slouží tato funkce 33H.
+
+Pozn.: Standardní  nastavení  kontroly <Ctrl>-<Break> (<Ctrl>-C) je vypnutý
+       stav,  tj. kontrola se provádí pouze při operacích vstupu/výstupu na
+       konzolu.
+
+       Stav  přepínače  BREAK lze nastavovat z příkazového řádku DOS pomocí
+       povelu BREAK ON nebo BREAK OFF.
+
+       Programy,  které  používají  volání  funkcí  06H  nebo  07H ke čtení
+       kombinace  kláves <Ctrl>-<Break> (<Ctrl>-C) jako dat, musí zajistit,
+       aby byl přepínač BREAK vypnut.
+
+
+
+
+ F u n k c e   3 4 H   ( 5 2 ) - rezervováno
+
+
+
+
+ F u n k c e   3 5 H   ( 5 3 ) - poskytnutí vektoru přerušení
+
+    vstup:    AH = 35H
+              AL = číslo přerušení
+
+    výstup:   ES:BX = ukazatel na obsluhu přerušení
+
+    Funkce navrací adresu obslužného programu pro požadované přerušení.
+
+Pozn.: Po  volání funkce 35H můžete nastavit novou adresu vektoru přerušení
+       pomocí  funkce  25H.  Toto  je  preferovaná  cesta  ke čtení vektoru
+       přerušení, programy by neměly získávat vektor přerušení přímo čtením
+       tabulky vektorů.
+
+
+
+
+
+ F u n k c e   3 6 H   ( 5 4 ) - poskytnutí volného místa disku
+
+    vstup:    AH = 36H
+              DL = číslo disku (0=aktivní disk, 1=A, 2=B, atd.)
+
+    výstup:   AX = počet sektorů na alokační blok
+                   (FFFFH = neplatná specifikace disku)
+              BX = počet volných alokačních bloků disku
+              CX = počet bajtů na sektor
+              DX = celkový počet alokačních bloků na disku
+
+    Funkce  navrací počet volných alokačních bloků disku a jiné informace o
+disku podobně jako funkce 1BH a 1CH se třemi odlišnostmi:
+
+    - navrací počet volných bloků (namísto tabulky popisovače média)
+    - nevrací ukazatel na popisovací bajt média
+    - navrací chybový kód, pokud je specifikovaný disk neplatný
+
+
+
+
+
+ F u n k c e   3 7 H   ( 5 5 ) - rezervováno
+
+    nastavení  oddělovacího znaku parametrů příkazu (viz povel SWITCHAR pro
+souboru CONFIG.SYS).
+
+
+
+ F u n k c e   3 8 H   ( 5 6 ) - poskytnutí/nastavení národnost. informací
+
+    vstup:    AH = 38H
+              AL = 00H - současně nastavená země (implicitní země)
+                 = kód země (› DOS 2.01)
+                 = FFH - kód země › 255 je uložen v registru BX (› DOS3.00)
+              BX = 16-bitový kód země (pokud je AL = FFH) (› DOS 3.00)
+              DS:DX = ukazatel na vyrovnávací paměť (32 resp. 34 bajtů)
+              DX = FFFFH pro nastavení kódu země v AL resp. BX (› DOS 3.00)
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   02H (2) - soubor nenalezen (není tabulka pro spec. zemi)
+              BX = kód země (pokud je zadán AL = 0)
+              naplní tab. na adrese DS:DX národnostně závislými informacemi
+
+    Funkce  navrací  (pokud  je  v  DS:DX  ukazatel  na  vyrovnávací paměť)
+národnostně  závislé informace pro implicitní zemi (AL = 00H; v AL resp. BX
+přitom  navrací  kód  země)  nebo  pro specifikovanou zemi (AL = kód země -
+pouze  verze  DOS  › 2.01) nebo umožňuje specifikovat novou implicitní zemi
+(pokud  je  DX  =  FFFFH; v AL resp. v BX je nastaven nový kód země - pouze
+verze  DOS  › 3.00 - nebo je AL=FFH a kód země je uložen v BX). Normálně je
+kód země nastaven v souboru CONFIG.SYS příkazem COUNTRY.
+
+    Pro  kódy  země  větší  než 254 (FDH) zadejte v registru AL hodnotu FFH
+(255) a kód země uveďte v registru BX (pouze verze DOS › 3.00).
+
+    Informace  navrácená  na  adrese  DS:DX  pro  DOS  verze  3.00  a vyšší
+(34-bajtová tabulka) má následující strukturu:
+ 
++------------+-------+---------------------------------------------------+
+|   offset   | bajtů |         význam                                    |
++------------+-------+---------------------------------------------------+
+|  00H ( 0)  |   2   |    formát data (viz následující tabulka)          |
+|  02H ( 2)  |   5   |    znak měny (řetězec ASCIIZ)                     |
+|  07H ( 7)  |   2   |    oddělovač tisíců (řetězec ASCIIZ)              |
+|  09H ( 9)  |   2   |    oddělovač desetinných míst (řetězec ASCIIZ)    |
+|  0BH (11)  |   2   |    oddělovač data (řetězec ASCIIZ)                |
+|  0DH (13)  |   2   |    oddělovač času (řetězec ASCIIZ)                |
+|  0FH (15)  |   1   |    formát měny (viz dále uvedená tabulka)         |
+|  10H (16)  |   1   |    počet významných desetinných číslic v měně     |
+|  11H (17)  |   1   |    formát času (bit0=0 - 12 hod; bit0=1 - 24 hod) |
+|  12H (18)  |   4   |    ukazatel na FAR porceduru, která provádí       |
+|            |       |      příp. mapování znaků pro specifikovanou zemi |
+|  16H (22)  |   2   |    oddělovač seznamu dat (řetězec ASCIIZ)         |
+|  18H (24)  |  10   |    rezervováno                                    |
++------------+-------+---------------------------------------------------+
+
+Možné formáty data:
+  +------------+----------+--------------------------------+
+  |   hodnota  |   země   |    formát zobrazení data       |
+  +------------+----------+----------+----------+----------+
+  |   00H (0)  |   USA    |  měsíc   |   den    |   rok    |
+  |   01H (1)  |  Evropa  |   den    |  měsíc   |   rok    |
+  |   02H (2)  | Japonsko |   rok    |  měsíc   |   den    |
+  +------------+----------+----------+----------+----------+
+
+Hodnota položky formátu měny:
+  +------------+---------------------------------------------------------+
+  |   hodnota  |            význam                                       |
+  +------------+---------------------------------------------------------+
+  |   00H (0)  | symbol měny předchází hodnotu; mezi symbolem a hodnotou |
+  |            | není žádná mezera                                       |
+  |   01H (1)  | symbol měny následuje za hodnotou; mezi symbolem a      |
+  |            | hodnotou není žádná mezera                              |
+  |   02H (2)  | symbol měny předchází před hodnotou; mezi symbolem a    |
+  |            | hodnotou je jedna mezera                                |
+  |   03H (3)  | symbol měny následuje za hodnotou; mezi symbolem a      |
+  |            | hodnotou je jedna mezera                                |
+  |   04H (4)  | symbol měny nahrazuje oddělovač desetinných míst (pouze |
+  |            | DOS verze 3.2 a vyšší)                                  |
+  +------------+---------------------------------------------------------+
+
+    Rutina mapování znaků DOS (CaseMap), jejíž adresa (jako segment:offset)
+se  navrací  s  národnostně závislými informacemi, převádí znaky s hodnotou
+80H  až  FFH  na  jejich  ekvivalenty velkých písmen. K použití této rutiny
+umístěte  nejdříve  mapovaný  znak  do registru AL. Potom proveďte vzdálené
+volání  FAR  CALL  na  tuto  rutinu. V registru AL bude navrácen velký znak
+ekvivalentní  mapovanému  znaku. Např. povel DOS SORT používá tuto rutinu k
+přiřazení  kódu "A" a "a" znakům ď, ä, Ď, Ť, Ä, Á, ž a á (tyto znaky jsou v
+standardní tabulce znaků IBM zobrazovány jako národní verze znaků A).
+
+    Informace  navrácená  na  adrese  DS:DX  pro DOS verze 2.x (32-bajtová
+tabulka) má následující strukturu:
+ 
++------------+-------+---------------------------------------------------+
+|   offset   | bajtů |         význam                                    |
++------------+-------+---------------------------------------------------+
+|  00H ( 0)  |   2   |    formát data a času (viz následující tabulka)   |
+|  02H ( 2)  |   ?   |    znak měny (řetězec ASCIIZ)                     |
+|   ?H ( ?)  |   ?   |    oddělovač tisíců (řetězec ASCIIZ)              |
+|   ?H ( ?)  |   ?   |    oddělovač desetinných míst (řetězec ASCIIZ)    |
+|   ?H ( ?)  |   ?   |    rezervováno (doplněk do 32 bajtů)              |
++------------+-------+---------------------------------------------------+
+   - řetězce následují ihned za sebou
+
+Možné formáty data a času:
+  +------------+----------+-----------------+------------------------+
+  |   hodnota  |   země   |  zobrazení data |     zobrazení času     |
+  +------------+----------+-----------------+------------------------+
+  |   00H (0)  |   USA    |  měsíc/den/rok  |  hodina:minuta:sekunda |
+  |   01H (1)  |  Evropa  |  den/měsíc/rok  |  hodina:minuta:sekunda |
+  |   02H (2)  | Japonsko |  rok:měsíc:den  |  hodina:minuta:sekunda |
+  +------------+----------+-----------------+------------------------+
+
+
+         Kódy zemí:
++-----------+--------------+------+--------+-----------+----------------+-+
+|  kód země |     země     | kláv.|  datum |   čas     |     měna       |d|
++-----------+--------------+------+--------+-----------+----------------+-+
+|  3DH ( 61)|Austrálie     |      |DD-MM-RR|13:00:00   |   $1,000.00    |,|
+|  20H ( 32)|Belgie        |      |DD/MM/RR|13:00:00   |    1 000,00 F  |;|
+|0352H (850)|Československo|keybCS|DD.MM.RR|13.00.00   |    1 000,00 Kčs|;|
+|  2DH ( 45)|Dánsko        |      |DD/MM/RR|13.00:00   |    1.000,00 DKR|;|
+|0166H (358)|Finsko        |      |DD-MM-RR|13:00:00   |    1 000,00 MK |;|
+|  21H ( 33)|Francie       |keybFR|DD/MM/RR|13:00:00   |    1 000,00 F  |;|
+|  27H ( 39)|Itálie        |keybIT|DD/MM/RR|13:00:00   |    1.000,Lit.  |;|
+|03CCH (972)|Izrael        |      |DD/MM/RR|13:00:00   |  Ö 1,000.00    |,|
+|  02H (  2)|Kanada        |      |RR-MM-DD|13:00:00   |    1 000,00 $  |;|
+|0311H (785)|Middle East   |      |DD/MM/RR|01:00:00 PM|    1.000,000 $ |;|
+|  31H ( 49)|Německo       |keybGR|DD.MM.RR|13.00.00   |  DM1.000,00    |;|
+|  1FH ( 31)|Nizozemsko    |      |DD-MM-RR|13:00:00   |   ť1.000,00    |;|
+|  2FH ( 47)|Norsko        |      |DD/MM/RR|13.00.00   | KR 1.000,00    |;|
+|015FH (351)|Portugalsko   |      |DD/MM/RR|13:00:00   |    1.000$00    |;|
+|  22H ( 34)|Španělsko     |keybSP|DD/MM/RR|13:00:00   |    1.000,00 Ř  |;|
+|  2CH ( 44)|Spojené král. |keybUK|DD-MM-RR|13:00:00   |   Ľ1,000.00    |,|
+|  01H (  1)|Spojené státy |      |MM-DD-RR|01:00:00 PM|   $1,000.00    |,|
+|  2EH ( 46)|Švédsko       |      |RR-MM-DD|13.00.00   |SEK 1.000,00    |;|
+|  29H ( 41)|Švýcarsko     |      |DD.MM.RR|13.00.00   | Fr 1,000.00    |,|
++-----------+--------------+------+--------+-----------+----------------+-+
+ d = oddělovač výpisu dat
+
+Pozn.: Verze operačního systému DOS 2.00 neměla tuto funkci plně obsazenou,
+       poskytovala  pouze národnostně závislě informace pro implicitní zemi
+       (s  omezenou  tabulkou).  Verze  DOS  2.01  již  umožňuje poskytnutí
+       národnostních informací i o jiných zemích. Verze › DOS 3.00 umožňuje
+       používat  čísla  kódů zemí větší než 255 a nastavovat implicitní kód
+       země.
+
+
+
+
+
+
+ F u n k c e   3 9 H   ( 5 7 ) - vytvoření adresáře (MKDIR)
+
+    vstup:    AH = 39H
+              DS:DX = ukazatel na jméno adresáře k vytvoření (řet. ASCIIZ)
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   03H - cesta nenalezena
+                   05H - požadavek odmítnut nebo adresář již existuje
+
+    Funkce  39H  (MKDIR)  vytváří  podadresář, jehož cesta je specifikována
+pomocí  řetězce  ASCIIZ  na  adrese  DS:DX.  Délka řetězce je omezena na 64
+znaků.  Pokud funkce není schopna vytvořit adresář, nastaví příznak přenosu
+CF a navrátí chybový kód v registru AX.
+
+   Při práci v síti vyžaduje tato funkce přístupová práva vytváření CREATE.
+
+Pozn.: Jméno adresáře může obsahovat označení disku.
+
+       Pokud některý z adresářů v cestě neexistuje, adresář se nevytvoří.
+
+       Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+
+
+
+ F u n k c e   3 A H   ( 5 8 ) - zrušení adresáře (RMDIR)
+
+    vstup:    AH = 3AH
+              DS:DX = ukazatel na jméno adresáře k zrušení (řetězec ASCIIZ)
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   03H ( 3) - cesta nenalezena
+                   05H ( 5) - požadavek odmítnut (adresář není prázdný)
+                   10H (16) - nelze zrušit aktivní adresář
+
+    Funkce 3AH (RMDIR) ruší podadresář, jehož cesta je specifikována pomocí
+řetězce ASCIIZ na adrese DS:DX. Délka řetězce je omezena na 64 znaků. Pokud
+funkce  není  schopna  zrušit adresář, nastaví příznak přenosu CF a navrátí
+chybový kód v registru AX.
+
+   Při práci v síti vyžaduje tato funkce přístupová práva vytváření CREATE.
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+
+
+
+
+ F u n k c e   3 B H   ( 5 9 ) - změna adresáře (CHDIR)
+
+    vstup:    AH = 3BH
+              DS:DX = ukazatel na jméno nového adresáře (řetězec ASCIIZ)
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   03H ( 3) - cesta nenalezena
+
+    Funkce  3BH  (CHDIR) změní aktivní adresář na nový adresář, jehož cesta
+je  specifikována  pomocí  řetězce ASCIIZ na adrese DS:DX. Délka řetězce je
+omezena na 64 znaků. Pokud funkce není schopna nalézt nový adresář, nastaví
+příznak  přenosu  CF a navrátí chybový kód v registru AX (a adresář zůstane
+nezměněn).
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+       Označení  nové  cesty  může obsahovat označení disku (změní se cesta
+       pro daný disk).
+
+
+
+
+
+ F u n k c e   3 C H   ( 6 0 ) - vytvoření souboru (CREAT)
+
+    vstup:    AH = 3CH
+              CX = atributy souboru
+              DS:DX = ukazatel na jméno nového souboru (řetězec ASCIIZ)
+
+    výstup:   AX = identifikátor souboru (pokud není CF nastaven)
+                 = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   03H ( 3) - cesta nenalezena
+                   04H ( 4) - není  volný  žádný identifikátor souboru (tj.
+                              je otevřeno příliš mnoho souborů)
+                   05H ( 5) - požadavek  odmítnut  (soubor má ochranu proti
+                              zápisu nebo je základní adresář plný)
+
+    Funkce  3CH  otevře soubor, jehož jméno je specifikováno pomocí řetězce
+ASCIIZ  na  adrese DS:DX. Pokud soubor ještě neexistuje, vytvoří jej. Pokud
+soubor  se specifikovaným jménem již existuje, zkrátí jej na nulovou délku,
+tj.  zruší všechna stará data ze souboru (!). Soubor je otevřen pro čtení i
+zápis.
+
+   Při práci v síti vyžaduje tato funkce přístupová práva vytváření CREATE.
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+       Označení  nové  cesty  může obsahovat označení disku (změní se cesta
+       pro daný disk).
+
+       Registr CX specifikuje atributy vytvářeného souboru:
+         +----------+-------------------------------+
+         |    CX    | specifikované atributy        |
+         +----------+-------------------------------+
+         |  00H (0) | normální soubor               |
+         |  01H (1) | soubor pouze pro čtení (R/O)  |
+         |  02H (2) | skrytý soubor (HID)           |
+         |  04H (4) | systémový soubor              |
+         +----------+-------------------------------+
+         - součtem hodnot můžete atributy kombinovat (blíže viz "Adresářová
+           položka")
+
+       Informace může být zapisována i do souboru vytvořeného v módu "pouze
+       čtení".  Ovšem  při  použití  této  funkce  k  otevření existujícího
+       souboru s nastaveným příznakem "pouze čtení" bude generována chyba.
+
+       Ke změně atributů souboru lze použít funkci CHMOD (43H).
+
+
+
+
+ F u n k c e   3 D H   ( 6 1 ) - otevření souboru
+
+    vstup:    AH = 3DH
+              AL = mód otevření
+              DS:DX = ukazatel na jméno souboru (řetězec ASCIIZ)
+
+    výstup:   AX = identifikátor souboru (pokud není CF nastaven)
+                 = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   01H ( 1) - neplatné číslo funkce
+                   02H ( 2) - soubor nenalezen
+                   03H ( 3) - cesta nenalezena
+                   04H ( 4) - není   volný   žádný   identifikátor  souboru
+                              (příliš mnoho otevřených souborů)
+                   05H ( 5) - požadavek  odmítnut
+                   0CH (12) - mód otevření neplatný
+
+    Funkce  3DH  otevře  soubor  (a  přiřadí mu identifikační slovo), jehož
+jméno  je  specifikováno  pomocí  řetězce ASCIIZ na adrese DS:DX s použitím
+bajtu  "mód  otevření"  k  určení,  jakým  způsobem bude prováděn k souboru
+přístup.  Funkce otevře jakýkoliv existující soubor včetně skrytých souborů
+a nastaví velikost záznamu na 1úbajt.
+
+Kódování módů otevření v AL:
+ +---+---+---+---+---+---+---+---+-----------------+---------------------+
+ | 7 | 6 | 5 | 4 | 3 | 2 | 1 | 0 |  mód otevření   |       poznámka      |
+ +---+---+---+---+---+---+---+---+-----------------+---------------------+
+ | . | . | . | . | . | A | A | A |  mód přístupu   | přístup čtení/zápis |
+ | . | . | . | . | R | . | . | . |  rezervováno    | vždy 0              |
+ | . | S | S | S | . | . | . | . |  mód sdílení    | v DOS 2 musí být 0  |
+ | I | . | . | . | . | . | . | . |  příznak podílu | v DOS 2 musí být 0  |
+ +---+---+---+---+---+---+---+---+-----------------+---------------------+
+
+Mód přístupu (nejnižší tři bity registru AL):
+ +---+---+---+-----+---------------------------------------+
+ | 2 | 1 | 0 | hex |             mód přístupu              |
+ +---+---+---+-----+---------------------------------------+
+ | 0 | 0 | 0 |  0  |  přístup pouze ke čtení souboru       |
+ | 0 | 0 | 1 |  1  |  přístup pouze k zápisu do souboru    |
+ | 0 | 1 | 0 |  2  |  přístup ke čtení i zápisu do souboru |
+ +---+---+---+-----+---------------------------------------+
+
+Mód sdílení (bity 4, 5 a 6 registru AL) - pouze DOS 3.0 a vyšší:
+
+    Tyto  bity  řídí způsob, jakým mohou ostatní uživatelé v síti otevřít a
+používat soubor pokud jej otevřete. Jsou povolená následující nastavení:
+
+ +---+---+---+-----+------------------------------+
+ | 6 | 5 | 4 | hex |         mód sdílení          |
+ +---+---+---+-----+------------------------------+
+ | 0 | 0 | 0 |  0  |  kompatibilní mód            |
+ | 0 | 0 | 1 |  1  |  zamítnutí módu čtení/zápis  |
+ | 0 | 1 | 0 |  2  |  zamítnutí módu pouze zápis  |
+ | 0 | 1 | 1 |  3  |  zamítnutí módu pouze čtení  |
+ | 1 | 0 | 0 |  4  |  nezamítnut žádný mód        |
+ +---+---+---+-----+------------------------------+
+
+Příznak podílu (bit 7 registru AL) - pouze DOS 3.0 a vyšší:
+
+    Příznak  podílu  (bit  7)  specifikuje,  zda se budou podílet podřazené
+procesy  na  používání  tohoto  souboru.  Pokud  je  bit  7 vynulován, mají
+podřazené  procesy  automaticky  přístup  k  tomuto souboru. Pokud je bit 7
+nastaven,  soubor  se  automaticky neovolňuje pro podřízený proces. Avšak ,
+jako  jakýkoliv  jiný  proces,  může  požadovat přístup k souboru podřízený
+proces na bázi sdílení.
+
+ +---+------------------------------------------+
+ | 7 |              příznak podílu              |
+ +---+------------------------------------------+
+ | 0 |  na souboru se podílí podřízený proces   |
+ | 1 |  podřízený proces se na souboru nepodílí |
+ +---+------------------------------------------+
+
+Zpřístupnění otevřeného souboru podřazeným procesům:
+
+    Je-li  soubor  jednou  otevřen hlavním procesem, je zpřístupnění tohoto
+souboru  jiným  procesům  určeno  módem sdílením i módem přístupu původního
+procesu,  stejně  tak  jako  módem  sdílením  a  módem přístupu podřazeného
+procesu.
+
+    1.- Soubor  je  poprvé  otevřen  v kompatibilním módu sdílení, pokud je
+        otevřen:
+
+         - přes funkce používající FCB
+         - přes funkce vyžadující práva vytváření CREATE
+         - přes volanou funkci, ve které je kompatibilní mód specifikován
+
+        Soubor  v  kompatibilním  módu  může  být  otevřen  jedním procesem
+        libovolněkrát,  pokud  soubor  není  dosud  otevřen  pod některým z
+        ostatních čtyř módů sdílení. Avšak pokud má soubor nastaven atribut
+        "pouze  čtení"  a  je  v  současnosti  otevřen  v  módu  sdílení se
+        zamítnutím  zápisu,  může  být tento soubor otevřen v kompatibilním
+        módu s přístupem čtení.
+
+    2.- Soubor je otevřen v jednom z jiných módů sdílení.
+
++---------------------------------+--------------------------------------+
+| soubor je poprvé otevřen v módu | může být opakovaně otevřen v módu    |
++---------------------------------+--------------------------------------+
+| zamítnutí módu "čtení/zápis",   | nemůže být opakovaně otevřen         |
+| přístup "pouze čtení"           |                                      |
+|    (AL = X0010000)              |                                      |
++---------------------------------+--------------------------------------+
+| zamítnutí módu "čtení/zápis",   | nemůže být opakovaně otevřen         |
+| přístup "pouze zápis"           |                                      |
+|    (AL = X0010001)              |                                      |
++---------------------------------+--------------------------------------+
+| zamítnutí módu "čtení/zápis",   | nemůže být opakovaně otevřen         |
+| přístup "čtení/zápis"           |                                      |
+|    (AL = X0010010)              |                                      |
++---------------------------------+--------------------------------------+
+| zamítnutí módu "zápis",         | zamítnutí módu "zápis", pouze čtení  |
+| přístup "pouze čtení",          |       (AL = X0100000)                |
+|    (AL = X0100000)              | nezamítnut žádný mód, pouze čtení    |
+|                                 |       (AL - X1000000)                |
++---------------------------------+--------------------------------------+
+| zamítnutí módu "zápis",         | zamítnutí módu "čtení", pouze čtení  |
+| přístup "pouze zápis",          |       (AL = X0110000)                |
+|    (AL = X0100001)              | nezamítnut žádný mód, pouze čtení    |
+|                                 |       (AL = X1000000)                |
++---------------------------------+--------------------------------------+
+| zamítnutí módu "zápis",         | nezamítnut žádný mód, pouze čtení    |
+| přístup "čtení/zápis"           |       (AL = X1000000)                |
+|    (AL = X0100010)              |                                      |
++---------------------------------+--------------------------------------+
+| zamítnutí módu "čtení",         | zamítnutí módu "zápis", pouze zápis  |
+| přístup "pouze čtení",          |       (AL = X0100001)                |
+|    (AL = X0110000)              | nezamítnut žádný mód, pouze zápis    |
+|                                 |       (AL - X1000001)                |
++---------------------------------+--------------------------------------+
+| zamítnutí módu "čtení",         | zamítnutí módu "čtení", pouze zápis  |
+| přístup "pouze zápis",          |       (AL = X0110001)                |
+|    (AL = X0110001)              | nezamítnut žádný mód, pouze zápis    |
+|                                 |       (AL - X1000001)                |
++---------------------------------+--------------------------------------+
+| zamítnutí módu "čtení",         | nezamítnut žádný mód, pouze zápis    |
+| přístup "čtení/zápis"           |       (AL = X1000001)                |
+|    (AL = X0110010)              |                                      |
++---------------------------------+--------------------------------------+
+| nezamítnut žádný mód,           | zamítnutí módu "zápis", pouze čtení  |
+| přístup "pouze čtení"           |       (AL = X0100000)                |
+|    (AL = X1000000)              | zamítnutí módu "zápis", pouze zápis  |
+|                                 |       (AL = X0100001)                |
+|                                 | zamítnutí módu "zápis", čtení/zápis  |
+|                                 |       (AL = X0100010)                |
+|                                 | nezamítnut žádný mód, pouze čtení    |
+|                                 |       (AL = X1000000)                |
+|                                 | nezamítnut žádný mód, pouze zápis    |
+|                                 |       (AL = X1000001)                |
+|                                 | nezamítnut žádný mód, čtení/zápis    |
+|                                 |       (AL = X1000010)                |
++---------------------------------+--------------------------------------+
+| nezamítnut žádný mód,           | zamítnutí módu "čtení", pouze čtení  |
+| přístup "pouze zápis"           |       (AL = X0110000)                |
+|    (AL = X1000001)              | zamítnutí módu "čtení", pouze zápis  |
+|                                 |       (AL = X0110001)                |
+|                                 | zamítnutí módu "čtení", čtení/zápis  |
+|                                 |       (AL = X0110010)                |
+|                                 | nezamítnut žádný mód, pouze čtení    |
+|                                 |       (AL = X1000000)                |
+|                                 | nezamítnut žádný mód, pouze zápis    |
+|                                 |       (AL = X1000001)                |
+|                                 | nezamítnut žádný mód, čtení/zápis    |
+|                                 |       (AL = X1000010)                |
++---------------------------------+--------------------------------------+
+| nezamítnut žádný mód,           | žádné zamítnutí, pouze čtení         |
+| přístup "čtení/zápis"           |       (AL = X1000000)                |
+|    (AL = X1000010)              | žádné zamítnutí, pouze zápis         |
+|                                 |       (AL = X1000001)                |
+|                                 | žádné zamítnutí, čtení/zápis         |
+|                                 |       (AL = X1000010)                |
++---------------------------------+--------------------------------------+
+
+
+Pozn.: Soubory  končící  dvojtečkou  (zařízení)  nelze  voláním této funkce
+       otevřít.
+
+       Pro  módy  sdílení  musí být pro tuto funkci, aby pracovala, načtena
+       obsluha sdílení souborů.
+
+       Podřízené  procesy, které se podílejí na souborech, se také podílejí
+       na jejich omezeních sdílení a přístupů.
+
+
+
+ F u n k c e   3 E H   ( 6 2 ) - uzavření identifikátoru souboru
+
+    vstup:    AH = 3EH
+              BX = identifikátor souboru
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   06H (6) - neplatný identifikátor souboru
+
+    Funkce  3EH  vyprázdní  vyrovnávací paměť souboru, uzavře soubor, zruší
+identifikátor souboru a uloží informace do adresáře.
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+
+
+
+
+ F u n k c e   3 F H   ( 6 3 ) - čtení ze soub./zaříz. s použitím id. soub.
+
+    vstup:    AH = 3FH
+              BX = identifikátor souboru
+              CX = počet bajtů, které mají být přečteny
+              DS:DX = adresa vyrovnávací paměti, kam jsou data uložena
+
+    výstup:   AX = počet skutečně přečtených bajtů (CF=0)
+                 = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   05H (5) - požadavek odmítnut
+                   06H (6) - neplatný identifikátor souboru
+
+    Funkce čte data ze souboru nebo zařízení, jehož identifikátor je uložen
+v  registru  BX,  do  paměti od adresy DS:DX. Data jsou čtena od polohy, na
+kterou  ukazuje  ukazatel  souboru.  Ukazatel  souboru  se  zvýší  o  počet
+přečtených bajtů.
+
+    Při práci v síti vyžaduje tato funkce přístupová práva čtení READ.
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+       Pokud  není příznak  přenosu  CF   nastaven  a registr AX = 0, potom
+       ukazatel souboru byl nastaven na konec souboru.
+
+       Pokud  není  příznak  přenosu CF nastaven a počet přečtených bajtů v
+       registru  AX je menší než požadovaný počet bajtů (registr CX), potom
+       funkce při čtení narazila na konec souboru.
+
+       Pomocí  funkce  42H  můžete  před  čtením přemístit ukazatel souboru
+       jinam, čímž můžete číst data z kteréhokoliv místa v souboru.
+
+       Pokud je specifikována klávesnice, čte tato funkce buď specifikovaný
+       počet bajtů nebo všechny bajty až po příští znak CR (klávesa Return,
+       Enter),  je-li  počet  menší.  (pokud je počet specifikovaných bajtů
+       alespoň o dvě větší než počet zadaných znaků, bude jako poslední dva
+       znaky  navrácen  pár  CR/LF  (kódy  0DH,  0AH) a bude počítán za dva
+       bajt.)
+
+
+
+
+
+
+ F u n k c e   4 0 H   ( 6 4 ) - zápis do soub./zař. s použitím ident.soub.
+
+    vstup:    AH = 40H
+              BX = identifikátor souboru
+              CX = počet bajtů, které mají být zapsány
+              DS:DX = adresa vyrovnávací paměti, odkud jsou data zapisována
+
+    výstup:   AX = počet skutečně zapsaných bajtů (CF=0)
+                 = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   05H (5) - požadavek odmítnut
+                   06H (6) - neplatný identifikátor souboru
+
+    Funkce zapisuje data z paměti od adresy DS:DX do souboru nebo zařízení,
+jehož  identifikátor  je  uložen  v  registru  BX.  Data jsou zapisována od
+polohy,  na  kterou  ukazuje  ukazatel souboru. Ukazatel souboru se zvýší o
+počet zapsaných bajtů.
+
+    Při práci v síti vyžaduje tato funkce přístupová práva zápisu WRITE.
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+       Pokud  se  zaplní disk, není navrácen žádný chybový kód (tj. CF není
+       nastaven)   avšak   je  zapsáno  méně  bajtů  než  bylo  požadováno.
+       Kontrolujte   proto   po   návratu  z  funkce  vznik  této  situtace
+       testováním,  zda  není  obsah registru AX menší než požadovaný počet
+       bajtů v CX.
+
+       Pomocí  funkce  42H  můžete  před zápisem přemístit ukazatel souboru
+       jinam, čímž můžete zapisovat data do kteréhokoliv místa v souboru.
+
+       Soubor  můžete  zkrátit tak, že přesunete ukazatel souboru na pozici
+       nového  konce  souboru  (pomocí funkce 42H) a vyvoláte tuto funkci s
+       nastaveným nulovým počtem bajtů k zápisu (CX = 0).
+
+       Pokus  o  zápis  do souboru označeného jako "pouze čtení" vygeneruje
+       chybový kód 5 "požadavek odmítnut".
+
+
+
+
+
+ F u n k c e   4 1 H   ( 6 5 ) - zrušení souboru (UNLINK)
+
+    vstup:    AH = 41H
+              DS:DX = ukazatel na jméno souboru (řetězec ASCIIZ)
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   02H (2) - soubor nenalezen
+                   03H (3) - cesta nenalezena
+                   05H (5) - požadavek odmítnut (soubor je R/O)
+
+    Funkce   41H   zruší  položku  adresáře  pro  soubor,  jehož  jméno  je
+specifikováno  pomocí  řetězce ASCIIZ na adrese DS:DX. Ve specifikaci cesty
+(jména souboru) nelze použít (na rozdíl od funkce 13H) nahrazovací znaky (?
+a *).
+
+   Při práci v síti vyžaduje tato funkce přístupová práva vytváření CREATE.
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+       Ke  zrušení  souboru  označeného  atributem  "pouze  čtení" nejdříve
+       zrušte tento atribut pomocí funkce 43H.
+
+
+
+
+ F u n k c e   4 2 H   ( 6 6 ) - přemístění ukazatele souboru (LSEEK)
+
+    vstup:    AH = 42H
+              BX = identifikátor souboru
+              CX:DX = nový offset v bajtech (32-bitové celé číslo se znam.)
+              AL = kód módu
+                   00H (0) - přesunutí  ukazatele  souboru  CX:DX  bajtů od
+                             začátku souboru
+                   01H (1) - přesunutí  ukazatele  souboru o CX:DX bajtů od
+                             současné pozice
+                   02H (2) - přesunutí  ukazatele  souboru o CX:DX bajtů od
+                             konce souboru
+
+    výstup:   DX:AX = nová pozice ukazatele souboru (32-bit.číslo se znam.)
+              nebo AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   01H (1) - neplatný kód módu
+                   06H (6) - neplatný identifikátor souboru
+
+    Funkce  změní  logickou  pozici  ukazatele  pro operace čtení/zápis pro
+specifikovaný  soubor  zvýšením  nebo  snížením  hodnoty ukazatele souboru.
+Offset,  který se přičítá k ukazateli souboru se předává v registrovém páru
+CX:DX  jako  32-bitové celé číslo se znaménkem; významnější část offsetu je
+uložena  v  registru  CX.  Kód  módu,  specifikovaný v AL, indikuje, zda se
+offset  uložený v CX:DX vztahuje k začátku souboru (mód 0), současné pozici
+ukazatele souboru (mód 1) nebo ke konci souboru (mód 2).
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+       Nezávisle  na tom, který mód je v AL specifikován, pozitivní hodnota
+       offsetu  v  CX:DX  způsobí  vždy zvýšení hodnoty ukazatele souboru a
+       negativní  způsobí snížení hodnoty. Proto v módu 2 pozitivní hodnota
+       offsetu CX:DX způsobí přesunutí ukazatele souboru za konec souboru.
+
+       Chcete-li  přesunout  ukazatel  na  konec souboru nebo zjistit délku
+       souboru, použijte kód módu 2 a offset CX:DX = 0
+
+       Ukazatel  souboru  je možné přesunout na pozici ležící před začátkem
+       souboru  nebo  za  koncem  souboru. Přesunutí ukazatele před začátek
+       souboru  sice  nezpůsobí  hlášení  chyby,  avšak  bude chybná příští
+       operace čtení nebo zápisu.
+
+       Soubor  může  být  rozšířen  přesunutím  ukazatele  souboru za konec
+       souboru a zápisem jednoho nebo více bajtů dat na tuto novou pozici.
+
+       Soubor může být zkrácen přesunutím ukazatele souboru na novou pozici
+       požadovaného  konce souboru a provedením operace zápisu (funkce 40H)
+       s nastaveným nulovým počtem bajtů k zápisu (CX = 0).
+
+
+
+
+
+ F u n k c e   4 3 H   ( 6 7 ) - poskytnutí/nastavení atrib. soub. (CHMOD)
+
+    vstup:    AH = 43H
+              AL = 00H (0) - poskytnutí atributů souboru
+                   01H (1) - nastavení atributů souboru
+              CX = požadované atributy (pouze pokud je AL=01H - nastavení)
+              DS:DX = ukazatel na specifikaci souboru (řetězec ASCIIZ)
+
+    výstup:   CX = atributy souboru (pokud je AL=00H - poskytnutí atributů)
+              AX = kód chyby (pokud je CF = 1) - viz funkce DOS 59H
+                   01H (1) - neplatný kód funkce
+                   02H (2) - soubor nenalezen
+                   03H (3) - cesta nenalezena
+                   05H (5) - požadavek odmítnut
+
+    Funkce  navrací  nebo  nastavuje  bajt atributů souboru specifikovaného
+souboru.  K  určení současných atributů uložte do registru AL hodnotu 00H -
+atributy  budou  navráceny  v  registru  CX. K nastavení atributů uložte do
+registru AL hodnotu 01H a do registru CX požadované atributy.
+
+    Pokud  je  požadována  jiná změna než archivního bitu při práci v síti,
+jsou požadována přístupová práva pro vytváření (CREATE).
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+       Registr CX specifikuje atributy souboru tímto způsobem:
+           +-----------+---------------------------------+
+           |    CX     |   specifikovaný atribut         |
+           +-----------+---------------------------------+
+           |    00H    |   normální soubor               |
+           |    01H    |   pouze čtení souboru (R/O)     |
+           |    02H    |   skrytý soubor (HID)           |
+           |    04H    |   systémový soubor (SYS)        |
+           |    20H    |   archivní soubor (ARC)         |
+           +-----------+---------------------------------+
+           - součtem těchto hodnot lze atributy kombinovat
+
+       Nastavení  jiných  bitů  než  které  jsou  uvedeny vygeneruje chybu.
+       Atribut  adresáře  nelze  změnit  ,  avšak můžete přidat nebo zrušit
+       ostatní bity bajtu atributů adresáře. Stačí, když pomocí této funkce
+       specifikujete bajt atributů mající nastaveny všechny požadované bity
+       pro adresář kromě bitu 4 (adresářový bit).
+
+
+
+
+
+ F u n k c e   4 4 H   ( 6 8 ) - vstupně/výstupní ovládání zařízení (IOCTL)
+
+    vstup:    AH = 44H
+              AL = podfunkce
+              BX = identifikátor souboru nebo zařízení
+         nebo BL = číslo disku (je-li AL = 4,5: 0 = aktivní; 1 = A; atd.)
+              CX = počet bajtů, které mají být přečteny nebo zapsány
+              DS:DX = data nebo adresa vyrovnávací paměti
+
+    výstup:   podle podfunkce
+
+    Při práci v síti nejsou podfunkce 4400H a 4408H podporovány.
+
+    Funkce  44H  (IOCTL)  je  soubor  podfunkcí (16 podfunkcí v DOS 3.3, 10
+podfunkcí  v DOS 3.0, 8 podfunkcí v DOS 2), které slouží k výměně informací
+mezi  aplikačním  programem  a  zařízením  (nebo souborem). Pouze podfunkce
+4400H,  4406H  a  4407H  jsou definovány pro soubory. Ve všech případech je
+požadovaná podfunkce určena obsahem registru AL:
+ 
++----------+--------------------------------------------------------------+
+|    AL    |                        podfunkce                             |
++----------+--------------------------------------------------------------+
+| 00H ( 0) | poskytnutí informací o zařízení (navráceno v DX)             |
+| 01H ( 1) | nastavení informací o zařízení (z DX; DH musí být 0)         |
+| 02H ( 2) | čtení bajtů z řídícího kanálu zařízení do paměti na          |
+|          | adresu DS:DX (znakové zařízení)                              |
+| 03H ( 3) | zápis bajtů z paměti na adrese DS:DX do řídícího             |
+|          | kanálu zařízení (znakové zařízení)                           |
+| 04H ( 4) | čtení bajtů z řídícího kanálu zařízení do paměti na          |
+|          | adresu DS:DX (blokové zařízení)                              |
+| 05H ( 5) | zápis bajtů z paměti na adrese DS:DX do řídícího             |
+|          | kanálu zařízení (blokové zařízení)                           |
+| 06H ( 6) | poskytnutí vstupního statutu zařízení                        |
+| 07H ( 7) | poskytnutí výstupního statutu zařízení                       |
+| 08H ( 8) | je blokové zařízení výměnné ? (› DOS 3.0)                    |
+| 09H ( 9) | je logické zařízení lokální nebo dálkové ? (› DOS 3.1)       |
+| 0AH (10) | je identifikátor lokální nebo dálkový ? (› DOS 3.1)          |
+| 0BH (11) | změna čítače opakování sdílení (› DOS 3.0)                   |
+| 0DH (13) | generování požadavku IOCTL pro blokové zařízení (› DOS 3.2)  |
+| 0EH (14) | poskytnutí logického disku (› DOS 3.2)                       |
+| 0FH (15) | nastavení označení logického disku (› DOS 3.2)               |
++----------+--------------------------------------------------------------+
+
+    Jednotlivé  podfunkce  jsou  dále  pospány  podrobněji  jako samostatné
+funkce 44xxH.
+
+Pozn.: Pro soubory jsou definovány pouze podfunkce 4400H, 4406H a 4407H.
+
+       Podfunkce  4400H  a  4408H nejsou podporovány v síťových zařízeních.
+       Podfunkce  440BH  vyžadují sdílení souboru, které se načte do paměti
+       pomocí povelu SHARE.
+
+
+
+
+
+ F u n k c e   4 4 0 0 H   ( 6 8 - 0 ) - IOCTL: poskytnutí inf. o zařízení
+
+    vstup:    AH = 44H
+              AL = 00H
+              BX = identifikátor zařízení nebo souboru
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+              DX = informace o zařízení
+
+    Podfunkce 4400H navrací v DX informace o zařízení. Bit 7 registru DX je
+nastaven na 1, pokud je kanálem znakové zařízení, a je nastaven na 0, pokud
+je kanálem blokové zařízení (diskový soubor).
+
+    DX pro znakové zařízení (bit 7 registru DX = 1):
+   +------+--------------------------------------------------------------+
+   |  bit |                          popis                               |
+   +------+--------------------------------------------------------------+
+   |   0  |   nastaven, pokud je vstupním zařízením standardní konzola   |
+   |   1  |   nastaven, pokud je výstupním zařízením standardní konzola  |
+   |   2  |   nastaven, pokud jde o nulové zařízení                      |
+   |   3  |   nastaven, pokud jsou zařízením hodiny                      |
+   |   4  |   nastaven, pokud se jedná o speciální zařízení              |
+   |   5  |   nastaven pro binární mód, nulován pro ASCII mód            |
+   |   6  |   nulován, pokud je na vstupu konec souboru (EOF)            |
+   |   7  |   nastaven pro indikaci, že se jedná o zařízení              |
+   | 8-13 |   rezervováno                                                |
+   |  14  |   nastaven, pokud je možno zařízení ovládat řídícím řetězcem |
+   |      |   přes funkce 4402H, 4403H                                   |
+   |  15  |   rezervováno                                                |
+   +------+--------------------------------------------------------------+
+
+    DX pro blokové zařízení (bit 7 registru DX = 0):
+   +------+--------------------------------------------------------------+
+   |  bit |                         popis                                |
+   +------+--------------------------------------------------------------+
+   |  0-5 |   číslo blokového zařízení (A = 0; B = 1; atd.)              |
+   |   6  |   nastaven, pokud bylo do kanálu zapisováno                  |
+   |   7  |   nulován pro indikaci, že se jedná o blokové zařízení       |
+   | 8-13 |   rezervováno                                                |
+   |  14  |   nastaven, pokud je možno zařízení ovládat řídícím řetězcem |
+   |      |   přes funkce 4404H a 4405H                                  |
+   |  15  |   rezervováno                                                |
+   +------+--------------------------------------------------------------+
+
+Pozn.: Stav je definován v okamžiku volání systému. Později, když je řízení
+       vráceno ze systému, uživateli vrácený stav již nemusí přesně odrážet
+       skutečný okamžitý stav zařízení nebo souboru.
+
+
+
+ F u n k c e   4 4 0 1 H   ( 6 8 - 1 ) - IOCTL: nastavení inf. o zařízení
+
+    vstup:    AH = 44H
+              AL = 01H
+              BX = identifikátor zařízení nebo souboru
+              DH = 00H
+              DL = informace o zařízení
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+
+    Podfunkce 4401H nastavuje informace o zařízení podle obsahu reg. DX.
+
+   +------+--------------------------------------------------------------+
+   |  bit |                          popis                               |
+   +------+--------------------------------------------------------------+
+   |   0  |   nastaven, pokud je vstupním zařízením standardní konzola   |
+   |   1  |   nastaven, pokud je výstupním zařízením standardní konzola  |
+   |   2  |   nastaven, pokud jde o nulové zařízení                      |
+   |   3  |   nastaven, pokud jsou zařízením hodiny                      |
+   |   4  |   rezervováno                                                |
+   |   5  |   nastaven pro binární mód, nulován pro ASCII mód            |
+   |   6  |   nulován, pokud je na vstupu konec souboru (EOF)            |
+   |   7  |   nastaven pro indikaci, že se jedná o zařízení              |
+   | 8-15 |   musí být 0                                                 |
+   +------+--------------------------------------------------------------+
+
+Pozn.: Podfunkce není podporována pro diskové soubory (bloková zařízení).
+
+
+
+
+
+ F u n k c e   4 4 0 2 H   ( 6 8 - 2 ) - IOCTL: čtení ze znakového zařízení
+
+    vstup:    AH = 44H
+              AL = 02H
+              BX = identifikátor zařízení
+              CX = počet bajtů, které mají být přečteny
+              DS:DX = data nebo adresa vyrovnávací paměti
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   01H (1) - zařízení nepodporuje řídící řetězce
+
+    Podfunkce  4402H  čte  CX  datových  bajtů  z řídícího kanálu znakového
+zařízení  buď  do  registru  DS:DX nebo do paměti od adresy DS:DX. Jak jsou
+data  čtena  je  definováno driverem zařízení. Data mohou být čtena pouze v
+případě, že zařízení může provádět řídící řetězce.
+
+
+
+
+ F u n k c e   4 4 0 3 H   ( 6 8 - 3 ) - IOCTL: zápis na znakové zařízení
+
+    vstup:    AH = 44H
+              AL = 03H
+              BX = identifikátor zařízení
+              CX = počet bajtů, které mají být zapsány
+              DS:DX = data nebo adresa vyrovnávací paměti
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   01H (1) - zařízení nepodporuje řídící řetězce
+
+    Podfunkce  4403H zapisuje CX datových bajtů buď z registru DS:DX nebo z
+paměti  od  adresy  DS:DX na řídící kanál znakového zařízení. Jak jsou data
+zapisována je definováno driverem zařízení. Data mohou být zapisována pouze
+v případě, že zařízení může provádět řídící řetězce.
+
+
+
+
+
+ F u n k c e   4 4 0 4 H   ( 6 8 - 4 ) - IOCTL: čtení z blokového zařízení
+
+    vstup:    AH = 44H
+              AL = 04H
+              BL = číslo disku (0 = aktivní disk; 1 = A; 2 = B; atd.)
+              CX = počet bajtů, které mají být přečteny
+              DS:DX = data nebo adresa vyrovnávací paměti
+
+    výstup:   AX = počet přečtených bajtů  (pokud je CF = 0)
+                 = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   01H (1) - zařízení nepodporuje řídící řetězce
+                   05H (5) - disk je neplatný
+
+    Podfunkce  4404H  čte  CX  datových  bajtů  z řídícího kanálu blokového
+zařízení  buď  do  registru  DS:DX nebo do paměti od adresy DS:DX. Jak jsou
+data  čtena  je  definováno driverem zařízení. Data mohou být čtena pouze v
+případě, že zařízení může provádět řídící řetězce.
+
+
+
+
+
+ F u n k c e   4 4 0 5 H   ( 6 8 - 5 ) - IOCTL: zápis na blokové zařízení
+
+    vstup:    AH = 44H
+              AL = 03H
+              BL = číslo disku (0 = aktivní disk; 1 = A; 2 = B; atd.)
+              CX = počet bajtů, které mají být zapsány
+              DS:DX = data nebo adresa vyrovnávací paměti
+
+    výstup:   AX = počet zapsaných bajtů  (pokud je CF = 0)
+                 = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   01H (1) - zařízení nepodporuje řídící řetězce
+                   05H (5) - disk je neplatný
+
+    Podfunkce  4405H zapisuje CX datových bajtů buď z registru DS:DX nebo z
+paměti  od  adresy  DS:DX na řídící kanál blokového zařízení. Jak jsou data
+zapisována je definováno driverem zařízení. Data mohou být zapisována pouze
+v případě, že zařízení může provádět řídící řetězce.
+
+
+
+
+ F u n k c e   4 4 0 6 H   ( 6 8 - 6 ) - IOCTL: poskytnutí vstup. statutu
+
+    vstup:    AH = 44H
+              AL = 06H
+              BX = identifikátor souboru nebo zařízení
+
+    výstup:   AL = FFH - než je konec souboru/pokud je zařízení připraveno
+              AL = 00H - dosaženo konce souboru/zařízení není připraveno
+
+    Podfunkce  hlásí  vstupní  statut zařízení nebo souboru. AL navrací buď
+hodnotu  FFH  (zařízení  připraveno  nebo  není  ještě  konec souboru) nebo
+hodnotu 00H (zařízení nepřipraveno nebo dosaženo konce souboru).
+
+
+
+
+ F u n k c e   4 4 0 7 H   ( 6 8 - 7 ) - IOCTL: poskytnutí výstup. statutu
+
+    vstup:    AH = 44H
+              AL = 07H
+              BX = identifikátor souboru nebo zařízení
+
+    výstup:   AL = FFH - než je konec souboru/pokud je zařízení připraveno
+              AL = 00H - dosaženo konce souboru/zařízení není připraveno
+
+    Podfunkce  hlásí  výstupní statut zařízení nebo souboru. AL navrací buď
+hodnotu  FFH  (zařízení  připraveno  nebo  není  ještě  konec souboru) nebo
+hodnotu 00H (zařízení nepřipraveno nebo dosaženo konce souboru).
+
+
+
+
+ F u n k c e   4 4 0 8 H   ( 6 8 - 8 ) - IOCTL: je zařízení výměnné ?
+
+    vstup:    AH = 44H
+              AL = 08H
+              BL = číslo disku (0=aktivní; 1=A; atd.)
+
+    výstup:   AX = 00H - zařízení je výměnné
+                   01H - zařízení je pevné
+                   0FH - neplatná specifikace disku
+                   chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                        01H - je síťové zařízení
+
+    Tato  podfunkce (pouze DOS 3.0 a vyšší verze) indikuje, zda má zařízení
+výměnné  médium  (jako  je  pružný  disk  nebo výměnný kartový pevný disk).
+Hodnota  00H  registru  AX  znamená,  že  zařízení  je výměnné. Hodnota 01H
+registru AX znamená, že jde o pevné zařízení. Pokud je v BL zadána neplatná
+specifikace disku, navrací v registru AX chybový kód 0FH.
+
+
+
+
+ F u n k c e   4 4 0 9 H   ( 6 8 - 9 ) - IOCTL: je log. zařízení dálkové ?
+
+    vstup:    AH = 44H
+              AL = 09H
+              BL = číslo disku (0=aktivní; 1=A; atd.)
+
+    výstup:   DX = bit 12: 0 - zařízení je lokální
+                           1 - zařízení je dálkové
+
+    Podfunkce  (pouze DOS 3.1 a vyšší verze) umožňuje určit, zda je blokové
+zařízení  (specifikované  v BL) přidruženo k síťovému adresáři. Pro lokální
+zařízení  navrací DX slovo atributů ze záhlaví zařízení s vynulovaným bitem
+12; pro dálková zařízení navrací DX toto slovo s nastaveným bitem 12.
+
+
+
+
+ F u n k c e   4 4 0 A H   ( 6 8 - 1 0 ) - IOCTL:je ident. dálk. zařízení ?
+
+    vstup:    AH = 44H
+              AL = 0AH
+              BX = identifikátor zařízení
+
+    výstup:   AX = bit 15: 0 - zařízení je lokální
+                           1 - zařízení je dálkové
+
+    Podfunkce  (pouze  DOS  3.1  a  vyšší  verze)  umožňuje  určit,  zda je
+identifikátor  zařízení  (specifikovaný  v  BX)  pro  lokální  nebo dálkové
+zařízení.  Pro  lokální  identifikátor navrací DX slovo atributů ze záhlaví
+zařízení s vynulovaným bitem 15; pro dálková zařízení navrací DX toto slovo
+s nastaveným bitem 15.
+
+
+
+
+ F u n k c e   4 4 0 B H   ( 6 8 - 1 1 ) - IOCTL: čítač opakování sdílení
+
+    vstup:    AH = 44H
+              AL = 0BH
+              CX = počet, kolikrát bude prováděna smyčka prodlevy
+              DX = počet opakování
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+
+    Podfunkce  (pouze  pro  DOS 3.0 a vyšší) nastavuje dva parametry, které
+používá  DOS  k pokusům o řešení konfliktů při sdílení souborů. Specifikuje
+v  registru  DX  počet opakování a v registru CX počet časových prodlev mezi
+jednotlivými  průchody  při  opakování pokusů o přístup. Standardní hodnota
+nastavení  jsou  3  opakování  a  1  časová  prodleva.  Před  použitím této
+podfunkce musí být načten v paměti příkaz SHARE.
+
+
+
+
+ F u n k c e   4 4 0 D H   ( 6 8 - 1 3 ) - IOCTL:generování požadavku IOCTL
+
+    vstup:    AH = 44H
+              AL = 0DH
+              BL = číslo disku (0=aktivní; 1=A; atd.)
+              CH = 08H (hlavní kód)
+              CL = vedlejší kód:
+                        40H - nastavení parametrů zařízení
+                        60H - poskytnutí parametrů zařízení
+                        41H - zápis stopy na logické zařízení
+                        61H - čtení stopy z logického zařízení
+                        42H - formátování a verifikace stopy na log. zař.
+                        62H - verifikace stopy logického zařízení
+              DS:DX = ukazatel na blok parametrů
+
+    Tato  podfunkce (pouze DOS 3.2 a vyšší verze) umožňuje řízení blokového
+zařízení na nízké úrovni.
+
+
+
+
+ F u n k c e   4 4 0 E H   ( 6 8 - 1 4 ) - IOCTL:poskytnutí logického disku
+
+    vstup:    AH = 44H
+              AL = 0EH
+              BL = číslo disku (0=aktivní; 1=A; atd.)
+
+    výstup:   AL = 00H pokud je blok. zařízení přiřazen pouze jeden znak
+                 = onačení disku používané jako poslední (1=A, atd.)
+              AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+
+    Podfunkce  (pouze  DOS  verze  3.2  a  vyšší)  navrací  označení  disku
+používané jako nejposlednější pro blokové zařízení, které má více než jedno
+označení   (logický  disk).  Například  pružný  disk  v  systému  s  jednou
+mechanikou  může  být  popsán buď jako A: nebo jako B:. Tato funkce oznámí,
+zda má blokové zařízení více než jedno označení, a pokud tomu tak je, které
+označení  zařízení  bylo  použito  jako  nejposlednější  (to umožňuje např.
+oznámit  uživateli,  aby  vyměnil  diskety  v mechanice, pokud je v systému
+požadován přístup na jinou disketu, než která byla dosud používána).
+
+
+
+
+ F u n k c e   4 4 0 F H   ( 6 8 - 1 5 ) - IOCTL: nastavení logického disku
+
+    vstup:    AH = 44H
+              AL = 0FH
+              BL = číslo disku (0=aktivní; 1=A; atd.)
+
+    výstup:   AL = 00H pokud je blok. zařízení přiřazen pouze jeden znak
+                 = nejvyšší onačení blokového zařízení (1=A, atd.)
+              AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+
+    Podfunkce  (pouze  DOS  verze  3.2  a  vyšší)  nastavuje označení disku
+používané jako nejposlednější pro blokové zařízení, které má více než jedno
+označení   (logický  disk).  Například  pružný  disk  v  systému  s  jednou
+mechanikou  může  být  popsán buď jako A: nebo jako B:. Tato funkce oznámí,
+zda  má  blokové  zařízení  více  než  jedno označení, a pokud tomu tak je,
+nastaví označení zařízení jako nejposlednější.
+
+Pozn.: Pokud  použijete vstupně/výstupní operaci používající označení disku
+       jiné  než  nejposledněji  používané (u disku, který má více možností
+       označení),  zobrazí DOS hlášení "Insert diskette for..." oznamující,
+       že  má uživatel vložit novou disketu, která přísluší jiné požadované
+       logické  jednotce,  než  s  kterou  byla  jako  s poslední prováděna
+       disková   operace.   Hlášení   můžete  odstranit  nastavením  nového
+       logického  disku  pomocí  této  funkce  před  další vstupně/výstupní
+       operací.
+
+
+
+
+ F u n k c e   4 5 H   ( 6 9 ) - zdvojení identifikátoru souboru (DUP)
+
+    vstup:    AH = 45H
+              BX = identifikátor souboru
+
+    výstup:   AX = zduplikovaný identifikátor souboru (pokud je CF = 0)
+                 = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                        04H - není   volný   žádný   identifikátor  souboru
+                              (příliš mnoho otevřených souborů)
+                        06H - neplatný identifikátor souboru
+
+    Funkce   vytvoří   nový   identifikátor   souboru   zduplikováním   již
+existujícího   identifikátoru   otevřeného   souboru  nebo  zařízení.  Nový
+identifikátor sdílí existující ukazatel souboru.
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+       Přesunutí  ukazatele  souboru  jednoho identifikátoru souboru pomocí
+       READ,  WRITE  nebo  LSEEK  způsobí  přesunutí  ukazatele  i  druhého
+       identifikátoru   souboru.   Avšak  uzavření  jednoho  identifikátoru
+       nezpůsobí uzavření jiného identifikátoru souboru.
+
+       Zduplikováním identifikátoru souboru a jeho opětným uzavřením můžete
+       umístit  soubor  z  vyrovnávací  paměti  na  disk  a uložit adresář;
+       původní   identifikátor  přitom  zůstává  i  nadále  otevřen,  takže
+       nemusíte soubor znovu otevírat, což je časově náročná operace.
+
+
+
+
+
+ F u n k c e   4 6 H   ( 7 0 ) - nucené zdvojení identif. souboru (FORCDUP)
+
+    vstup:    AH = 46H
+              BX = první identifikátor souboru
+              CX = identifikátor souboru, který má být změněn
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                        04H - není   volný   žádný   identifikátor  souboru
+                              (otevřeno příliš mnoho souborů)
+                        06H - neplatný identifikátor souboru
+
+    Funkce   způsobí,   že   druhý   identifikátor  (v  CX)  bude  nastaven
+odpovídajícím  způsobem na stejný soubor a stejnou pozici ukazatele souboru
+jako  první  identifikátor  (v  BX).  Oba  identifikátory  přitom  musí již
+existovat. Pokud se druhý identifikátor vztahuje k otevřenému souboru, bude
+soubor  nejdříve  uzavřen  a potom teprve bude nastaven druhý identifikátor
+stejně jako první.
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+       Přesunutí  ukazatele  souboru  jednoho identifikátoru souboru pomocí
+       READ,  WRITE  nebo  LSEEK  způsobí  přesunutí  ukazatele  i  druhého
+       identifikátoru   souboru.   Avšak  uzavření  jednoho  identifikátoru
+       nezpůsobí uzavření jiného identifikátoru souboru.
+
+       Tato  funkce  je  použitelná  pro přesměrování. Např. k přesměrování
+       standardního  výstupu  (předdefinovaného  jako  identifikátor  1) na
+       soubor  umístěte  do  CX  hodnotu  1  a do BX umístěte identifikátor
+       souboru, na který má být přesměrován výstup.
+
+
+
+
+ F u n k c e   4 7 H   ( 7 1 ) - poskytnutí aktivního adresáře
+
+    vstup:    AH = 47H
+              DL = číslo disku (0=aktivní; 1=A; atd.)
+              DS:SI = ukazatel na 64-bajtovou vyrovnávací paměť
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   0FH (15) - neplatná specifikace disku
+
+    Funkce  navrací  plné  označení cesty aktivního adresáře kromě označení
+disku  a  inicializačního  znaku  lomítka  jako  řetězec  ASCIIZ uložený ve
+vyrovnávací paměti od adresy DS:SI.
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+       Označení  cesty  může  být  dlouhé  až 63 bajtů (bez inicializačního
+       znaku  lomítka)  plus  ukončující  nulový  bajt.  Pokud  je aktivním
+       adresářem  základní  adresář  disku  (tzv. kořenný adresář), navrací
+       funkce  nulový řetězec ASCIIZ (tzn. že první bajt vyrovnávací paměti
+       obsahuje nulu).
+
+       V  některých  verzích  předcházejících  verzi DOS 3.0 mohlo označení
+       cesty  adresáře  obsahovat  členy  delší než 12 znaků používané jako
+       omezení  pro  jména  souborů. Např. pokud pod DOS 2.0 uživatel zadal
+       příkaz  "cd  \jmenoadresare\podadr" a přitom existuje cesta adresáře
+       "\jmenoadr\podadr",  navrátí  tato  funkce  "\jmenoadresare\podadr".
+       Tato  cesta  je navrácena v malých písmenech a obsahuje příliš mnoho
+       znaků.  DOS  3.0  a  vyšší vždy vrací správné jméno cesty ve velkých
+       písmenech - v tomto případě "JMENOADR\PODADR".
+
+
+
+
+ F u n k c e   4 8 H   ( 7 2 ) - přidělení paměti
+
+    vstup:    AH = 48H
+              BX = počet odstavců paměti, která má být přidělena
+
+    výstup:   AX = adresa segmentu přidělené paměti (pokud CF = 0)
+                 = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   07H (7) - řídící blok paměti zničen
+                   08H (8) - nepostačující paměť
+              BX = velikost nejdelšího volného bloku (pokud je CF = 1)
+
+    Funkce  48H dynamicky přiděluje paměť v násobcích po 16 bajtech (tj. po
+odstavcích).  Velikost  částečně přidělené paměti (pokud paměť nedostačuje)
+je  navrácena  při chybě 08H v registru BX (v odstavcích). Pokud je operace
+úspěšná,  ukazuje AX:0000H na začátek přiděleného bloku paměti (AX obsahuje
+adresu segmentu; offset je vždy 0000H).
+
+
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+       Pokud  nastavíte  před  voláním  funkce BX=FFFFH, můžete tuto funkci
+       použít  k  zjištění,  jak velká část paměti je volná (je navrácena v
+       registru  BX).  To vyvolá chybu, kterou však můžete ignorovat, neboť
+       DOS nemůže přidělit paměť větší než 640K.
+
+
+
+
+ F u n k c e   4 9 H   ( 7 3 ) - uvolnění přidělené paměti
+
+    vstup:    AH = 49H
+              ES = adresa segmentu paměti, která má být uvolněna
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   07H (7) - řídící blok paměti zničen
+                   09H (9) - neplatná adresa bloku paměti
+
+    Funkce  49H  navrátí  do  DOS paměť, která byla přidělena pomocí funkce
+48H.  ES  ukazuje na adresu segmentu bloku, který je navracen; je to stejná
+hodnota jako ta, kterou navrátila funkce 48H v registru AX.
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+
+
+
+ F u n k c e   4 A H   ( 7 4 ) - modifikace přidělení paměti (SETBLOCK)
+
+    vstup:    AH = 4AH
+              BX = nová velikost bloku paměti (v odstavcích)
+              ES = adresa segmentu bloku paměti, který je modifikován
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   07H (7) - řídící blok paměti je zničen
+                   08H (8) - nepostačující paměť
+                   09H (9) - neplatná adresa bloku
+
+    Funkce  umožňuje  zvětšit nebo zmenšit velikost bloku paměti, který byl
+přidělen  funkcí  48H.  ES  obsahuje  adresu  segmentu  bloku paměti, jehož
+velikost  má  být  změněna. BX obsahuje novou velikost bloku (v odstavcích,
+tj. v násobcích 16 bajtů).
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+
+
+ F u n k c e   4 B H   ( 7 5 ) - načtení nebo provedení programu (EXEC)
+
+    vstup:    AH = 4BH
+              AL = 00H - načtení programu a jeho start
+                   03H - načtení programu, avšak nebude odstartován
+              DS:DX = ukazatel  na  řetězec  ASCIIZ  specifikující označení
+                      cesty k podprogramu
+              ES:BX = ukazatel na blok parametrů
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   01H ( 1) - neplatné číslo funkce
+                   02H ( 2) - soubor nenalezen
+                   03H ( 3) - cesta nenalezena
+                   05H ( 5) - požadavek odmítnut
+                   08H ( 8) - nepostačující paměť
+                   0AH (10) - neplatné prostředí
+                   0BH (11) - neplatný formát
+
+    Funkce mění všechny registry.
+
+    Funkce  4BH  umožňuje  programu  zavést  podprogram z disku do paměti a
+(pokud je to požadováno) spustit jej. Při zavedení programu se z otcovského
+procesu  zduplikují  do  synovského  procesu  všechny  otevřené  soubory  a
+prostředí  procesu - to umožňuje, aby otcovský proces přesměroval podle své
+potřeby  např.  vstupní  a  výstupní zařízení a potom vyvolal mapř. třídící
+program.
+
+    Pokud  je  v  AL  zadána  hodnota  00H,  podprogram se načte do paměti,
+vytvoří  se  jeho prefix programového segmentu PSP a program se odstartuje.
+Vektory ukončení a obsluhy Ctrl-Break se nastaví na adresu instrukce, která
+následuje za voláním této funkce EXEC v hlavním programu, takže po ukončení
+podprogramu  z  disku  se řízení navrátí do hlavního programu, jakoby šlo o
+volání běžného podprogramu.
+
+    Pokud  je  v  AL  zadána  hodnota  03H,  podprogram se načte z disku do
+paměti,  nevytvoří  se  však  prefix  programového  segmentu  PSP,  ani  se
+podprogram  automaticky  nespustí, avšak hlavní program může do podprogramu
+vskočit přímo.
+
+    Do registrového páru DS:DX uložte ukazatel na řetězec ASCIIZ obsahující
+označení  disku,  cesty  a  jméno souboru, který se má zavést do paměti. Do
+registrů  ES:BX uložte ukazatel na blok parametrů, které specifikují bližší
+podmínky pro provedení podprogramu. Blok parametrů má tuto strukturu:
+
+    Pro podfunkci 00H (načti a spusti):
++----------+------------------+-----------------------------------------+
+|  offset  | velikost (bajtů) |                 popis                   |
++----------+------------------+-----------------------------------------+
+| 00H ( 0) |        2         | adresa segmentu řetězců prostředí       |
+| 02H ( 2) |        4         | segment a offset příkazového řádku      |
+| 06H ( 6) |        4         | segment a offset prvního aktivního FCB  |
+| 0AH (10) |        4         | segment a offset druhého aktivního FCB  |
++----------+------------------+-----------------------------------------+
+
+    Pro podfunkci 03H (načti ale nespouštěj):
++----------+------------------+-----------------------------------------+
+|  offset  | velikost (bajtů) |                 popis                   |
++----------+------------------+-----------------------------------------+
+| 00H ( 0) |        2         | adresa segmentu kam bude soubor načten  |
+| 02H ( 2) |        2         | relokační faktor programu (aplikuje se  |
+|          |                  |     pouze pro formáty programů EXE)     |
++----------+------------------+-----------------------------------------+
+
+Prostředí: Řetězce  prostředí,  které  musí  být  seřazeny  po  odstavcích,
+           obsahují  posloupnosti  řetězců ASCIIZ následované bajtem 00H po
+           všech   řetězcích.   Každý   řetězec  ASCIIZ  má  typicky  formu
+           parametr=hodnota. Celkový řetězec prostředí musí být svou délkou
+           menší  než  32K. Pokud je segment pro řetězec prostředí nastaven
+           na   00H,  sdílí  podprogram  prostředí  programu,  který  tento
+           podprogram vyvolal.
+
+           Podprogram  vždy  přijímá  kopii  řetězce prostředí, takže žádná
+           změna  provedená v prostředí podprogramu se neodrazí v prostředí
+           hlavního programu.
+
+Soubory:   Pokud  je  podprogram  načten  do  paměti  a  vykonáván, všechny
+           otevřené  identifikátory  souborů  se  uvolní pro podprogram. To
+           znamená, že volající program může přesměrovat standardní vstup a
+           výstup  pro  podprogram. Nejsou uvolněny pro podprogram pouze ty
+           identifikátory  souborů,  které byly otevřeny s nastaveným bitem
+           příznaku podílu (bit 7 registru AL - viz funkce 3DH).
+
+Paměť:     Před  použitím  funkce  4BH  musíte  uvolnit dostatek paměti pro
+           načtení podprogramu resp. pro jeho provoz (voz funkce 4AH).
+
+Varování:  Tato  funkce  mění  všechny  registry včetně registru zásobníku.
+           Proto  před  voláním  podprogramu  uložte  registry  SS  a SP do
+           proměnných  (tj.  na  určitá  paměťová  místa)  uvnitř  hlavního
+           programu  a  po návratu z podprogramu nejdříve navraťte tyto dva
+           registry a potom teprve můžete opět používat zásobník.
+
+Pozn.:     Funkce EXEC volá zaváděcí část COMMAND.COM k zavedení programu.
+
+
+
+
+ F u n k c e   4 C H   ( 7 6 ) - ukončení procesu (EXIT)
+
+    vstup:    AH = 4CH
+              AL = návratový kód
+
+    výstup:   žádný - neexistuje návrat
+
+    Tato  funkce  je  správná  metoda  ukončení  programu v DOS verze 2.0 a
+vyšší.  Funkce  uzavře  všechny  soubory  a navrátí řízení zpět do hlavního
+(otcovského)  procesu  (obvykle  COMMAND.COM).  Přitom  lze  v  registru AL
+specifikovat  návratový  kód,  který  slouží hlavnímu procesu k informaci o
+činnosti ukončeného procesu.
+
+Pozn.: Návratový  kód může být testován pomocí funkce 4DH nebo v příkazovém
+       souboru systému pomocí příkazu ERRORLEVEL.
+
+       Tato  metoda  ukončení  procesu je výhodnější než přerušení INTú20H,
+       neboť CS nemusí obsahovat adresu prefixu záhlaví programu PSP.
+
+Příklad: Následující krátký program je velmi užitečnou maličkostí při práci
+         v  operačním  systému. Umožňuje větvit uživatelské volby v systému
+         podle zadání z klávesnice. Program čeká na znak z klávesnice (znak
+         se nezobrazuje, tato činnost se ponechává na příkazovém souboru) a
+         pokud  je  to  písmeno,  navrátí kód odpovídající pořadovému číslu
+         písmene (A=0, ..., Z=25) nezávisle na tom, zda jde o velké či malé
+         písmeno.  Dále  je uveden krátký příkazový soubor ukazující způsob
+         práce s tímto programem (program je zde pojmenován PISMENO.EXE).
+
+         cyklus:   mov       ah,8
+                   int       21h            ; čekání na zadání znaku
+                   sub       al,"A"         ; odečtení znaku "A"
+                   jc        cyklus         ; menší než "A"
+                   cmp       al,27
+                   jl        konec          ; je platný znak
+                   sub       al,32          ; korekce malých písmen
+                   jc        cyklus         ; není malé písmeno
+                   cmp       al,26          ; je písmeno ?
+                   jg        cyklus         ; není malé písmeno
+         konec:    mov       ah,4ch
+                   int       21h            ; ukončení programu
+
+Příklad povelového souboru:
+
+         echo off
+         echo Zadejte vaši volbu (ANO/NE)
+         :start
+         PISMENO.EXE
+         if errorlevel == 14 goto start
+         if errorlevel == 13 goto ne
+         if errorlevel == 1 goto start
+         echo ANO !
+         goto start
+         :ne
+         echo NE !
+         goto start
+
+
+
+
+ F u n k c e   4 D H   ( 7 7 ) - poskytnutí návrat. kódu podprocesu (WAIT)
+
+    vstup:    AH = 4DH
+
+    výstup:   AX = návratový kód
+
+    Funkce  poskytne návratový kód procesu, který byl ukončen pomocí funkce
+4CH  (EXIT)  nebo funkce 31H (přerušení a ponechání rezidentním). Návratový
+kód  se  skládá  ze  dvou  částí: AL obsahuje návratový kód, který nastavil
+přerušení  proces;  AH  obsahuje způsob, jakým byl podproces ukončen.
+
+    Možné hodnoty registru AH jsou:
+   +---------+----------------------------------------------------------+
+   | 00H (0) | normální přerušení                                       |
+   | 01H (1) | přerušení klávesami <Ctrl>-<Break> (<Ctrl>-C)            |
+   | 02H (2) | přerušení z DOS z důvodu kritické chyby zařízení         |
+   | 03H (3) | přerušení funkcí 31H (přerušení a ponechání rezidentním) |
+   +---------+----------------------------------------------------------+
+
+
+
+
+
+ F u n k c e   4 E H   ( 7 8 ) - nalezení 1.vyhovujícího soub. (FIND FIRST)
+
+    vstup:    AH = 4EH
+              CX = atributy souboru
+              DS:DX = ukazatel na specifikaci souboru (řetězec ASCIIZ)
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   02H ( 2) - soubor nenalezen
+                   03H ( 3) - cesta nenalezena
+                   12H (18) - nelze nalézt další soubory
+
+    Funkce  nalezne  první  soubor,  který vyhovuje specifikaci (udané jako
+řetězec  ASCIIZ na adrese DS:DX). Specifikace může obsahovat označení disku
+a cestu, jméno souboru může obsahovat maskovací znaky (* a ?).
+
+    Funkce  navrací  informace  v  43-bajtové  oblasti paměti na adrese DTA
+(adresa diskových přenosů). Informace jsou formátovany takto:
++----------+----------+--------------------------------------------------+
+|  offset  | velikost |             popis                                |
++----------+----------+--------------------------------------------------+
+| 00H ( 0) |    21    | používá DOS pro funkci 4FH (nalezení dalšího)    |
+| 15H (21) |     1    | atributy nalezeného souboru                      |
+| 16H (22) |     2    | čas posledního záznamu souboru                   |
+| 18H (24) |     2    | datum posledního záznamu souboru                 |
+| 1AH (26) |     4    | velikost souboru v bajtech                       |
+| 1EH (30) |    13    | jméno souboru a rozšíření jména souboru (ASCIIZ) |
++----------+----------+--------------------------------------------------+
+
+    Jméno  souboru  a  rozšíření  jména  souboru  jsou hlášeny v konvenčním
+tvaru,  s  vymazanými  mezerami a s tečkou mezi jménem souboru a rozšířením
+jména souboru. Pokud soubor neobsahuje žádné rozšíření jména souboru, tečka
+je potlačena.
+
+Pozn.: Další  vyhovující  soubor  můžete hledat pomocí funkce 4FH (nalezení
+       dalšího vyhovujícího souboru).
+
+       Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+       Adresu diskových přenosů (DTA) můžete nastavit pomocí funkce 1AH.
+
+       Rozsah  hledání  můžete řídit zadáním bajtu atributů do registru CX.
+       Pokud  je  CX  nastaven  na 00H, hledá funkce pouze normální soubory
+       (tj.   mohou   mít  nastaven  pouze  atribut  "pouze  čtení"  a/nebo
+       "archivní").  Pokud  je v CX specifikována nějaká kombinace atributů
+       "skrytý   soubor",  "systémový  soubor"  nebo  "adresář",  budou  se
+       vyhledávat   normální  soubory  a  také  všechny  soubory  s  těmito
+       atributy.  Pokud  je v CX specifikován atribut "návěští disku", bude
+       funkce  hledat  pouze  položku s atributem "návěští disku". Atributy
+       "pouze čtení" a "archivní" nemají vliv na hledání.
+
+         Struktura bajtu atributů souboru:
+        +-+-+-+-+-+-+-+-+
+        |7 6 5 4 3 2 1 0|
+        +++++++++++++++++ bit
+         | | | | | | | +-> 0 (  1): pouze čtení souboru (Read-only "R/O")
+         | | | | | | +---> 1 (  2): skrytý soubor (Hidden "HID")
+         | | | | | +-----> 2 (  4): systémový soubor (System "SYS")
+         | | | | +-------> 3 (  8): návěští disku (Volume Label "VOL")
+         | | | +---------> 4 ( 16): adresář (Directory "DIR")
+         | | +-----------> 5 ( 32): archivní soubor (Archive "ARC")
+         | +-------------> 6 ( 64): rezervováno (musí být nastaven na 0)
+         +---------------> 7 (128): rezervováno (musí být nastaven na 0)
+
+            - bližší popis atributů viz "Adresářová položka"
+
+       Čas  posledního záznamu udává čas, kdy byl soubor naposledy vytvořen
+       nebo  aktualizován.  Hodina,  minuta  a sekunda jsou zapsány ve dvou
+       bajtech takto:
+
+        15  14  13  12  11  10   9   8      7   6   5   4   3   2   1   0
+       +---+---+---+---+---+---+---+---+  +---+---+---+---+---+---+---+---+
+       | H | H | H | H | H | M | M | M |  | M | M | M | S | S | S | S | S |
+       +---+---+---+---+---+---+---+---+  +---+---+---+---+---+---+---+---+
+        |                 | |                        | |                 |
+        +- hodina (0-23) -+ +---- minuta (0-59) -----+ +- sekunda (0-58) +
+                                                      (údaj se vynásobí 2*)
+
+       Datum  posledního  záznamu  udává  den,  kdy  byl  soubor  naposledy
+       vytvořen  nebo  aktualizován.  Rok, měsíc a den jsou zapsány ve dvou
+       bajtech takto:
+
+        15  14  13  12  11  10   9   8      7   6   5   4   3   2   1   0
+       +---+---+---+---+---+---+---+---+  +---+---+---+---+---+---+---+---+
+       | R | R | R | R | R | R | R | M |  | M | M | M | D | D | D | D | D |
+       +---+---+---+---+---+---+---+---+  +---+---+---+---+---+---+---+---+
+        |                         | |                | |                 |
+        +--- rok (1980 až 2099) --+ +- měsíc (1-12) -+ +--- den (1-31) --+
+         (k údaji se přičte 1980)
+
+
+
+
+ F u n k c e   4 F H   ( 7 9 ) - nalezení dalšího vyhov.souboru (FIND NEXT)
+
+    vstup:    AH = 4FH
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   12H (18) - nejsou žádné další vyhovující soubory
+
+    Funkce  pokračuje  v  hledání  dalšího  souboru,  který se začal hledat
+pomocí  funkce  4EH  (nalezení  první  vyhovujícího souboru). Informace pro
+hledání  souboru  se  předá z funkce 4EH v 43-bajtové položce na adrese DTA
+(adresa diskových přenosů). Informace pro hledání má tuto strukturu:
+
++----------+----------+--------------------------------------------------+
+|  offset  | velikost |             popis                                |
++----------+----------+--------------------------------------------------+
+| 00H ( 0) |    21    | používá DOS pro proces nalezení dalšího souboru  |
+| 15H (21) |     1    | atributy nalezeného souboru                      |
+| 16H (22) |     2    | čas posledního záznamu souboru                   |
+| 18H (24) |     2    | datum posledního záznamu souboru                 |
+| 1AH (26) |     4    | velikost souboru v bajtech                       |
+| 1EH (30) |    13    | jméno souboru a rozšíření jména souboru (ASCIIZ) |
++----------+----------+--------------------------------------------------+
+
+    Jméno  souboru  a  rozšíření  jména  souboru  jsou hlášeny v konvenčním
+tvaru,  s  vymazanými  mezerami a s tečkou mezi jménem souboru a rozšířením
+jména souboru. Pokud soubor neobsahuje žádné rozšíření jména souboru, tečka
+je potlačena.
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+       Pro  nalezení  prvního vyhovujícího souboru použijte funkci 4EH, kde
+       jsou též podrobněji popsány jednotlivé položky informačního pole.
+
+
+
+ F u n k c e   5 0 H   ( 8 0 ) - rezervováno
+
+ F u n k c e   5 1 H   ( 8 1 ) - rezervováno
+
+ F u n k c e   5 2 H   ( 8 2 ) - rezervováno
+
+ F u n k c e   5 3 H   ( 8 3 ) - rezervováno
+
+
+
+ F u n k c e   5 4 H   ( 8 4 ) - poskytnutí informace o nastavení VERIFY
+
+    vstup:    AH = 54H
+
+    výstup:   AL = 00H - přepínač VERIFY je vypnut
+                   01H - přepínač VERIFY je zapnut
+
+    Funkce  54H navrací v registru AL informaci o současném stavu nastavení
+systémového  přepínače VERIFY. Přízak VERIFY lze nastavit pomocí funkce 2EH
+nebo  pomocí  povelu  VERIFY  ON  nebo OFF. Pokud je přepínač VERIFY zapnut
+(ON), provádí se při diskových operacích ověřování zapsaných dat kontrolním
+čtením (nikoliv však porovnáním se zapisovanými daty).
+
+
+
+
+ F u n k c e   5 5 H   ( 8 5 ) - rezervováno
+
+
+
+ F u n k c e   5 6 H   ( 8 6 ) - přejmenování souboru
+
+    vstup:    AH = 56H
+              DS:DX = ukazatel na řetězec ASCIIZ obsahující původní cestu a
+                      jméno souboru
+              ES:DI = ukazatel  na  řetězec ASCIIZ obsahující novou cestu a
+                      jméno souboru
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   02H ( 2) - soubor nenalezen
+                   03H ( 3) - cesta nenalezena
+                   05H ( 5) - požadavek odmítnut
+                   11H (17) - není stejné zařízení
+
+    Funkce  přejmenuje  soubor,  přemístí jej do jiného adresáře na stejném
+disku nebo jej přejmenuje i přemístí.
+
+   Při práci v síti vyžaduje tato funkce přístupová práva vytváření CREATE.
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+       Pokud  je  v popisu nového souboru obsaženo označení disku, musí být
+       toto označení shodné s označením disku v popisu původního souboru.
+
+       Jméno souboru nemůže obsahovat maskovací znaky (? a *).
+
+
+
+
+ F u n k c e   5 7 H   ( 8 7 ) - poskytnutí/nastavení data a času souboru
+
+    vstup:    AH = 57H
+              AL = 00H - poskytnutí data a času souboru
+                   01H - nastavení data a času souboru
+              BX = identifikátor souboru
+              CX = čas (pouze je-li AL = 01H - nastavení)
+              DX = datum (pouze je-li AL = 01H - nastavení)
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   01H (1) - neplatné číslo funkce v AL
+                   06H (6) - neplatný identifikátor souboru
+              CX = čas (pouze je-li AL = 00H - poskytnutí)
+              DX = datum (pouze je-li AL = 00H - poskytnutí)
+
+    Funkce  navrací  nebo  nastavuje datum a čas posledního zápisu souboru,
+který byl otevřen pomocí identifikátoru souboru (např. pomocí funkce 3DH).
+
+    Datum a čas jsou definovány následujícím způsobem:
+
+               DX (datum) = (rok-1980)*512 + měsíc*32 + den
+
+       15  14  13  12  11  10   9   8       7   6   5   4   3   2   1   0
+      +---+---+---+---+---+---+---+---+   +---+---+---+---+---+---+---+---+
+      | R | R | R | R | R | R | R | M |   | M | M | M | D | D | D | D | D |
+      +---+---+---+---+---+---+---+---+   +---+---+---+---+---+---+---+---+
+       |                         | |                 | |                 |
+       +--- rok (1980 až 2099) --+ +-- měsíc (1-12) -+ +--- den (1-31) --+
+      (k údaji se přičte hodnota 1980)
+
+
+               CX (čas) = hodina*2048 + minuta*32 + sekunda/2
+
+       15  14  13  12  11  10   9   8       7   6   5   4   3   2   1   0
+      +---+---+---+---+---+---+---+---+   +---+---+---+---+---+---+---+---+
+      | H | H | H | H | H | M | M | M |   | M | M | M | S | S | S | S | S |
+      +---+---+---+---+---+---+---+---+   +---+---+---+---+---+---+---+---+
+       |                 | |                         | |                 |
+       +- hodina (0-23) -+ +----- minuta (0-59) -----+ +- sekunda (0-58) +
+                                                     (údaj je vynásoben 2*)
+
+
+
+
+ F u n k c e   5 9 H   ( 8 9 ) - poskytnutí rozšířených chybových informací
+
+    vstup:    AH = 59H
+              BX = 0000H pro DOS 3.00 a vyšší
+
+    výstup:   AX = rozšiřující chybový kód
+              BH = třída chyby
+              BL = návrh další akce
+              CH = umístění chyby (zdroj chyby)
+
+    zničené registry: CL, DX, SI, DI, ES a DS
+
+    Funkce  59H navrací detailnější diagnostické informace o vzniklé chybě.
+Tato  funkce  může  být  použita  zevnitř obsluhy kritické chyby (přerušení
+INTú24H),  po  volání  funkce  DOS  která  hlásí  chybu nastavením příznaku
+přenosu  CF  nebo  po  operaci  se  souborem  s  použitím  FCB, která hlásí
+návratový kód FFH. Tato funkce je možná pouze pro DOS 3.00 a vyšší.
+
+    Všechny  funkce  pracující s FCB (tj. chybové kódy navracené v DOS 1.x)
+navrací  chybový  kód  operace v registru AL - při bezchybné funkci navrátí
+kód  0,  při  chybě navrátí kód 0FFH. Ostatní funkce hlásí chybu nastavením
+příznaku  přenosu  CF  a  umístěním  chybového  kódu  do  registru  AX (viz
+následující  tabulka). DOS 2.x navrací chybové kódy 01H - 12H (18). Pod DOS
+3.x  je  lepší  volat  tuto  funkci 59H, pomocí níž lze obdržet podrobnější
+informace o chybách.
+
+    Chyby  13H  (19)  až  1FH (31) odpovídají chybám 00H až 0CH, které jsou
+předávány  v  registru  DI při vyvolání přerušení INT 24H (obsluha kritické
+chyby).
+
+    Hodnoty navrácené v registru AX (rozšířený chybový kód):
+ 
++----------+--------------------------------------------------------------+
+|   Kód    |                       Význam                                 |
++----------+--------------------------------------------------------------+
+| 00H ( 0) | žádná chyba                                                  |
+| 01H ( 1) | neplatné číslo funkce                                        |
+| 02H ( 2) | soubor nenalezen                                             |
+| 03H ( 3) | cesta nenalezena                                             |
+| 04H ( 4) | otevřeno příliš mnoho souborů (není volný ident.s.)          |
+| 05H ( 5) | požadavek odmítnut                                           |
+| 06H ( 6) | neplatný identifikátor souboru                               |
+| 07H ( 7) | řídící blok paměti zničen                                    |
+| 08H ( 8) | nepostačující paměť                                          |
+| 09H ( 9) | neplatná adresa bloku paměti                                 |
+| 0AH (10) | neplatné prostředí                                           |
+| 0BH (11) | neplatný formát                                              |
+| 0CH (12) | neplatný přístupový kód                                      |
+| 0DH (13) | neplatná data                                                |
+| 0EH (14) | rezervováno                                                  |
+| 0FH (15) | neplatná specifikace disku                                   |
+| 10H (16) | pokus o zrušení aktivního adresáře                           |
+| 11H (17) | není stejné zařízení                                         |
+| 12H (18) | nejsou žádné další soubory                                   |
++----------+--------------------------------------------------------------+
+| 13H (19) | pokus o zápis na disk chráněný proti zápisu    INT 24H/00H   |
+| 14H (20) | neznámá jednotka                               INT 24H/01H   |
+| 15H (21) | disková mechanika není připravena              INT 24H/02H   |
+| 16H (22) | neznámý povel                                  INT 24H/03H   |
+| 17H (23) | chyba dat disku (kontrolní součet CRC)         INT 24H/04H   |
+| 18H (24) | chybná délka struktury požadavku               INT 24H/05H   |
+| 19H (25) | chyba vystavení disku                          INT 24H/06H   |
+| 1AH (26) | neznámý typ média                              INT 24H/07H   |
+| 1BH (27) | sektor nenalezen                               INT 24H/08H   |
+| 1CH (28) | v tiskárně není papír                          INT 24H/09H   |
+| 1DH (29) | operace zápisu byla chybná                     INT 24H/0AH   |
+| 1EH (30) | operace čtení byla chybná                      INT 24H/0BH   |
+| 1FH (31) | celková chyba                                  INT 24H/0CH   |
++----------+--------------------------------------------------------------+
+| 20H (32) | porušení sdílení souborů                                     |
+| 21H (33) | porušení uzamykání souborů                                   |
+| 22H (34) | neplatná výměna disku                                        |
+| 23H (35) | řídící blok souboru FCB nepřístupný (příliš mnoho FCB)       |
+| 24H (36) | přetečení vyrovnávací paměti pro sdílení                     |
+| 25H - 31H| rezervováno                                                  |
+| 32H (50) | požadavek pro práci v síti není podporován                   |
+| 33H (51) | vzdálený počítač nepřijímá                                   |
+| 34H (52) | zdvojené síťové jméno                                        |
+| 35H (53) | síťové jméno nenalezeno                                      |
+| 36H (54) | síť zaneprázdněna                                            |
+| 37H (55) | síťové zařízení již nadále neexistuje                        |
+| 38H (56) | omezení povelu síťového BIOSu překročeno                     |
+| 39H (57) | chyba hardware adaptéru pro práci v síti                     |
+| 3AH (58) | nesprávná odpověď ze sítě                                    |
+| 3BH (59) | neočekávaná chyba síťě                                       |
+| 3CH (60) | nekompatibilní adaptér pro dálkové přenosy                   |
+| 3DH (61) | tisková fronta plná                                          |
+| 3EH (62) | není dostatek volného místa pro tištěný soubor               |
+| 3FH (63) | tištěný soubor byl zrušen                                    |
+| 40H (64) | síťové jméno bylo zrušeno                                    |
+| 41H (65) | požadavek odmítnut                                           |
+| 42H (66) | typ síťového zařízení nesprávný                              |
+| 43H (67) | síťové jméno nenalezeno                                      |
+| 44H (68) | překročeno omezení síťového jména                            |
+| 45H (69) | překročeno omezení citlivosti síťového BIOSu                 |
+| 46H (70) | dočasná pauza                                                |
+| 47H (71) | požadavek pro práci v síti nepřijat                          |
+| 48H (72) | pauza tiskového nebo diskového přesměrování                  |
+| 49H - 4FH| rezervováno                                                  |
+| 50H (80) | soubor již existuje                                          |
+| 51H (81) | rezervováno                                                  |
+| 52H (82) | nelze vytvořit položku adresáře                              |
+| 53H (83) | chyba - přerušení pro obsluhu kritické chyby INT 24H         |
+| 54H (84) | příliš mnoho přesměrování                                    |
+| 55H (85) | zdvojené přesměrování                                        |
+| 56H (86) | neplatné heslo                                               |
+| 57H (87) | neplatný parametr                                            |
+| 58H (88) | chyba zařízení pro práci v síti                              |
++----------+--------------------------------------------------------------+
+
+    Hodnoty navrácené v registru BH (třída chyby):
+ 
++----------+--------------------------------------------------------------+
+|   Kód    |                       Význam                                 |
++----------+--------------------------------------------------------------+
+| 01H ( 1) | překročeno přesměrování (nejsou FCB, paměť, kanály, ident.)  |
+| 02H ( 2) | dočasná situace; zkuste opět později (např. uzamčený soubor) |
+| 03H ( 3) | problémy oprávnění (musíte mít vyšší přístupová práva)       |
+| 04H ( 4) | vnitřní chyba v systémovém software (chyba v DOS)            |
+| 05H ( 5) | chyba hardware                                               |
+| 06H ( 6) | chyba systému; tj. špatný nebo chybí CONFIG.SYS              |
+| 07H ( 7) | chyba aplikačního programu (chybná informace do DOS atd.)    |
+| 08H ( 8) | požadovaný prvek nenalezen                                   |
+| 09H ( 9) | chybný formát (tj. nerozpoznatelný disk nebo soubor)         |
+| 0AH (10) | prvek vnitřně uzamčen                                        |
+| 0BH (11) | chyba média (tj. chyba CRC, špatný disk)                     |
+| 0CH (12) | prvek již existuje                                           |
+| 0DH (13) | jiné chyby (neklasifikované)                                 |
++----------+--------------------------------------------------------------+
+
+    Hondoty navrácené v registru BL (návrh další akce):
+ 
++----------+--------------------------------------------------------------+
+|   Kód    |                       Význam                                 |
++----------+--------------------------------------------------------------+
+| 01H ( 1) | zkuste několikrát (a pak se zeptejte uživatele, co dál)      |
+| 02H ( 2) | zkuste   opět  (několikrát)  po  přestávce,  potom  zobrazte |
+|          | uživateli nabídku k pokračování nebo k abortování procesu    |
+| 03H ( 3) | požádejte uživatele o opravení vstupu, potom opakujte        |
+| 04H ( 4) | řádně přerušte; uzavřete soubory a potom ukončete aplikaci   |
+| 05H ( 5) | přímo přerušte; nepokoušejte se již uzavřít soubory          |
+| 06H ( 6) | ignorujte                                                    |
+| 07H ( 7) | požádejte  uživatele,  aby  něco udělal (jako vložit správný |
+|          | disk) a potom operaci opakujte                               |
++----------+--------------------------------------------------------------+
+
+    Hodnoty navrácené v registru CH (umístění chyby, zdroj chyby):
+ 
++----------+--------------------------------------------------------------+
+|   Kód    |                       Význam                                 |
++----------+--------------------------------------------------------------+
+| 01H ( 1) | neznámý zdroj chyby                                          |
+| 02H ( 2) | blokové zařízení (tj. disk)                                  |
+| 03H ( 3) | komunikační síť                                              |
+| 04H ( 4) | znakové zařízení, sériové zařízení                           |
+| 05H ( 5) | paměť                                                        |
++----------+--------------------------------------------------------------+
+
+
+
+
+ F u n k c e   5 A H   ( 9 0 ) - vytvoření jedinečného souboru
+
+    vstup:    AH = 5AH
+              CX = atributy souboru
+              DS:DX = ukazatel na cestu končící znakem \ (řetězec ASCIIZ)
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   03H (3) - cesta nenalezena
+                   05H (5) - požadavek odmítnut
+              DS:DX = ukazatel na jméno souboru (řetězec ASCIIZ)
+
+    Funkce 5AH vytvoří ve specifikovaném adresáři jedinečný soubor a otevře
+jej  v  kompatibilním  módu s přístupem "čtení/zápis". Tato funkce se často
+používá k vytvoření dočasných souborů, avšak DOS při ukončení programu tyto
+soubory automaticky neruší. Tato služba je možná pouze v DOS 3.0 a vyšším.
+
+   Při práci v síti vyžaduje tato funkce přístupová práva vytváření CREATE.
+
+Pozn.: Jméno cesty k adresáři musí končit znakem obráceného lomítka "\".
+
+       Rezervujte  za  řetězcem označení cesty 13 bajtů tak, aby DOS mohl k
+       cestě připojit jméno nově vytvořeného souboru.
+
+
+
+ F u n k c e   5 B H   ( 9 1 ) - vytvoření nového souboru
+
+    vstup:    AH = 5BH
+              CX = atributy souboru
+              DS:DX = ukazatel na označení souboru (řetězec ASCIIZ)
+
+    výstup:   AX = identifikátor souboru
+                 = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   03H (3) - cesta nenalezena
+                   04H (4) - není volný žádný identifikátor souboru
+                   05H (5) - požadavek odmítnut
+                   80H (128) - soubor již existuje
+
+    Tato  funkce  vytvoří  soubor podle specifikovaného označení souboru za
+podmínky,  že  tento  soubor dosud neexistuje. Tato funkce je možná pouze v
+DOS 3.0 a vyšším.
+
+   Při práci v síti vyžaduje tato funkce přístupová práva vytváření CREATE.
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+       Tato  funkce  je identická funkci 3CH (vytvoření souboru) v případě,
+       že  vytvářený  soubor  dosud  ještě  neexistuje.  Pokud  soubor  již
+       existuje,  ohlásí  tato  funkce  chybu,  zatímco  funkce 3CH v tomto
+       případě  zkrátí  existující  soubor  na  nulovou  délku  a potom jej
+       otevře.
+
+
+
+
+ F u n k c e   5 C H   ( 9 2 ) - zamknutí/odemknutí přístupu k souboru
+
+    vstup:    AH = 5CH
+              AL = 00H - uzamčení souboru
+                   01H - odemknutí souboru
+              BX = identifikátor souboru
+              CX = relativní adresa začátku oblasti (vyšší slovo)
+              DX = relativní adresa začátku oblasti (nižší slovo)
+              SI = délka oblasti (vyšší slovo)
+              DI = délka oblasti (nižší slovo)
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   01H ( 1) - neplatný kód funkce
+                   06H ( 6) - neplatný identifikátor souboru
+                   21H (33) - porušení   uzamčení   souboru  (specifikovaná
+                              oblast je již uzamčena nebo je již odemčena)
+
+    Tato  funkce  se  používá k uzamčení nebo odemčení vybrané části disku,
+čímž  zabraňuje  nebo  umožňuje  přístup  k  této oblasti jiným procesům ve
+víceúlohovém  režimu  nebo v prostředí sítě. Tato funkce je možná pouze pro
+DOS 3.00 a vyšší.
+
+Pozn.: Registry  CX  a DX společně (jako 4-bajtové celé číslo bez znaménka)
+       určují  relativní  adresu  (offset;  v  bajtech)  od začátku souboru
+       oblasti  uvnitř  souboru,  která  má  být  uzamčena  nebo odemknuta;
+       registry  SI  a DI společně (jako 4-bajtové celé číslo bez znaménka)
+       specifikují délku této chráněné oblasti.
+
+       Přerušení  procesu,  který má otevřené soubory s uzamčenými oblastmi
+       nebo  uzavření  souboru s uzavřenou oblastí bude mít nedefinovatelné
+       následky.  Pokud  váš  program  může  být  přerušen pomocí přerušení
+       INTú23H  nebo INTú24H, musíte před přerušením programu zajistit, aby
+       všechny zámky byly odemčeny.
+
+       Operace  odemknutí  musí  specifikovat přesně stejnou oblast souboru
+       jako uzamykací operace.
+
+       Podřízené procesy (tj. proces vytvořený voláním funkce EXEC) nesdílí
+       přístup  k  oblastem  souboru,  které  byly  uzamčeny jeho otcovským
+       procesem.
+
+       Použijte tuto funkci v následujících módech souboru:
+        mód sdílení se zamítnutím čtení
+        mód sdílení bez žádného zamítnutí
+        mód sdílení se zamítnutím zápisu, soubor je otevřen pro čtení/zápis
+        mód sdílení se zamítnutím zápisu, soubor je otevřen pouze pro zápis
+
+
+
+
+ F u n k c e   5 D H   ( 9 3 ) - rezervováno
+
+
+
+ F u n k c e   5 E 0 0 H   ( 9 4 - 0 ) - poskytnutí jména zařízení
+
+    vstup:    AH = 5EH
+              AL = 00H (číslo podfunkce)
+              DS:DX = ukazatel  na  vyrovnávací  paměť (16 bajtů), kde bude
+                      navráceno jméno počítače
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   01H (1) - program obsluhy pro práci v síti není načten
+              CH = 00H (0) - jméno není definováno
+                   není 00H (0) - jméno je definováno
+              CL = číslo jména NETBIOS (doplněk BIOS pro práci v síti)
+                   (pokud není CH = 0)
+              DS:DX = ukazatel na jméno počítače (řetězec ASCIIZ)
+
+    V  systémech vybavených prostředky pro práci v síti IBM PC Network nebo
+Microsoft Networks navrací tato funkce jméno lokálního počítače. Toto jméno
+navrací  jako  řetězec ASCIIZ, který je doplněn mezerami na délku 15 znaků.
+Tato  funkce  je  možná  pouze  pro DOS 3.10 a vyšší a vyžaduje, aby běžely
+programy IBM PC Network nebo Microsoft Networks.
+
+Pozn.: Pokud  nebylo  jméno  nikdy definováno, CH navrací 00H a obsah CL je
+       nedefinovaný.  V opačném případě navrací CL číslo jména NETBIOS (tj.
+       doplňující část k BIOS počítače, která umožňuje práci v síti).
+
+
+
+
+ F u n k c e   5 E 0 2 H   ( 9 4 - 2 ) - nastavení inicial.řetězce tiskárny
+
+    vstup:    AH = 5EH
+              AL = 02H (podfunkce)
+              BX = index výpisu přesměrování
+              CX = délka řetězce pro nastavení (maximálně 64 bajtů)
+              DS:SI = ukazatel  na vyrovnávací paměť obsahující řetězec pro
+                      nastavení tiskárny
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   01H (1) - program obsluhy pro práci v síti není načten
+
+    Tato  podfunkce  funkce  5EH  umožňuje  jednotlivým  uživatelům  v síti
+specifikovat  jejich  vlastní  řetězec  pro  nastavení tiskárny při sdílení
+tiskárny.  Tento  řetězec  nastavení  tiskárny bude vyslán na tiskárnu vždy
+před  tiskem jednotlivých souborů uživatele. Tato funkce je možná pouze pro
+DOS  3.10  a  vyšší  a  vyžaduje,  aby  běžely programy IBM PC Network nebo
+Microsoft Networks.
+
+Důležité: Vzhledem  k  tomu,  že  hodnota  indexu přesměrování se může mezi
+          dobou prohlížení výpisu přesměrování a dobou ukončení této funkce
+          měnit,  je  vhodné  volat  tuto  funkci  bezprostředně za voláním
+          funkce  5F02H  (poskytnutí  položky  výpisu přesměrování). (změnu
+          položky  výpisu  přesměrování  může  způsobit volání funkce 5F03H
+          (přesměrování    zařízení)    nebo    funkce    5F04H    (zrušení
+          přesměrování).)
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+       Tato  funkce  je  volána  s  indexem  výpisu přesměrování v BX; tato
+       hodnota  indexu  může  být  určena  voláním funkce 5F02H (poskytnutí
+       položky výpisu přesměrování).
+
+       Nastavovací řetězec nesmí být delší než 64 bajtů.
+
+
+
+
+ F u n k c e   5 E 0 3 H   ( 9 4 - 3 ) - poskytnutí inic. řetězce tiskárny
+
+    vstup:    AH = 5EH
+              AL = 03H (podfunkce)
+              BX = index výpisu přesměrování
+              ES:DI = ukazatel na 64-bajtovou vyrovnávací paměť
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   01H (1) - program obsluhy pro práci v síti není načten
+
+    Tato   funkce  navrací  inicializační  řetězec  pro  nastavení  sdílené
+tiskárny  lokálního uživatele. Funkce je možná pouze pro DOS 3.10 a vyšší a
+vyžaduje, aby běžely programy IBM PC Network nebo Microsoft Networks.
+
+Důležité: Vzhledem  k  tomu,  že  hodnota  indexu přesměrování se může mezi
+          dobou prohlížení výpisu přesměrování a dobou ukončení této funkce
+          měnit,  je  vhodné  volat  tuto  funkci  bezprostředně za voláním
+          funkce  5F02H  (poskytnutí  položky  výpisu přesměrování). (změnu
+          položky  výpisu  přesměrování  může  způsobit volání funkce 5F03H
+          (přesměrování    zařízení)    nebo    funkce    5F04H    (zrušení
+          přesměrování).)
+
+Pozn.: Použijte  funkci 59H k získání rozšířeného chybového kódu (DOS 3.0 a
+       vyšší).
+
+       Tato  funkce  je  volána  s  indexem  výpisu přesměrování v BX; tato
+       hodnota  indexu  může  být  určena  voláním funkce 5F02H (poskytnutí
+       položky výpisu přesměrování).
+
+       Nastavovací řetězec nesmí být delší než 64 bajtů.
+
+
+
+
+
+ F u n k c e   5 F 0 2 H   ( 9 5 - 2 ) - poskytnutí položky výpisu přesměr.
+
+    vstup:    AH = 5FH
+              AL = 02H
+              BX = index pro výpis přesměrování
+              DS:SI = ukazatel na 128-bajtovou vyrovnávací paměť obsahující
+                      jméno lokálního zařízení
+              ES:DI = ukazatel na 128-bajtovou vyrovnávací paměť obsahující
+                      jméno pro práci v síti
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   01H ( 1) - program pro obsluhu práce v síti není načten
+                   12H (18) - není více souborů
+              BH = příznak stavu zařízení
+                   bit 0 = 0 - zařízení platí
+                           1 - zařízení neplatí
+              BL = typ zařízení (3=tiskárna; 4=mechanika disku)
+              CX = parametr uložený funkcí 5F03H
+
+    zničené registry: DX a BP
+
+    Tato  funkce  navrací položku výpisu přesměrování v síti. Výpis samotný
+se  vytváří  pomocí  podfunkce  5F03H. Funkce je možná pouze pro DOS 3.10 a
+vyšší  a  vyžaduje,  aby  běžely  programy  IBM  PC  Network nebo Microsoft
+Networks.
+
+    Při  volání  podfunkce  5F02H  umístěte  do registru BX hodnotu indexu,
+kterou  si přejete ověřit. V 16-bajtové oblasti na kterou ukazuje pár DS:SI
+bude  navráceno  jméno lokálního zařízení, jeho jméno pro práci v síti bude
+navráceno v páru ES:DI. BL navrátí kód tyou zařízení (3 pro tiskárnu, 4 pro
+mechaniku  disku)  a  CX  navrátí  parametr (specifikovaný pomocí podfunkce
+5F03H).
+
+    Pokud  chcete  získat výpis všech zařízení pro práci v síti, provádějte
+tuto  funkci  opakovaně,  počínaje  indexem (BX) nastaveným na 00H, hodnotu
+indexu  v  BX  postupně zvětšujte o 1 až bude registr AX hlásit chybový kód
+12H (18).
+
+
+
+ F u n k c e   5 F 0 3 H   ( 9 5 - 3 ) - přesměrování zařízení
+
+    vstup:    AH = 5FH
+              AL = 03H
+              BL = typ zařízení (3=tiskárna, 4=disková mechanika)
+              CX = uložený parametr (všechny hodnoty kromě 0 jsou rezerv.)
+              DS:SI = ukazatel na řetězec ASCIIZ obsahující jméno lokálního
+                      zařízení
+              ES:DI = ukazatel na řetězec ASCIIZ obsahující cestu pro práci
+                      v síti následovanou řetězcem ASCIIZ obsahujícím heslo
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+                   01H (1) - program pro obsluhu práce v síti není načten
+                   03H (3) - cesta nenalezena
+                   05H (5) - požadavek odmítnut
+                   08H (8) - nepostačující paměť
+
+    Funkce  5F03H umožňuje přesměrovat vstup/výstup z lokální tiskárny nebo
+diskové  mechaniky  na  síťové  zařízení.  Můžete  také  ovládat  přístup k
+síťovému  zařízení  použitím  hesla.  Funkce  je možná pouze pro DOS 3.10 a
+vyšší  a  vyžaduje,  aby  běžely  programy  IBM  PC  Network nebo Microsoft
+Networks.
+
+Pozn.: Volejte   tuto   funkci  s  nastaveným  kódem  typu  zařízení  v  BL
+       (3=tiskárna,  4=disková  mechanika)  a  s  0  v CX. Pár DS:SI by měl
+       ukazovat na jméno zařízení, které si přejete přesměrovat a pár ES:DI
+       by  měl  ukazovat  na  řetězec  ASCIIZ  udávající  jméno  příjmového
+       síťového  zařízení.  Jméno  síťového  zařízení  musí být následováno
+       druhým řetězcem ASCIIZ specifikujícím heslo. Heslo může být dlouhé 0
+       až  8  znaků; nechcete-li specifikovat žádné heslo, použijte řetězec
+       ASCIIZ s nulovou délkou (prvním bajtem je bajt 0).
+
+       Pokud  je  přesměrovávaným zařízením tiskárna, jsou přijatelná jména
+       PRN, LPT1, LPT2 a LPT3. Pokud je přesměrovávaným zařízením mechanika
+       disku,  měl byt zdrojový řetězec ASCIIZ obsahovat písmeno označující
+       disk následované dvojtečkou.
+
+       Zdrojový  řetězec  může být i nulový; v tomto případě se DOS pokouší
+       provést přístup na jméno síťového zařízení se specifikovaným heslem.
+
+
+
+
+ F u n k c e   5 F 0 4 H   ( 9 5 - 4 ) - zrušení přesměrování
+
+    vstup:    AH = 5FH
+              AL = 04H
+              DS:SI = ukazatel  na řetězec ASCIIZ specifikující buď lokální
+                      zařízení,  jehož  přesměrování  má  být zrušeno, nebo
+                      jemu přiřazené jméno síťového zařízenó.
+
+    výstup:   AX = chybový kód (pokud je CF = 1) - viz funkce DOS 59H
+
+    Tato funkce ruší dříve nastavená přesměrování na síťová zařízení. DS:SI
+ukazuje  na  jméno zařízení, jehož přesměrování má být zrušeno, to může být
+buď  jméno  tiskárny (PRN, LPT1, LPT2 nebo LPT3), označení disku nebo jméno
+síťového zařízení (v posledním případě by měl být řetězec ASCIIZ označující
+jméno  síťového  zařízení  následován druhým řetězcem, který obsahuje heslo
+spojené  s rušením). Funkce je možná pouze pro DOS 3.10 a vyšší a vyžaduje,
+aby běžely programy IBM PC Network nebo Microsoft Networks.
+
+
+
+
+
+ F u n k c e   6 0 H   ( 9 6 ) - rezervováno
+
+
+
+ F u n k c e   6 1 H   ( 9 7 ) - rezervováno
+
+
+
+
+ F u n k c e   6 2 H   ( 9 8 ) - poskytnutí adresy prefixu program.segmentu
+
+    vstup:    AH = 62H
+
+    výstup:   BX = segment prefixu programového segmentu PSP
+
+    Funkce  navrací  v BX adresu segmentu prefixu programového segmentu PSP
+současného procesu (tj. program, který právě probíhá). Tato funkce je možná
+pouze pro DOS 3.00 a vyšší.
+

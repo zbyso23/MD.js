@@ -1,11 +1,14 @@
 {
-  "name": "mdjs-reborn-arctic",
-  "version": "0.4.5",
+  "name": "mdjs-lite",
+  "version": "5.4.6-lite",
   "private": true,
-  "description": "Vanilla ES6 Markdown, strict Mermaid-like SVG, fuzzy search, code tabs, smart tables, fullscreen, print and SVG export",
+  "description": "Offline Markdown and EDU workbench with Micro R, KaTeX and MiniChem; no retro/Arduino emulators",
   "scripts": {
     "test": "node --test test/*.test.js",
-    "bench": "node test/performance.js"
+    "bench": "node test/performance.js",
+    "test:encyclopedia": "npm run test:encyclopedia:unit && npm run test:encyclopedia:browser",
+    "test:highlight": "node --test test/lite-highlighting.test.js",
+    "test:lite": "npm test && npm run test:highlight"
   },
   "dependencies": {},
   "devDependencies": {}

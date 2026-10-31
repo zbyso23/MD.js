@@ -1,0 +1,11 @@
+const assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
+const ctx={};ctx.globalThis=ctx;vm.createContext(ctx);vm.runInContext(fs.readFileSync(path.join(__dirname,'minichem.js'),'utf8'),ctx);const M=ctx.MiniChem;
+const good=[['H2O',/_\{2\}/],['SO4^2-',/\^\{2-\}/],['Fe^{3+}',/\^\{3\+\}/],['^{14}C',/\^\{14\}.*C/],['^{235}_{92}U',/\^\{235\}_\{92\}.*U/],['CuSO4 * 5H2O',/\\cdot 5/],['CuSO4 · 5H2O',/\\cdot 5/],['H2O(l)',/\\mathrm\{\(l\)\}/],['NaCl(aq)',/\\mathrm\{\(aq\)\}/],['Ca(OH)2',/_\{2\}/],['2H2 + O2 -> 2H2O',/\\rightarrow/],['Na+',/\^\{\+\}/]];
+for(const [s,re] of good)assert.match(M.formula(s),re,s);
+assert.match(M.expand(String.raw`\ce{^{235}_{92}U}`),/\^\{235\}/);
+assert.match(M.expand(String.raw`x+\ce{Fe^{3+}}`),/\^\{3\+\}/);
+for(const s of ['H2 ->','H2O(','Fe^{0+}','H2O *','H'.repeat(2049)])assert.throws(()=>M.formula(s),s);
+assert.throws(()=>M.expand(String.raw`\ce{H2O`));
+const kctx={window:{},document:{compatMode:'CSS1Compat'},console};kctx.globalThis=kctx.window;vm.runInNewContext(fs.readFileSync(path.join(__dirname,'vendor/katex.min.js'),'utf8'),kctx);
+for(const [s] of good)assert.match(kctx.window.katex.renderToString(M.expand('\\ce{'+s+'}'),{throwOnError:true}),/katex-html/,s);
+console.log('MiniChem Plus I: PASS '+good.length+' render cases');

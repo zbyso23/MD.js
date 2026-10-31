@@ -25,22 +25,184 @@
   .preset { font-size: 12px; }
   #status { font-size: 12px; color: #93a7c4; font-weight: 500; }
   @media (max-width: 930px) { main { grid-template-columns: 1fr; } #source { height: 330px; min-height: 330px; } .preview-wrap { max-height: initial; } }
+
+/* Reader / projector / print share the same live Markdown DOM. */
+.workbar{display:flex;flex-wrap:wrap;gap:8px;background:#0c1a2d;padding:10px 16px;border-bottom:1px solid #36506a;align-items:center}
+.workbar button,.workbar a{font:600 12px system-ui;border:1px solid #536f8d;background:#26425f;border-radius:7px;color:#e9f6fc;padding:9px 12px;text-decoration:none;cursor:pointer}
+.workbar .spacer{flex:1}.workbar .notice{font:12px system-ui;color:#b6cfe3}
+body.reader-view main{display:block;max-width:1100px;margin:auto}body.reader-view main>.pane:first-child{display:none}body.reader-view .preview-wrap{max-height:none;overflow:visible}body.reader-view main>.pane:last-child .pane-head{display:none}
+body.projector-view{background:#080e19}body.projector-view .mast,body.projector-view main>.pane:first-child{display:none}body.projector-view main{display:block;padding:0}body.projector-view main>.pane:last-child{border:0;background:none}body.projector-view .preview-wrap{max-height:none;min-height:100vh;background:#0c1422;padding:2vw}body.projector-view #preview{max-width:100%;min-height:92vh;font-size:clamp(20px,2.4vw,38px)}
+@media print{.mast,.workbar,.pane:first-child,.pane-head,.md-toolbar,.md-docux-toolbar{display:none!important}body,main,.pane,.preview-wrap,#preview{display:block!important;max-height:none!important;height:auto!important;overflow:visible!important;border:0!important;box-shadow:none!important;background:white!important;color:black!important;margin:0!important;padding:0!important}main{display:block!important}#preview{font-size:11pt!important}figure,table,pre{break-inside:avoid} @page{size:auto;margin:15mm}}
+/* Printing must not inherit hidden reader/projector panels or overflow clamps. */
+@media print {
+  html,body{width:100%!important;min-height:0!important;overflow:visible!important}
+  body.editor-view main,body.reader-view main,body.projector-view main,main{
+    display:block!important;width:100%!important;max-width:none!important;
+    height:auto!important;overflow:visible!important;position:static!important
+  }
+  main>.pane:first-child{display:none!important}
+  main>.pane:last-child{display:block!important;width:100%!important;max-width:none!important}
+  main>.pane:last-child .preview-wrap,#preview{
+    display:block!important;width:100%!important;max-width:none!important;
+    min-height:0!important;max-height:none!important;overflow:visible!important;
+    position:static!important;transform:none!important;visibility:visible!important
+  }
+  body.projector-view #preview{font-size:11pt!important}
+  .md-ency-overlay[hidden],.md-ency-trigger{display:none!important}
+}
 </style>
+
+<link rel="stylesheet" href="../MD-Encyclopedia.css">
 </head>
 <body>
 <header class="mast"><div><h1>MD.js <span>Reborn</span> <small>↗</small></h1><p>ARCTIC EDITION · PHASE 4.5 · Document UX · Vanilla ES6</p></div><span class="tag">ZERO IMPORTS · SVG-FIRST · LIGHT / DARK</span></header>
-<main>
+<nav class="workbar" aria-label="Document tools"><a href="../index.html">⌂ Home</a><button id="nav-back" type="button">← Back</button><button id="nav-forward" type="button">Forward →</button><label class="preset" for="file-open">Open .md</label><input id="file-open" type="file" accept=".md,.markdown,.txt,text/markdown,text/plain" style="display:none"><button id="file-save" type="button">Save .md</button><button id="mode-editor" type="button">Editor</button><button id="mode-reader" type="button">Reader</button><button id="mode-projector" type="button">Projector</button><button id="mode-print" type="button">Print / PDF</button><span class="spacer"></span><span class="notice" id="doc-name">Untitled.md</span></nav><main>
   <section class="pane" aria-label="Editor Markdown">
     <div class="pane-head"><span>01 — Markdown editor</span><button id="reset" type="button">Obnovit ukázku</button></div>
     <textarea id="source" spellcheck="false" aria-label="Zdroj Markdown"></textarea>
-    <nav class="preset-bar" aria-label="Ukázky"><button type="button" class="preset" data-example="overview">Všechno</button><button type="button" class="preset" data-example="flow">Flowchart</button><button type="button" class="preset" data-example="sequence">Sequence</button><button type="button" class="preset" data-example="pie">Pie chart</button><button type="button" class="preset" data-example="class">Class</button><button type="button" class="preset" data-example="timeline">Timeline</button><button type="button" class="preset" data-example="security">Útočný text</button><button type="button" class="preset" data-example="extended">Extended F4</button><button type="button" class="preset" data-example="docux">DocUX F4.5</button></nav>
+    <nav class="preset-bar" aria-label="Ukázky"><button type="button" class="preset" data-example="overview">Všechno</button><button type="button" class="preset" data-example="katex">∑ KaTeX Showcase</button><button type="button" class="preset" data-example="flow">Flowchart</button><button type="button" class="preset" data-example="sequence">Sequence</button><button type="button" class="preset" data-example="pie">Mermaid Pie</button><button type="button" class="preset" data-example="charts">Grafy Mini</button><button type="button" class="preset" data-example="class">Class</button><button type="button" class="preset" data-example="timeline">Timeline</button><button type="button" class="preset" data-example="security">Útočný text</button><button type="button" class="preset" data-example="extended">Extended F4</button><button type="button" class="preset" data-example="docux">DocUX F4.5</button></nav>
   </section>
   <section class="pane" aria-label="Náhled Markdown"><div class="pane-head"><span>02 — Reader / Live preview</span><span id="status" role="status" aria-live="polite">Ready</span></div><div class="preview-wrap"><article id="preview" class="md-root" data-md-theme="light"></article></div></section>
 </main>
-<script src="../MD.js"></script><script src="../MD-diagrams.js"></script><script src="../MD-docux.js"></script><script src="../MD-UX.js"></script>
+<script src="../MD.js"></script><script src="../MD-diagrams.js"></script><script src="../MD-Charts.js"></script><script src="../MD-docux.js"></script><script src="../MD-UX.js"></script>
 <script>
 'use strict';
 const samples = {
+  katex: String.raw`# KaTeX Showcase — Tested Math & Science
+
+**Inline:** Energy is $E=mc^2$ and sampling interval is $T=1/f_s$.
+
+## Algebra and fractions
+
+$$\frac{a+b}{c}=\sqrt{x^2+y^2}$$
+
+## Calculus
+
+$$\int_0^{\pi}\sin(x)\,dx=2$$
+
+## Matrices (multiple rows and columns)
+
+$$
+\begin{bmatrix}
+a & b \\
+c & d
+\end{bmatrix}
+\begin{bmatrix}x\\y\end{bmatrix}
+=
+\begin{bmatrix}ax+by\\cx+dy\end{bmatrix}
+$$
+
+## Aligned equations
+
+$$\begin{aligned}a &= b+c \\ d &= e+f\end{aligned}$$
+
+## Piecewise function
+
+$$f(x)=\begin{cases}-x & x<0 \\ x & x\ge0\end{cases}$$
+
+## Fourier transform (FFT)
+
+$$X_k=\sum_{n=0}^{N-1}x_n e^{-i2\pi kn/N}$$
+
+## Statistics
+
+$$\bar{x}=\frac1n\sum_{i=1}^n x_i,\qquad s^2=\frac{1}{n-1}\sum_{i=1}^n(x_i-\bar{x})^2$$
+
+## EDU Chemistry Lab — MiniChem Plus III
+
+Try changing the formula in the left editor; the right preview updates immediately.
+
+**Nested groups:** $\ce{K4[Fe(CN)6]}$, $\ce{Al2(SO4)3}$.
+
+**Math + chemistry in one expression:**
+
+$$\Delta H = H_{\ce{H2O(l)}} - H_{\ce{H2O(g)}}$$
+
+**Isotopes and reactions:**
+
+$$\ce{^{14}C}\quad \ce{N2 + 3H2 <=> 2NH3}$$
+
+**Conditions:** $\ce{CaCO3 ->[heat] CaO + CO2}$.
+
+> MiniChem is a *typesetter*, not a reaction balancer or chemical validation engine.
+
+## Chemistry — MiniChem Plus I
+
+Water $\ce{H2O}$ and sulfuric acid $\ce{H2SO4}$.
+
+$$\ce{2H2 + O2 -> 2H2O}$$
+
+$$\ce{Ca(OH)2} \qquad \ce{SO4^2-}$$
+
+MiniChem Plus I also supports isotopes, hydrate dots and physical states.
+
+Carbon-14 $\ce{^{14}C}$ and uranium-235 $\ce{^{235}_{92}U}$.
+
+Iron(III) $\ce{Fe^{3+}}$, liquid water $\ce{H2O(l)}$ and aqueous sodium chloride $\ce{NaCl(aq)}$.
+
+$$\ce{CuSO4 * 5H2O}$$
+
+This is a deliberately small subset of mhchem; it does not balance equations.
+
+## MiniChem Plus II — reactions, catalysts and equilibrium
+
+Ammonia synthesis (equilibrium):
+
+$$\ce{N2 + 3H2 <=> 2NH3}$$
+
+Heat above a reaction arrow:
+
+$$\ce{CaCO3 ->[heat] CaO + CO2}$$
+
+Catalyst and conditions above/below an arrow:
+
+$$\ce{2SO2 + O2 ->[V2O5][450 C] 2SO3}$$
+
+This is chemical **typesetting** only. MiniChem never balances reactions.
+
+
+## Markdown code must stay literal
+
+~~~text
+$E=mc^2$
+\frac{1}{2}
+~~~
+`,
+
+  charts: String.raw`# Charts Mini
+
+## Sloupce a popisky os
+
+~~~chart
+type: bar
+title: Délka sestavení
+x: Projekt
+y: Milisekundy
+data:
+MD Core: 12
+Z80: 7
+Blocks: 16
+~~~
+
+## Koláč
+
+~~~chart
+type: pie
+title: Běhy
+unit: kusy
+data:
+Úspěšné: 80
+Zbývá: 20
+~~~
+
+## Sort / Filter
+
+| Moduly | Body |
+|:--|--:|
+| Core | 5 |
+| ZX | 11 |
+| Blocks | 8 |
+`,
   overview: String.raw`# MD.js Reborn 🧊
 
 ###### 2016 → 2026: bezpečný Markdown, který vyrostl.
@@ -286,7 +448,6 @@ Ano. **HTML je vykresleno už parserem.** Interaktivní prvky jsou volitelnou vr
 
 ![Arctic Vault](assets/arctic.svg)
 ![AI Hospital](assets/hospital.svg)
-![ZX 48K](assets/spectrum.svg)
 
 ## Mermaid s uložením SVG
 
@@ -317,12 +478,14 @@ flowchart TB
 Poslední diagram se **úmyslně nevykreslí**: nepodporované click zůstane jako text.`
 };
 const source = document.getElementById('source');
+let currentDocumentName='Untitled.md';
 const status = document.getElementById('status');
 const preview = document.getElementById('preview');
 const md = new MD({ mode:'extended' });
 function redraw() {
   try {
     md.mount(preview, source.value);
+    if (window.MDMathPlugin) window.MDMathPlugin.render(preview);
     const drawn = preview.querySelectorAll('figure.md-diagram').length;
     const fallback = preview.querySelectorAll('pre.md-diagram-fallback').length;
     status.textContent = `${drawn} diagramů · ${fallback} fallback`; status.style.color = '#a9efdb';
@@ -338,6 +501,22 @@ const use = key => { source.value = samples[key]; redraw(); };
 document.getElementById('reset').addEventListener('click', () => use('overview'));
 document.querySelectorAll('[data-example]').forEach(b => b.addEventListener('click', () => use(b.dataset.example)));
 use('overview');
+const $=id=>document.getElementById(id);
+$('nav-back').onclick=()=>history.back();$('nav-forward').onclick=()=>history.forward();
+$('file-open').onchange=async e=>{const f=e.target.files[0];if(!f)return;if(f.size>4*1024*1024){alert('Maximum Markdown file size is 4 MB');return;}source.value=await f.text();currentDocumentName=f.name;$('doc-name').textContent=f.name;redraw();e.target.value='';};
+function stamp(){const d=new Date();return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0'),String(d.getHours()).padStart(2,'0'),String(d.getMinutes()).padStart(2,'0'),String(d.getSeconds()).padStart(2,'0')].join('');}
+$('file-save').onclick=()=>{const original=(currentDocumentName||'Untitled.md').replace(/\.(md|markdown|txt)$/i,'').replace(/[^a-zA-Z0-9._-]/g,'_').slice(0,75)||'Untitled';const name=original+'_'+stamp()+'.md';const url=URL.createObjectURL(new Blob([source.value],{type:'text/markdown;charset=utf-8'}));const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),2000);};
+function setMode(mode){document.body.classList.toggle('reader-view',mode==='reader');document.body.classList.toggle('projector-view',mode==='projector');$('mode-editor').setAttribute('aria-pressed',String(mode==='editor'));$('mode-reader').setAttribute('aria-pressed',String(mode==='reader'));$('mode-projector').setAttribute('aria-pressed',String(mode==='projector'));redraw();}
+$('mode-editor').onclick=()=>setMode('editor');$('mode-reader').onclick=()=>setMode('reader');$('mode-projector').onclick=()=>setMode('projector');$('mode-print').onclick=()=>{redraw();window.print();};setMode('editor');
+
 </script>
+
+<script src="../MD-Encyclopedia-Data.js"></script>
+<link rel="stylesheet" href="../optional/math/vendor/katex.min.css">
+<link rel="stylesheet" href="../optional/math/math.css">
+<script src="../optional/math/vendor/katex.min.js"></script>
+<script src="../optional/math/minichem.js"></script>
+<script src="../optional/math/math.js"></script>
+<script src="../MD-Encyclopedia.js"></script>
 </body>
 </html>

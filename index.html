@@ -1,86 +1,37 @@
-<!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<link rel="stylesheet" href="MD.css" />
-		<script src="U.min.js"></script>
-		<script src="MD.js"></script>
-		<script>
-		window.onload = () => {
-			var mdConfig = { mode: 'extended' }; //mode: ['basic', 'extended']
-			var md = new MD(mdConfig);
-			var processNewContent = () => {
-				var text = document.getElementById('source').value;
-				document.getElementById('destination').innerHTML = md.parse(text);
-			}
-			document.getElementById('source').addEventListener('keyup', () => {
-				processNewContent();
-			});
-			processNewContent();
-		}
-		</script>
-		<style>
-		* {
-			border: 0;
-			outline: none;
-			margin: 0;
-			padding: 0;
-		}
+<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MD.js Lite — Arctic Labs</title>
+<style>
+:root{font-family:system-ui,-apple-system,'Segoe UI',sans-serif;color:#e5edfa;background:#091222}*{box-sizing:border-box}body{margin:0}main{width:min(1120px,94vw);margin:auto;padding:32px 0 80px}header{padding:32px 0 10px;display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap}.eyebrow{letter-spacing:.16em;font-size:11px;font-weight:800;color:#63d7cb}h1{font-size:clamp(34px,5vw,62px);line-height:1.03;letter-spacing:-.05em;margin:9px 0}h1 span{color:#74dacd}header p{max-width:650px;line-height:1.6;color:#afc2d9}.chip{border:1px solid #365371;border-radius:999px;padding:9px 13px;color:#8cd9df;font-size:12px;font-weight:700}.section-title{font-size:12px;text-transform:uppercase;letter-spacing:.11em;color:#9db5d4;margin:34px 0 15px}.hero{border-radius:22px;border:1px solid #304562;background:linear-gradient(120deg,#132c44,#11223a 55%,#1a2b46);padding:26px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:18px;align-items:center}.hero h2{margin:0 0 6px;font-size:22px}.hero p{color:#bbcade;margin:0;font-size:14px;line-height:1.55}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.tile{border:1px solid #2f4360;background:#13233a;padding:23px 22px;border-radius:18px;display:flex;flex-direction:column;gap:9px;min-height:216px}.tile h3{margin:0;font-size:19px}.tile p{color:#afc2db;line-height:1.5;margin:0;font-size:13px;flex:1}.tile b{font-size:11px;color:#89dcce}.tile .emoji{font-size:27px}.link{color:#122436;text-decoration:none;border-radius:9px;padding:11px 15px;font-weight:750;background:#80dbc9;display:inline-flex;align-items:center;justify-content:center;margin-top:6px;font-size:13px}.link.secondary{color:#d8e8fb;background:#2b4463}.tile a:focus-visible,.hero a:focus-visible{outline:3px solid #e7ce87}footer{margin-top:32px;color:#8198b6;font-size:12px;line-height:1.6}@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:580px){.grid{grid-template-columns:1fr}main{padding-top:5px}.tile{min-height:180px}}
 
-		body > div {
-			display: flex;
-			flex-direction: row;
-		}
-
-		textarea {
-			background-color: #eee;
-			padding: 15px;
-		}
-
-		#source {
-			width: calc(50vw - 30px);
-			height: calc(100vh - 30px);
-		}
-
-		#destination {
-			width: 50vw;
-			height: 100vh;
-			font-family: sans-serif;
-		}
-		</style>
-	</head>
-	<body>
-		<div>
-			<textarea id="source">
-#Header 1
-##Header 2
-###Header 3
-[Link Title](https://github.com/zbyso23/MD)
-```php
-<?php 
-$x = 6;
-
-do {
-    echo "The number is: $x\n";
-    $x++;
-} while ($x <= 5);
-```
-
-```python
-#Function to left rotate arr[] of size n by d*/ 
-def leftRotate(arr, d, n): 
-    for i in range(d): 
-        leftRotatebyOne(arr, n) #left rotate arr[] of size n by d 
-  
-#Function to left Rotate arr[] of size n by 1*/  
-def leftRotatebyOne(arr, n): 
-    temp = arr[0] 
-    for i in range(n-1): 
-        arr[i] = arr[i+1] 
-    arr[n-1] = temp 
-```
-			</textarea>
-			<div id="destination"></div>
-		</div>
-	</body>
-</html>
+.quicknav{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 22px}.quicknav a,.quicknav button{background:#203953;border:1px solid #496684;color:#d9f4fa;border-radius:9px;padding:9px 13px;text-decoration:none;font:600 13px system-ui;cursor:pointer}.quicknav a:hover,.quicknav button:hover{background:#2e536b}
+</style>
+<link rel="stylesheet" href="MD.css"><link rel="stylesheet" href="MD-Encyclopedia.css">
+</head><body>
+<a href="optional/math/edu.html" style="position:fixed;right:12px;bottom:12px;z-index:9999;background:#214866;color:white;border:1px solid #79c4e4;border-radius:12px;padding:12px 16px;text-decoration:none;font:600 14px system-ui" aria-label="Open MiniChem EDU Lab">🧪 MiniChem EDU</a>
+<main>
+<header><div><div class="eyebrow">2016 → 2026 · LITE EDU</div><h1>MD.js <span>Lite</span></h1><p>Markdown, SVG grafy, diagramy, dokumenty a malé výukové laboratoře v jednom offline balíku. Každou laboratoř otevíráš samostatně; základní renderer ji nikdy automaticky nespouští.</p></div><div class="chip">VANILLA JS · HTTP / FILE · 0 DEPENDENCIES</div></header>
+<nav class="quicknav" aria-label="Quick navigation"><a href="examples/index.html">✎ Editor</a><a href="examples/reader.html">▤ Reader</a><a href="optional/micror/index.html">∑ Micro R</a><button id="go-back" type="button">← Back</button><button id="go-forward" type="button">Forward →</button></nav><section class="hero"><div><h2>Začni dokumentem</h2><p>Markdown Reader · Dark/Light · diagramy · grafy · opravené sortovací tabulky</p></div><a class="link" href="examples/charts.html">Otevřít Charts & Tables →</a></section>
+<div class="section-title">DOKUMENTAČNÍ NÁSTROJE</div>
+<div class="grid">
+  <section class="tile"><div class="emoji">📝</div><h3>Markdown editor</h3><p>Živá editace, Mermaid-like SVG, GFM syntaxe a chytré nástroje dokumentu.</p><b>CORE + DOCUX + MERMAID + CHARTS</b><a class="link secondary" href="examples/index.html">Otevřít editor →</a></section>
+  <section class="tile"><div class="emoji">📊</div><h3>Charts Mini</h3><p>Koláč, sloupce, vodorovné sloupce a čáry. Osy a jejich popisy přímo v Markdownu.</p><b>STANDARD · ALWAYS ON</b><a class="link secondary" href="examples/charts.html">Otevřít grafy →</a></section>
+  <section class="tile"><div class="emoji">📚</div><h3>Document Reader</h3><p>Čtení bez editoru, full screen, tisk, dark/light, vyhledávání a SVG export.</p><b>CORE + DOCUX + MERMAID + CHARTS</b><a class="link secondary" href="examples/reader.html">Otevřít Reader →</a></section>
+</div>
+<div class="section-title">STATISTIKA A MATEMATIKA — SPOUŠTĚTELNÉ LABORATOŘE</div>
+<div class="grid">
+  <section class="tile"><div class="emoji">📈</div><h3>Micro R 5.0 · Statistics Lab</h3><p>Praktická offline statistická laboratoř: import CSV/TSV/JSON, tabulkový náhled, výpočty, korelace, regrese, histogramy, bodové a další grafy. Vyzkoušej připravené experimenty nebo vlastní data.</p><b>OFFLINE · R-LIKE INTERPRETER · NO EVAL</b><a class="link" href="optional/micror/index.html">Otevřít Micro R →</a></section>
+  <section class="tile"><div class="emoji">∑</div><h3>Matematika &amp; KaTeX</h3><p>Profesionální sazba vzorců přímo v Markdownu. Výpočty patří do Micro R; KaTeX vzorce pouze vykresluje.</p><b>OFFLINE · KATEX RENDERER</b><a class="link secondary" href="examples/index.html">Otevřít Markdown editor →</a></section>
+</div>
+<footer>MD.js Lite — Markdown a výukové laboratoře bez PC, ZX a Arduino emulátorů. Vše běží offline; projekty a obsah se automaticky nevykonávají.</footer>
+</main>
+<script src="MD.js"></script>
+<script src="MD-diagrams.js"></script>
+<script src="MD-Charts.js"></script>
+<script src="MD-docux.js"></script>
+<script src="MD-Encyclopedia-Data.js"></script>
+<link rel="stylesheet" href="optional/math/vendor/katex.min.css">
+<link rel="stylesheet" href="optional/math/math.css">
+<script src="optional/math/vendor/katex.min.js"></script>
+<script src="optional/math/minichem.js"></script>
+<script src="optional/math/math.js"></script>
+<script src="MD-Encyclopedia.js"></script>
+<script>document.getElementById("go-back").onclick=()=>history.back();document.getElementById("go-forward").onclick=()=>history.forward();</script></body></html>
