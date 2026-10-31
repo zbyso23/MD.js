@@ -476,14 +476,21 @@
       const wrap = document.createElement('div'); wrap.className = 'md-diagram-viewport';
       const help = document.createElement('span'); help.className = 'md-diagram-hint'; help.textContent = 'Diagram · SVG';
       bar.appendChild(help);
+      // Default responsive fit: never overflow the document width. Keep native viewBox geometry.
+      const naturalWidth = Number(diagram.getAttribute('width')) || 1;
+      const naturalHeight = Number(diagram.getAttribute('height')) || 1;
+      diagram.setAttribute('viewBox', `0 0 ${naturalWidth} ${naturalHeight}`);
+      diagram.setAttribute('preserveAspectRatio', 'xMidYMid meet');
       let zoom = 1;
       function setZoom(next) {
         zoom = Math.min(2.5, Math.max(0.5, next));
-        diagram.style.width = `${Math.round(Number(diagram.getAttribute('width')) * zoom)}px`;
-        diagram.style.height = `${Math.round(Number(diagram.getAttribute('height')) * zoom)}px`;
+        diagram.style.width = zoom === 1 ? '100%' : `${zoom * 100}%`;
+        diagram.style.height = 'auto';
+        diagram.style.maxWidth = 'none';
       }
+      setZoom(1);
       bar.appendChild(control('−', () => setZoom(zoom-0.25), 'Oddálit diagram'));
-      bar.appendChild(control('100%', () => setZoom(1), 'Obnovit velikost diagramu'));
+      bar.appendChild(control('Fit', () => setZoom(1), 'Přizpůsobit šířce dokumentu'));
       bar.appendChild(control('+', () => setZoom(zoom+0.25), 'Přiblížit diagram'));
       const sourceButton = control('Zdroj', () => {
         const show = pre.hidden;
