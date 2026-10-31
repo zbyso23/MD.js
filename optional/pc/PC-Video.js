@@ -120,7 +120,7 @@ class PCVideo {
  getPixel(x,y){const p=this.pixelOffset(x,y);return p?(this.vram[p.offset]>>>p.shift)&p.mask:null;}
  setPixel(x,y,value,xor=false){const p=this.pixelOffset(x,y);if(!p)return false;const bitmask=p.mask<<p.shift,v=(value&p.mask)<<p.shift;this.vram[p.offset]=xor?this.vram[p.offset]^v:(this.vram[p.offset]&~bitmask)|v;return true;}
  palette(index){
-  if(this.adapter==='hercules')return index?'#9ef2bb':'#061b17';
+  if(this.adapter==='hercules')return index?'#FFBF66':'#140B02';
   if(this.mode===6)return index?'#f2f2f2':'#000000';
   if(this.mode===4||this.mode===5){
    const p=(this.colorSelect&0x20)?1:0,bright=(this.colorSelect&0x10)?8:0;
@@ -132,7 +132,7 @@ class PCVideo {
  render(ctx){
   const [w,h]=this.dimensions;const canvas=ctx.canvas;
   if(canvas.width!==w)canvas.width=w;if(canvas.height!==h)canvas.height=h;
-  ctx.fillStyle=this.adapter==='hercules'?'#061b17':'#000000';ctx.fillRect(0,0,w,h);
+  ctx.fillStyle=this.adapter==='hercules'?'#140B02':'#000000';ctx.fillRect(0,0,w,h);
   if(this.isGraphics){
    const image=ctx.createImageData(w,h),colors=[];
    for(let i=0;i<4;i++){const col=this.palette(i),r=parseInt(col.slice(1,3),16),g=parseInt(col.slice(3,5),16),b=parseInt(col.slice(5,7),16);colors.push([r,g,b]);}
@@ -145,8 +145,8 @@ class PCVideo {
   const cols=this.textCols,cw=w/cols,ch=h/25;ctx.textBaseline='top';ctx.font=`${Math.max(9,Math.floor(ch*.87))}px monospace`;
   for(let row=0;row<25;row++)for(let col=0;col<cols;col++){
    const cell=this.readCell(row,col);if(!cell)continue;
-   const fg=this.adapter==='hercules'?'#9ef2bb':CGA_COLORS[cell.attr&15];
-   const bg=this.adapter==='hercules'?'#061b17':CGA_COLORS[(cell.attr>>>4)&7];
+   const fg=this.adapter==='hercules'?'#FFBF66':CGA_COLORS[cell.attr&15];
+   const bg=this.adapter==='hercules'?'#140B02':CGA_COLORS[(cell.attr>>>4)&7];
    ctx.fillStyle=bg;ctx.fillRect(col*cw,row*ch,Math.ceil(cw),Math.ceil(ch));
    if(cell.char&&cell.char!==32){ctx.fillStyle=fg;ctx.fillText(String.fromCharCode(cell.char>=32?cell.char:32),col*cw,row*ch);}
   }
