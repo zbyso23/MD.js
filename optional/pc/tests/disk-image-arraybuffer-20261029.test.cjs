@@ -62,7 +62,7 @@ test('snapshot round-trip preserves FDD A/B and IDE contents and custom medium',
 });
 test('malformed, oversized media and unmounted export reject safely',()=>{
  assert.throws(()=>copyBytes(new Uint8Array(513)),/512-byte/);
- assert.throws(()=>createFloppy('2.88M'),/Unsupported/);assert.throws(()=>createIDE(64),/presets/);
+ assert.throws(()=>createFloppy('2.88M'),/Unsupported/);assert.throws(()=>createIDE(81),/presets/);
  const m=new PCMachine('at');assert.throws(()=>m.fdd.exportArrayBuffer(0),/No floppy/);
  assert.throws(()=>m.ide.exportArrayBuffer(),/No IDE/);
  assert.throws(()=>m.ide.mount(new ArrayBuffer(513)),/512/);

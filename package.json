@@ -44,7 +44,8 @@
     "test:pc:phase4e:hardening": "node --test optional/pc/tests/hardening-regressions-20261029.test.cjs optional/pc/tests/pc-integration-hardening-20261029.test.cjs optional/pc/tests/mandel-geometry-regression.test.cjs && python3 optional/pc/tests/test_mandel_dos_browser.py",
     "test:pc:closure": "node --test optional/pc/tests/pc-286-compat-20261029.test.cjs optional/pc/tests/fpu-extended80-20261029.test.cjs optional/pc/phase3/audio-closure-20261029.test.cjs && python3 optional/pc/tests/test_80bit_browser.py",
     "test:file:real": "python3 test/compat/file-url-smoke.py",
-    "test:pc:disk-images": "node --test optional/pc/tests/disk-image-arraybuffer-20261029.test.cjs && python3 optional/pc/tests/test_disk_images_browser_20261029.py && python3 optional/pc/tests/test_dos_hdd_c_drive_browser_20261029.py"
+    "test:pc:disk-images": "node --test optional/pc/tests/disk-image-arraybuffer-20261029.test.cjs && python3 optional/pc/tests/test_disk_images_browser_20261029.py && python3 optional/pc/tests/test_dos_hdd_c_drive_browser_20261029.py && npm run test:pc:quick-media",
+    "test:pc:quick-media": "node --test optional/pc/tests/file-to-disk-20261029.test.cjs && python3 optional/pc/tests/test_quick_media_browser_20261029.py"
   },
   "dependencies": {},
   "devDependencies": {}

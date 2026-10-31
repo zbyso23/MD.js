@@ -37,13 +37,18 @@
 <details><summary>Ruční vložení Base64 disketového obrazu</summary><textarea id="fdd-base64" rows="3" style="width:100%;background:#152c3b;color:#fff;border:1px solid #426276;border-radius:8px" placeholder="Base64 raw diskette image (.img)"></textarea><button id="fdd-paste">Připojit Base64</button></details>
 <p class="muted"><strong>🌀 MANDEL.COM:</strong> pro 80287XL výukové preview přepni na <strong>AT/286 + VGA</strong>, zaškrtni <strong>80287XL</strong> a do FreeDOS promptu napiš <code>MANDEL</code>. Po vykreslení se klávesou vrátíš do DOSu. Výchozí rychlý výpočet používá binary64; experimentální 80bitový aritmetický režim je volitelný a může být výrazně pomalejší.</p>
 <p class="muted"><strong>🎵 AdLib DOS melodie:</strong> zapni PC zvuk a napiš v DOSu <code>TUNE</code>. Program má 137 bajtů, běží na XT i AT/286, nic se nespouští automaticky.</p>
+<details id="pc-quick-media"><summary><strong>📦 Soubor(y) → virtuální disk (max 5 MiB)</strong></summary>
+<p class="muted">Vyber EXE/COM/JPG/ZIP/TXT nebo více souborů. Vznikne FAT12 disketa do B: nebo FAT16 disk C: na AT/286, podle obsahu. ZIP zůstává souborem ZIP, nerozbaluje se. Názvy se automaticky převádějí na DOS 8.3. Obsah se pouze kopíruje, nikdy se automaticky nespouští.</p>
+<div class="actions"><label for="quick-media-target">Cíl</label><select id="quick-media-target"><option value="auto">Automaticky podle velikosti</option><option value="floppy">Disketa B: (FAT12)</option><option value="ide">IDE C: (AT/286, FAT16)</option></select><button class="primary" id="quick-media-button">↑ Soubor(y) → IMG</button><input type="file" id="quick-media-file" multiple hidden><button id="quick-media-export" disabled>↓ Uložit vytvořený IMG</button></div>
+<p id="quick-media-status" class="muted" role="status">Maximálně 5 MiB souborů celkem; velikost virtuálního IDE disku až 80 MB. Původní A: FreeDOS zůstává zachována.</p>
+</details>
 <p class="muted" id="fdd-status">Při prvním spuštění se do A: připojí vestavěná 720 KiB FreeDOS disketa s DEBUG.COM a TUNE.COM. Můžeš ji přepsat vlastní .IMG/.IMA nebo zase obnovit.</p>
 <p class="muted">Podporované RAW obrazy 160/180/320/360/720 KiB, 1,2/1,44 MiB. INT 13h CHS čtení, zápis, ověření a geometrie; omezené 765 porty + DMA2. Vestavěný osobní obraz používá 720 KiB FreeDOS a obsahuje DEBUG.COM (~22 KiB) a TUNE.COM (137 bajtů, sedmitónová melodie přes skutečné OPL2 porty).</p>
 </section>
 <section class="panel" id="pc-ide" aria-label="AT IDE hard disk">
 <h2>ATA IDE (AT/286) — PIO, C: disková laboratoř</h2>
 <p class="muted">Připoj vlastní sektorový RAW HDD obraz. Emulátor načte pracovní kopii a zapisuje do oddělené vrstvy; původní soubor se nikdy přímo nemění. Pouze AT/286. Nový HDD je v paměti ArrayBuffer, obsahuje MBR a prázdný FAT16 oddíl. Neobsahuje DOS systémové soubory, proto se z něj nebootuje. Po resetu AT/286 jej dodaný FreeDOS umí detekovat jako datové C: (ověřeno COPY a DIR).</p>
-<div class="actions"><button id="ide-mount">↑ Připojit HDD IMG</button><input id="ide-file" type="file" accept=".img,.ima,.bin,application/octet-stream" hidden><button id="ide-export">↓ Export změněného IMG</button><button id="ide-eject">Vysunout IDE</button><label for="ide-size">Nový disk</label><select id="ide-size"><option value="8">8 MiB</option><option value="16">16 MiB</option><option value="32">32 MiB</option></select><button id="ide-new">+ Nový FAT16 HDD</button></div>
+<div class="actions"><button id="ide-mount">↑ Připojit HDD IMG</button><input id="ide-file" type="file" accept=".img,.ima,.bin,application/octet-stream" hidden><button id="ide-export">↓ Export změněného IMG</button><button id="ide-eject">Vysunout IDE</button><label for="ide-size">Nový disk</label><select id="ide-size"><option value="8">8 MiB</option><option value="16">16 MiB</option><option value="32">32 MiB</option><option value="64">64 MiB</option><option value="80">80 MB (80 000 000 B)</option></select><button id="ide-new">+ Nový FAT16 HDD</button></div>
 <p class="muted" id="ide-status" role="status">Bez HDD obrazu · pro IDE zvol AT/286.</p>
 </section>
 <section class="panel" id="pc-persistence" aria-label="Přenosné snapshoty">
@@ -435,12 +440,48 @@ el('fdd-new').addEventListener('click',()=>safe(()=>{const d=driveIndex(),type=e
 el('fdd-export').addEventListener('click',()=>safe(()=>{const d=driveIndex(),bytes=machine.fdd.exportImage(d);saveRawImage(bytes,`mdjs-fdd-${d?'B':'A'}-${diskTimestamp()}.img`);fddStatus(`FDD ${d?'B':'A'}: export aktuálních ${bytes.length} bajtů včetně změn.`);}));
 
 
+// Quick import: real local host files -> DOS 8.3 FAT12/FAT16 -> a normal working IMG.
+// ZIP is kept opaque; no file content is executed, decoded or uploaded.
+let quickMedia=null;
+const quickStatus=msg=>{el('quick-media-status').textContent=msg;trace(msg);refresh();};
+el('quick-media-button').addEventListener('click',()=>el('quick-media-file').click());
+el('quick-media-file').addEventListener('change',async ev=>{
+ const files=[...(ev.target.files||[])];ev.target.value='';if(!files.length)return;
+ try{
+  const total=files.reduce((n,f)=>n+f.size,0);
+  if(total>diskImages.MAX_PAYLOAD)throw RangeError('Obsah přesahuje 5 MiB');
+  // Read only after a total-length check. File API works without a web server.
+  const items=[];for(const f of files)items.push({name:f.name,data:await f.arrayBuffer()});
+  const packed=diskImages.packFiles(items,el('quick-media-target').value);
+  if(packed.kind==='ide'){
+   if(machine.profile!=='at'){el('machine').value='at';reboot('at',false);}
+   machine.ide.mount(packed.buffer,'MDJS-FILES-'+packed.format+'.img');
+   retainedIDE=null;reboot('at',true); // FreeDOS must rescan the MBR to see C:.
+   ideStatus('C: nový FAT16 '+packed.format+' s '+packed.mapping.length+' soubory. Export IMG uloží další změny DOSu.');
+  }else{
+   machine.mountDisk(1,packed.buffer,'MDJS-FILES-'+packed.format+'.img');
+   el('fdd-drive').value='1';reboot(machine.profile,true); // Let DOS rediscover the second floppy drive.
+   fddStatus('B: FAT12 '+packed.format+' obsahuje '+packed.mapping.length+' soubory.');
+  }
+  quickMedia={kind:packed.kind,format:packed.format};
+  el('quick-media-export').disabled=false;
+  quickStatus(packed.kind.toUpperCase()+' '+packed.format+' · '+packed.total+' B · '+packed.mapping.map(x=>x.dosName).join(', '));
+ }catch(err){quickStatus('Import odmítnut: '+err.message);}
+});
+el('quick-media-export').addEventListener('click',()=>safe(()=>{
+ if(!quickMedia)throw Error('Nejdřív vyber soubory');
+ const bytes=quickMedia.kind==='ide'?(machine.ide&&machine.ide.exportImage()):machine.fdd.exportImage(1);
+ if(!bytes)throw Error('Vytvořený disk už není připojen');
+ saveRawImage(bytes,'mdjs-import-'+quickMedia.format+'-'+diskTimestamp()+'.img');
+ quickStatus('Exportováno '+bytes.length+' bajtů, včetně případných DOS změn.');
+}));
+
 // IDE raw media is copy-on-write; only explicit export saves a changed image.
 function ideStatus(message){el('ide-status').textContent=message;trace(message);refresh();}
 el('ide-mount').addEventListener('click',()=>{if(!machine.ide){ideStatus('IDE je jen pro profil AT/286.');return;}el('ide-file').click();});
 el('ide-file').addEventListener('change',async event=>{
  const file=event.target.files&&event.target.files[0];event.target.value='';if(!file)return;
- try{if(!machine.ide)throw Error('IDE only AT/286');const bytes=await runtime.readFile(file,32*1024*1024),g=machine.ide.mount(bytes,file.name);ideStatus(`IDE ${file.name}: ${g.cylinders}×${g.heads}×${g.sectors}; ${machine.ide.capacity} sektorů, privátní pracovní kopie.`);}
+ try{if(!machine.ide)throw Error('IDE only AT/286');const bytes=await runtime.readFile(file,80*1024*1024),g=machine.ide.mount(bytes,file.name);ideStatus(`IDE ${file.name}: ${g.cylinders}×${g.heads}×${g.sectors}; ${machine.ide.capacity} sektorů, privátní pracovní kopie.`);}
  catch(error){ideStatus('IDE rejected: '+error.message);}
 });
 el('ide-export').addEventListener('click',()=>safe(()=>{

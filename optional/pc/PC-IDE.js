@@ -4,15 +4,15 @@
  * Security: never mutates original IMG input; all writes update a private overlay.
  */
 (function(root){'use strict';
-const SECTOR=512,MAX=32*1024*1024; // 32 MiB bounded media; no guest system RAM allocation
+const SECTOR=512,MAX=80*1000*1000; // 80 MB decimal bound; no guest system RAM allocation
 class PCIDE {
  constructor(machine){this.machine=machine;this.image=null;this.name='';this.overlay=new Map();this.reset();}
  reset(){this.error=0;this.features=0;this.count=1;this.sector=1;this.cylinderLo=0;this.cylinderHi=0;this.drive=0xa0;this.control=0;this.status=this.image?0x50:0;this.command=0;this.transfer=null;this.index=0;this.remaining=0;this.lba=0;this.irqPending=false;}
  get capacity(){return this.image?this.image.length/SECTOR:0;}
- get geometry(){return {heads:4,sectors:16,cylinders:Math.max(1,Math.ceil(this.capacity/64))};}
+ get geometry(){const heads=this.capacity>65536?8:4,sectors=this.capacity>65536?32:16;return {heads,sectors,cylinders:Math.max(1,Math.ceil(this.capacity/(heads*sectors)))};}
  mount(bytes,name='IDE HDD'){
   if(bytes instanceof ArrayBuffer)bytes=new Uint8Array(bytes);
-  if(!(bytes instanceof Uint8Array)||bytes.length===0||bytes.length%SECTOR||bytes.length>MAX)throw Error('IDE image must contain 1..65536 sectors of 512 bytes (max 32 MiB)');
+  if(!(bytes instanceof Uint8Array)||bytes.length===0||bytes.length%SECTOR||bytes.length>MAX)throw Error('IDE image must contain 1..163840 sectors of 512 bytes (max 80 MB)');
   this.image=new Uint8Array(bytes);this.overlay.clear();this.name=String(name).slice(0,120);this.reset();return this.geometry;
  }
  eject(){this.image=null;this.overlay.clear();this.name='';this.reset();}
