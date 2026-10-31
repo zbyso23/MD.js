@@ -63,3 +63,13 @@ Catalyst and conditions above/below an arrow:
 $$\ce{2SO2 + O2 ->[V2O5][450 C] 2SO3}$$
 
 This is chemical **typesetting** only. MiniChem never balances reactions.
+
+## EDU Chemistry Lab — MiniChem Plus III
+
+Nested groups: $\ce{K4[Fe(CN)6]}$ and $\ce{Al2(SO4)3}$.
+
+$$\Delta H = H_{\ce{H2O(l)}} - H_{\ce{H2O(g)}}$$
+
+$$\ce{CaCO3 ->[heat] CaO + CO2}$$
+
+This module formats notation; it does not balance or verify chemistry.

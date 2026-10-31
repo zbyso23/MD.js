@@ -1,11 +1,11 @@
-/* MiniChem Plus II — offline chemical typography; no execution. */
+/* MiniChem Plus III — offline chemical typography; no execution. */
 (function(root){'use strict';
  class MiniChem {
   static formula(input){
    if(typeof input!=='string'||!input.length||input.length>2048)throw Error('MiniChem: invalid input length');
    const arrows={'<=>':'\\rightleftharpoons','<->':'\\leftrightarrow','->':'\\rightarrow','<-':'\\leftarrow'};
    const atom=x=>'\\mathrm{'+x+'}';
-   let out='',i=0,depth=0,needSpecies=true;
+   let out='',i=0,depth=0,needSpecies=true,groupStack=[];
    function charge(s){if(!/^(?:[1-9][0-9]*)?[+-]$/.test(s))throw Error('MiniChem: invalid ionic charge');return '^{'+s+'}';}
    while(i<input.length){
     let rest=input.slice(i),a=Object.keys(arrows).find(x=>rest.startsWith(x));
@@ -63,11 +63,27 @@
     if(c==='-'){if(!needSpecies&&(i===input.length-1|| /\s/.test(input[i+1]||''))){out+=charge('-');i++;continue;}throw Error('MiniChem: unsupported dash');}
     if(/[A-Z]/.test(c)){const m=rest.match(/^[A-Z][a-z]?/)[0];out+=atom(m);i+=m.length;needSpecies=false;continue;}
     if(/[0-9]/.test(c)){const m=rest.match(/^\d+/)[0];out+=needSpecies?m:'_{'+m+'}';i+=m.length;needSpecies=false;continue;}
-    if('(['.includes(c)){out+=c==='['?'\\lbrack ':'(';depth++;i++;needSpecies=true;continue;}
-    if(')]'.includes(c)){if(!depth)throw Error('MiniChem: unmatched bracket');out+=c===']'?'\\rbrack ':')';depth--;i++;needSpecies=false;continue;}
+    if('(['.includes(c)){if(depth>=32)throw Error('MiniChem: group nesting exceeds 32 at '+i);out+=c==='['?'\\lbrack ':'(';groupStack.push(c);depth++;i++;needSpecies=true;continue;}
+    if(')]'.includes(c)){if(!depth || groupStack.pop()!==(c===')'?'(':'['))throw Error('MiniChem: mismatched bracket at '+i);out+=c===']'?'\\rbrack ':')';depth--;i++;needSpecies=false;continue;}
     throw Error('MiniChem: unsupported token '+c);
    }
-   if(depth||needSpecies)throw Error('MiniChem: incomplete formula');return out;
+   if(depth||needSpecies)throw Error('MiniChem: incomplete formula at '+i);return out;
+  }
+  static diagnose(input){
+   if(typeof input!=='string')return {ok:false,index:0,message:'Expected text',hint:'Enter a chemical formula.'};
+   try {const tex=MiniChem.formula(input);return {ok:true,tex,index:-1,message:'OK',hint:''};}
+   catch(err){const msg=String(err.message||err);let index=Number((msg.match(/ at (\d+)/)||[])[1]);
+    if(!Number.isFinite(index)){
+     if(/unclosed arrow annotation/.test(msg))index=input.lastIndexOf('[');
+     else if(/unmatched|incomplete/.test(msg))index=input.length;
+     else index=0;
+    }
+    const hint=/annotation/.test(msg)?'Use ->[catalyst][temperature] with plain-text labels (max 48 characters).':
+     /bracket|group/.test(msg)?'Check paired parentheses and square brackets.':
+     /charge|superscript/.test(msg)?'Use ^{2-}, ^{3+} or ^2- for charges.':
+     'Check the MiniChem supported syntax; this is a limited mhchem subset.';
+    return {ok:false,index:Math.max(0,index),message:msg,hint};
+   }
   }
   static expand(tex){
    if(typeof tex!=='string')throw Error('MiniChem: expected TeX string');

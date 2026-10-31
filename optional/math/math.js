@@ -27,7 +27,7 @@
      for(let x of parts){if(x.text!==undefined){frag.appendChild(document.createTextNode(x.text));continue;}
        const holder=document.createElement(x.display?'span':'span');holder.className=x.display?'md-math-block':'md-math-inline';holder.setAttribute('data-md-math-rendered','');
        try{root.katex.render(root.MiniChem?root.MiniChem.expand(x.tex):x.tex,holder,{displayMode:x.display,throwOnError:config.throwOnError,trust:false,strict:config.strict,maxExpand:config.maxExpand,maxSize:config.maxSize,output:'htmlAndMathml'});count++;}
-       catch(err){holder.className='md-math-error';holder.textContent=x.tex;holder.title=String(err.message||err);}
+       catch(err){holder.className='md-math-error';holder.textContent=x.tex;const d=root.MiniChem&&x.tex.includes('\\ce{')?root.MiniChem.diagnose(x.tex.match(/\\ce\{([^{}]*)\}/)?.[1]||''):null;holder.title=String(err.message||err)+(d&&!d.ok?' — '+d.hint:'');holder.setAttribute('role','alert');}
        frag.appendChild(holder);
      }node.replaceWith(frag);
    }return count;

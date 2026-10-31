@@ -1,3 +1,5 @@
+**v5.4.6 note:** See [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md) for KaTeX and PERSONAL redistributability caveats. Full archive is not cleared for public redistribution.
+
 # MD.js Ultra — license map and reuse policy
 
 ## Project decision (22 Oct 2026)

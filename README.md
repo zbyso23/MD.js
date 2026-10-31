@@ -1,3 +1,35 @@
+# MD.js Ultra — offline Markdown, EDU and retro computing workbench
+
+**Current branch: v5.4.6 / MiniChem Plus III.** A browser-first, no-build collection of learning tools, text rendering, diagrams, charts, mathematical and chemical notation, Micro R and optional hardware emulation labs. Open **`index.html`** for the hub or **`examples/index.html`** for the live Markdown editor. All current examples render locally from bundled JS/CSS/fonts; no runtime npm, CDN or server is required for the core viewer.
+
+## Quick start for learners and teachers
+
+1. Open `examples/index.html` in a browser, choose **∑ KaTeX Showcase**.
+2. Edit text on the left and inspect the live Markdown + math/chemistry preview on the right.
+3. Type `$E=mc^2$`, `$\ce{H2O}$`, or `$$\ce{N2 + 3H2 <=> 2NH3}$$`.
+4. Use **F2 Encyclopedia** for searchable bilingual (CS/EN) reference cards. Use Reader, Projector or Print for presentation; inspect print preview before distribution.
+5. For a separate educational statistics environment, open `optional/micror/index.html`.
+
+## MiniChem scope
+
+MiniChem Basic → Plus I → Plus II → **Plus III**: formula subscripts, ions, isotopes, hydrates, states `(s/l/g/aq)`, annotated arrows and nested bracket groups, with bounded input and a diagnostic API. Works inside inline and block KaTeX. **It formats notation only**: no chemistry validation or equation balancing, and **not full mhchem compatibility**. Details: [`docs/MINICHEM-PLUS-III.md`](docs/MINICHEM-PLUS-III.md).
+
+## Accessibility and safety
+
+The preview preserves KaTeX MathML for assistive technologies and visually hides its duplicate representation. Error markup remains visible; the MiniChem diagnostic API returns structured feedback. Do not rely on the page as an authoritative chemistry solver. Local/offline functionality can vary with browser `file://` policy; no data is intentionally transmitted by the core viewer.
+
+## Development and tests
+
+No build required. Node.js is needed **only to run automated tests** (`npm test`, `node --test optional/math/minichem-plus3.test.cjs`). Test passes do not replace verification in an actual browser, projection or print device.
+
+## Licensing and redistribution
+
+Project-authored code is intended for **GPL-3.0-only**; see [`LICENSE`](LICENSE), [`LICENSING.md`](LICENSING.md), and [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md). KaTeX is MIT licensed, bundled with its own license and fonts. **This PERSONAL archive includes ROM/DOS/DEBUG/media material whose public redistribution rights have not been established. Do not publish the entire ZIP as a redistributable source release** without removing or clearing those files and auditing remaining dependencies. Source-only and third-party/reference provenance distinctions are important.
+
+---
+
+## Historical release notes (preserved)
+
 # MD.js Ultra — Phase 4A VGA preview (24. 10. 2026)
 
 **Current working milestone:** XT still offers CGA/Hercules; AT/80286 additionally offers **VGA** with 320×200×256 (13h), 640×480×16 planar (12h), VGA 6-bit DAC and a bounded sequencer/graphics/attribute register subset. Browser runtime remains original unbundled HTML/CSS/JavaScript, no WASM, 386 or runtime npm; installed system RAM is at most 1 MiB. This is **Phase 4A preview**, not full Gate 4 (AT IDE remains unimplemented and VGA is not cycle accurate).
