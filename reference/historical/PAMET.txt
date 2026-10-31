@@ -1,0 +1,1382 @@
+
+                      R o z d ě l e n í   p a m ě t i
+                            (c) Miroslav Němeček
+
+0:0400H  - bázové adresy portů komunikačních linek RS-232
+0:0408H  - bázové adresy paralelních portů tiskáren
+0:0410H  - výpis vybavení
+0:0412H  - rezervováno (stav POST pro konvertabilní PC)
+0:0413H  - velikost paměti
+0:0415H  - rezervováno (stav baterií pro konvertabilní PC)
+0:0417H  - statut přesmykačů
+0:0418H  - rozšířený statu přesmykačů
+0:0419H  - alternativní vstup znaku
+0:041AH  - čtecí adresa z bufferu klávesnice (záhlaví bufferu)
+0:041CH  - ukládací adresa do bufferu klávesnice (pata bufferu)
+0:041EH  - buffer klávesnice (16 slov)
+0:043EH  - stav rekalibrace disketové mechaniky
+0:043FH  - stav motoru disketové mechaniky
+0:0440H  - čítač pro vypnutí motoru
+0:0441H  - statut poslední operace s disketovou mechanikou
+0:0442H  - statut řadiče disketové jednotky
+0:0449H  - mód displeje
+0:044AH  - počet pozic na řádek v současném módu displeje
+0:044CH  - délka zobrazovaného bufferu displeje
+0:044EH  - počáteční adresa zobrazovaného bufferu displeje
+0:0450H  - pozice kurzoru (pozice,řádek) pro stránky zobrazení
+0:0460H  - koncová a počáteční linka zobrazení kurzoru
+0:0462H  - aktivní stránka displeje
+0:0463H  - bázová řídící adresa displeje CRT
+0:0465H  - současné nastavení řídícího registru módu
+0:0466H  - současné nastavení registru volby barev (3x9H)
+0:0467H  - rezervováno
+0:046CH  - dlouhé celé číslo s časovacím čítačem
+0:0470H  - příznak přetečení časovače
+0:0471H  - statut klávesy <Break>
+0:0472H  - příznaky stavu RESETu
+0:0474H  - statut poslední operace na pevném disku
+0:0475H  - počet pevných disků
+0:0476H  - rezervováno
+0:0477H  - rezervováno
+0:0478H  - hodnota time-out pro paralelní tiskárny
+0:047CH  - hodnota time-out pro komunikační linku RS-232
+0:0480H  - offsetový ukazatel začátku bufferu klávesnice
+0:0482H  - offsetový ukazatel konce bufferu klávesnice
+0:0484H  - počet řádků displeje mínus 1
+0:0485H  - výška znaku (počet linek na displeji)
+0:0487H  - statuty řízení video
+0:0489H  - rezervováno
+0:048BH  - řízení disketového média
+0:048CH  - statut řadiče pevného disku
+0:048DH  - chybový statut řadiče pevného disku
+0:048EH  - řízení přerušení pevného disku
+0:048FH  - rezervováno
+0:0490H  - stav média disketové jednotky 0
+0:0491H  - stav média disketové jednotky 1
+0:0492H  - rezerovváno
+0:0494H  - aktuální stopa disketové jednotky 0
+0:0495H  - aktuální stopa disketové jednotky 1
+0:0496H  - statut klávesnice a příznaky typů kláves
+0:0497H  - statut LED klávesnice
+0:0498H  - ukazatel na příznak ukončení uživatelského čekání
+0:049CH  - čítač uživatelského čekání (mikrosekundy)
+0:04A0H  - příznak aktivity čekání
+0:04A1H  - rezervováno
+0:04A8H  - ukazatel na video parametry EGA
+0:04ACH  - rezervováno
+0:04F0H  - meziaplikační komunikační prostor (ICA)
+0:0500H  - stavový bajt tisku obrazovky (viz přerušení INT 05H)
+0:0501H  - rezervováno
+0:0504H  - příznak logického disku
+0:0505H  - rezervováno
+
+F000:FFF0H  - skok na začátek vnitřního inicial. testu (POST)
+F000:FFF5H  - datum vzniku ROM BIOSu - v ASCII
+F000:FFFCH  - rezervováno
+F000:FFFEH  - identifikátor systémového modelu
+
+
+
+
+
+
+ 0 : 0 4 0 0 H  - bázové adresy portů komunikačních linek RS-232
+
+Délka:   8 bajtů
+
+    Bázové adresy čtyř sériových portů. Pokud je adresa portu 0, potom port
+není použit.
+
+         0:0400H - sériový port #1 (COM1)
+         0:0402H - sériový port #2 (COM2)
+         0:0404H - sériový port #3 (COM3)
+         0:0406H - sériový port #4 (COM4)
+
+
+
+
+ 0 : 0 4 0 8 H  - bázové adresy paralelních portů tiskáren
+
+Délka:   8 bajtů
+
+    Bázové adresy čtyř paralelních portů tiskáren. Pokud je adresa portu 0,
+potom port není použit.
+
+         0:0408H - paralelní port tiskárny #1 (LPT1)
+         0:040AH - paralelní port tiskárny #2 (LPT2)
+         0:040CH - paralelní port tiskárny #3 (LPT3)
+         0:040EH - paralelní port tiskárny #4 (LPT4)
+
+
+
+ 0 : 0 4 1 0 H  - výpis vybavení
+
+Délka:   2 bajty
+
+    Obsahuje výpis instalovaného hardware v systému
+
+              Výpis vybavení:
+
+         Kód vybavení (AX):
++----------------+-----------------+--------------------------------------+
+|F E D C B A 9 8 | 7 6 5 4 3 2 1 0 |                význam                |
++----------------+-----------------+--------------------------------------+
+|* * . . . . . . | . . . . . . . . | počet nainstalovaných tiskáren       |
+|. . * . . . . . | . . . . . . . . | instalován vnitřní modem             |
+|. . . * . . . . | . . . . . . . . | instalován herní adaptér (pro PCjr=1)|
+|. . . . * * * . | . . . . . . . . | počet sériových portů RS-232         |
+|. . . . . . . * | . . . . . . . . | rezervováno                          |
+|. . . . . . . . | * * . . . . . . | počet disketových mechanik-1 (0=1 d.)|
+|. . . . . . . . | . . * * . . . . | inicializační videomód               |
+|. . . . . . . . | . . . . * . . . | rezervováno                          |
+|. . . . . . . . | . . . . . * . . | rezervováno                          |
+|. . . . . . . . | . . . . . . * . | instalován matematický koprocesor    |
+|. . . . . . . . | . . . . . . . * | 1=diskety přítomny; 0=není žádný disk|
++----------------+-----------------+--------------------------------------+
+
+                  Inicializační videomód (bity 4,5):
+              +-------------+-------------------------+
+              |   hodnota   |         význam          |
+              +-------------+-------------------------+
+              |     00      |  rezervováno            |
+              |     01      |  40 x 25 barevný        |
+              |     10      |  80 x 25 barevný        |
+              |     11      |  80 x 25 monochromní    |
+              +-------------+-------------------------+
+
+Pozn.: Použijte  službu INT 11H k přístupu k informacím o vybavení počítače
+       jako komunikační cestu s ROM BIOSem.
+
+       Výpis  vybavení  je  inicializován  během  inicializačního vnitřního
+       testu při zapnutí počítače (POST).
+
+       Pro  počítače  IBM  PC,  XT  a  PCjr  jsou  bity  2 a 3 použity jako
+       informace o paměti RAM instalované na systémové desce v násobcích po
+       16KB. 00 znamená 16K, zatímco 11 znamená 64K.
+
+       Bit  2  na  počítačích  XT-286  hlásí,  zda je instalováno ukazovací
+       zařízení.
+
+       Bit  0  indikuje pouze to, zda má systém jednu nebo více disketových
+       mechanik. V kladném případě informují bity 6 a 7 o počtu mechanik (1
+       až  4).  K  zjištění  počtu  instalovaných  pevných  disků  použijte
+       přerušení INT 13H, službu 08H.
+
+       Pokud  přepínače  DIL  pro  PCjr a XT nejsou nastaveny správně podle
+       skutečnosti,  zda je přítomen matematický koprocesor, potom může být
+       bit  1  nastaven  chybně.  Lepší  test  na  přítomnost matematického
+       koprocesoru   je   přímo  test  provedením  instrukce  matematického
+       koprocesory a kontrola, zda byla instrukce provedena.
+
+
+
+
+
+ 0 : 0 4 1 2 H  - rezervováno (stav POST pro konvertabilní PC)
+
+Délka:   1 bajt
+
+    Tento  bajt je rezervován pro všechny stroje kromě konvertabilního PC a
+PCjr.  Konvertabilní  PC  používá  tento  bajt  k úschově stavu operací při
+inicializaci systému (POST). PCjr jej používá k čítání počtu chyb přenosu z
+klávesnice v infračerveném spojení.
+
+
+
+
+ 0 : 0 4 1 3 H  - velikost paměti
+
+Délka:   2 bajty
+
+    Obsahuje počet 1K spojitých paměťových bloků v systému (max. 640K).
+
+Pozn.: Použijte  přerušení  INT  12H  k  přístupu  k informacím o velikosti
+       paměti jako komunikační prostředek s ROM BIOSem.
+
+       Tato  hodnota  se  určuje  při  inicializaci systému podle nastavení
+       přepínačů  DIL  na  systémové  desce nebo použitím hodnoty uložené v
+       paměti CMOS (zálohované bateriemi) - podle typu počítače.
+
+       Tato  hodnota  se  rovná volné paměti použitelné pro systém, nikoliv
+       však paměti volné pro uživatelské programy. Ke zjištění volné paměti
+       pro uživatelské programy použijte přerušení INT 21H, funkce 48H.
+
+       Ke  zjištění  paměti  nad adresovým rozsahem 1024K použijte INT 15H,
+       službu 88H.
+
+
+
+
+
+ 0 : 0 4 1 5 H  - rezervováno (stav baterií pro konvertabilní PC)
+
+Délka:   2 bajty
+
+    Tyto   dva   bajty   jsou   rezervovány   pro   všechny   stroje  kromě
+konvertabilních  PC,  které  používají první bajt (0:0415H) k úschově stavu
+baterií.
+
+
+
+ 0 : 0 4 1 7 H  - statut přesmykačů
+
+Délka:   1 bajt
+
+         stav přesmykačů:
+    +-------------------+-------------------------------+
+    |  7 6 5 4 3 2 1 0  |         význam                |
+    +-------------------+-------------------------------+
+    |  1 . . . . . . .  | <Insert> zapnut               |
+    |  . 1 . . . . . .  | <Casp Lock> zapnut            |
+    |  . . 1 . . . . .  | <Num Lock> zapnut             |
+    |  . . . 1 . . . .  | <Scroll Lock> zapnut          |
+    |  . . . . 1 . . .  | klávesa <Alt> stisknuta       |
+    |  . . . . . 1 . .  | klávesa <Ctrl> stisknuta      |
+    |  . . . . . . 1 .  | levý <Shift> stisknut         |
+    |  . . . . . . . 1  | pravý <Shift> stisknut        |
+    +-------------------+-------------------------------+
+
+    Stavový   bajt   přesmykačů  je  možné  obdržet  pomocí  přerušení  INT
+16H/služba 02H.
+
+
+
+
+ 0 : 0 4 1 8 H  - rozšířený statu přesmykačů
+
+Délka:   1 bajt
+
+         rozšiřený stav přesmykačů:
+    +-------------------+-------------------------------+
+    |  7 6 5 4 3 2 1 0  |         význam                |
+    +-------------------+-------------------------------+
+    |  1 . . . . . . .  | klávesa <Ins> stisknuta       |
+    |  . 1 . . . . . .  | klávesa <Caps Lock> stisknuta |
+    |  . . 1 . . . . .  | klávesa <Num Lock> stisknuta  |
+    |  . . . 1 . . . .  | kláv. <Scroll Lock> stisknuta |
+    |  . . . . 1 . . .  | <Pause> zapnut                |
+    |  . . . . . 1 . .  | klávesa <Sys Rq> stisknuta    |
+    |  . . . . . . 1 .  | levá klávesa <Alt> stisknuta  |
+    |  . . . . . . . 1  | pravá klávesa <Ctrl> stisknuta|
+    +-------------------+-------------------------------+
+
+    Bity 2 až 0 jsou platné pouze pro klávesnice 101/102 kláves.
+
+    Na počítačích PCjr je bit 2 použit k indikaci, že je pípnutí klávesnice
+aktivní.
+
+    Rozšířený stavový bajt přesmykačů je možné obdržet pomocí přerušení INT
+16H/služba 12H (obsah bajtu přesně neodpovídá, je modifikován).
+
+
+
+
+ 0 : 0 4 1 9 H  - alternativní vstup znaku
+
+Délka:   1 bajt
+
+    Tento  bajt  obsahuje  načítaný vstup znaku, který se zadává při držení
+klávesy  <Alt>  zadáváním  číslic  v  numerickém  poli klávesnice. Pokud je
+klávesa  <Alt>  uvolněna, potom je numerická hodnota z tohoto bajtu uložena
+do  bufferu klávesnice (vyšší část slova je nastavena na 0) a tento bajt je
+vynulován.
+
+
+
+
+ 0 : 0 4 1 A H  - čtecí adresa z bufferu klávesnice (záhlaví bufferu)
+
+Délka:   2 bajty
+
+    Toto  slovo  ukazuje na kód příštího znaku v bufferu klávesnice (buffer
+začíná  na  adrese  0:041EH),  který  bude  vyjmut  (přečten a vymazán). Po
+vyjmutí  znaku  z  bufferu je ukazatel inkrementován o 2. Pokud je ukazatel
+záhlaví  bufferu  roven  ukazateli  paty  bufferu  (0:041CH), pak je buffer
+klávesnice  prázdný.  Ukazatel  adresy  v  bufferu je udáván jako offset od
+adresy 0:0400H. Např. první znak v bufferu má adresu ukazatele 001EH.
+
+
+
+
+ 0 : 0 4 1 C H - ukládací adresa do bufferu klávesnice (pata bufferu)
+
+Délka:   2 bajty
+
+    Toto  slovo  ukazuje  na  adresu v bufferu klávesnice (buffer začíná na
+adrese  0:041EH), kam bude uložen příští znak zadaný z klávesnice. Pokud by
+po  zvýšení  ukazatele  na příští pozici znaku k uložení byl ukazatel roven
+ukazateli  pro  čtení znaku, považuje se buffer za plný a znak není uložen.
+Po  uložení  znaku  do  bufferu  je ukazatel inkrementován o 2 (po přechodu
+okraje bufferu je nastaven opět začátek bufferu). Pokud je ukazatel záhlaví
+bufferu roven ukazateli záhlaví bufferu (0:041AH), pak je buffer klávesnice
+prázdný. Ukazatel adresy v bufferu je udáván jako offset od adresy 0:0400H.
+Např. první znak v bufferu má adresu ukazatele 001EH.
+
+
+
+
+ 0 : 0 4 1 E H  - buffer klávesnice (16 slov)
+
+Délka:   32 bajtů (16 slov)
+
+    Tento  buffer  uchovává  ASCII  kódy znaků následované rozšířeným kódem
+kláves.  Každá klávesa je uchována jako 2-bajtová položka. Délka bufferu je
+16 slov (16 kódů kláves).
+
+    Viz  též  adresy  0:041A  (čtecí  adresa  z bufferu klávesnice), 0:041C
+(ukládací  adresa  do  bufferu  klávesnice)  a přerušení INT 09H (přerušení
+klávesnicí) a INT 16H (čtení znaku z bufferu klávesnice).
+
+
+
+ 0 : 0 4 3 E H  - stav rekalibrace disketové mechaniky
+
+Délka:   1 bajt
+
+    Tento  bajt indikuje, zda disketová jednotka potřebuje rekalibraci nebo
+ne.
+
+         statut rekalibrace disketové jednotky:
+       +-----------------+-------------------------+
+       | 7 6 5 4 3 2 1 0 |      význam             |
+       +-----------------+-------------------------+
+       | * . . . . . . . |   příznak přerušení     |
+       | . * . . . . . . |   rezervováno           |
+       | . . * . . . . . |   rezervováno           |
+       | . . . * . . . . |   rezervováno           |
+       | . . . . * . . . |   rekalibrace disku 3   |
+       | . . . . . * . . |   rekalibrace disku 2   |
+       | . . . . . . * . |   rekalibrace disku 1   |
+       | . . . . . . . * |   rekalibrace disku 0   |
+       +-----------------+-------------------------+
+
+Pozn.: Pokud  jsou  bity  0  až  3 nastaveny na nulu, potom disky potřebují
+       rekalibraci.
+
+       Rekalibrace přesune hlavu na stopu 0.
+
+       Pokud  disk potřebuje rekalibraci a je požadován přístup na disk, je
+       před přístupem nejdříve provedena rekalibrace.
+
+       Přerušení  INT  13H/služba  00H nastaví bity 0 až 3 na hodnotu nula,
+       tzn. že disku potřebují rekalibraci.
+
+
+
+
+
+ 0 : 0 4 3 F H  - stav motoru disketové mechaniky
+
+Délka:   1 bajt
+
+    Tento  bajt indikuje, která disketová jednotka je v současnosti vybraná
+a který motor disketové jednotky je zapnutý.
+
+         statut motoru disketové jednotky:
+       +-----------------+---------------------------------------------+
+       | 7 6 5 4 3 2 1 0 |                 význak                      |
+       +-----------------+---------------------------------------------+
+       | * . . . . . . . | operace čtení/zápis                         |
+       | . * . . . . . . | rezervováno                                 |
+       | . . * * . . . . | statut zvolené disketové jednotky           |
+       | . . . . * . . . | statut zapnutí motoru disketové jednotky 3  |
+       | . . . . . * . . | statut zapnutí motoru disketové jednotky 2  |
+       | . . . . . . * . | statut zapnutí motoru disketové jednotky 1  |
+       | . . . . . . . * | statut zapnutí motoru disketové jednotky 0  |
+       +-----------------+---------------------------------------------+
+
+    Bity 3 až 0 řídí stav motorů v rozdílných disketových jednotkách. Pokud
+je bit nastaven, potom je specifikovaný motor disketové jednotky zapnut.
+
+    statut zvolené disketové jednotky (bity 5 a 4):
+      +-------------------------------------+
+      |  00 - vybrána disketová jednotka 0  |
+      |  01 - vybrána disketová jednotka 1  |
+      |  10 - vybrána disketová jednotka 2  |
+      |  11 - vybrána disketová jednotka 3  |
+      +-------------------------------------+
+
+    Pokud  čítač pro vypnutí motoru 0:0440H dosáhne nuly, nastaví přerušení
+INT 08H všechny bity (tj. bity 3 až 0) zapnutí motoru jednotky na nulu (tj.
+vypne všechny motory).
+
+
+
+
+ 0 : 0 4 4 0 H  - čítač pro vypnutí motoru
+
+Délka:   1 bajt
+
+    Na  této  adrese  je  čítána  doba  po  uplynutí  poslední  operace  na
+disketových  jednotkách. Jsou počítány impulsy hodin reálného času (impulsy
+18.2 krát za sekundu). Dekrementace čítače je zajištěna přerušením INT 08H.
+Po  dosažení  nuly  jsou  všechny  motory  vypnuty  a  stavový  bajt motorů
+disketových jednotek (0:043FH) je nastaven na stav vypnutí všech motorů.
+
+
+
+
+ 0 : 0 4 4 1 H  - statut poslední operace s disketovou mechanikou
+
+Délka:   1 bajt
+
+    Bajt uchovává statut poslední disketové operace.
+    +-------------+---------------------------------------------------+
+    |   hodnota   |          poslední disketová operace               |
+    +-------------+---------------------------------------------------+
+    |     00H     |     žádná chyba                                   |
+    |     01H     |     neplatný povel                                |
+    |     02H     |     adresová značka nenalezena                    |
+    |     03H     |     pokus o zápis na disk chráněný proti zápisu   |
+    |     04H     |     sektor nenalezen                              |
+    |     06H     |     linka výměny diskety je aktivní               |
+    |     08H     |     přetečení DMA                                 |
+    |     09H     |     pokus o DMA přes okraj 64K                    |
+    |     0CH     |     typ média nenalezen                           |
+    |     10H     |     chyba CRC dat                                 |
+    |     20H     |     chyba řadiče                                  |
+    |     40H     |     chyba vystavení                               |
+    |     80H     |     disketová jednotka nepřipravena               |
+    +-------------+---------------------------------------------------+
+
+    Použijte přerušení INT 13H/službu 01H k obdržení dalších informací.
+
+
+
+ 0 : 0 4 4 2 H  - statut řadiče disketové jednotky
+
+Délka:   7 bajtů
+
+    Řadič disketové jednotky používá tento buffer jako pracovní prostor pro
+povelový blok řadiče pevných disků a také pro stavové informace řadiče.
+
+
+
+
+ 0 : 0 4 4 9 H  - mód displeje
+
+Délka:   1 bajt
+
+    Bajt obsahuje současně nastavený videomód.
+
+Pozn.: Viz přerušení INT 10H/služba 00H - výpis videomódů displeje.
+
+       INT 10H/služba 0FH navrací tuto hodnotu nastaveného videomódu.
+
+
+
+
+ 0 : 0 4 4 A H  - počet pozic na řádek v současném módu displeje
+
+Délka:   2 bajty
+
+    Slovo obsahuje počet znakových pozic na řádek v aktivním videomódu.
+
+Pozn.: Použijte přerušení INT 10H/službu 0FH k určení počtu znakových pozic
+       v současném módu displeje.
+
+
+
+
+
+ 0 : 0 4 4 C H  - délka zobrazovaného bufferu displeje
+
+Délka:   2 bajty
+
+    Slovo  obsahuje  délku  jedné  stránky  displeje pro současný videomód.
+Např.  CGA  má při módu 2 (textový režim 80x25, 4 stránky displeje) uloženu
+na  této  adrese  hodnotu  4096 (80 pozic * 25 řádků = 2000; 2000 znaků * 2
+bajty na znak = 4000 bajtů celkem; 96 bajtů je nevyužitý prostor).
+
+
+
+ 0 : 0 4 4 E H  - počáteční adresa zobrazovaného bufferu displeje
+
+Délka:   2 bajty
+
+    Tato  hodnota  představuje  offset  stránky  od začátku paměti adaptéru
+displeje.  Obvykle  je  to  0, neboť nejčastěji používanou stránkou je první
+stránka  displeje.  Např. pokud  se  stránka displeje změní na 2, nastaví se tato
+hodnota  na  dvojnásobek  hodnoty  na  adrese  0:044CH (délka zobrazovaného
+bufferu   displeje).   Tato   adresa   tedy   představuje   násobek   délky
+zobrazovaného buffery (0:044CH) a nastavené stránky displeje.
+
+
+
+ 0 : 0 4 5 0 H  - pozice kurzoru (pozice,řádek) pro stránky zobrazení
+
+Délka:   16 bajtů
+
+    Zde  jsou  uvedeny  pozice kurzorů pro každou z osmi stránek zobrazení.
+Pozice  kurzoru  pro  každou  stránku má pořadí - sloupec (pozice na řádku)
+následovaný řádkem.
+
+        0:0450H - pozice kurzoru stránky 0 (sloupec,řádek)
+        0:0452H - pozice kurzoru stránky 1 (sloupec,řádek)
+        0:0454H - pozice kurzoru stránky 2 (sloupec,řádek)
+        0:0456H - pozice kurzoru stránky 3 (sloupec,řádek)
+        0:0458H - pozice kurzoru stránky 4 (sloupec,řádek)
+        0:045AH - pozice kurzoru stránky 5 (sloupec,řádek)
+        0:045CH - pozice kurzoru stránky 6 (sloupec,řádek)
+        0:045EH - pozice kurzoru stránky 7 (sloupec,řádek)
+
+Pozn.: K  získání  těchto  informací  použijte přerušení INT 10H/služba 03H
+       (čtení pozice kurzoru).
+
+
+
+
+ 0 : 0 4 6 0 H  - koncová a počáteční linka zobrazení kurzoru
+
+Délka:   2 bajty
+
+    Položka  obsahuje  číslo  počáteční a koncové linky zobrazeného kurzoru
+(tj. velikost blikajícího hardwarového kurzoru).
+
+         0:0460H - koncová linka kurzoru
+         0:0461H - počáteční linka kurzoru
+
+Pozn.: Použijte   přerušení  INT  10H/služba  03H  k  získání  informací  o
+       počáteční a koncové lince kurzoru.
+
+       Použijte  přerušení  INT  10H/služba  01H  k  nastavení  počáteční a
+       koncové linky kurzoru.
+
+
+
+ 0 : 0 4 6 2 H  - aktivní stránka displeje
+
+Délka:   1 bajt
+
+    Bajt obsahuje současně nastavenou aktivní stránku displeje.
+
+Pozn.: Použijte přerušení INT 10H/služba 0FH k obdržení této informace.
+
+       Použijte přerušení INT 10H/služba 05H k nastavení aktivní stránky.
+
+
+
+ 0 : 0 4 6 3 H  - bázová řídící adresa displeje CRT
+
+Délka:   2 bajty
+
+    Slovo  na  této  adrese  obsahuje  bázovou  řídící adresu displeje CRT.
+Můžete  snadno  určit  současný  aktivní  adaptér  displeje  přečtením této
+hodnoty.  Tato  bázová  adresa  je  indexovým  registrem videořadiče. Tento
+registr je používán k výběru, ke kterému registru videořadiče bude přístup.
+
+    Hodnoty na této adrese mohou být:
+
+         03B4H - monochromatický displej
+         03D4H - barevný grafický adaptér (CGA,EGA)
+
+
+
+
+ 0 : 0 4 6 5 H  - současné nastavení řídícího registru módu
+
+Délka:   1 bajt
+
+    Obsahuje současné nastavení řídícího registru módu (port 3x8H).
+
+    Podle toho, který řadič displeje CRT je v současnosti aktivní, může mít
+tato položka tyto hodnoty:
+
+         03B8H - pro monochromatický displej
+         03D8H - pro barevný grafický displej (CGA,EGA)
+
+
+
+
+ 0 : 0 4 6 6 H  - současné nastavení registru volby barev (3x9H)
+
+Délka:   1 bajt
+
+    Obsahuje současné nastavení registru volby barev (port 3x9H).
+
+    Podle toho, který řadič displeje CRT je v současnosti aktivní, může mít
+tato položka tyto hodnoty:
+
+         03B9H - pro monochromatický displej
+         03D9H - pro barevný grafický displej (CGA,EGA)
+
+    Ačkoliv  monochromatický adaptér displeje si rezervuje port 03B9H, bude
+tento  bajt  obsahovat  hodnotu  3D9H  pro CGA a nebude pro monochromatický
+adaptér displeje použit (avšak mohl by být použit v budoucnosti).
+
+
+
+
+ 0 : 0 4 6 7 H  - rezervováno
+
+Délka:   5 bajtů
+
+    Počítače  PC  a  PCjr  používají  těchto  5 bajtů pro řízení kazetového
+magnetofonu.
+
+
+
+
+ 0 : 0 4 6 C H  - čítač časovače
+
+Délka:   4 bajty
+
+    Tato  čtyřbajtová  položka  slouží  jako  čítač impulsů, z kterého jsou
+odvozovány  časové informace. Každý časový impuls (18.2065 krát za sekundu,
+tj.  každých  54.9  ms)  aktivuje přerušení INT 08H, které zvýší obsah této
+položky  o  1.  Pokud  tato  položka překročí půlnoc (1800B0H = 1 573 040),
+nastaví se na hodnotu 0 a bajt 0:0470H je nastaven na 1.
+
+Pozn.: Použijte  přerušení INT 1AH/služba 00H k obdržení této hodnoty (tato
+       služba zároveň vymaže příznak přetečení na adrese 0:0470H).
+
+
+
+
+ 0 : 0 4 7 0 H  - příznak přetečení časovače
+
+Délka:   1 bajt
+
+    Bajt  obsahuje  informaci,  zda  během zapnutí počítače byla překročena
+půlnoc (pokud ano, změní se hodnota příznaku z 0 na 1).
+
+Pozn.: Použijte  přerušení  INT  1AH/služba 00H k obdržení tohoto příznaku.
+       Vyvolání této funkce zároveň příznak vynuluje.
+
+       Viz též položka 0:046C (čítač času).
+
+
+
+ 0 : 0 4 7 1 H  - statut klávesy <Break>
+
+Délka:   1 bajt
+
+    Bajt  signalizuje,  zda  byla  zadána  kombinace  kláves  pro přerušení
+(Control-Break). Pokud ano, je nastaven bit 7 tohoto bajtu.
+
+Pozn.: Tento  bajt  se  nenastavuje  na  nulu;  při  prvním  stisku  kláves
+       <Ctrl>-<Break> se nastaví bit 7 tohoto bajtu na 1 a zůstane nastaven
+       až do doby, kdy je počítač vypnut nebo resetován.
+
+
+
+
+ 0 : 0 4 7 2 H  - příznak stavu RESETu
+
+Délka:   2 bajty
+
+    Toto slovo indikuje činnost počítače při resetování počítače.
+
+  +-----------+-------------------------------+--------------------+
+  |  hodnota  |             význam            |     určeno pro     |
+  +-----------+-------------------------------+--------------------+
+  |   1234H   |   přeskočení testů pamětí     |     všechny PC     |
+  |   5678H   |   systém přerušen             |  konvertabilní PC  |
+  |   9ABCH   |   testovací mód               |  konvertabilní PC  |
+  |   ABCDH   |   mód smyčky POST             |  konvertabilní PC  |
+  +-----------+-------------------------------+--------------------+
+
+    Pokud  uživatel stiskne kombinaci kláves <Ctrl>-<Alt>-<Del>, nastaví se
+toto  slovo  na  hodnotu 1234H a řízení se předá na rutinu inicializace při
+zapnutí  počítače,  která  inicializuje a testuje hardwarová zařízení. Toto
+slovo  je  testováno  a  pokud  obsahuje hodnotu 1234H, přeskočí se vnitřní
+testy pamětí (které trvají dlouho) a zavede se operační systém.
+
+    Konvertabilní  PC  přidává  tři nové módy pro toto slovo. Prvním je mód
+přerušení  systému.  Tento  mód  je  vyvolán, pokud je přístroj navrácen ze
+stavu  přerušeného  napájení.  V  tomto  módu  se  neprovádí  testy pamětí,
+zařízení  jsou  navrácena  do jejich původního stavu a řízení je předáno do
+přerušeného programu na stejnou adresu, na které nastalo přerušení. Ostatní
+dva módy nejsou použitelné pro uživatele.
+
+
+
+
+ 0 : 0 4 7 4 H  - statut poslední operace na pevném disku
+
+Délka:   1 bajt
+
+    Bajt obsahuje statut poslední diskové operace pevného disku.
+
+                   Statut operací:
+      +------+---------------------------------------------------------+
+      | AH   |      Význam                                             |
+      +------+---------------------------------------------------------+
+      | FFH  |   smysl operace chybný                                  |
+      | E0H  |   chyba stavu                                           |
+      | CCH  |   chyba zápisu                                          |
+      | BBH  |   nedefinovatelná chyba                                 |
+      | AAH  |   disk není připraven                                   |
+      | 80H  |   time-out                                              |
+      | 40H  |   chyba vystavení                                       |
+      | 20H  |   chyba řadiče                                          |
+      | 11H  |   korekce chybných dat pomocí ECC                       |
+      | 10H  |   chyba dat ECC (CRC)                                   |
+      | 0FH  |   úroveň rozlišení DMA mimo rozsah                      |
+      | 0EH  |   detekována adresová značka řídících dat               |
+      | 0DH  |   neplatný počet sektorů ve formátu                     |
+      | 0CH  |   typ média nenalezen                                   |
+      | 0BH  |   nalezena vadná stopa                                  |
+      | 0AH  |   detekováno vadné návěští sektoru                      |
+      | 09H  |   přístup k DMA překročil hranici 64K                   |
+      | 08H  |   přetečení DMA                                         |
+      | 07H  |   chyba aktivity diskových parametrů                    |
+      | 06H  |   vedení pro výměnu diskety aktivní                     |
+      | 05H  |   chyba resetování disku                                |
+      | 04H  |   sektor nenalezen                                      |
+      | 03H  |   pokus o zápis na disk chránění proti zápisu           |
+      | 02H  |   adresová značka nenalezena                            |
+      | 01H  |   neplatný povel                                        |
+      | 00H  |   žádná chyba                                           |
+      +------+---------------------------------------------------------+
+
+Pozn.: Použijte přerušení INT 13H/služba 01H k obdržení těchto informací.
+
+
+
+
+ 0 : 0 4 7 5 H  - počet pevných disků
+
+Délka:   1 bajt
+
+    Bajt obsahuje počet pevných disků přístupných v systému.
+
+Pozn.: Použijte přerušení INT 13H/služba 08H k obdržení těchto informací.
+
+
+
+
+ 0 : 0 4 7 6 H  - rezervováno
+
+Délka:   1 bajt
+
+    Tento  bajt  je  rezervován pro všechny stroje kromě počítačů XT, které
+jej používají pro řízení jednotek pevných disků.
+
+
+
+
+ 0 : 0 4 7 7 H  - rezervováno
+
+Délka:   1 bajt
+
+    Tento  bajt  je  rezervován pro všechny stroje kromě počítačů XT, které
+jej používají pro uložení offsetu řadiče jednotky pevných disků relativně k
+portu 320H.
+
+
+
+ 0 : 0 4 7 8 H  - hodnota time-out pro paralelní tiskárny
+
+Délka:   4 bajty
+
+    Tyto bajty jsou použity k testování, kdy bude tiskárna v time-out.
+
+    Hodnoty  v  těchto bajtech jsou obvykle 14H (20). Na počítačích PC a XT
+tyto  hodnoty  reprezentují počet sekund před označením tiskárny jako time-
+out.  Na  jiných  počítačích, jako např. AT, je tato hodnota též 14H, avšak
+při  testech  time-out  je  tato hodnota vynásobena 4 ke kompenzaci zvýšené
+rychlosti AT. Aktuální počet sekund před stavem time-out je asi dvojnásobek
+hodnoty  bajtu  time-out.  V  některých  případech by měla být tato hodnota
+považována spíše za hodnotu času potřebného k detekování stavu time-out než
+za čas před stavem time-out.
+
+         0:0478H - hodnota time-out pro první   tiskárnu (LPT1)
+         0:0479H - hodnota time-out pro druhou  tiskárnu (LPT2)
+         0:047AH - hodnota time-out pro třetí   tiskárnu (LPT3)
+         0:047BH - hodnota time-out pro čtvrtou tiskárnu (LPT4)
+
+
+
+
+ 0 : 0 4 7 C H  - hodnota time-out pro komunikační linku RS-232
+
+Délka:   4 bajty
+
+    Tyto  bajty jsou použity k testování, kdy bude komunikační linka RS-232
+v time-out.
+
+    Hodnoty  v  těchto bajtech jsou obvykle 01H. Na počítačích PC a XT tyto
+hodnoty reprezentují počet sekund před označením tiskárny jako time-out. Na
+jiných  počítačích,  jako  např.  AT,  je  tato  hodnota též 01H, avšak při
+testech  time-out  je  tato  hodnota  vynásobena  4  ke  kompenzaci zvýšené
+rychlosti AT. Aktuální počet sekund před stavem time-out je asi dvojnásobek
+hodnoty  bajtu  time-out.  V  některých  případech by měla být tato hodnota
+považována spíše za hodnotu času potřebného k detekování stavu time-out než
+za čas před stavem time-out.
+
+         0:047CH - hodnota time-out pro sériový port #1 (COM1)
+         0:047DH - hodnota time-out pro sériový port #2 (COM2)
+         0:047EH - hodnota time-out pro sériový port #3 (COM3)
+         0:047FH - hodnota time-out pro sériový port #4 (COM4)
+
+
+
+
+ 0 : 0 4 8 0 H  - offsetový ukazatel začátku bufferu klávesnice
+
+Délka:   2 bajty
+
+    Slovo obsahuje offset začátku bufferu klávesnice. To umožňuje přemístit
+buffer  klávesnice,  zvětšit  nebo  zmenšit jeho velikost. Má to však jeden
+háček:  adresa  zde  je offsetem vztahujícím se k adrese 0:0400H. Například
+současný  32-bajtový  buffer na adrese 0:041EH má nastavenu tuto offsetovou
+adresu  na  hodnotu 001EH. Proto, pokud je buffer přesunut na jinou lokaci,
+musí být offsetová adresa začátku bufferu vztažena k adrese 0:0400H.
+
+
+
+
+ 0 : 0 4 8 2 H  - offsetový ukazatel konce bufferu klávesnice
+
+Délka:   2 bajty
+
+    Slovo  obsahuje  offset konce bufferu klávesnice. To umožňuje přemístit
+buffer  klávesnice,  zvětšit  nebo  zmenšit jeho velikost. Má to však jeden
+háček:  adresa  zde  je offsetem vztahujícím se k adrese 0:0400H. Například
+současný  32-bajtový  buffer na adrese 0:043EH má nastavenu tuto offsetovou
+adresu  na  hodnotu 003EH. Proto, pokud je buffer přesunut na jinou lokaci,
+musí být offsetová adresa konce bufferu vztažena k adrese 0:0400H.
+
+
+
+
+ 0 : 0 4 8 4 H  - počet řádků displeje mínus 1
+
+Délka:   1 bajt
+
+    Tento  bajt  je používán pouze grafickými kartami EGA a PGA k uschování
+informace o počtu řádků mínus 1 v současném módu displeje (představuje tedy
+číslo  posledního  řádku).  To  je použito z toho důvodu, že karty umožňují
+přepínat počet zobrazených řádků.
+
+
+
+ 0 : 0 4 8 5 H  - výška znaku (počet linek na displeji)
+
+Délka:   2 bajty
+
+    Toto  slovo je používáno pouze grafickými kartami EGA a PGA k uschování
+informace  o  počtu  bajtů  na  znak. Toto číslo představuje počet linek na
+znak, resp. výšku znaku.
+
+
+
+
+ 0 : 0 4 8 7 H  - statuty řízení video
+
+Délka:   2 bajty
+
+    Rezervováno pro všechny typy počítačů.
+
+
+
+
+ 0 : 0 4 8 9 H  - rezervováno
+
+Délka:   2 bajty
+
+
+
+
+ 0 : 0 4 8 B H  - řízení disketového média
+
+Délka:   1 bajt
+
+    Tento  bajt  je  pro  počítače  PC, PCjr, konvertabilní PC a PC XT data
+8.11.1982  rezervován.  Pro  ostatní obsahuje podsledně nastavenou rychlost
+přenosu dat k disketě a rychlost krokování.
+
+              Řízení média diskety:
+   +-------------------+------------------------------------------------+
+   |  7 6 5 4 3 2 1 0  |        význam                                  |
+   +-------------------+------------------------------------------------+
+   |  * * . . . . . .  | poslední rychlost přenosu dat k disketě        |
+   |  . . * * . . . .  | poslední rychlost krokování disketové jednotky |
+   |  . . . . * * * *  | rezervováno                                    |
+   +-------------------+------------------------------------------------+
+
+       Posledně nastavené rychlosti přenosu dat k disketě (bity 7 a 6):
+                +----+-------------------+
+                | 00 | 500K za sekundu   |
+                | 01 | 300K za sekundu   |
+                | 10 | 250K za sekundu   |
+                | 11 | rezervováno       |
+                +----+-------------------+
+
+
+
+ 0 : 0 4 8 C H  - statut řadiče pevného disku
+
+Délka:   1 bajt
+
+    Tento  bajt  je  pro  počítače  PC, PCjr, konvertabilní PC a PC XT data
+8.11.1982 rezervován. Pro ostatní obsahuje statut řadiče pevného disku.
+
+
+
+ 0 : 0 4 8 D H  - chybový statut řadiče pevného disku
+
+Délka:   1 bajt
+
+    Tento  bajt  je  pro  počítače  PC, PCjr, konvertabilní PC a PC XT data
+8.11.1982  rezervován.  Pro  ostatní obsahuje chybový statut řadiče pevného
+disku.
+
+
+
+ 0 : 0 4 8 E H  - řízení přerušení pevného disku
+
+Délka:   1 bajt
+
+    Tento  bajt  je  pro  počítače  PC, PCjr, konvertabilní PC a PC XT data
+8.11.1982  rezervován.  Pro  ostatní  obsahuje  příznak přerušení pro pevný
+disk.  (tento  bajt  je  používán přerušením INT 76H - přerušení od pevného
+disku AT).
+
+
+
+ 0 : 0 4 8 F H  - rezervováno
+
+Délka:   1 bajt
+
+
+
+ 0 : 0 4 9 0 H  - stav média disketové jednotky 0
+
+Délka:   1 bajt
+
+    Tento  bajt  je  pro  počítače  PC, PCjr, konvertabilní PC a PC XT data
+8.11.1982 rezervován. Pro ostatní obsahuje stav disketové jednotky 0.
+
+              Stav disketové jednotky:
+   +-----------------+-------------------------------------------------+
+   | 7 6 5 4 3 2 1 0 |               význam                            |
+   +-----------------+-------------------------------------------------+
+   | * * . . . . . . |  přenosová rychlost dat k disketové jednotce    |
+   | . . * . . . . . |  nutnost dvojitého krokování (diskety 40 stop)  |
+   | . . . * . . . . |  médium je známé                                |
+   | . . . . * . . . |  rezervováno                                    |
+   | . . . . . * * * |  typ média/disketové mechaniky                  |
+   +-----------------+-------------------------------------------------+
+
+            Rychlost přenosu dat k disketě (bity 7 a 6):
+                +----+-------------------+
+                | 00 | 500K za sekundu   |
+                | 01 | 300K za sekundu   |
+                | 10 | 250K za sekundu   |
+                | 11 | rezervováno       |
+                +----+-------------------+
+
+           Typy média/disketová jednotka (bity 2, 1 a 0):
+               +-----+-------------------------+
+               | 000 |  360K/360K nezavedená   |
+               | 001 |  360K/1.2M nezavedená   |
+               | 010 |  1.2M/1.2M nezavedená   |
+               | 011 |  360K/360K zavedená     |
+               | 100 |  360K/1.2M zavedená     |
+               | 101 |  1.2M/1.2M zavedená     |
+               | 110 |  rezervováno            |
+               | 111 |  žádný z těchto typů    |
+               +-----+-------------------------+
+
+
+
+ 0 : 0 4 9 1 H  - stav média disketové jednotky 1
+
+Délka:   1 bajt
+
+    Tento  bajt  je  pro  počítače  PC, PCjr, konvertabilní PC a PC XT data
+8.11.1982  rezervován.  Pro  ostatní  obsahuje statut disketové jednotky 1.
+Význam  bajtu je jinak stejný jak bylo popsáno u adresy 0:0490H (stav média
+disketové jednotky 0).
+
+
+
+ 0 : 0 4 9 2 H  - rezerovváno
+
+Délka:   2 bajty
+
+
+
+ 0 : 0 4 9 4 H  - aktuální stopa disketové jednotky 0
+
+Délka:   1 bajt
+
+    Tento  bajt  je  pro  počítače  PC, PCjr, konvertabilní PC a PC XT data
+8.11.1982   rezervován.  Pro  ostatní  obsahuje  současně  nastavený  válec
+disketové jednotky 0.
+
+
+
+
+ 0 : 0 4 9 5 H  - aktuální stopa disketové jednotky 1
+
+Délka:   1 bajt
+
+    Tento  bajt  je  pro  počítače  PC, PCjr, konvertabilní PC a PC XT data
+8.11.1982   rezervován.  Pro  ostatní  obsahuje  současně  nastavený  válec
+disketové jednotky 1.
+
+
+
+
+
+ 0 : 0 4 9 6 H  - statut klávesnice a příznaky typů kláves
+
+Délka:   1 bajt
+
+    Bajt obsahuje stavové informace klávesnice.
+
+         Stavové informace klávesnice:
+  +-----------------+------------------------------------------+
+  | 7 6 5 4 3 2 1 0 |             význam                       |
+  +-----------------+------------------------------------------+
+  | * . . . . . . . |  probíhá čtení ID                        |
+  | . * . . . . . . |  poslední znak byl prvním ID znakem      |
+  | . . * . . . . . |  platí Num Lock pokud je čtena ID a KBX  |
+  | . . . * . . . . |  instalována klávesnice 101/102 kláves   |
+  | . . . . * . . . |  stisknuta pravá klávesa <Alt>           |
+  | . . . . . * . . |  stisknuta pravá klávesa <Ctrl>          |
+  | . . . . . . * . |  poslední kód byl skrytý kód E0H         |
+  | . . . . . . . * |  poslední kód byl skrytý kód E1H         |
+  +-----------------+------------------------------------------+
+       ID  - identifikace klávesy
+       KBX - kód klávesy
+
+Pozn.: Použijte  přerušení  INT  16H/služba  12H  k  obdržení  části těchto
+       informací.
+
+       Adresy 0:0417H a 0:0418H obsahují též stavové informace klávesnice.
+
+
+
+
+ 0 : 0 4 9 7 H  - statut LED klávesnice
+
+Délka:   1 bajt
+
+    Bajt obsahuje stav indikátorů LED klávesnice.
+
+         Stavové informace indikátorů LED klávesnice:
+  +-----------------+------------------------------------------+
+  | 7 6 5 4 3 2 1 0 |             význam                       |
+  +-----------------+------------------------------------------+
+  | * . . . . . . . |  chyba přenosu ke klávesnici             |
+  | . * . . . . . . |  indikátory módu uloženy                 |
+  | . . * . . . . . |  příznak přijetí opakovaně vysílán       |
+  | . . . * . . . . |  přijato potvrzení                       |
+  | . . . . * . . . |  rezervováno                             |
+  | . . . . . * * * |  stavové bity indikátorů klávesnice LED  |
+  +-----------------+------------------------------------------+
+
+
+
+
+ 0 : 0 4 9 8 H  - ukazatel na příznak ukončení uživatelského čekání
+
+Délka:   4 bajty
+
+    Tato  4-bajtová položka představuje ukazatel (segment:offset) na adresu
+bajtu  příznaku  ukončení,  který  je  použit v INT 15H/služba 83H (událost
+čekání).
+
+
+
+
+ 0 : 0 4 9 C H  - čítač uživatelského čekání (mikrosekundy)
+
+Délka:   4 bajty
+
+    Tato   4-bajtová  položka  obsahuje  časovou  prodlevu  před  odesláním
+ukončení  prodlevy,  jak  je použita v INT 15H/služba 83H (událost čekání).
+Zde je prováděno aktuální odečítání času.
+
+
+
+
+ 0 : 0 4 A 0 H  - příznak aktivity čekání
+
+Délka:   1 bajt
+
+    Bajt hlásí současný stav služby čekání hodin reálného času.
+
+         příznak aktivity čekání:
+
+  +-----------------+------------------------------------------+
+  | 7 6 5 4 3 2 1 0 |             význam                       |
+  +-----------------+------------------------------------------+
+  | * . . . . . . . |  čekací čas ukončen a odeslán            |
+  | . * * * * . . . |  rezervováno                             |
+  | . . . . . * . . |  zapnutí napájení pomocí alarmu          |
+  | . . . . . . * . |  uživatelský požadavek alarmu INT 4AH    |
+  | . . . . . . . * |  interval čekání v současnosti aktivní   |
+  +-----------------+------------------------------------------+
+
+Pozn.: Viz  přerušení  INT  15H/služby  83H  a  86H  - další detaily služeb
+       používajících volbu čekání.
+
+       Bity 2 a 1 jsou platné pouze pro konvertabilní PC.
+
+
+
+
+ 0 : 0 4 A 1 H  - rezervováno
+
+Délka:   7 bajtů
+
+    Tento prostor je rezervován pro síťový adaptér počítačů AT.
+
+
+
+
+ 0 : 0 4 A 8 H  - ukazatel na video parametry EGA
+
+Délka:   4 bajty
+
+    Tento ukazatel (segment:offset) ukazuje na výpis ukazatelů obsahujících
+proměnné parametry a přehledy pro grafickou kartu EGA.
+
+    Tabulka ukazatelů pro grafickou kartu EGA:
++----------+----------+---------------------------------------------------+
+|  offset  | velikost |                 popis                             |
++----------+----------+---------------------------------------------------+
+| 00H ( 0) |    4     | ukazatel tabulky videoparametrů                   |
+| 04H ( 4) |    4     | ukazatel prostoru dynamického uložení             |
+| 08H ( 8) |    4     | ukazatel pomocného generátoru znaků textového módu|
+| 0CH (12) |    4     | ukazatel pomocného generátoru znaků graf. módu    |
+| 10H (16) |    4     | rezervováno (vždy 0000:0000H)                     |
+| 14H (20) |    4     | rezervováno (vždy 0000:0000H)                     |
+| 18H (24) |    4     | rezervováno (vždy 0000:0000H)                     |
++----------+----------+---------------------------------------------------+
+
+Ukazatel tabulky videoparametrů:
+
+          Tento   ukazatel   je  inicializován  na  tabulku  videoparametrů
+          uloženou v BIOS.
+
+Ukazatel prostoru dynamických parametrů:
+
+          Tento  ukazatel  je  volitelný.  Je  inicializován na 0000:0000H.
+          Pokud  je  použit,  ukazuje  na  tabulku  v RAM, kde jsou uloženy
+          specifikované   dynamické   hodnoty.   Běžně  jsou  tyto  hodnoty
+          definovány takto:
+
+          +----------+----------+------------------------------------+
+          |  offset  | velikost |              popis                 |
+          +----------+----------+------------------------------------+
+          | 00H ( 0) |    16    | hodnoty 16 paletových registrů EGA |
+          | 10H (16) |     1    | hodnota registru barvy okolí       |
+          | 11H (17) |   239    | rezervováno                        |
+          +----------+----------+------------------------------------+
+
+Ukazatel pomocného znakového generátoru textového módu:
+
+          Tento   ukazatel  je  volitelný;  normálně  je  inicializován  na
+          0000:0000H.  Pokud  je  použit,  ukazuje  na  tabulku definovanou
+          takto:
+
+          +----------+----------+----------------------------------------+
+          | offset   | velikost |               popis                    |
+          +----------+----------+----------------------------------------+
+          | 00H ( 0) |    1     | počet bajtů na znak                    |
+          | 01H ( 1) |    1     | blok k načtení (normálně = 0)          |
+          | 02H ( 2) |    2     | počet znaků k uložení (normálně = 256) |
+          | 04H ( 4) |    2     | offset znaků (normálně = 0)            |
+          | 06H ( 6) |    4     | ukazatel na tabulku fontů              |
+          | 0AH (10) |    1     | maximální počet zobrazitelných řádků   |
+          |          |          |   (pokud je FFH, provede se výpočet)   |
+          | 0BH (11) |    n     | 'n' bajtů obsahujících hodnoty různých |
+          |          |          |   módů pro tento font (FFH = konec)    |
+          +----------+----------+----------------------------------------+
+
+Ukazatel pomocného znakového generátoru grafického módu:
+
+          Tento   ukazatel  je  volitelný;  normálně  je  inicializován  na
+          0000:0000H.  Pokud  je  použit,  ukazuje  na  tabulku definovanou
+          takto:
+
+          +----------+----------+----------------------------------------+
+          | offset   | velikost |               popis                    |
+          +----------+----------+----------------------------------------+
+          | 00H ( 0) |    1     | počet zobrazitelných řádků             |
+          | 01H ( 1) |    2     | počet bajtů na znak                    |
+          | 03H ( 6) |    4     | ukazatel na tabulku fontů              |
+          | 07H ( 7) |    n     | 'n' bajtů obsahujících hodnoty různých |
+          |          |          |   módů pro tento font (FFH = konec)    |
+          +----------+----------+----------------------------------------+
+
+
+
+ 0 : 0 4 A C H  - rezervováno
+
+Délka:   44 bajtů
+
+
+
+
+ 0 : 0 4 F 0 H  - meziaplikační komunikační prostor (ICA)
+
+Délka:   16 bajtů
+
+    Těchto  16  bajtů,  nazývaných meziaplikační komunikační prostor (ICA),
+může být použito libovolným programem k libovolným účelům. Obvykle je tento
+prostor  používán  k  předávání dat mezi dvěma nebo více programy. Pokud se
+rozhodnete  použít  tento  prostor,  zajistěte  si správnost dat kontrolním
+součtem  a  označením,  neboť  se  může  jiný  program též rozhodnout tento
+prostor použít pro své účely.
+
+
+
+
+ 0 : 0 5 0 0 H  - stavový bajt tisku obrazovky (viz přerušení INT 05H)
+
+Délka:   1 bajt
+
+    Bajt  obsahuje  statut  poslední  operace tisku obsahu obrazovky (Print
+Screen).
+
+    Zkoušením  tohoto  bajtu  mohou  programy  zjistit  stav  operace tisku
+obrazovky. Bajt může mít některou z následujících hodnot:
+
+     +---------+-------------------------------------------------------+
+     | hodnota |                  význam                               |
+     +---------+-------------------------------------------------------+
+     |   00H   | obsluha Print Screen nevyvolána nebo operace ukončena |
+     |   01H   | obsluha tisku obrazovky právě probíhá                 |
+     |   FFH   | během posledního vyvolání nastala chyba               |
+     +---------+-------------------------------------------------------+
+
+Pozn.: Viz též přerušení INT 05H (tisk obsahu obrazovky).
+
+
+
+ 0 : 0 5 0 1 H  - rezervováno
+
+Délka:   3 bajty
+
+
+
+ 0 : 0 5 0 4 H  - příznak logického disku
+
+Délka:   1 bajt
+
+    Bajt   hlásí   stav   jednodisketového   systému,  pokud  je  simulován
+dvoudisketový systém.
+
+    Testováním  tohoto bajtu lze zjistit stav jednoho disku instalovaného v
+jednodiskovém  systému.  Použitím  tohoto bajtu se může programátor vyhnout
+hlášení "Insert disk for drive B:", které je generováno při jednodisketovém
+systému.
+            +---------+--------------------------+
+            | hodnota |           význam         |
+            +---------+--------------------------+
+            |   00H   |    aktivní jako disk A   |
+            |   01H   |    aktivní jako disk B   |
+            |   FFH   |    aktivní jako disk A   |
+            +---------+--------------------------+
+
+    Ačkoliv  poslední  hodnota  FFH  není  dokumentována,  FFH  znamená, že
+označení  disku  nebylo  ještě  určeno, takže jeho použití jako disk A bude
+pracovat správně.
+
+    K  určení,  zda je instalován pouze jeden disk, použijte výpis vybavení
+(přerušení INT 11H).
+
+
+
+
+ 0 : 0 5 0 5 H  - rezervováno
+
+Délka:   250 bajtů
+
+
+
+
+
+
+
+ F 0 0 0 : F F F 0 H  - skok na začátek vnitřního inicial. testu (POST)
+
+Délka:   5 bajtů
+
+    Na  této  adrese  je umístěn daleký skok (typ FAR) na začátek vnitřního
+inicializačního testu po zapnutí počítače (Power-On Self Test; POST).
+
+    Použití  této adresy je z toho důvodu, že v rodině procesorů 8086 se po
+zapnutí napájení mikroprocesoru (nebo po resetu) nastaví obsah registru CS
+na  hodnotu  FFFFH  a  obsah registru IP na hodnotu 0000H, což je prakticky
+stejná adresa jako tato adresa F000:FFF0H.
+
+    Pokud  si  přejete  resetovat  počítač  (buď studený nebo horký start),
+proveďte daleký skok na tuto adresu. Předá se řízení inicializačnímu testu,
+který  zavede operační systém. Během inicializace kontroluje POST obsah dat
+na  adrese 0:0472H; pokud je zde uložena hodnota 1234H, přeskočí se vnitřní
+test pamětí (horký start), jinak se test pamětí provede (studený start).
+
+
+
+ F 0 0 0 : F F F 5 H  - datum vzniku ROM BIOSu - v ASCII
+
+Délka:   8 bajtů
+
+    Tato  položka  obsahuje datum vzniku (resp. ukončení vývoje) ROM BIOSu.
+Datum  je  ve  formě  ASCII:  první  dvě  číslice  udávají měsíc, následuje
+oddělovací  lomítko,  pak dvě číslice den, lomítko a dvě číslice rok. Např.
+údaj '06/10/85' znamená 10.června 1985.
+
+Pozn.: Pozdější  verze  Compaq mají toto datum posunuto o 1 bajt, začíná na
+       adrese F000:FFF6H.
+
+       Viz též identifikátor systémového modelu - adresa F000:FFFEH.
+
+
+ F 0 0 0 : F F F C H  - rezervováno
+
+Délka:   2 bajty
+
+
+
+ F 0 0 0 : F F F E H  - identifikátor systémového modelu
+
+Délka:   1 bajt
+
+    Tento bajt specifikuje typ stroje.
+
+       +---------------+--------------------------------------+
+       | identifikátor |       typ počítače                   |
+       +---------------+--------------------------------------+
+       |     FFH       |    originální PC                     |
+       |     FEH       |    pozdější PC, XT nebo Portable PC  |
+       |     FBH       |    pozdější XT                       |
+       |     FDH       |    PCjr                              |
+       |     FCH       |    AT nebo XT-286                    |
+       |     F9H       |    konvertabilní PC                  |
+       +---------------+--------------------------------------+
+
+Pozn.: Použijte  přerušení  INT  15H/služba  C0H  pro další ověřovací testy
+       systémového modelu a identifikátoru submodelu.
+
+       Několik  přístrojů  sdílí stejný identifikátor. K odlišení přístrojů
+       použijte  INT  15H,  služba  C0H  a  podívejte  se  na identifikátor
+       submodelu.
+
+
+              Identifikace systémových modelů:
++------------------+-------------+-------------+----------------+--------+
+| produkt          | datum BIOSu | bajt modelu | bajt submodelu | revize |
++------------------+-------------+-------------+----------------+--------+
+| PC               |   24.4.1981 |    FFH      |       -        |   -    |
+| PC               |  19.10.1981 |    FFH      |       -        |   -    |
+| PC               |  27.10.1982 |    FFH      |       -        |   -    |
+| PC XT            |   8.11.1982 |    FEH      |       -        |   -    |
+| PC XT            |   10.1.1986 |    FBH      |      00H       |  01H   |
+| PC XT            |    9.5.1986 |    FBH      |      00H       |  02H   |
+| PCjr             |    1.6.1983 |    FDH      |       -        |   -    |
+| AT               |   10.1.1984 |    FCH      |       -        |   -    |
+| AT               |   10.6.1985 |    FCH      |      00H       |  01H   |
+| AT               |  15.11.1985 |    FCH      |      01H       |  00H   |
+| XT-286           |   21.4.1986 |    FCH      |      02H       |  00H   |
+| konvertabilní PC |   13.9.1985 |    F9H      |      00H       |  00H   |
++------------------+-------------+-------------+----------------+--------+
+ 
