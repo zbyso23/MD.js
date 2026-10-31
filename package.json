@@ -1,0 +1,29 @@
+{
+  "name": "mdjs-ultra",
+  "version": "0.7.7-phase1-foundation",
+  "private": true,
+  "description": "MD.js Ultra: standalone Markdown, Mermaid, Charts and optional ZX, Blockly/Arduino, PC (XT and 286) labs",
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "bench": "node test/performance.js",
+    "test:zx:unit": "node --test zx/tests/*.test.cjs",
+    "test:zx:browser": "python3 zx/tests/e2e/test_zx_browser.py",
+    "test:zx:real": "python3 zx/tests/e2e/test_real_offline.py",
+    "test:zx:reference": "python3 zx/tests/reference_skoolkit.py",
+    "test:zx": "npm run test:zx:unit && npm run test:zx:browser",
+    "test:all": "npm test && npm run test:zx:unit && npm run test:zx:patch && npm run test:zx:browser",
+    "test:zx:rom": "python3 zx/rom_tools.py --check",
+    "test:zx:patch": "python3 -m unittest zx/tests/test_vendor_patch.py",
+    "test:zx:real:http": "python3 zx/tests/e2e/test_zx_browser.py --real",
+    "test:blocks": "node optional/blockly/tests/test.mjs",
+    "test:ultra:browser": "python3 test/e2e/test_ultra_browser.py",
+    "test:release": "npm test && npm run test:blocks && npm run test:zx:unit && npm run test:pc:phase1 && npm run test:pc:browser && npm run test:runtime:browser && npm run test:ultra:browser",
+    "test:pc:phase1": "node --test optional/pc/tests/*.test.cjs",
+    "test:pc:browser": "python3 optional/pc/tests/test_browser.py",
+    "test:runtime:browser": "python3 optional/pc/tests/test_universal_browser.py && python3 zx/tests/e2e/test_universal_zx_browser.py",
+    "test:pc": "npm run test:pc:phase1 && npm run test:pc:browser",
+    "test:zx:personal-rom": "python3 zx/tests/e2e/test_embedded_rom_v077.py"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}

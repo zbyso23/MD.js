@@ -33,14 +33,48 @@
   <section class="pane" aria-label="Editor Markdown">
     <div class="pane-head"><span>01 — Markdown editor</span><button id="reset" type="button">Obnovit ukázku</button></div>
     <textarea id="source" spellcheck="false" aria-label="Zdroj Markdown"></textarea>
-    <nav class="preset-bar" aria-label="Ukázky"><button type="button" class="preset" data-example="overview">Všechno</button><button type="button" class="preset" data-example="flow">Flowchart</button><button type="button" class="preset" data-example="sequence">Sequence</button><button type="button" class="preset" data-example="pie">Pie chart</button><button type="button" class="preset" data-example="class">Class</button><button type="button" class="preset" data-example="timeline">Timeline</button><button type="button" class="preset" data-example="security">Útočný text</button><button type="button" class="preset" data-example="extended">Extended F4</button><button type="button" class="preset" data-example="docux">DocUX F4.5</button></nav>
+    <nav class="preset-bar" aria-label="Ukázky"><button type="button" class="preset" data-example="overview">Všechno</button><button type="button" class="preset" data-example="flow">Flowchart</button><button type="button" class="preset" data-example="sequence">Sequence</button><button type="button" class="preset" data-example="pie">Mermaid Pie</button><button type="button" class="preset" data-example="charts">Grafy Mini</button><button type="button" class="preset" data-example="class">Class</button><button type="button" class="preset" data-example="timeline">Timeline</button><button type="button" class="preset" data-example="security">Útočný text</button><button type="button" class="preset" data-example="extended">Extended F4</button><button type="button" class="preset" data-example="docux">DocUX F4.5</button></nav>
   </section>
   <section class="pane" aria-label="Náhled Markdown"><div class="pane-head"><span>02 — Reader / Live preview</span><span id="status" role="status" aria-live="polite">Ready</span></div><div class="preview-wrap"><article id="preview" class="md-root" data-md-theme="light"></article></div></section>
 </main>
-<script src="../MD.js"></script><script src="../MD-diagrams.js"></script><script src="../MD-docux.js"></script><script src="../MD-UX.js"></script>
+<script src="../MD.js"></script><script src="../MD-diagrams.js"></script><script src="../MD-Charts.js"></script><script src="../MD-docux.js"></script><script src="../MD-UX.js"></script>
 <script>
 'use strict';
 const samples = {
+  charts: String.raw`# Charts Mini
+
+## Sloupce a popisky os
+
+~~~chart
+type: bar
+title: Délka sestavení
+x: Projekt
+y: Milisekundy
+data:
+MD Core: 12
+Z80: 7
+Blocks: 16
+~~~
+
+## Koláč
+
+~~~chart
+type: pie
+title: Běhy
+unit: kusy
+data:
+Úspěšné: 80
+Zbývá: 20
+~~~
+
+## Sort / Filter
+
+| Moduly | Body |
+|:--|--:|
+| Core | 5 |
+| ZX | 11 |
+| Blocks | 8 |
+`,
   overview: String.raw`# MD.js Reborn 🧊
 
 ###### 2016 → 2026: bezpečný Markdown, který vyrostl.

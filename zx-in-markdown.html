@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MD.js – ZX block inside Markdown</title>
+<link rel="stylesheet" href="MD.css"><link rel="stylesheet" href="zx/MD-ZX.css">
+<style>body{font-family:system-ui,sans-serif;background:#edf1f6;padding:20px}article{max-width:930px;margin:auto;padding:22px;border-radius:14px;background:#fff;box-shadow:0 5px 35px #1112}</style>
+</head><body><article class="md-root" id="md-article"></article>
+<script src="MD.js"></script><script src="MD-diagrams.js"></script><script src="MD-docux.js"></script><script src="MD-UX.js"></script>
+<script id="mdjs-state-worker" type="text/plain">
+self.onmessage=function(e){if(e.data&&e.data.type==='stringify')self.postMessage({type:'json',text:JSON.stringify(e.data.payload)});};
+</script>
+<script src="MD-Runtime.js"></script>
+<script src="zx/ZX-ROM-embedded.js"></script>
+<script src="zx/vendor/Z80.js"></script><script src="zx/vendor/utils.js"></script><script src="zx/vendor/MinZX-mdzx.js"></script><script src="zx/vendor/ZXScreen.js"></script><script src="zx/vendor/ZXKeyboard.js"></script><script src="zx/vendor/ZXSound.js"></script>
+<script>
+if(typeof MinZX!=='undefined')window.MinZX=MinZX;
+if(typeof ZXScreen!=='undefined')window.ZXScreen=ZXScreen;
+if(typeof ZXKeyboard!=='undefined')window.ZXKeyboard=ZXKeyboard;
+if(typeof ZXSoundOutput!=='undefined')window.ZXSoundOutput=ZXSoundOutput;
+if(typeof Z80!=='undefined')window.Z80=Z80;
+</script>
+<script src="zx/ZX-Screen.js"></script><script src="zx/ZX-ASM.js"></script><script src="zx/MD-ZX.js"></script><script>
+const source=String.raw`# Z80 / ZX Spectrum inside a Markdown article
+
+This is an actual **MD.js Reborn document**, not a separate emulator page.
+
+## ZX Spectrum 48K · 48K BASIC ROM
+
+The inline view shows only the Spectrum display. Use **Fullscreen Workbench** to enter debugging mode. Press **Start ZX** explicitly to boot.
+
+~~~zx
+model: 48k
+rom: local-zx48
+~~~
+
+## BASIC learning
+
+After mounting the included \`zx/demos/HELLO.TAP\` from the Workbench, type \`LOAD ""\` on the Spectrum keyboard. Standard ROM tape loading is experimental.
+
+## Architecturally isolated
+
+The document controls and diagrams are independent of the optional ZX emulator. No Javascript from Markdown content is executed automatically.
+`;
+const article=document.getElementById('md-article');
+new MD({mode:'extended'}).mount(article,source);
+MDZX.enhance(article);
+</script></body></html>

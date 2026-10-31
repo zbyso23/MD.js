@@ -5,3 +5,6 @@ zx/vendor/*.js
 zx/vendor/LICENSE
 .DS_Store
 zx/roms/*.json
+
+# Personal user-supplied ZX ROM (never commit)
+zx/ZX-ROM-embedded.js

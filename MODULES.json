@@ -1,0 +1,54 @@
+{
+  "schema": 1,
+  "distribution": "MD.js Ultra",
+  "version": "0.7.0-phase1-alpha",
+  "core": [
+    "MD.js",
+    "MD.css",
+    "MD-diagrams.js",
+    "MD-Charts.js",
+    "MD-docux.js",
+    "MD-UX.js"
+  ],
+  "documentAddons": {},
+  "optionalEnvironments": [
+    {
+      "id": "blockly",
+      "entry": "optional/blockly/index.html?preset=blink",
+      "autoload": false
+    },
+    {
+      "id": "arduino",
+      "entry": "optional/blockly/index.html?preset=playground",
+      "shares": "blockly",
+      "autoload": false
+    },
+    {
+      "id": "zx48",
+      "entry": "zx-ultra.html",
+      "autoload": false,
+      "userRomRequiredInCleanSource": true
+    },
+    {
+      "id": "pc",
+      "entry": "optional/pc/index.html",
+      "autoload": false,
+      "status": "phase1-alpha",
+      "profiles": [
+        "8086-xt",
+        "80286-at"
+      ],
+      "completeGate1": false
+    }
+  ],
+  "roadmapOnly": [
+    "atari800",
+    "c64",
+    "apple2",
+    "micro-js-torch"
+  ],
+  "planningDocuments": [
+    "PC-ENV-ROADMAP-v1.1-FROZEN.md",
+    "LICENSING.md"
+  ]
+}

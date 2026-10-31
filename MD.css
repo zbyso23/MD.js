@@ -349,3 +349,17 @@
   .md-root .md-code-tabpanel::before {content:attr(data-md-label);display:block;
     font:700 10pt system-ui,sans-serif;border-bottom:1px solid #bbb;padding:.4em}
 }
+/* MD.js Ultra Charts — optional MD-Charts.js, theme-neutral SVG styles */
+.md-chart .md-chart-svg { max-width: none; overflow: visible; }
+.md-root .md-chart-title { font: 700 20px system-ui,sans-serif; fill: var(--md-text, currentColor); }
+.md-root .md-chart-axis-label { font: 600 14px system-ui,sans-serif; fill: var(--md-text, currentColor); }
+.md-root .md-chart-tick, .md-root .md-chart-legend, .md-root .md-chart-value { font: 12px system-ui,sans-serif; fill: var(--md-text, currentColor); }
+.md-root .md-chart-grid { stroke: var(--md-border, #b4bfca); stroke-width: 1; opacity: .35; }
+.md-root .md-chart-axis { stroke: var(--md-text, #34405a); stroke-width: 1.5; }
+.md-root .md-chart-line { fill: none; stroke: #17a58d; stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+.md-root .md-chart-dot { fill: #17a58d; stroke: var(--md-surface, white); stroke-width: 2; }
+.md-root .md-chart-bar { opacity: .94; }
+@media print { .md-chart .md-chart-svg { max-width: 100%; } }
+
+/* Reliable filtering even when consumer CSS styles table rows. */
+.md-root table.md-table tbody tr[hidden] { display: none !important; }

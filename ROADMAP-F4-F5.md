@@ -72,3 +72,5 @@ Proposed components, still zero import/CDN:
 ## 22 October 2026 — Phase 4.5 implementation update
 
 F4.5 DocUX delivered: bounded code-tabs, code toolbar/line numbers/diff, details/FAQ, bounded typo-tolerant search, smart table sort/filter, local gallery/lightbox, fullscreen, print mode and SVG export. See `PHASE-4.5-REPORT.md`. SVG mini-charts and Gantt-lite remain TODO, excluded by user decision. F5 stays a separately activated micro-IDE/VM/ASM/emulator effort, not part of Markdown parsing.
+
+VERSION 0.6.0 — UNIFIED ULTRA BUNDLE (user-requested optional modules)

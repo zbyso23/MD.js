@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="cs">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MD.js Ultra / ZX Spectrum 48K</title>
+<link rel="stylesheet" href="MD.css"><link rel="stylesheet" href="zx/MD-ZX.css">
+<style>body{background:#e9eef5;color:#253a50;font:16px/1.5 system-ui,sans-serif;margin:0}main{max-width:1100px;margin:auto;padding:26px 14px}h1{margin:0;font-size:clamp(23px,3vw,36px)}.intro{color:#587084}.zx-title{display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap}code{background:#dae5f0;padding:2px 5px;border-radius:4px}details{background:#fff;border:1px solid #c6d2df;padding:12px 18px;border-radius:10px;margin-top:20px}pre.sample{background:#102033;color:#d1f5e8;padding:15px;border-radius:10px}</style>
+</head><body><main>
+<div class="zx-title"><div><h1>MD.js Ultra <span aria-hidden="true">🧊</span> / ZX Spectrum 48K</h1><p class="intro">feature/zx-ultra · 48K BASIC ROM · Vanilla JavaScript · MIT CPU</p></div></div>
+<div id="zx-here"></div>
+<details><summary><strong>Jak to funguje?</strong></summary>
+<p>1. Stiskni <b>Start ZX</b>. 2. Klikni na obrazovku, aby klávesnice ovládala Spectrum. 3. V režimu Fullscreen Workbench otevři <code>.sna</code>, <code>.tap</code> nebo vlastní <code>.rom</code>. 4. Pro standardní TAP vlož kazetu, pak na ZX zadej <code>LOAD ""</code>.</p>
+<p><strong>Rozsah:</strong> MinZX poskytuje 48K CPU+obrazovku+zvuk a SNA. TAP podporuje experimentální ROM fast-load, ne turbo-loader kazety. Fullscreen nabízí CPU registry, RAM, ASM Lite editor a SNA snapshoty. Plný debugger, TZX a .Z80 snapshoty zatím nepodporujeme.</p>
+</details>
+<h2>Markdown integrace</h2>
+<pre class="sample">~~~zx
+model: 48k
+rom: local-zx48
+~~~</pre>
+<p>Renderuj Markdown běžně přes <code>new MD({mode:'extended'}).mount(article, source)</code> a potom zavolej <code>MDZX.enhance(article)</code>. Markdown jen připraví vložení; emulátor nespustí kód před kliknutím uživatele.</p>
+</main>
+<!-- Upstream files are fetched by zx/fetch-assets.py (no runtime CDN). -->
+<script id="mdjs-state-worker" type="text/plain">
+self.onmessage=function(e){if(e.data&&e.data.type==='stringify')self.postMessage({type:'json',text:JSON.stringify(e.data.payload)});};
+</script>
+<script src="MD-Runtime.js"></script>
+<script src="zx/ZX-ROM-embedded.js"></script>
+<script src="zx/vendor/Z80.js"></script>
+<script src="zx/vendor/utils.js"></script>
+<script src="zx/vendor/MinZX-mdzx.js"></script>
+<script src="zx/vendor/ZXScreen.js"></script>
+<script src="zx/vendor/ZXKeyboard.js"></script>
+<script src="zx/vendor/ZXSound.js"></script>
+<script>
+  // Upstream class declarations in classic scripts are global lexical bindings,
+  // not necessarily own properties of window. Explicit bridge for optional MDZX.
+  if(typeof MinZX!=='undefined')window.MinZX=MinZX;
+  if(typeof ZXScreen!=='undefined')window.ZXScreen=ZXScreen;
+  if(typeof ZXKeyboard!=='undefined')window.ZXKeyboard=ZXKeyboard;
+  if(typeof ZXSoundOutput!=='undefined')window.ZXSoundOutput=ZXSoundOutput;
+  if(typeof Z80!=='undefined')window.Z80=Z80;
+</script>
+<script src="zx/ZX-Screen.js"></script><script src="zx/ZX-ASM.js"></script><script src="zx/MD-ZX.js"></script>
+<script>window.__zxWidget=window.MDZX.mount(document.getElementById('zx-here'));</script>
+</body></html>

@@ -1,0 +1,80 @@
+[
+  {
+    "file": "bios.cpp",
+    "bytes": 554963,
+    "sha256": "d69d59bcbeeab4d77f8967c77506a57e021f32172664b058527f408bc76cfa04",
+    "status": "phase1 BIOS/callback/chipset reference"
+  },
+  {
+    "file": "bios_disk.cpp",
+    "bytes": 89557,
+    "sha256": "7c0b83a5a533a8560a99238dce55c93d1455ca57679c4efb4c27d4eebca17c3a",
+    "status": "reserved for phase 2 FDD/IDE"
+  },
+  {
+    "file": "bios_int13.cpp",
+    "bytes": 36572,
+    "sha256": "7a16498411f0f6051988d4eab452fc9d095910f7f46722b91e5c218d6e42bbd9",
+    "status": "reserved for phase 2 FDD/IDE"
+  },
+  {
+    "file": "bios_keyboard.cpp",
+    "bytes": 76013,
+    "sha256": "f5e8447c6170bc8f4b8ac0b7e40d14ebbbc7d49fa6a333a8f65a05ab5ac43237",
+    "status": "phase1 BIOS/callback/chipset reference"
+  },
+  {
+    "file": "bios_memdisk.cpp",
+    "bytes": 25654,
+    "sha256": "a38a318e904dc55b58d7fec0b00c0d9ee640342781f38d7dd6d1203c4c44799a",
+    "status": "reserved for phase 2 FDD/IDE"
+  },
+  {
+    "file": "bios_vhd.cpp",
+    "bytes": 45424,
+    "sha256": "42f455bb53edb8686cfda30c73e960b47cb64d97ecaee29b70967c663e02392c",
+    "status": "reserved for phase 2 FDD/IDE"
+  },
+  {
+    "file": "callback.cpp",
+    "bytes": 39116,
+    "sha256": "7fdc256f23ab66297da6702c4587396164236ef7c48ee042bf93a7005a19b415",
+    "status": "phase1 BIOS/callback/chipset reference"
+  },
+  {
+    "file": "bios.h",
+    "bytes": 29939,
+    "sha256": "6ebc40937b5ca0fd8b02e94052ecbac03464768a0ebc359a77ee2420a5159e0e",
+    "status": "phase1 BIOS/callback/chipset reference"
+  },
+  {
+    "file": "callback.h",
+    "bytes": 3469,
+    "sha256": "7741de0007c00bac74655899bef6b1f1fc3f7b69ba408844dd8ba662b1595976",
+    "status": "phase1 BIOS/callback/chipset reference"
+  },
+  {
+    "file": "mem.h",
+    "bytes": 14567,
+    "sha256": "134353ef017857280c5173009b9bdf4f550ed917725d87814892440314547748",
+    "status": "phase1 BIOS/callback/chipset reference"
+  },
+  {
+    "file": "pic.h",
+    "bytes": 3013,
+    "sha256": "7fddfc4d3aae96de85d85d28a8908206dd8fc607637d36957f54d5ce53c96262",
+    "status": "phase1 BIOS/callback/chipset reference"
+  },
+  {
+    "file": "memory.cpp",
+    "bytes": 101967,
+    "sha256": "5b6a2449291ad5f6db380cfa916c4eec8b9ba5c48d1f7ace5f8a19878d5e877b",
+    "status": "phase1 BIOS/callback/chipset reference"
+  },
+  {
+    "file": "pic.cpp",
+    "bytes": 49388,
+    "sha256": "bc2564f9b3b9cc0c85e15f701121c0b49142d3e19a55d4f582c34cb99767c8e5",
+    "status": "phase1 BIOS/callback/chipset reference"
+  }
+]

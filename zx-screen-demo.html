@@ -1,0 +1,17 @@
+<!doctype html><html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MD.js Ultra – .SCR Screen Lab</title><link rel="stylesheet" href="zx/MD-ZX.css">
+<style>body{margin:0;padding:24px;background:#101928;color:#e5f5ef;font:16px system-ui,sans-serif;}main{max-width:1100px;margin:auto}a{color:#8dd9bc}</style></head>
+<body><main><h1>ZX Screen Lab (.SCR)</h1><p>Native 6912-byte Spectrum screen: 2× / 4× / Fit, FLASH and lossless SCR/PNG save. No CPU or ROM required.</p>
+<div id="preview"></div><p><a href="zx-ultra.html">ZX Emulator / Workbench</a></p></main>
+<script src="MD-Runtime.js"></script><script src="zx/ZX-Screen.js"></script><script>
+(async()=>{
+ const host=document.getElementById('preview'),rt=window.MDUltraRuntime;
+ const status=document.createElement('p');const pick=document.createElement('input');pick.type='file';pick.accept='.scr';
+ const show=(b,name)=>{if(b.length!==6912)throw new Error('SCR requires exactly 6912 bytes');host.textContent='';ZXScreenPreview.mount(host,b,{name});};
+ const result=await rt.loadBytes('zx/demos/CHECKER.SCR',{maxBytes:6912});
+ if(result.bytes){try{show(result.bytes,'CHECKER.SCR · MD.js demo');return;}catch(e){status.textContent=e.message;}}
+ status.textContent='Automatické načtení SCR není dostupné. Vyber vlastní 6912-byte .SCR soubor.';
+ pick.addEventListener('change',async()=>{try{const f=pick.files[0];if(f)show(await rt.readFile(f,6912),f.name);}catch(e){status.textContent='Chyba: '+e.message;}});
+ host.after(status,pick);
+})();
+</script></body></html>

@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MD.js Ultra · PC Lab Phase 1</title>
+<style>
+:root{color-scheme:dark;font:14px/1.55 system-ui,-apple-system,'Segoe UI',sans-serif;background:#091420;color:#e6f4f5}*{box-sizing:border-box}body{margin:0}button,select,input{font:inherit}button,select{cursor:pointer}button{border:1px solid #426276;border-radius:9px;padding:10px 13px;color:#eaf8f3;background:#22394b;font-weight:650}button:hover{background:#315369}button.primary{background:#23b5a6;color:#05282d;border-color:#32d2bf}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #ecca78}select,input{background:#152c3b;color:#fff;border:1px solid #426276;border-radius:8px;padding:9px}.container{max-width:1260px;margin:0 auto;padding:26px 20px 70px}.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.eyebrow{color:#65d6be;font-weight:800;text-transform:uppercase;font-size:11px;letter-spacing:.16em}.back{color:#a3cbd2;text-decoration:none}h1{font-size:clamp(28px,4vw,44px);line-height:1.1;margin:8px 0}h2{font-size:17px;margin:0 0 12px}.lede{color:#aec5cd;max-width:760px}.badge{border:1px solid #64858c;color:#c9d8dc;padding:6px 9px;border-radius:30px;white-space:nowrap;font-size:11px}.notice{background:#24353a;border-left:4px solid #edbf69;padding:13px 15px;margin:18px 0 21px;color:#e7e5dc;border-radius:6px}.actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:14px 0 20px}.layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:15px}.panel{border:1px solid #2b485c;background:linear-gradient(150deg,#102637,#101d2d);border-radius:15px;padding:17px;min-width:0}.wide{grid-column:1/-1}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:#172e3f;padding:12px;border-radius:9px}.stat .meta{color:#94bbc0;font-size:11px}.stat .num{font-size:18px;font-weight:750;letter-spacing:.02em}.registers{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.register{display:flex;justify-content:space-between;gap:5px;border:1px solid #2b5060;border-radius:8px;padding:7px;background:#122c3b;font-family:ui-monospace,monospace}.register b{color:#77dfcc}.register span{color:#eefaff}.muted{color:#8eafbb}.memory{font-family:ui-monospace,Consolas,monospace;font-size:12px;white-space:pre;overflow:auto;max-height:285px;margin:0;line-height:1.7;color:#c4ede9}.trace{font-family:ui-monospace,Consolas,monospace;font-size:12px;white-space:pre-wrap;word-break:break-word;margin:0;min-height:100px;max-height:285px;overflow:auto;color:#b8d8e2}.split{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.check{margin:0;display:inline-flex;gap:7px;align-items:center;color:#aacbd0}.ok{color:#77dec1}.error{color:#f5a99c}footer{margin-top:22px;color:#91a6b4;font-size:12px}@media(max-width:850px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:510px){.registers{grid-template-columns:repeat(2,1fr)}.top{flex-direction:column}.stat .num{font-size:15px}}
+</style></head><body><main class="container">
+<div class="top"><div><a class="back" href="../../index.html">← MD.js Ultra</a><div class="eyebrow">PC Environment · Phase 1 / Alpha</div><h1>8086 / 80286 Workbench</h1><p class="lede">Základní výuková laboratoř: skutečně vykonávané instrukce, ROM reset, paměť, BIOS interrupt bridge, PIC/PIT/DMA a malý experiment s 286 Protected Mode.</p></div><span class="badge">GPLv3 · LOCAL · NO AUTORUN</span></div>
+<div class="notice"><strong>Ještě není plný PC emulátor.</strong> Zatím podporujeme jen část instrukcí CPU a vybraných periferních registrů. Nejde o plný 80286 Protected Mode, skutečný DOSBox BIOS ani historický POST. CGA, Hercules, diskety a FreeDOS přijdou ve fázi 2.</div>
+<div class="actions"><label for="machine">Profil</label><select id="machine"><option value="xt">XT · 8086 ISA / 8088 cíl</option><option value="at">AT · 80286</option></select><button id="reset">Reset</button><button id="step">CPU krok</button><button id="boot" class="primary">Boot ROM</button><button id="pm">286 Protected Mode demo</button><button id="cpu-demo">ModR/M + REP demo</button><button id="alu-demo">ALU / SHIFT demo</button><button id="idt-demo">286 IDT demo</button><button id="de-demo">#DE · dělení nulou</button><button id="br-demo">286 #BR · BOUND</button><button id="bcd-demo">8086 BCD demo</button><button id="irq10-demo">286 IRQ10 / 2× PIC</button><button id="pit">PIT → IRQ0</button></div>
+<section class="panel" id="pc-persistence" aria-label="Přenosné snapshoty">
+<h2>Universal Runtime · PC stav (HTTP / file://)</h2>
+<div class="actions"><button id="pc-save-local">Uložit do prohlížeče</button><button id="pc-load-local">Obnovit z prohlížeče</button><button id="pc-export-json" class="primary">↓ Export JSON</button><button id="pc-import-json">↑ Import JSON</button><input type="file" accept=".json,application/json" id="pc-json-file" hidden></div>
+<details><summary>Nemáš File API? Vlož JSON jako text</summary><textarea id="pc-json-paste" rows="4" style="width:100%;background:#152c3b;color:#fff;border:1px solid #426276;border-radius:8px" placeholder="{ ... MD.js Ultra state ... }"></textarea><button id="pc-import-paste">Obnovit vložený JSON</button></details>
+<p id="pc-storage-status" class="muted" role="status">Export a import JSON fungují nezávisle na localStorage.</p>
+<p class="muted">Snapshot zahrnuje RAM, CPU, BIOS a stav dostupných chipsetů fáze 1. Neobsahuje žádnou cizí ROM; při obnově se použije vestavěný svobodný testovací firmware.</p>
+</section>
+<div class="layout">
+<section class="panel"><h2>CPU registr / stav</h2><div id="regs" class="registers"></div><p id="mode" class="muted"></p></section>
+<section class="panel"><h2>Hardware</h2><div id="stats" class="stats"></div><p class="muted" id="bio"></p></section>
+<section class="panel"><h2>Paměť · byte view</h2><div class="split"><label for="address">Fyzická adresa hex</label><input id="address" value="F0100" maxlength="6" size="9" aria-label="Memory address"><button id="showmemory">Zobrazit</button></div><pre class="memory" id="memory"></pre></section>
+<section class="panel"><h2>Protokol skutečných instrukcí</h2><pre class="trace" id="trace"></pre></section>
+<section class="panel wide"><h2>Testovací kontrolní body</h2><div class="split"><button id="selftest">Spustit diagnostiku</button><span id="testresult" class="muted">Připraveno</span></div><p class="muted">Diagnostika provede boot XT, boot AT, test 286 GDT/LMSW, ModR/M + REP, ALU/SHIFT, BCD, #DE/#BR, AT IRQ10 a hranici 1 MiB. Každý test používá přímo implementovaný CPU, ne mock.</p></section>
+</div><footer>Neznámý opcode vyvolá CPUFault; nevydává se za úspěšnou emulaci. Binární programy z dokumentů se nikdy nespouštějí automaticky. Plná Gate 1 zůstává otevřená.</footer>
+</main>
+<script id="mdjs-state-worker" type="text/plain">
+self.onmessage = function(event){
+ if(event.data && event.data.type==='stringify') self.postMessage({type:'json',text:JSON.stringify(event.data.payload)});
+};
+</script>
+<script src="../../MD-Runtime.js"></script>
+<script src="PC-Core.js"></script>
+<script src="PC-BIOS.js"></script>
+<script src="PC-Machine.js"></script>
+<script>
+(()=>{'use strict';
+const {PCMachine}=window.MDPC_MACHINE,{R,S}=window.MDPC_CPU, runtime=window.MDUltraRuntime;
+const el=id=>document.getElementById(id),fmt=(n,w=4)=>((n>>>0).toString(16).toUpperCase().padStart(w,'0'));
+let machine=new PCMachine('xt');let messages=['PC Lab initialized. Select Boot ROM or CPU step.'];
+const trace=s=>{messages.push(s);if(messages.length>160)messages.shift();};
+function refresh(){const c=machine.cpu,state=c.snapshot();
+ const regs=['AX','BX','CX','DX','SP','BP','SI','DI'];const seg=['ES','CS','SS','DS'];
+ el('regs').innerHTML=regs.map(k=>`<div class="register"><b>${k}</b><span>${fmt(c.reg(k))}</span></div>`).join('')+seg.map(k=>`<div class="register"><b>${k}</b><span>${fmt(c.s[S[k]])}</span></div>`).join('')+`<div class="register"><b>IP</b><span>${fmt(c.ip)}</span></div><div class="register"><b>FLAGS</b><span>${fmt(c.flags)}</span></div><div class="register"><b>MSW</b><span>${fmt(c.msw)}</span></div><div class="register"><b>GDTR</b><span>${fmt(c.gdtr.base,6)}</span></div>`;
+ el('mode').textContent=`${machine.profile==='at'?'80286':'8086 ISA / XT bus model'} | ${c.protected?'PROTECTED':'REAL'} MODE | ${state.halted?'HALTED':'RUNNABLE'} | ${fmt(c.s[S.CS])}:${fmt(c.ip)} | Instructions ${c.steps}`;
+ const vals=[['RAM',`${machine.conventional/1024}+${machine.extended/1024} KiB`],['A20',machine.profile==='at'?(machine.a20?'ON':'OFF'):'N/A'],['PIC IRQ',fmt(machine.pic.irr,2)],['DMA mask',fmt(machine.dma.mask,2)]];
+ el('stats').innerHTML=vals.map(([a,b])=>`<div class="stat"><div class="meta">${a}</div><div class="num">${b}</div></div>`).join('');
+ el('bio').textContent=`BIOS calls: ${machine.biosCalls.map(n=>'INT '+fmt(n,2)+'h').join(' · ')||'none'}`;
+ el('trace').textContent=messages.join('\n');el('trace').scrollTop=el('trace').scrollHeight;drawMemory();
+}
+function drawMemory(){const raw=el('address').value.trim();if(!/^[0-9a-fA-F]{1,6}$/.test(raw)){el('memory').textContent='Neplatná hex adresa';return;}
+ let a=parseInt(raw,16),out=[];for(let row=0;row<12;row++){const bytes=[];for(let i=0;i<16;i++)bytes.push(fmt(machine.read8(a+i),2));out.push(fmt(a,6)+': '+bytes.join(' '));a+=16;}el('memory').textContent=out.join('\n');}
+function safe(task){try{task();}catch(e){trace(`ERROR [${e.name}]: ${e.message}`);}refresh();}
+function reboot(p){machine=new PCMachine(p);messages=[];trace(`${p.toUpperCase()} RESET · ${fmt(machine.cpu.s[S.CS])}:${fmt(machine.cpu.ip)} · hidden CS base ${fmt(machine.cpu.base[S.CS],6)}`);refresh();}
+function cpuStep(){const c=machine.cpu,at=fmt(c.s[S.CS])+':'+fmt(c.ip),op=machine.read8(c.physical(S.CS,c.ip));const count=c.steps;c.step();trace(`${at} [${fmt(op,2)}] → ${fmt(c.s[S.CS])}:${fmt(c.ip)}  ${c.halted?'HALT':''}  #${count+1}`);}
+el('machine').addEventListener('change',e=>reboot(e.target.value));el('reset').addEventListener('click',()=>reboot(el('machine').value));
+el('step').addEventListener('click',()=>safe(cpuStep));el('boot').addEventListener('click',()=>safe(()=>{const result=machine.run(2000);trace(`BOOT ROM: ${result.executed} instructions · ${result.halted?'HALTED':'budget exhausted'} · AX=${fmt(machine.cpu.reg('AX'))}`);}));
+el('showmemory').addEventListener('click',refresh);el('address').addEventListener('change',drawMemory);
+el('pit').addEventListener('click',()=>safe(()=>{machine.pic.mask=0xfe;machine.pit.reload[0]=10;machine.pit.value[0]=10;machine.pit.advance(10);trace(`PIT ticks=10 → IRQ0 ${machine.pic.pending()===0?'REQUESTED':'not pending'}`);}));
+function protectedDemo(m){const c=m.cpu;c.loadSegment(S.CS,0);c.ip=0x2000;c.loadSegment(S.DS,0);c.loadSegment(S.SS,0);c.r[R.SP]=0x7000;
+ m.ram.set([0x0f,0x01,0x16,0,7,0xb8,1,0,0x0f,0x01,0xf0,0xea,0,0,8,0],0x2000);
+ m.ram.set([23,0,0,8,0,0],0x700);m.ram.set([255,255,0,0x30,0,0x9a,0,0],0x808);m.ram.set([0xb8,0x34,0x12,0xf4],0x3000);
+ return m.run(50);
+}
+function cpuMemoryDemo(m){
+ const c=m.cpu;c.loadSegment(S.CS,0);c.ip=0x2000;c.loadSegment(S.DS,0);c.loadSegment(S.ES,0);c.loadSegment(S.SS,0);c.r[R.SP]=0x7000;
+ // MOV BX,0520 ; MOV SI,0 ; MOV AX,[BX+SI] ; ADD AX,3 ; MOV [BX+SI+6],AX ;
+ // MOV CX,3 ; MOV SI,0520 ; MOV DI,0540 ; REP MOVSB ; HLT.
+ const bytes=[0xbb,0x20,0x05,0xbe,0,0,0x8b,0,0x05,3,0,0x89,0x40,6,0xb9,3,0,0xbe,0x20,0x05,0xbf,0x40,0x05,0xf3,0xa4,0xf4];
+ m.ram.set(bytes,0x2000);m.ram.set([0x34,0x12,0x99],0x520);
+ const result=m.run(100);
+ const ok=result.halted&&c.r[R.AX]===0x1237&&m.read16Physical(0x526)===0x1237&&
+     m.ram[0x540]===0x34&&m.ram[0x541]===0x12&&m.ram[0x542]===0x99&&c.r[R.CX]===0;
+ return {ok,result};
+}
+el('cpu-demo').addEventListener('click',()=>safe(()=>{
+ const p=el('machine').value;reboot(p);const demo=cpuMemoryDemo(machine);
+ el('address').value='00520';trace(`CPU ModR/M + REP ${p.toUpperCase()}: ${demo.ok?'PASS':'FAIL'}; AX=${fmt(machine.cpu.r[R.AX])}; [0526]=${fmt(machine.read16Physical(0x526))}; [0540..0542]=${[0x540,0x541,0x542].map(a=>fmt(machine.read8(a),2)).join(' ')}`);
+}));
+function aluDemo(m){
+ const c=m.cpu;c.loadSegment(S.CS,0);c.ip=0x2000;
+ c.loadSegment(S.DS,0);c.loadSegment(S.SS,0);c.r[R.SP]=0x7000;
+ // MOV AX,0120; MOV BL,10h; DIV BL; SHL AX,1; HLT
+ m.ram.set([0xb8,0x20,1,0xb3,0x10,0xf6,0xf3,0xd1,0xe0,0xf4],0x2000);
+ const r=m.run(30);return {ok:r.halted&&c.reg('AX')===0x24,steps:r.executed};
+}
+function divideFaultDemo(m){
+ const c=m.cpu;c.loadSegment(S.CS,0);c.ip=0x2000;
+ c.loadSegment(S.DS,0);c.loadSegment(S.SS,0);c.loadSegment(S.ES,0);c.r[R.SP]=0x7000;
+ // MOV AX,100; MOV BL,0; DIV BL (interrupt 0); HLT
+ m.ram.set([0xb8,100,0,0xb3,0,0xf6,0xf3,0xf4],0x2000);
+ // Guest's INT 00h handler: MOV BL,10; IRET
+ m.write16Physical(0,0x2300);m.write16Physical(2,0);
+ m.ram.set([0xb3,10,0xcf],0x2300);
+ const result=m.run(30);
+ const expected=m.profile==='xt'?100:10;
+ return {ok:result.halted&&c.reg('AX')===expected&&c.r[R.SP]===0x7000&&c.lastFault?.name==='#DE',result};
+}
+function boundsFaultDemo(m){
+ const c=m.cpu;c.loadSegment(S.CS,0);c.ip=0x2000;
+ c.loadSegment(S.DS,0);c.loadSegment(S.SS,0);c.r[R.SP]=0x7000;
+ // MOV AX,6; BOUND AX,[0500]; HLT. Bounds are [-5,+5].
+ m.ram.set([0xb8,6,0,0x62,0x06,0,5,0xf4],0x2000);
+ m.ram.set([0xfb,0xff,5,0],0x500);
+ m.write16Physical(0x14,0x2300);m.write16Physical(0x16,0);
+ // Guest INT 05h handler repairs AX then IRET retries BOUND.
+ m.ram.set([0xb8,3,0,0xcf],0x2300);
+ const result=m.run(30);
+ return {ok:result.halted&&c.reg('AX')===3&&c.r[R.SP]===0x7000&&c.lastFault?.name==='#BR',result};
+}
+function idtDemo(m){
+ const c=m.cpu;c.loadSegment(S.CS,0);c.ip=0x2000;
+ c.loadSegment(S.DS,0);c.loadSegment(S.SS,0);c.r[R.SP]=0x7000;
+ m.ram.set([0xcd,0x30,0xf4],0x2000); // INT 30h; HLT
+ m.ram.set([0xff,0xff,0,0,0,0x9a,0,0],0x408); // ring-0 GDT code
+ m.ram.set([0,0x21,8,0,0,0x86,0,0],0x780); // interrupt gate in 286 IDT
+ m.ram[0x2100]=0xcf; // guest IRET
+ c.gdtr={base:0x400,limit:0x0f};c.idtr={base:0x600,limit:0x1ff};
+ c.msw|=1;c.loadSegment(S.CS,8);
+ const result=m.run(30);
+ return {ok:result.halted&&c.ip===0x2003&&c.r[R.SP]===0x7000,steps:result.executed};
+}
+el('alu-demo').addEventListener('click',()=>safe(()=>{
+ const p=el('machine').value;reboot(p);const r=aluDemo(machine);
+ trace(`Pure JS ALU / SHIFT ${p.toUpperCase()}: ${r.ok?'PASS':'FAIL'} AX=${fmt(machine.cpu.reg('AX'))} steps=${r.steps}`);
+}));
+el('idt-demo').addEventListener('click',()=>safe(()=>{
+ el('machine').value='at';reboot('at');const r=idtDemo(machine);
+ trace(`286 Protected IDT interrupt gate / IRET: ${r.ok?'PASS':'FAIL'} IP=${fmt(machine.cpu.ip)} steps=${r.steps}`);
+}));
+el('de-demo').addEventListener('click',()=>safe(()=>{
+ const p=el('machine').value;reboot(p);const r=divideFaultDemo(machine);
+ trace(`#DE INT 00h ${p.toUpperCase()}: ${r.ok?'PASS':'FAIL'} | AX=${fmt(machine.cpu.reg('AX'))} | resume IP=${fmt(machine.cpu.lastFault?.returnIP??0)} | guest IRET`);
+}));
+el('br-demo').addEventListener('click',()=>safe(()=>{
+ el('machine').value='at';reboot('at');const r=boundsFaultDemo(machine);
+ trace(`286 BOUND #BR INT 05h: ${r.ok?'PASS':'FAIL'} | repaired AX=${fmt(machine.cpu.reg('AX'))} | resumed by guest IRET`);
+}));
+el('pm').addEventListener('click',()=>safe(()=>{el('machine').value='at';reboot('at');const r=protectedDemo(machine);el('address').value='00800';trace(`286 LGDT → LMSW → FAR JMP selector 0008 → ${r.halted?'HALT':'RUNNING'} AX=${fmt(machine.cpu.reg('AX'))}, base(CS)=${fmt(machine.cpu.base[S.CS],6)}`);}));
+function bcdDemo(m){
+ const c=m.cpu;c.loadSegment(S.CS,0);c.ip=0x2000;
+ m.ram.set([0xb0,9,0x04,9,0x27,0xf4],0x2000);
+ const r=m.run(30);return {ok:r.halted&&c.get8(0)===0x18,steps:r.executed};
+}
+function irq10Demo(m){
+ if(m.profile!=='at')return {ok:false,steps:0};
+ const c=m.cpu;c.loadSegment(S.CS,0);c.ip=0x2000;c.loadSegment(S.SS,0);c.r[R.SP]=0x7000;
+ m.ram[0x2000]=0xf4;
+ m.write16Physical(0x72*4,0x2500);m.write16Physical(0x72*4+2,0);
+ // Actual guest program: MOV AL,20h ; OUT A0h,AL ; OUT 20h,AL ; IRET.
+ m.ram.set([0xb0,0x20,0xe6,0xa0,0xe6,0x20,0xcf],0x2500);
+ m.pic.mask=0xfb;m.picSlave.mask=0xfb;c.flags|=0x200;
+ m.requestIRQ(10);const delivered=m.processIRQ();const r=m.run(50);
+ return {ok:delivered&&r.halted&&c.r[R.SP]===0x7000&&m.pic.isr===0&&m.picSlave.isr===0,steps:r.executed};
+}
+el('bcd-demo').addEventListener('click',()=>safe(()=>{
+ const p=el('machine').value;reboot(p);const r=bcdDemo(machine);
+ trace(`8086 BCD DAA ${p.toUpperCase()}: ${r.ok?'PASS':'FAIL'} | 09+09 → ${fmt(machine.cpu.get8(0),2)} | guest instructions=${r.steps}`);
+}));
+el('irq10-demo').addEventListener('click',()=>safe(()=>{
+ el('machine').value='at';reboot('at');const r=irq10Demo(machine);
+ trace(`286 cascaded PIC IRQ10 → INT 72h → guest EOIs + IRET: ${r.ok?'PASS':'FAIL'} | instructions=${r.steps}`);
+}));
+el('selftest').addEventListener('click',()=>safe(()=>{const report=[];
+ for(const p of ['xt','at']){const m=new PCMachine(p),r=m.run(100);report.push(`${p.toUpperCase()}: ${r.halted&&m.cpu.reg('AX')===640?'PASS':'FAIL'}`);}
+ const m=new PCMachine('at');protectedDemo(m);report.push(`286 protected: ${m.cpu.protected&&m.cpu.reg('AX')===0x1234?'PASS':'FAIL'}`);
+ const e=new PCMachine(el('machine').value);report.push(`CPU ModR/M + REP: ${cpuMemoryDemo(e).ok?'PASS':'FAIL'}`);
+ report.push(`ALU/SHIFT: ${aluDemo(new PCMachine(el('machine').value)).ok?'PASS':'FAIL'}`);
+ report.push(`#DE guest INT 00h: ${divideFaultDemo(new PCMachine(el('machine').value)).ok?'PASS':'FAIL'}`);
+ report.push(`BCD 8086/286: ${bcdDemo(new PCMachine(el('machine').value)).ok?'PASS':'FAIL'}`);
+ report.push(`AT IRQ10 slave PIC: ${irq10Demo(new PCMachine('at')).ok?'PASS':'FAIL'}`);
+ report.push(`286 BOUND #BR: ${boundsFaultDemo(new PCMachine('at')).ok?'PASS':'FAIL'}`);
+ let cap=false;try{new PCMachine('at',{conventional:640*1024,extended:385*1024});}catch(e){cap=true;}report.push(`1 MiB RAM cap: ${cap?'PASS':'FAIL'}`);
+ el('testresult').textContent=report.join(' | ');trace(report.join('  ·  '));}));
+const PC_SAVE_KEY='mdjs-ultra:pc:phase1';
+const status=(msg)=>{el('pc-storage-status').textContent=msg;trace(msg);refresh();};
+function currentSnapshot(){return runtime.wrapState('pc',machine.exportState(runtime));}
+function importPCSnapshot(doc){const data=runtime.parseState(doc,'pc');const candidate=PCMachine.fromState(data,runtime);
+ machine=candidate;el('machine').value=machine.profile;messages=['Snapshot restored: '+machine.profile.toUpperCase()];refresh();return machine;
+}
+el('pc-save-local').addEventListener('click',()=>safe(()=>{
+ const r=runtime.saveLocal(PC_SAVE_KEY,currentSnapshot());status(r.ok?'PC: stav uložen do localStorage':'PC: localStorage selhal ('+r.error+'). Použij Export JSON.');
+}));
+el('pc-load-local').addEventListener('click',()=>safe(()=>{
+ const r=runtime.loadLocal(PC_SAVE_KEY,'pc');if(!r.ok)throw new Error('PC localStorage: '+r.error);
+ importPCSnapshot(runtime.wrapState('pc',r.payload));status('PC: stav obnoven z localStorage');
+}));
+el('pc-export-json').addEventListener('click',async()=>{
+ try{const doc=currentSnapshot(),res=await runtime.workerJSON(doc);runtime.download('mdjs-pc-'+machine.profile+'-v1.json',res.text);
+ status('PC: JSON export hotový ('+(res.worker?'Blob Worker':'main-thread fallback')+').');}catch(e){status('ERROR: '+e.message);}
+});
+el('pc-import-json').addEventListener('click',()=>el('pc-json-file').click());
+el('pc-json-file').addEventListener('change',async(e)=>{
+ const file=e.target.files&&e.target.files[0];e.target.value='';if(!file)return;
+ try{const bytes=await runtime.readFile(file,6*1024*1024);const json=new TextDecoder().decode(bytes);
+ importPCSnapshot(json);status('PC: JSON snapshot úspěšně obnoven.');}catch(err){status('PC: Import odmítnut: '+err.message);}
+});
+el('pc-import-paste').addEventListener('click',()=>safe(()=>{importPCSnapshot(el('pc-json-paste').value);status('PC: stav obnoven z vloženého JSON.');}));
+window.__mdPCUniversal={get machine(){return machine;},currentSnapshot,importPCSnapshot};
+reboot('xt');
+})();
+</script></body></html>

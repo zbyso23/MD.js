@@ -1,0 +1,1277 @@
+
+> mdjs-reborn-arctic@0.5.1 test:all
+> npm test && npm run test:zx:unit && npm run test:zx:patch && npm run test:zx:browser
+
+
+> mdjs-reborn-arctic@0.5.1 test
+> node --test test/*.test.js
+
+TAP version 13
+# Subtest: valid diagram: flow LR
+ok 1 - valid diagram: flow LR
+  ---
+  duration_ms: 2.740329
+  type: 'test'
+  ...
+# Subtest: valid diagram: flow TB
+ok 2 - valid diagram: flow TB
+  ---
+  duration_ms: 0.365152
+  type: 'test'
+  ...
+# Subtest: valid diagram: flow RL
+ok 3 - valid diagram: flow RL
+  ---
+  duration_ms: 0.334996
+  type: 'test'
+  ...
+# Subtest: valid diagram: flow BT
+ok 4 - valid diagram: flow BT
+  ---
+  duration_ms: 0.232281
+  type: 'test'
+  ...
+# Subtest: valid diagram: state
+ok 5 - valid diagram: state
+  ---
+  duration_ms: 1.19152
+  type: 'test'
+  ...
+# Subtest: valid diagram: sequence
+ok 6 - valid diagram: sequence
+  ---
+  duration_ms: 1.101083
+  type: 'test'
+  ...
+# Subtest: valid diagram: pie
+ok 7 - valid diagram: pie
+  ---
+  duration_ms: 0.419754
+  type: 'test'
+  ...
+# Subtest: valid diagram: flow chained
+ok 8 - valid diagram: flow chained
+  ---
+  duration_ms: 0.217979
+  type: 'test'
+  ...
+# Subtest: valid diagram: subgraph
+ok 9 - valid diagram: subgraph
+  ---
+  duration_ms: 0.539976
+  type: 'test'
+  ...
+# Subtest: valid diagram: class
+ok 10 - valid diagram: class
+  ---
+  duration_ms: 0.878006
+  type: 'test'
+  ...
+# Subtest: valid diagram: timeline
+ok 11 - valid diagram: timeline
+  ---
+  duration_ms: 0.39735
+  type: 'test'
+  ...
+# Subtest: valid diagram: long Unicode
+ok 12 - valid diagram: long Unicode
+  ---
+  duration_ms: 0.274765
+  type: 'test'
+  ...
+# Subtest: reject unsupported: javascript
+ok 13 - reject unsupported: javascript
+  ---
+  duration_ms: 0.280083
+  type: 'test'
+  ...
+# Subtest: reject unsupported: HTML style directive
+ok 14 - reject unsupported: HTML style directive
+  ---
+  duration_ms: 0.094643
+  type: 'test'
+  ...
+# Subtest: reject unsupported: unknown type
+ok 15 - reject unsupported: unknown type
+  ---
+  duration_ms: 0.095875
+  type: 'test'
+  ...
+# Subtest: reject unsupported: invalid ID
+ok 16 - reject unsupported: invalid ID
+  ---
+  duration_ms: 0.101954
+  type: 'test'
+  ...
+# Subtest: reject unsupported: unknown arrow
+ok 17 - reject unsupported: unknown arrow
+  ---
+  duration_ms: 0.104758
+  type: 'test'
+  ...
+# Subtest: reject unsupported: conflicting declaration
+ok 18 - reject unsupported: conflicting declaration
+  ---
+  duration_ms: 0.128084
+  type: 'test'
+  ...
+# Subtest: reject unsupported: missing bracket
+ok 19 - reject unsupported: missing bracket
+  ---
+  duration_ms: 0.149716
+  type: 'test'
+  ...
+# Subtest: reject unsupported: unclosed group
+ok 20 - reject unsupported: unclosed group
+  ---
+  duration_ms: 0.221945
+  type: 'test'
+  ...
+# Subtest: reject unsupported: nested group
+ok 21 - reject unsupported: nested group
+  ---
+  duration_ms: 0.121123
+  type: 'test'
+  ...
+# Subtest: reject unsupported: long input
+ok 22 - reject unsupported: long input
+  ---
+  duration_ms: 0.160653
+  type: 'test'
+  ...
+# Subtest: reject unsupported: control label
+ok 23 - reject unsupported: control label
+  ---
+  duration_ms: 0.107603
+  type: 'test'
+  ...
+# Subtest: reject unsupported: bidi control
+ok 24 - reject unsupported: bidi control
+  ---
+  duration_ms: 0.115514
+  type: 'test'
+  ...
+# Subtest: reject unsupported: unpaired activation
+ok 25 - reject unsupported: unpaired activation
+  ---
+  duration_ms: 0.16558
+  type: 'test'
+  ...
+# Subtest: reject unsupported: sequence unknown
+ok 26 - reject unsupported: sequence unknown
+  ---
+  duration_ms: 0.11215
+  type: 'test'
+  ...
+# Subtest: reject unsupported: pie negative
+ok 27 - reject unsupported: pie negative
+  ---
+  duration_ms: 0.150467
+  type: 'test'
+  ...
+# Subtest: reject unsupported: pie non-numeric
+ok 28 - reject unsupported: pie non-numeric
+  ---
+  duration_ms: 0.106571
+  type: 'test'
+  ...
+# Subtest: reject unsupported: pie empty
+ok 29 - reject unsupported: pie empty
+  ---
+  duration_ms: 0.096285
+  type: 'test'
+  ...
+# Subtest: reject unsupported: unknown state
+ok 30 - reject unsupported: unknown state
+  ---
+  duration_ms: 0.240193
+  type: 'test'
+  ...
+# Subtest: reject unsupported: oversize label
+ok 31 - reject unsupported: oversize label
+  ---
+  duration_ms: 0.140161
+  type: 'test'
+  ...
+# Subtest: reject unsupported: bare script
+ok 32 - reject unsupported: bare script
+  ---
+  duration_ms: 0.108154
+  type: 'test'
+  ...
+# Subtest: reject unsupported: class unsafe directive
+ok 33 - reject unsupported: class unsafe directive
+  ---
+  duration_ms: 0.102735
+  type: 'test'
+  ...
+# Subtest: reject unsupported: class unclosed body
+ok 34 - reject unsupported: class unclosed body
+  ---
+  duration_ms: 0.104678
+  type: 'test'
+  ...
+# Subtest: reject unsupported: timeline unsupported config
+ok 35 - reject unsupported: timeline unsupported config
+  ---
+  duration_ms: 0.091438
+  type: 'test'
+  ...
+# Subtest: reject unsupported: Mermaid config
+ok 36 - reject unsupported: Mermaid config
+  ---
+  duration_ms: 0.086821
+  type: 'test'
+  ...
+# Subtest: escaping of diagram fences in parser HTML fallback
+ok 37 - escaping of diagram fences in parser HTML fallback
+  ---
+  duration_ms: 2.373856
+  type: 'test'
+  ...
+# Subtest: fallback in basic mode still carries diagram marker
+ok 38 - fallback in basic mode still carries diagram marker
+  ---
+  duration_ms: 0.186672
+  type: 'test'
+  ...
+# Subtest: reused parser remains deterministic and unchanged
+ok 39 - reused parser remains deterministic and unchanged
+  ---
+  duration_ms: 1.180794
+  type: 'test'
+  ...
+# Subtest: SVG renderer creates only namespaced text-safe nodes
+ok 40 - SVG renderer creates only namespaced text-safe nodes
+  ---
+  duration_ms: 2.904408
+  type: 'test'
+  ...
+# Subtest: bounded randomized parser does not spin indefinitely
+ok 41 - bounded randomized parser does not spin indefinitely
+  ---
+  duration_ms: 111.6443
+  type: 'test'
+  ...
+# Subtest: ES6 test surface — no dependencies and no execution
+ok 42 - ES6 test surface — no dependencies and no execution
+  ---
+  duration_ms: 1.207283
+  type: 'test'
+  ...
+# Subtest: typo tolerance — insertion deletion substitution transposition
+ok 43 - typo tolerance — insertion deletion substitution transposition
+  ---
+  duration_ms: 2.005299
+  type: 'test'
+  ...
+# Subtest: short queries are intentionally strict
+ok 44 - short queries are intentionally strict
+  ---
+  duration_ms: 0.173132
+  type: 'test'
+  ...
+# Subtest: no unsafe URL or HTML in details/faq bodies
+ok 45 - no unsafe URL or HTML in details/faq bodies
+  ---
+  duration_ms: 3.629152
+  type: 'test'
+  ...
+# Subtest: details preserve markdown and have bounded unclosed fallback
+ok 46 - details preserve markdown and have bounded unclosed fallback
+  ---
+  duration_ms: 0.985549
+  type: 'test'
+  ...
+# Subtest: tabs fence is never interpreted as script or HTML
+ok 47 - tabs fence is never interpreted as script or HTML
+  ---
+  duration_ms: 0.573747
+  type: 'test'
+  ...
+# Subtest: diff blocks remain escaped
+ok 48 - diff blocks remain escaped
+  ---
+  duration_ms: 0.249848
+  type: 'test'
+  ...
+# Subtest: numeric columns sort correctly including decimal commas
+ok 49 - numeric columns sort correctly including decimal commas
+  ---
+  duration_ms: 9.430436
+  type: 'test'
+  ...
+# Subtest: document index scoring bounds and denial-of-service guard
+ok 50 - document index scoring bounds and denial-of-service guard
+  ---
+  duration_ms: 0.61547
+  type: 'test'
+  ...
+# Subtest: tasklist checked: - [x] complete
+ok 51 - tasklist checked: - [x] complete
+  ---
+  duration_ms: 2.973312
+  type: 'test'
+  ...
+# Subtest: tasklist checked: * [X] complete
+ok 52 - tasklist checked: * [X] complete
+  ---
+  duration_ms: 0.406724
+  type: 'test'
+  ...
+# Subtest: tasklist checked: + [x] complete
+ok 53 - tasklist checked: + [x] complete
+  ---
+  duration_ms: 0.126782
+  type: 'test'
+  ...
+# Subtest: tasklist checked: 1. [x] complete
+ok 54 - tasklist checked: 1. [x] complete
+  ---
+  duration_ms: 0.11949
+  type: 'test'
+  ...
+# Subtest: task list empty, immutable, no forms or event attributes
+ok 55 - task list empty, immutable, no forms or event attributes
+  ---
+  duration_ms: 0.528879
+  type: 'test'
+  ...
+# Subtest: literal code with task syntax is never parsed
+ok 56 - literal code with task syntax is never parsed
+  ---
+  duration_ms: 0.825748
+  type: 'test'
+  ...
+# Subtest: task list inside a quoted block
+ok 57 - task list inside a quoted block
+  ---
+  duration_ms: 1.432194
+  type: 'test'
+  ...
+# Subtest: basic mode preserves literal task markers
+ok 58 - basic mode preserves literal task markers
+  ---
+  duration_ms: 0.155245
+  type: 'test'
+  ...
+# Subtest: full reference link with title
+ok 59 - full reference link with title
+  ---
+  duration_ms: 0.962244
+  type: 'test'
+  ...
+# Subtest: collapsed and shortcut reference forms
+ok 60 - collapsed and shortcut reference forms
+  ---
+  duration_ms: 0.651625
+  type: 'test'
+  ...
+# Subtest: reference names are case-insensitive and normalize whitespace
+ok 61 - reference names are case-insensitive and normalize whitespace
+  ---
+  duration_ms: 0.207183
+  type: 'test'
+  ...
+# Subtest: image reference alt safely escaped
+ok 62 - image reference alt safely escaped
+  ---
+  duration_ms: 0.257389
+  type: 'test'
+  ...
+# Subtest: unsafe reference schemes remain inert
+ok 63 - unsafe reference schemes remain inert
+  ---
+  duration_ms: 0.199772
+  type: 'test'
+  ...
+# Subtest: entity-obfuscated unsafe reference rejected after decoding
+ok 64 - entity-obfuscated unsafe reference rejected after decoding
+  ---
+  duration_ms: 0.555599
+  type: 'test'
+  ...
+# Subtest: definitions fenced as code do not participate
+ok 65 - definitions fenced as code do not participate
+  ---
+  duration_ms: 0.249227
+  type: 'test'
+  ...
+# Subtest: reference definitions cleared per parse
+ok 66 - reference definitions cleared per parse
+  ---
+  duration_ms: 0.134283
+  type: 'test'
+  ...
+# Subtest: first duplicate reference definition takes precedence
+ok 67 - first duplicate reference definition takes precedence
+  ---
+  duration_ms: 0.120913
+  type: 'test'
+  ...
+# Subtest: basic mode keeps reference definitions visible
+ok 68 - basic mode keeps reference definitions visible
+  ---
+  duration_ms: 0.089164
+  type: 'test'
+  ...
+# Subtest: notes have named backlinks and render emphasis
+ok 69 - notes have named backlinks and render emphasis
+  ---
+  duration_ms: 0.269567
+  type: 'test'
+  ...
+# Subtest: notes are numbered in order of appearance and support repeated citations
+ok 70 - notes are numbered in order of appearance and support repeated citations
+  ---
+  duration_ms: 0.384951
+  type: 'test'
+  ...
+# Subtest: missing note remains literal
+ok 71 - missing note remains literal
+  ---
+  duration_ms: 0.100962
+  type: 'test'
+  ...
+# Subtest: definitions reset across parse calls
+ok 72 - definitions reset across parse calls
+  ---
+  duration_ms: 0.145019
+  type: 'test'
+  ...
+# Subtest: two parser instances use separate anchor ID prefixes
+ok 73 - two parser instances use separate anchor ID prefixes
+  ---
+  duration_ms: 0.220143
+  type: 'test'
+  ...
+# Subtest: reference cannot create executable content in footnote
+ok 74 - reference cannot create executable content in footnote
+  ---
+  duration_ms: 0.270018
+  type: 'test'
+  ...
+# Subtest: footnotes in code do not become live links
+ok 75 - footnotes in code do not become live links
+  ---
+  duration_ms: 0.093091
+  type: 'test'
+  ...
+# Subtest: multiline note definition accepts indented continuation
+ok 76 - multiline note definition accepts indented continuation
+  ---
+  duration_ms: 0.120222
+  type: 'test'
+  ...
+# Subtest: GitHub alert NOTE
+ok 77 - GitHub alert NOTE
+  ---
+  duration_ms: 0.210228
+  type: 'test'
+  ...
+# Subtest: GitHub alert TIP
+ok 78 - GitHub alert TIP
+  ---
+  duration_ms: 0.068103
+  type: 'test'
+  ...
+# Subtest: GitHub alert IMPORTANT
+ok 79 - GitHub alert IMPORTANT
+  ---
+  duration_ms: 0.055254
+  type: 'test'
+  ...
+# Subtest: GitHub alert WARNING
+ok 80 - GitHub alert WARNING
+  ---
+  duration_ms: 0.122916
+  type: 'test'
+  ...
+# Subtest: GitHub alert CAUTION
+ok 81 - GitHub alert CAUTION
+  ---
+  duration_ms: 0.078599
+  type: 'test'
+  ...
+# Subtest: unknown GitHub alert becomes ordinary quote
+ok 82 - unknown GitHub alert becomes ordinary quote
+  ---
+  duration_ms: 0.186853
+  type: 'test'
+  ...
+# Subtest: rendering an alert does not allow hostile tags
+ok 83 - rendering an alert does not allow hostile tags
+  ---
+  duration_ms: 0.146582
+  type: 'test'
+  ...
+# Subtest: hard line break via backslash at EOL
+ok 84 - hard line break via backslash at EOL
+  ---
+  duration_ms: 0.091238
+  type: 'test'
+  ...
+# Subtest: entity names and decimal numeric entities decode exactly once
+ok 85 - entity names and decimal numeric entities decode exactly once
+  ---
+  duration_ms: 0.078028
+  type: 'test'
+  ...
+# Subtest: HTML entity decoded tag is re-escaped
+ok 86 - HTML entity decoded tag is re-escaped
+  ---
+  duration_ms: 0.082034
+  type: 'test'
+  ...
+# Subtest: invalid numeric entity becomes replacement char
+ok 87 - invalid numeric entity becomes replacement char
+  ---
+  duration_ms: 0.104137
+  type: 'test'
+  ...
+# Subtest: entities inside code are not decoded
+ok 88 - entities inside code are not decoded
+  ---
+  duration_ms: 0.068323
+  type: 'test'
+  ...
+# Subtest: bare HTTP URL autolink trims trailing punctuation
+ok 89 - bare HTTP URL autolink trims trailing punctuation
+  ---
+  duration_ms: 0.589861
+  type: 'test'
+  ...
+# Subtest: www autolink uses https
+ok 90 - www autolink uses https
+  ---
+  duration_ms: 0.168555
+  type: 'test'
+  ...
+# Subtest: balanced parentheses are kept, stray closing bracket dropped
+ok 91 - balanced parentheses are kept, stray closing bracket dropped
+  ---
+  duration_ms: 0.130918
+  type: 'test'
+  ...
+# Subtest: inline code disables bare autolinking
+ok 92 - inline code disables bare autolinking
+  ---
+  duration_ms: 0.129826
+  type: 'test'
+  ...
+# Subtest: no automatic HTML from bare protocols not allowed
+ok 93 - no automatic HTML from bare protocols not allowed
+  ---
+  duration_ms: 0.193392
+  type: 'test'
+  ...
+# Subtest: large list of HTML alert payloads cannot inject scripts/events
+ok 94 - large list of HTML alert payloads cannot inject scripts/events
+  ---
+  duration_ms: 1.178891
+  type: 'test'
+  ...
+# Subtest: constructor, mode, no global U, and parse are available
+ok 95 - constructor, mode, no global U, and parse are available
+  ---
+  duration_ms: 2.365654
+  type: 'test'
+  ...
+# Subtest: configuration rejects null and arrays
+ok 96 - configuration rejects null and arrays
+  ---
+  duration_ms: 0.557602
+  type: 'test'
+  ...
+# Subtest: same instance is deterministic across different parse calls
+ok 97 - same instance is deterministic across different parse calls
+  ---
+  duration_ms: 5.618287
+  type: 'test'
+  ...
+# Subtest: ATX heading H1
+ok 98 - ATX heading H1
+  ---
+  duration_ms: 0.289257
+  type: 'test'
+  ...
+# Subtest: ATX heading H2
+ok 99 - ATX heading H2
+  ---
+  duration_ms: 0.229767
+  type: 'test'
+  ...
+# Subtest: ATX heading H3
+ok 100 - ATX heading H3
+  ---
+  duration_ms: 0.128053
+  type: 'test'
+  ...
+# Subtest: ATX heading H4
+ok 101 - ATX heading H4
+  ---
+  duration_ms: 0.182546
+  type: 'test'
+  ...
+# Subtest: ATX heading H5
+ok 102 - ATX heading H5
+  ---
+  duration_ms: 0.107492
+  type: 'test'
+  ...
+# Subtest: ATX heading H6
+ok 103 - ATX heading H6
+  ---
+  duration_ms: 0.341196
+  type: 'test'
+  ...
+# Subtest: H7 is not a heading
+ok 104 - H7 is not a heading
+  ---
+  duration_ms: 0.572275
+  type: 'test'
+  ...
+# Subtest: a space is required after ATX heading marks
+ok 105 - a space is required after ATX heading marks
+  ---
+  duration_ms: 0.215215
+  type: 'test'
+  ...
+# Subtest: setext headings H1/H2
+ok 106 - setext headings H1/H2
+  ---
+  duration_ms: 0.270419
+  type: 'test'
+  ...
+# Subtest: headings escape untrusted text
+ok 107 - headings escape untrusted text
+  ---
+  duration_ms: 0.297249
+  type: 'test'
+  ...
+# Subtest: raw HTML is never interpreted as a tag
+ok 108 - raw HTML is never interpreted as a tag
+  ---
+  duration_ms: 0.169536
+  type: 'test'
+  ...
+# Subtest: less-than, ampersand and quotes escape safely
+ok 109 - less-than, ampersand and quotes escape safely
+  ---
+  duration_ms: 0.114203
+  type: 'test'
+  ...
+# Subtest: strong, emphasis and short one-letter emphasis
+ok 110 - strong, emphasis and short one-letter emphasis
+  ---
+  duration_ms: 0.426705
+  type: 'test'
+  ...
+# Subtest: strike-through
+ok 111 - strike-through
+  ---
+  duration_ms: 0.169837
+  type: 'test'
+  ...
+# Subtest: inline code protects Markdown and raw HTML
+ok 112 - inline code protects Markdown and raw HTML
+  ---
+  duration_ms: 0.127823
+  type: 'test'
+  ...
+# Subtest: code spans with double backticks
+ok 113 - code spans with double backticks
+  ---
+  duration_ms: 0.102905
+  type: 'test'
+  ...
+# Subtest: fenced code renders escaped code
+ok 114 - fenced code renders escaped code
+  ---
+  duration_ms: 0.570172
+  type: 'test'
+  ...
+# Subtest: tilde fences and unclosed fences
+ok 115 - tilde fences and unclosed fences
+  ---
+  duration_ms: 0.268295
+  type: 'test'
+  ...
+# Subtest: indented code
+ok 116 - indented code
+  ---
+  duration_ms: 0.2449
+  type: 'test'
+  ...
+# Subtest: javascript highlighter outputs escaped tokens
+ok 117 - javascript highlighter outputs escaped tokens
+  ---
+  duration_ms: 0.143707
+  type: 'test'
+  ...
+# Subtest: basic highlights only core languages
+ok 118 - basic highlights only core languages
+  ---
+  duration_ms: 0.121644
+  type: 'test'
+  ...
+# Subtest: escape sequences render literal Markdown punctuation
+ok 119 - escape sequences render literal Markdown punctuation
+  ---
+  duration_ms: 0.1988
+  type: 'test'
+  ...
+# Subtest: thematic break
+ok 120 - thematic break
+  ---
+  duration_ms: 0.106662
+  type: 'test'
+  ...
+# Subtest: paragraph softbreak
+ok 121 - paragraph softbreak
+  ---
+  duration_ms: 0.303698
+  type: 'test'
+  ...
+# Subtest: paragraph hardbreak
+ok 122 - paragraph hardbreak
+  ---
+  duration_ms: 0.134543
+  type: 'test'
+  ...
+# Subtest: blockquotes
+ok 123 - blockquotes
+  ---
+  duration_ms: 0.288927
+  type: 'test'
+  ...
+# Subtest: nested blockquotes
+ok 124 - nested blockquotes
+  ---
+  duration_ms: 0.21164
+  type: 'test'
+  ...
+# Subtest: normal unordered list
+ok 125 - normal unordered list
+  ---
+  duration_ms: 0.151689
+  type: 'test'
+  ...
+# Subtest: asterisk unordered list
+ok 126 - asterisk unordered list
+  ---
+  duration_ms: 0.121343
+  type: 'test'
+  ...
+# Subtest: plus unordered list
+ok 127 - plus unordered list
+  ---
+  duration_ms: 0.114142
+  type: 'test'
+  ...
+# Subtest: ordered list
+ok 128 - ordered list
+  ---
+  duration_ms: 0.158009
+  type: 'test'
+  ...
+# Subtest: ordered start number
+ok 129 - ordered start number
+  ---
+  duration_ms: 0.169225
+  type: 'test'
+  ...
+# Subtest: ordered with right paren
+ok 130 - ordered with right paren
+  ---
+  duration_ms: 0.13891
+  type: 'test'
+  ...
+# Subtest: nested list
+ok 131 - nested list
+  ---
+  duration_ms: 0.216287
+  type: 'test'
+  ...
+# Subtest: table with text alignment
+ok 132 - table with text alignment
+  ---
+  duration_ms: 0.213493
+  type: 'test'
+  ...
+# Subtest: tables support literal escaped pipe
+ok 133 - tables support literal escaped pipe
+  ---
+  duration_ms: 0.528679
+  type: 'test'
+  ...
+# Subtest: table content escapes raw HTML
+ok 134 - table content escapes raw HTML
+  ---
+  duration_ms: 0.167053
+  type: 'test'
+  ...
+# Subtest: legacy compact table works in extended
+ok 135 - legacy compact table works in extended
+  ---
+  duration_ms: 0.239762
+  type: 'test'
+  ...
+# Subtest: compact table is NOT active in basic
+ok 136 - compact table is NOT active in basic
+  ---
+  duration_ms: 0.138039
+  type: 'test'
+  ...
+# Subtest: standard link and rel for external targets
+ok 137 - standard link and rel for external targets
+  ---
+  duration_ms: 0.999049
+  type: 'test'
+  ...
+# Subtest: relative link
+ok 138 - relative link
+  ---
+  duration_ms: 0.322337
+  type: 'test'
+  ...
+# Subtest: image HTTPS URL and alt escape
+ok 139 - image HTTPS URL and alt escape
+  ---
+  duration_ms: 0.250038
+  type: 'test'
+  ...
+# Subtest: image title does not become executable HTML
+ok 140 - image title does not become executable HTML
+  ---
+  duration_ms: 0.339363
+  type: 'test'
+  ...
+# Subtest: disallow data images
+ok 141 - disallow data images
+  ---
+  duration_ms: 0.192611
+  type: 'test'
+  ...
+# Subtest: unsafe link destination is never emitted: javascript:alert(1)
+ok 142 - unsafe link destination is never emitted: javascript:alert(1)
+  ---
+  duration_ms: 0.139091
+  type: 'test'
+  ...
+# Subtest: unsafe link destination is never emitted: JAVASCRIPT:alert(1)
+ok 143 - unsafe link destination is never emitted: JAVASCRIPT:alert(1)
+  ---
+  duration_ms: 0.08601
+  type: 'test'
+  ...
+# Subtest: unsafe link destination is never emitted: vbscript:msgbox(1)
+ok 144 - unsafe link destination is never emitted: vbscript:msgbox(1)
+  ---
+  duration_ms: 0.123727
+  type: 'test'
+  ...
+# Subtest: unsafe link destination is never emitted: data:text/html,hi
+ok 145 - unsafe link destination is never emitted: data:text/html,hi
+  ---
+  duration_ms: 0.09926
+  type: 'test'
+  ...
+# Subtest: unsafe link destination is never emitted: file:///etc/passwd
+ok 146 - unsafe link destination is never emitted: file:///etc/passwd
+  ---
+  duration_ms: 0.102224
+  type: 'test'
+  ...
+# Subtest: unsafe link destination is never emitted: //evil.example/path
+ok 147 - unsafe link destination is never emitted: //evil.example/path
+  ---
+  duration_ms: 0.081403
+  type: 'test'
+  ...
+# Subtest: unsafe link destination is never emitted: javascript&\#58;alert(1)
+ok 148 - unsafe link destination is never emitted: javascript&\#58;alert(1)
+  ---
+  duration_ms: 0.222857
+  type: 'test'
+  ...
+# Subtest: unsafe link destination is never emitted: java&\#x73;cript:alert(1)
+ok 149 - unsafe link destination is never emitted: java&\#x73;cript:alert(1)
+  ---
+  duration_ms: 0.098679
+  type: 'test'
+  ...
+# Subtest: valid href query params escape ampersands
+ok 150 - valid href query params escape ampersands
+  ---
+  duration_ms: 0.325812
+  type: 'test'
+  ...
+# Subtest: link text HTML injection blocked
+ok 151 - link text HTML injection blocked
+  ---
+  duration_ms: 0.173923
+  type: 'test'
+  ...
+# Subtest: code highlighter plugin cannot inject HTML through token text
+ok 152 - code highlighter plugin cannot inject HTML through token text
+  ---
+  duration_ms: 0.270298
+  type: 'test'
+  ...
+# Subtest: code highlighter plugin cannot invent CSS classes
+ok 153 - code highlighter plugin cannot invent CSS classes
+  ---
+  duration_ms: 0.161434
+  type: 'test'
+  ...
+# Subtest: highlighter callback throwing falls back safely
+ok 154 - highlighter callback throwing falls back safely
+  ---
+  duration_ms: 0.202105
+  type: 'test'
+  ...
+# Subtest: highlighter language class cannot inject attributes
+ok 155 - highlighter language class cannot inject attributes
+  ---
+  duration_ms: 0.121854
+  type: 'test'
+  ...
+# Subtest: malformed Markdown does not crash
+ok 156 - malformed Markdown does not crash
+  ---
+  duration_ms: 0.689341
+  type: 'test'
+  ...
+# Subtest: max document length enforced
+ok 157 - max document length enforced
+  ---
+  duration_ms: 0.157257
+  type: 'test'
+  ...
+# Subtest: long single lines guarded
+ok 158 - long single lines guarded
+  ---
+  duration_ms: 0.208755
+  type: 'test'
+  ...
+# Subtest: untrusted SVG/script inside Mermaid fence remains code text
+ok 159 - untrusted SVG/script inside Mermaid fence remains code text
+  ---
+  duration_ms: 0.168464
+  type: 'test'
+  ...
+# Subtest: large linear plain text does not explode
+ok 160 - large linear plain text does not explode
+  ---
+  duration_ms: 81.60308
+  type: 'test'
+  ...
+# Subtest: original javascript mode is available and HTML-safe
+ok 161 - original javascript mode is available and HTML-safe
+  ---
+  duration_ms: 0.340915
+  type: 'test'
+  ...
+# Subtest: original python mode is available and HTML-safe
+ok 162 - original python mode is available and HTML-safe
+  ---
+  duration_ms: 0.357079
+  type: 'test'
+  ...
+# Subtest: original bash mode is available and HTML-safe
+ok 163 - original bash mode is available and HTML-safe
+  ---
+  duration_ms: 0.205831
+  type: 'test'
+  ...
+# Subtest: original html mode is available and HTML-safe
+ok 164 - original html mode is available and HTML-safe
+  ---
+  duration_ms: 0.11944
+  type: 'test'
+  ...
+# Subtest: original css mode is available and HTML-safe
+ok 165 - original css mode is available and HTML-safe
+  ---
+  duration_ms: 0.415017
+  type: 'test'
+  ...
+# Subtest: original ini mode is available and HTML-safe
+ok 166 - original ini mode is available and HTML-safe
+  ---
+  duration_ms: 0.289107
+  type: 'test'
+  ...
+# Subtest: original php mode is available and HTML-safe
+ok 167 - original php mode is available and HTML-safe
+  ---
+  duration_ms: 0.168444
+  type: 'test'
+  ...
+# Subtest: safe custom highlighter deliberately receives tokens rather than HTML
+ok 168 - safe custom highlighter deliberately receives tokens rather than HTML
+  ---
+  duration_ms: 0.238671
+  type: 'test'
+  ...
+# Subtest: sanitization adversarial corpus (deterministic transformations)
+ok 169 - sanitization adversarial corpus (deterministic transformations)
+  ---
+  duration_ms: 8.429122
+  type: 'test'
+  ...
+# Subtest: hostile unmatched link delimiters are handled without a quadratic storm
+ok 170 - hostile unmatched link delimiters are handled without a quadratic storm
+  ---
+  duration_ms: 0.35776
+  type: 'test'
+  ...
+1..170
+# tests 170
+# suites 0
+# pass 170
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 337.482152
+
+> mdjs-reborn-arctic@0.5.1 test:zx:unit
+> node --test zx/tests/*.test.cjs
+
+TAP version 13
+# Subtest: two-pass labels and loops, gold opcode bytes
+ok 1 - two-pass labels and loops, gold opcode bytes
+  ---
+  duration_ms: 3.229169
+  type: 'test'
+  ...
+# Subtest: forward CALL + JP and address little endian
+ok 2 - forward CALL + JP and address little endian
+  ---
+  duration_ms: 0.537703
+  type: 'test'
+  ...
+# Subtest: direct video RAM and DB/DW
+ok 3 - direct video RAM and DB/DW
+  ---
+  duration_ms: 0.547247
+  type: 'test'
+  ...
+# Subtest: illegal assembly fails closed and never evaluates expressions
+ok 4 - illegal assembly fails closed and never evaluates expressions
+  ---
+  duration_ms: 0.722071
+  type: 'test'
+  ...
+# Subtest: bounded source code and no write past RAM
+ok 5 - bounded source code and no write past RAM
+  ---
+  duration_ms: 3.101665
+  type: 'test'
+  ...
+# Subtest: independent Python oracle agrees with JS on deterministic TAP corpus
+ok 6 - independent Python oracle agrees with JS on deterministic TAP corpus
+  ---
+  duration_ms: 921.61004
+  type: 'test'
+  ...
+# Subtest: SCR exact 6912 bytes only
+ok 7 - SCR exact 6912 bytes only
+  ---
+  duration_ms: 1.518133
+  type: 'test'
+  ...
+# Subtest: black screen palette and image dimensions
+ok 8 - black screen palette and image dimensions
+  ---
+  duration_ms: 6.475493
+  type: 'test'
+  ...
+# Subtest: ZX bitmap layout row y=0,1,8,64 and attribute row indexing
+ok 9 - ZX bitmap layout row y=0,1,8,64 and attribute row indexing
+  ---
+  duration_ms: 0.591824
+  type: 'test'
+  ...
+# Subtest: INK/PAPER/BRIGHT and FLASH inversion
+ok 10 - INK/PAPER/BRIGHT and FLASH inversion
+  ---
+  duration_ms: 6.254517
+  type: 'test'
+  ...
+# Subtest: untrusted data cannot modify input or inject HTML
+ok 11 - untrusted data cannot modify input or inject HTML
+  ---
+  duration_ms: 0.640467
+  type: 'test'
+  ...
+# Subtest: all demo TAP blocks are checksummed and payloads independent
+ok 12 - all demo TAP blocks are checksummed and payloads independent
+  ---
+  duration_ms: 1.516161
+  type: 'test'
+  ...
+# Subtest: multiple blocks, zero payload and high byte length encoding
+ok 13 - multiple blocks, zero payload and high byte length encoding
+  ---
+  duration_ms: 2.495299
+  type: 'test'
+  ...
+# Subtest: invalid zero length, one length, truncated header, truncated payload, mutated checksum
+ok 14 - invalid zero length, one length, truncated header, truncated payload, mutated checksum
+  ---
+  duration_ms: 0.756643
+  type: 'test'
+  ...
+# Subtest: two consecutive blocks and input mutation do not modify decoded data
+ok 15 - two consecutive blocks and input mutation do not modify decoded data
+  ---
+  duration_ms: 0.229066
+  type: 'test'
+  ...
+# Subtest: ROM trap skips header block, copies payload, records next cursor
+ok 16 - ROM trap skips header block, copies payload, records next cursor
+  ---
+  duration_ms: 0.420055
+  type: 'test'
+  ...
+# Subtest: ROM trap enforces ROM read-only, even if request straddles ROM/RAM boundary
+ok 17 - ROM trap enforces ROM read-only, even if request straddles ROM/RAM boundary
+  ---
+  duration_ms: 0.229107
+  type: 'test'
+  ...
+# Subtest: ROM trap does not write on missing or insufficient tape blocks
+ok 18 - ROM trap does not write on missing or insufficient tape blocks
+  ---
+  duration_ms: 0.364881
+  type: 'test'
+  ...
+# Subtest: ROM trap returns from wrapped SP=FFFF correctly
+ok 19 - ROM trap returns from wrapped SP=FFFF correctly
+  ---
+  duration_ms: 0.210649
+  type: 'test'
+  ...
+# Subtest: ROM trap verify mode preserves RAM, succeeds when equal
+ok 20 - ROM trap verify mode preserves RAM, succeeds when equal
+  ---
+  duration_ms: 0.43653
+  type: 'test'
+  ...
+# Subtest: ROM trap handles RAM end at 0xFFFF without index overflow
+ok 21 - ROM trap handles RAM end at 0xFFFF without index overflow
+  ---
+  duration_ms: 0.661429
+  type: 'test'
+  ...
+# Subtest: ROM trap rejects crossing 0xFFFF without wrap
+ok 22 - ROM trap rejects crossing 0xFFFF without wrap
+  ---
+  duration_ms: 0.250168
+  type: 'test'
+  ...
+# Subtest: valid demo has BASIC header + data
+ok 23 - valid demo has BASIC header + data
+  ---
+  duration_ms: 1.248546
+  type: 'test'
+  ...
+# Subtest: empty, truncated, tiny, checksum, and oversize rejected
+ok 24 - empty, truncated, tiny, checksum, and oversize rejected
+  ---
+  duration_ms: 0.648539
+  type: 'test'
+  ...
+# Subtest: tape parser immutable from caller edits
+ok 25 - tape parser immutable from caller edits
+  ---
+  duration_ms: 0.241314
+  type: 'test'
+  ...
+# Subtest: ROM trap copies data, updates IX/DE, restores PC/SP, sets carry
+ok 26 - ROM trap copies data, updates IX/DE, restores PC/SP, sets carry
+  ---
+  duration_ms: 1.215216
+  type: 'test'
+  ...
+# Subtest: failed verification clears carry without writing RAM
+ok 27 - failed verification clears carry without writing RAM
+  ---
+  duration_ms: 0.262707
+  type: 'test'
+  ...
+# Subtest: no trap at non-ROM addresses
+ok 28 - no trap at non-ROM addresses
+  ---
+  duration_ms: 0.266963
+  type: 'test'
+  ...
+# Subtest: Z80: LD A,n, INC A, LD (nn),A, HALT
+ok 29 - Z80: LD A,n, INC A, LD (nn),A, HALT # SKIP
+  ---
+  duration_ms: 0.718065
+  type: 'test'
+  ...
+# Subtest: Z80: CALL subroutine, XOR A, RET, JP, HALT
+ok 30 - Z80: CALL subroutine, XOR A, RET, JP, HALT # SKIP
+  ---
+  duration_ms: 0.210088
+  type: 'test'
+  ...
+# Subtest: Z80: DEC, carry, zero, PC wrap, independent state
+ok 31 - Z80: DEC, carry, zero, PC wrap, independent state # SKIP
+  ---
+  duration_ms: 0.125219
+  type: 'test'
+  ...
+1..31
+# tests 31
+# suites 0
+# pass 28
+# fail 0
+# cancelled 0
+# skipped 3
+# todo 0
+# duration_ms 983.852417
+
+> mdjs-reborn-arctic@0.5.1 test:zx:patch
+> python3 -m unittest zx/tests/test_vendor_patch.py
+
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.000s
+
+OK
+
+> mdjs-reborn-arctic@0.5.1 test:zx:browser
+> python3 zx/tests/e2e/test_zx_browser.py
+
+test_actual_mdjs_markdown_to_zx_widget_integration (__main__.ZXBrowserUI.test_actual_mdjs_markdown_to_zx_widget_integration) ... ok
+test_asm_editor_golden_and_injects_ram (__main__.ZXBrowserUI.test_asm_editor_golden_and_injects_ram) ... ok
+test_boot_state_waits_for_async_ready (__main__.ZXBrowserUI.test_boot_state_waits_for_async_ready) ... ok
+test_embedded_no_auto_run_and_no_workbench (__main__.ZXBrowserUI.test_embedded_no_auto_run_and_no_workbench) ... ok
+test_enhance_embedded_code_does_not_autorun (__main__.ZXBrowserUI.test_enhance_embedded_code_does_not_autorun) ... ok
+test_import_sna_then_save (__main__.ZXBrowserUI.test_import_sna_then_save) ... ok
+test_import_tap_then_invalid_tap (__main__.ZXBrowserUI.test_import_tap_then_invalid_tap) ... ok
+test_rom_error_cleans_up_and_retry_succeeds (__main__.ZXBrowserUI.test_rom_error_cleans_up_and_retry_succeeds) ... ok
+test_rom_selection_requires_16k_and_before_start (__main__.ZXBrowserUI.test_rom_selection_requires_16k_and_before_start) ... ok
+test_scr_import_pixels_scale_and_save (__main__.ZXBrowserUI.test_scr_import_pixels_scale_and_save) ... ok
+test_scr_memory_roundtrip (__main__.ZXBrowserUI.test_scr_memory_roundtrip) ... ok
+test_start_pause_step_reset_and_registers (__main__.ZXBrowserUI.test_start_pause_step_reset_and_registers) ... ok
+test_unmount_during_boot_prevents_late_ready (__main__.ZXBrowserUI.test_unmount_during_boot_prevents_late_ready) ... ok
+test_unmount_then_mount_is_idempotent (__main__.ZXBrowserUI.test_unmount_then_mount_is_idempotent) ... ok
+test_without_upstream_assets_fails_closed (__main__.ZXBrowserUI.test_without_upstream_assets_fails_closed) ... ok
+
+----------------------------------------------------------------------
+Ran 15 tests in 4.579s
+
+OK
+
+===== STRICT REAL-CORE BOOT GATE (NOT PASSED) =====
+The test suite above uses a browser mock for interactive UI testing.
+Actual MinZX vendor assets / OpenSE BASIC ROM are not mounted here.
+Running npm run test:zx:real exits 2 with REAL-E2E BLOCKED.
+This is NOT an emulator boot verification. Run zx/fetch-assets.py on a networked host.

@@ -1,0 +1,9 @@
+{
+  "LICENSE": "1c46ba71fc906d2ae35ab28efeb1c856cc9ef1a14b525288643b1052dfd2d4db",
+  "MinZX.js": "36aef3eac7fb511a87c3f0806278c19bf6bef7459af487b93357d85a5bf72f7e",
+  "Z80.js": "c92af315ad2cce08e8e8b465f469952af3e7df8b493a0b2f2c3d721a1f73e0fa",
+  "ZXKeyboard.js": "1f2ea7b95b388ff28e3c24cbbe890fcd8c01eef4c06cb280717f466401e8e88a",
+  "ZXScreen.js": "22be265306ddbdf2de780286e23430474b50c926bec0216d3eb39676680e6b92",
+  "ZXSound.js": "24cb2ef45c0f8f906c68dca9e3b2fa5a4fb63dc97b865f5762d84912d75acfc8",
+  "utils.js": "05bca47e5e9d4b355ab34718af67d0275a706b66ed8e6576b4181cae43c325c4"
+}

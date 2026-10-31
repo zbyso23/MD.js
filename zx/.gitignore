@@ -1,0 +1,5 @@
+# Downloaded upstream files are not present in this source distribution.
+roms/*.rom
+vendor/*.js
+vendor/LICENSE
+roms/*.json

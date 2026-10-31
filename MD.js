@@ -80,7 +80,7 @@
     if (parts.length !== expected || expected < 2 || expected > 64) return null;
     const aligns = [];
     for (const part of parts) {
-      if (!/^:?-{3,}:?$/.test(part.replace(/[ \t]/g, ''))) return null;
+      if (!/^:?-{1,}:?$/.test(part.replace(/[ \t]/g, ''))) return null;
       const left = part.startsWith(':');
       const right = part.endsWith(':');
       aligns.push(left && right ? 'center' : right ? 'right' : 'left');
@@ -298,6 +298,7 @@
       container.classList.add('md-root');
       container.innerHTML = this.parse(markdown);
       if (root.MDDiagrams && typeof root.MDDiagrams.enhance === 'function') root.MDDiagrams.enhance(container);
+      if (root.MDCharts && typeof root.MDCharts.enhance === 'function') root.MDCharts.enhance(container);
       if (root.MDDocUX && typeof root.MDDocUX.enhance === 'function') root.MDDocUX.enhance(container);
       if (root.MDReader && typeof root.MDReader.enhance === 'function') root.MDReader.enhance(container);
       return container;
@@ -308,7 +309,7 @@
       if (this.options.mode === 'basic' && ['general', 'javascript', 'js', 'python', 'py'].indexOf(lang) === -1) lang = 'general';
       const label = escapeHTML(lang);
       let output;
-      if (language === 'mermaid' || language === 'code-tabs' || language === 'diff' || !this.options.highlight || code.length > 128 * 1024) output = escapeHTML(code);
+      if (language === 'mermaid' || language === 'chart' || language === 'code-tabs' || language === 'diff' || !this.options.highlight || code.length > 128 * 1024) output = escapeHTML(code);
       else {
         let tokens;
         try { tokens = this.highlighters.has(lang) ? this.highlighters.get(lang)(code, lang) : builtinHighlighter(code, lang); }
@@ -322,8 +323,9 @@
         }).join('');
       }
       const diagram = language.toLowerCase() === 'mermaid' ? ' data-md-diagram="mermaid"' : '';
+      const chart = language.toLowerCase() === 'chart' ? ' data-md-chart="true"' : '';
       const tabs = language.toLowerCase() === 'code-tabs' ? ' data-md-code-tabs="true"' : '';
-      return `<pre class="md-code md-code-syntax-lang-${label}"${diagram}${tabs}><code>${output}</code></pre>`;
+      return `<pre class="md-code md-code-syntax-lang-${label}"${diagram}${chart}${tabs}><code>${output}</code></pre>`;
     }
 
     _inline(input, depth = 0) {

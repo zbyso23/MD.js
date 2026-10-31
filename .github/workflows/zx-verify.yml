@@ -1,0 +1,54 @@
+name: ZX Ultra verification
+on:
+  push:
+    branches: [feature/zx-ultra]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '20 3 * * 0'
+
+jobs:
+  regression-and-browser-mock:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install browser-test tooling (not runtime dependencies)
+        run: |
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: MD.js + ZX unit + mock browser E2E
+        run: npm run test:all
+
+  actual-rom-smoke:
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install developer test tooling
+        run: |
+          python -m pip install playwright skoolkit
+          python -m playwright install --with-deps chromium
+      - name: Fetch actual MinZX + OpenSE BASIC ROM
+        run: python zx/fetch-assets.py
+      - name: Real CPU unit fixtures (no skipped core tests allowed)
+        run: |
+          test -f zx/vendor/Z80.js
+          npm run test:zx:unit
+      - name: Actual ROM and render smoke
+        run: npm run test:zx:real
+      - name: Independent SkoolKit TAP oracle
+        run: npm run test:zx:reference
