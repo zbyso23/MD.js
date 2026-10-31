@@ -8,6 +8,10 @@ const cpuAPI=typeof module!=='undefined'&&module.exports?require('./PC-Core.js')
 const {PC16CPU,CPUFault,R,S,F}=cpuAPI;
 const biosAPI=typeof module!=='undefined'&&module.exports?require('./PC-BIOS.js'):root.MDPC_BIOS;
 const {PCBios}=biosAPI;
+const videoAPI=typeof module!=='undefined'&&module.exports?require('./PC-Video.js'):root.MDPC_VIDEO;
+const {PCVideo}=videoAPI;
+const floppyAPI=typeof module!=='undefined'&&module.exports?require('./PC-Floppy.js'):root.MDPC_FLOPPY;
+const {FDD765}=floppyAPI;
 class PIC8259 {
  constructor(vector=8){this.initialVector=vector;this.reset();}
  reset(){this.mask=0xff;this.irr=0;this.isr=0;this.vector=this.initialVector;
@@ -67,6 +71,8 @@ class PCMachine {
  constructor(profile='xt',opts={}){
   if(!['xt','at'].includes(profile))throw new Error('profile must be xt or at');
   this.profile=profile;
+  this.video=new PCVideo(this,opts.videoAdapter||'cga');
+  this.fdd=new FDD765(this);
   this.conventional=opts.conventional??640*1024;
   this.extended=opts.extended??(profile==='at'?384*1024:0);
   if(!Number.isSafeInteger(this.conventional)||this.conventional<64*1024||this.conventional>640*1024||this.conventional%1024||!Number.isSafeInteger(this.extended)||this.extended<0||this.extended%1024||this.conventional+this.extended>1024*1024||(profile==='xt'&&this.extended))throw new RangeError('Installed system RAM maximum is 1 MiB; XT conventional only');
@@ -85,11 +91,11 @@ class PCMachine {
   if(this.profile==='at'&&((a>=0xff0000&&a<=0xffffff)||(a>=0xef0000&&a<=0xefffff)))return a&0xffff;
   return -1;
  }
- read8(a){a=this.busAddress(a);if(a<this.conventional)return this.ram[a];if(a>=0x100000&&a<0x100000+this.extended)return this.extRam[a-0x100000];const o=this.romOffset(a);return o>=0?this.rom[o]:0xff;}
- write8(a,n){a=this.busAddress(a);n&=255;if(a<this.conventional)this.ram[a]=n;else if(a>=0x100000&&a<0x100000+this.extended)this.extRam[a-0x100000]=n;}
+ read8(a){a=this.busAddress(a);const v=this.video.readByte(a);if(v!==null)return v;if(a<this.conventional)return this.ram[a];if(a>=0x100000&&a<0x100000+this.extended)return this.extRam[a-0x100000];const o=this.romOffset(a);return o>=0?this.rom[o]:0xff;}
+ write8(a,n){a=this.busAddress(a);n&=255;if(this.video.writeByte(a,n))return;if(a<this.conventional)this.ram[a]=n;else if(a>=0x100000&&a<0x100000+this.extended)this.extRam[a-0x100000]=n;}
  read16Physical(a){return this.read8(a)|(this.read8(a+1)<<8);}
  write16Physical(a,n){this.write8(a,n);this.write8(a+1,n>>>8);}
- in8(port){port&=0xffff;
+ in8(port){port&=0xffff;const fddPort=this.fdd.portRead(port);if(fddPort!==null)return fddPort;const videoPort=this.video.portRead(port);if(videoPort!==null)return videoPort;
   if(port===0x20)return this.pic.readCommand();if(port===0x21)return this.pic.mask;
   if(port===0xa0&&this.picSlave)return this.picSlave.readCommand();if(port===0xa1&&this.picSlave)return this.picSlave.mask;
   if(port<=0x0f)return this.dma.read(port);
@@ -103,7 +109,8 @@ class PCMachine {
   return 0xff;
  }
  in16(port){return this.in8(port)|(this.in8((port+1)&0xffff)<<8);}
- out8(port,n){port&=0xffff;n&=255;
+ out8(port,n){port&=0xffff;n&=255;if(this.fdd.portWrite(port,n))return;if(this.video.portWrite(port,n))return;
+  if(port===0x81){this.dma.page[2]=n;return;} // DMA page register ch2
   if(port===0x20)this.pic.writeCommand(n);
   else if(port===0x21)this.pic.writeData(n);
   else if(port===0xa0&&this.picSlave)this.picSlave.writeCommand(n);
@@ -128,13 +135,21 @@ class PCMachine {
   this.rom.set([0xea,0x00,0x01,0x00,0xf0],0xfff0);
   // CLI; SS=0000; SP=7000; DS=0040; BDA equipment 0021; mem KB 0280;
   // INT 11h; INT 12h; STI; HLT; JMP back to HLT
-  const boot=[0xfa,0xb8,0,0,0x8e,0xd0,0xbc,0,0x70,0xb8,0x40,0,0x8e,0xd8,0xb8,0x21,0,0xa3,0x10,0,0xb8,(this.conventional>>>10)&255,(this.conventional>>>18)&255,0xa3,0x13,0,0xcd,0x11,0xcd,0x12,0xfb,0xf4,0xeb,0xfd];
+  const boot=[0xfa,0xb8,0,0,0x8e,0xd0,0xbc,0,0x70,0xb8,0x40,0,0x8e,0xd8,0xb8,this.video.adapter==='hercules'?0x30:0x20,0,0xa3,0x10,0,0xb8,(this.conventional>>>10)&255,(this.conventional>>>18)&255,0xa3,0x13,0,0xcd,0x11,0xcd,0x12,0xfb,0xf4,0xeb,0xfd];
   this.rom.set(boot,0x100);
   this.bios.init();
   this.cpu.reset();
  }
  beforeInstruction(cpu){return this.bios.dispatch(cpu);}
  queueBIOSKey(code){return this.bios.queueKey(code);}
+ mountDisk(drive,bytes,name){return this.fdd.mount(drive,bytes,name);}
+ bootFloppy(drive=0){
+  const sector=this.fdd.readSector(drive,0,0,1);if(!sector)throw new Error('Boot drive absent or invalid CHS');
+  if(sector[510]!==0x55||sector[511]!==0xaa)throw new Error('Boot sector signature 55 AA missing');
+  this.ram.set(sector,0x7c00);
+  const c=this.cpu;c.loadSegment(S.CS,0);c.loadSegment(S.DS,0);c.loadSegment(S.ES,0);c.loadSegment(S.SS,0);
+  c.ip=0x7c00;c.r[R.SP]=0x7c00;c.put8(2,drive);c.halted=false;return {cs:0,ip:0x7c00,drive};
+ }
  tickPIT(ticks){this.pit.advance(ticks);this.processIRQ();}
  requestIRQ(irq){
   if(!Number.isInteger(irq)||irq<0||irq>(this.picSlave?15:7))throw new RangeError('IRQ not supported by this PC profile');
@@ -157,11 +172,11 @@ class PCMachine {
   if(!codec||!codec.bytesToBase64)throw new Error('Missing MD.js runtime codec');
   const packPIC=x=>x?{mask:x.mask,irr:x.irr,isr:x.isr,vector:x.vector,icw:x.icw,expectICW4:x.expectICW4,single:x.single,readISR:x.readISR,autoEOI:x.autoEOI}:null;
   const p=this.pit,d=this.dma,c=this.cpu;
-  return {profile:this.profile,conventional:this.conventional,extended:this.extended,ram:codec.bytesToBase64(this.ram),extRam:codec.bytesToBase64(this.extRam),a20:this.a20,cmos:codec.bytesToBase64(this.cmos),cmosIndex:this.cmosIndex,kbcOutput:this.kbcOutput,kbcInputCommand:this.kbcInputCommand,kbdQueue:[...this.kbdQueue],xtKeyboard:this.xtKeyboard,pic:packPIC(this.pic),picSlave:packPIC(this.picSlave),pit:{reload:Array.from(p.reload),value:Array.from(p.value),mode:[...p.mode],access:[...p.access],writeLow:[...p.writeLow],readLow:[...p.readLow],temp:Array.from(p.temp)},dma:{addr:Array.from(d.addr),count:Array.from(d.count),baseAddr:Array.from(d.baseAddr),baseCount:Array.from(d.baseCount),page:Array.from(d.page),mode:Array.from(d.mode),mask:d.mask,flip:d.flip,status:d.status},cpu:{...c.snapshot(),ticks:c.ticks,lastOpcode:c.lastOpcode,instructionStartIP:c.instructionStartIP,segOverride:c.segOverride},bios:{calls:[...this.bios.calls],lastDiskStatus:this.bios.lastDiskStatus}};
+  return {floppy:this.fdd.snapshot(codec),video:this.video.snapshot(codec),profile:this.profile,conventional:this.conventional,extended:this.extended,ram:codec.bytesToBase64(this.ram),extRam:codec.bytesToBase64(this.extRam),a20:this.a20,cmos:codec.bytesToBase64(this.cmos),cmosIndex:this.cmosIndex,kbcOutput:this.kbcOutput,kbcInputCommand:this.kbcInputCommand,kbdQueue:[...this.kbdQueue],xtKeyboard:this.xtKeyboard,pic:packPIC(this.pic),picSlave:packPIC(this.picSlave),pit:{reload:Array.from(p.reload),value:Array.from(p.value),mode:[...p.mode],access:[...p.access],writeLow:[...p.writeLow],readLow:[...p.readLow],temp:Array.from(p.temp)},dma:{addr:Array.from(d.addr),count:Array.from(d.count),baseAddr:Array.from(d.baseAddr),baseCount:Array.from(d.baseCount),page:Array.from(d.page),mode:Array.from(d.mode),mask:d.mask,flip:d.flip,status:d.status},cpu:{...c.snapshot(),ticks:c.ticks,lastOpcode:c.lastOpcode,instructionStartIP:c.instructionStartIP,segOverride:c.segOverride},bios:{calls:[...this.bios.calls],lastDiskStatus:this.bios.lastDiskStatus}};
  }
  static fromState(data,codec){
   if(!data||!['xt','at'].includes(data.profile)||!codec||!codec.base64ToBytes)throw new Error('Invalid PC snapshot');
-  const m=new PCMachine(data.profile,{conventional:data.conventional,extended:data.extended});
+  const m=new PCMachine(data.profile,{conventional:data.conventional,extended:data.extended,videoAdapter:data.video?.adapter||'cga'});
   // Validate every variable-size binary field BEFORE committing machine state.
   const ram=codec.base64ToBytes(data.ram,640*1024),ext=codec.base64ToBytes(data.extRam,384*1024),cmos=codec.base64ToBytes(data.cmos,128);
   if(ram.length!==m.ram.length||ext.length!==m.extRam.length||cmos.length!==128)throw new Error('PC snapshot RAM/CMOS dimensions mismatch');
@@ -170,7 +185,7 @@ class PCMachine {
   check(src.r,8,'registers');check(src.s,4,'segments');check(src.base,4,'bases');check(src.limit,4,'limits');check(src.segAccess,4,'access');check(src.nullSegment,4,'null flags');
   for(const [key,max] of [['ip',65535],['flags',65535],['msw',65535],['steps',2**53-1],['ticks',2**53-1]])if(!Number.isSafeInteger(src[key])||src[key]<0||src[key]>max)throw new Error('Invalid PC '+key);
   if(!data.pic||!data.pit||!data.dma||!data.bios)throw new Error('Incomplete PC chipset snapshot');
-  m.ram.set(ram);m.extRam.set(ext);m.cmos.set(cmos);
+  m.ram.set(ram);m.extRam.set(ext);m.cmos.set(cmos);if(data.video)m.video.restore(data.video,codec);if(data.floppy)m.fdd.restore(data.floppy,codec);
   const copyPIC=(dst,st)=>{if(!dst||!st)throw new Error('PIC profile mismatch');for(const k of ['mask','irr','isr','vector','icw','expectICW4','single','readISR','autoEOI']){if(typeof st[k]!=='number'&&typeof st[k]!=='boolean')throw new Error('Invalid PIC '+k);dst[k]=st[k];}};
   copyPIC(m.pic,data.pic);if(m.picSlave)copyPIC(m.picSlave,data.picSlave);else if(data.picSlave)throw new Error('XT has no secondary PIC');
   const restoreArr=(dest,list,label)=>{check(list,dest.length,label);dest.set(list);};
@@ -185,7 +200,7 @@ class PCMachine {
   if(!Array.isArray(data.bios.calls))throw new Error('Bad BIOS call history');m.bios.calls.splice(0,m.bios.calls.length,...data.bios.calls);m.bios.lastDiskStatus=data.bios.lastDiskStatus|0;
   return m;
  }
- info(){return {profile:this.profile,installedRAM:this.conventional+this.extended,extended:this.extended,a20:this.a20,cpu:this.cpu.snapshot(),pic:{mask:this.pic.mask,irr:this.pic.irr,isr:this.pic.isr,slave:this.picSlave?{mask:this.picSlave.mask,irr:this.picSlave.irr,isr:this.picSlave.isr}:null},biosCalls:[...this.biosCalls]};}
+ info(){return {floppy:this.fdd.disks.map(d=>d?d.geometry.type:null),video:{adapter:this.video.adapter,mode:this.video.mode,graphics:this.video.isGraphics},profile:this.profile,installedRAM:this.conventional+this.extended,extended:this.extended,a20:this.a20,cpu:this.cpu.snapshot(),pic:{mask:this.pic.mask,irr:this.pic.irr,isr:this.pic.isr,slave:this.picSlave?{mask:this.picSlave.mask,irr:this.picSlave.irr,isr:this.picSlave.isr}:null},biosCalls:[...this.biosCalls]};}
 }
 const api={PCMachine,PIC8259,PIT8253,DMA8237};
 if(typeof module!=='undefined'&&module.exports)module.exports=api;

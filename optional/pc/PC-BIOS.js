@@ -23,13 +23,16 @@ class PCBios {
  init(){
   const m=this.m;
   // Just a minimal configuration block, not the results of a physical POST.
-  this.set16(BDA.EQUIPMENT,0x21);
+  this.set16(BDA.EQUIPMENT,m.video.adapter==='hercules'?0x30:0x20); // display type; FDD absent until INT 13h phase
   this.set16(BDA.CONVENTIONAL_KB,m.conventional>>>10);
   this.set16(BDA.KB_HEAD,0x1e);this.set16(BDA.KB_TAIL,0x1e);
   this.set16(BDA.KB_START,0x1e);this.set16(BDA.KB_LIMIT,0x3e);
   this.set32(BDA.TICKS,0);m.write8(BDA.MIDNIGHT,0);
   m.write8(BDA.FDD_STATUS,1);
-  const supported=[0x08,0x09,0x10,0x11,0x12,0x13,0x15,0x16,0x1a];
+  this.set16(0x44a,m.video.textCols); // BIOS screen columns
+  m.write8(0x449,m.video.mode); // current BIOS video mode
+  this.set16(0x44c,m.video.textCols*25*2); // text page bytes
+  const supported=[0x08,0x09,0x10,0x11,0x12,0x13,0x15,0x16,0x19,0x1a];
   this.map.clear();
   for(const int of supported){
    const off=0x500+int*4;m.rom[off]=0xcf; // guest executes normal IRET after callback
@@ -106,15 +109,74 @@ class PCBios {
     else this.failure(cpu);
     break;
    }
-   case 0x13:
-    // Phase 2 supplies FDD via a real sector-image adapter.
-    // Fail closed; never make FreeDOS believe a disk exists.
-    if(this.ah(cpu)===1)this.setAH(cpu,this.lastDiskStatus);
-    else this.setAH(cpu,1);
-    this.cf(cpu,true);break;
-   case 0x10:case 0x09:this.failure(cpu);break; // video/IRQ1 deferred
+   case 0x10:this.videoService(cpu);break;
+   case 0x13:this.diskService(cpu);break;
+   case 0x19:{this.m.bootFloppy(cpu.get8(2));return true;} // nonreturning boot chain: next step fetches 0000:7C00
+   case 0x09:this.failure(cpu);break; // IRQ1 implementation deferred
   }
   return true; // CPU executes guest IRET.
+ }
+ diskService(cpu){
+  const fn=this.ah(cpu),dl=cpu.get8(2),fdd=this.m.fdd,disk=fdd.disks[dl];
+  const success=()=>{this.lastDiskStatus=0;this.setAH(cpu,0);this.cf(cpu,false);this.m.write8(BDA.FDD_STATUS,0);};
+  const fail=code=>{this.lastDiskStatus=code;this.setAH(cpu,code);this.cf(cpu,true);this.m.write8(BDA.FDD_STATUS,code);};
+  if(fn===0){success();return;}
+  if(fn===1){this.setAH(cpu,this.lastDiskStatus);this.cf(cpu,this.lastDiskStatus!==0);return;}
+  if(dl>1||!disk){fail(0x80);return;}
+  const g=disk.geometry;
+  if(fn===8){ // AH08 = drive geometry
+   cpu.put8(5,g.cylinders-1);cpu.put8(1,g.sectors);cpu.put8(6,g.heads-1);
+   cpu.put8(2,fdd.disks.filter(Boolean).length);cpu.put8(3,g.type==='1.44M'?4:g.type==='1.2M'?2:1);
+   success();return;
+  }
+  if(fn===0x15){this.setAH(cpu,1);this.cf(cpu,false);return;}
+  if(fn===0x16){success();return;} // disk-change flag not modelled
+  if(fn!==2&&fn!==3&&fn!==4){fail(1);return;}
+  const count=cpu.get8(0),ch=cpu.get8(5),cl=cpu.get8(1),dh=cpu.get8(6),bx=cpu.r[R.BX];
+  const cyl=ch|((cl&0xc0)<<2),sec=cl&0x3f;
+  const start=fdd.lba(dl,cyl,dh,sec),byteCount=count*512;
+  if(count===0||count>127||start<0||start+count>disk.data.length/512){fail(4);return;}
+  if(bx+byteCount>65536){fail(9);return;} // 64KiB DMA boundary
+  if(fn===2){for(let i=0;i<byteCount;i++)cpu.write8(S.ES,bx+i,disk.data[start*512+i]);}
+  if(fn===3){for(let i=0;i<byteCount;i++)disk.data[start*512+i]=cpu.read8(S.ES,bx+i);}
+  cpu.put8(0,count);success();
+ }
+ videoService(cpu){
+  const v=this.m.video,fn=this.ah(cpu),al=cpu.get8(0),bh=cpu.get8(7),bl=cpu.get8(3),ch=cpu.get8(5),cl=cpu.get8(1),dh=cpu.get8(6),dl=cpu.get8(2);
+  switch(fn){
+   case 0x00:{
+    if(!v.setMode(al&0x7f)){this.failure(cpu);break;}
+    this.m.write8(0x449,v.mode);this.set16(0x44a,v.textCols);this.set16(0x44c,v.textCols*25*2);this.set16(0x450,0);
+    this.cf(cpu,false);break;
+   }
+   case 0x01:v.cursorStart=ch;v.cursorEnd=cl;v.crtc[10]=ch;v.crtc[11]=cl;this.cf(cpu,false);break;
+   case 0x02:{
+    if(dh>=25||dl>=v.textCols){this.failure(cpu);break;}
+    v.cursor=[dh,dl];this.set16(0x450+((bh&7)*2),dh<<8|dl);v.crtc[14]=(dh*v.textCols+dl)>>8;v.crtc[15]=(dh*v.textCols+dl)&255;this.cf(cpu,false);break;
+   }
+   case 0x03:{
+    cpu.put8(5,v.cursorStart);cpu.put8(1,v.cursorEnd);cpu.put8(6,v.cursor[0]);cpu.put8(2,v.cursor[1]);this.cf(cpu,false);break;
+   }
+   case 0x05:v.activePage=al&7;this.cf(cpu,false);break;
+   case 0x06:case 0x07:{
+    if(!v.scroll(al,bh,ch,cl,dh,dl,fn===0x06)){this.failure(cpu);break;}this.cf(cpu,false);break;
+   }
+   case 0x08:{
+    const cell=v.readCell(v.cursor[0],v.cursor[1],bh);if(!cell){this.failure(cpu);break;}cpu.put8(0,cell.char);cpu.put8(4,cell.attr);this.cf(cpu,false);break;
+   }
+   case 0x09:case 0x0a:{
+    v.writeRepeated(al,bl,cpu.r[R.CX],bh,fn===0x09);this.cf(cpu,false);break;
+   }
+   case 0x0c:{
+    if(!v.isGraphics||!v.setPixel(cpu.r[R.CX],cpu.r[R.DX],al,v.adapter==='cga'&&!!(al&0x80))){this.failure(cpu);break;}this.cf(cpu,false);break;
+   }
+   case 0x0d:{
+    const color=v.getPixel(cpu.r[R.CX],cpu.r[R.DX]);if(color===null){this.failure(cpu);break;}cpu.put8(0,color);this.cf(cpu,false);break;
+   }
+   case 0x0e:v.teletype(al,bl||7);this.set16(0x450,v.cursor[0]<<8|v.cursor[1]);this.cf(cpu,false);break;
+   case 0x0f:cpu.put8(0,v.mode);cpu.put8(4,v.textCols);cpu.put8(7,v.activePage);this.cf(cpu,false);break;
+   default:this.failure(cpu);
+  }
  }
 }
 const api={PCBios,BDA};if(typeof module!=='undefined'&&module.exports)module.exports=api;

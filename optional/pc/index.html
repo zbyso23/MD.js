@@ -1,17 +1,30 @@
 <!doctype html>
-<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MD.js Ultra · PC Lab Phase 1</title>
+<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MD.js Ultra · PC Lab Phase 2 · Video</title>
 <style>
 :root{color-scheme:dark;font:14px/1.55 system-ui,-apple-system,'Segoe UI',sans-serif;background:#091420;color:#e6f4f5}*{box-sizing:border-box}body{margin:0}button,select,input{font:inherit}button,select{cursor:pointer}button{border:1px solid #426276;border-radius:9px;padding:10px 13px;color:#eaf8f3;background:#22394b;font-weight:650}button:hover{background:#315369}button.primary{background:#23b5a6;color:#05282d;border-color:#32d2bf}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #ecca78}select,input{background:#152c3b;color:#fff;border:1px solid #426276;border-radius:8px;padding:9px}.container{max-width:1260px;margin:0 auto;padding:26px 20px 70px}.top{display:flex;justify-content:space-between;gap:16px;align-items:flex-start}.eyebrow{color:#65d6be;font-weight:800;text-transform:uppercase;font-size:11px;letter-spacing:.16em}.back{color:#a3cbd2;text-decoration:none}h1{font-size:clamp(28px,4vw,44px);line-height:1.1;margin:8px 0}h2{font-size:17px;margin:0 0 12px}.lede{color:#aec5cd;max-width:760px}.badge{border:1px solid #64858c;color:#c9d8dc;padding:6px 9px;border-radius:30px;white-space:nowrap;font-size:11px}.notice{background:#24353a;border-left:4px solid #edbf69;padding:13px 15px;margin:18px 0 21px;color:#e7e5dc;border-radius:6px}.actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin:14px 0 20px}.layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:15px}.panel{border:1px solid #2b485c;background:linear-gradient(150deg,#102637,#101d2d);border-radius:15px;padding:17px;min-width:0}.wide{grid-column:1/-1}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:#172e3f;padding:12px;border-radius:9px}.stat .meta{color:#94bbc0;font-size:11px}.stat .num{font-size:18px;font-weight:750;letter-spacing:.02em}.registers{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.register{display:flex;justify-content:space-between;gap:5px;border:1px solid #2b5060;border-radius:8px;padding:7px;background:#122c3b;font-family:ui-monospace,monospace}.register b{color:#77dfcc}.register span{color:#eefaff}.muted{color:#8eafbb}.memory{font-family:ui-monospace,Consolas,monospace;font-size:12px;white-space:pre;overflow:auto;max-height:285px;margin:0;line-height:1.7;color:#c4ede9}.trace{font-family:ui-monospace,Consolas,monospace;font-size:12px;white-space:pre-wrap;word-break:break-word;margin:0;min-height:100px;max-height:285px;overflow:auto;color:#b8d8e2}.split{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.check{margin:0;display:inline-flex;gap:7px;align-items:center;color:#aacbd0}.ok{color:#77dec1}.error{color:#f5a99c}footer{margin-top:22px;color:#91a6b4;font-size:12px}@media(max-width:850px){.layout{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}}@media(max-width:510px){.registers{grid-template-columns:repeat(2,1fr)}.top{flex-direction:column}.stat .num{font-size:15px}}
 </style></head><body><main class="container">
-<div class="top"><div><a class="back" href="../../index.html">← MD.js Ultra</a><div class="eyebrow">PC Environment · Phase 1 / Alpha</div><h1>8086 / 80286 Workbench</h1><p class="lede">Základní výuková laboratoř: skutečně vykonávané instrukce, ROM reset, paměť, BIOS interrupt bridge, PIC/PIT/DMA a malý experiment s 286 Protected Mode.</p></div><span class="badge">GPLv3 · LOCAL · NO AUTORUN</span></div>
-<div class="notice"><strong>Ještě není plný PC emulátor.</strong> Zatím podporujeme jen část instrukcí CPU a vybraných periferních registrů. Nejde o plný 80286 Protected Mode, skutečný DOSBox BIOS ani historický POST. CGA, Hercules, diskety a FreeDOS přijdou ve fázi 2.</div>
-<div class="actions"><label for="machine">Profil</label><select id="machine"><option value="xt">XT · 8086 ISA / 8088 cíl</option><option value="at">AT · 80286</option></select><button id="reset">Reset</button><button id="step">CPU krok</button><button id="boot" class="primary">Boot ROM</button><button id="pm">286 Protected Mode demo</button><button id="cpu-demo">ModR/M + REP demo</button><button id="alu-demo">ALU / SHIFT demo</button><button id="idt-demo">286 IDT demo</button><button id="de-demo">#DE · dělení nulou</button><button id="br-demo">286 #BR · BOUND</button><button id="bcd-demo">8086 BCD demo</button><button id="irq10-demo">286 IRQ10 / 2× PIC</button><button id="pit">PIT → IRQ0</button></div>
+<div class="top"><div><a class="back" href="../../index.html">← MD.js Ultra</a><div class="eyebrow">PC Environment · Phase 2 / Video</div><h1>8086 / 80286 Workbench</h1><p class="lede">Čistý JavaScript: XT a AT, Hercules/CGA grafické adaptéry, mapované VRAM, BIOS INT 10h a historicky věrné bankování bitových map.</p></div><span class="badge">GPLv3 · LOCAL · NO AUTORUN</span></div>
+<div class="notice"><strong>Ještě není plný PC emulátor.</strong> Zatím podporujeme jen část instrukcí CPU a periferních registrů. Nejde o plný 80286 Protected Mode, skutečný DOSBox BIOS ani historický POST. CGA, Hercules, část INT 10h i základ FDD/INT 13h jsou nyní implementovány. Skutečný FreeDOS boot na XT i AT dosud není ověřen.</div>
+<div class="actions"><label for="machine">Profil</label><select id="machine"><option value="xt">XT · 8086 ISA / 8088 cíl</option><option value="at">AT · 80286</option></select><button id="reset">Reset</button><button id="step">CPU krok</button><label for="video-adapter">Video</label><select id="video-adapter"><option value="cga">CGA</option><option value="hercules">Hercules</option></select><button id="video-text-demo" class="primary">INT 10h · text demo</button><button id="video-cga-demo">CGA · 320×200</button><button id="video-herc-demo">Hercules · 720×348</button><button id="video-render">Obnovit obraz</button><button id="boot" class="primary">Boot ROM</button><button id="pm">286 Protected Mode demo</button><button id="cpu-demo">ModR/M + REP demo</button><button id="alu-demo">ALU / SHIFT demo</button><button id="idt-demo">286 IDT demo</button><button id="de-demo">#DE · dělení nulou</button><button id="br-demo">286 #BR · BOUND</button><button id="bcd-demo">8086 BCD demo</button><button id="irq10-demo">286 IRQ10 / 2× PIC</button><button id="pit">PIT → IRQ0</button></div>
+<section class="panel" aria-label="Grafická karta a obrazovka">
+<h2>Emulovaný monitor · přímý obraz z VRAM</h2>
+<p class="muted" id="video-status">CGA text 80×25 · standardní RAM/video prostor je oddělen</p>
+<canvas id="video-screen" width="640" height="200" aria-label="CGA nebo Hercules obrazovka" style="display:block;max-width:100%;width:100%;height:auto;image-rendering:pixelated;background:#000;border:6px solid #263c45;border-radius:8px"></canvas>
+<p class="muted">Režimy CGA 0–6, Hercules text a bitmapový HGC. Textové glyfy kreslí prohlížeč (zatím bez originálního 8×8/9×14 ROM fontu). Emulace není cycle-accurate; retrace signál je zjednodušený.</p>
+</section>
+<section class="panel" id="pc-floppy" aria-label="Disketové mechaniky">
+<h2>FDD A: / B: · NEC 765 + BIOS INT 13h</h2>
+<div class="actions"><label for="fdd-drive">Mechanika</label><select id="fdd-drive"><option value="0">A:</option><option value="1">B:</option></select><button id="fdd-mount">↑ Připojit .IMG / .IMA</button><input id="fdd-file" type="file" accept=".img,.ima,.dsk,application/octet-stream" hidden><button id="fdd-create">Vytvořit testovací A:</button><button id="fdd-boot" class="primary">Boot A:</button><button id="fdd-eject">Vysunout</button></div>
+<details><summary>Ruční vložení Base64 disketového obrazu</summary><textarea id="fdd-base64" rows="3" style="width:100%;background:#152c3b;color:#fff;border:1px solid #426276;border-radius:8px" placeholder="Base64 raw diskette image (.img)"></textarea><button id="fdd-paste">Připojit Base64</button></details>
+<p class="muted" id="fdd-status">Mechaniky prázdné. Připoj vlastní disketu nebo vytvoř svobodný ukázkový boot sektor.</p>
+<p class="muted">Podporované RAW obrazy 160/180/320/360/720 KiB, 1,2/1,44 MiB. INT 13h CHS čtení, zápis, ověření a geometrie; omezené 765 porty + DMA2. FreeDOS boot ještě NENÍ ověřen; demo disketa není FreeDOS.</p>
+</section>
 <section class="panel" id="pc-persistence" aria-label="Přenosné snapshoty">
 <h2>Universal Runtime · PC stav (HTTP / file://)</h2>
 <div class="actions"><button id="pc-save-local">Uložit do prohlížeče</button><button id="pc-load-local">Obnovit z prohlížeče</button><button id="pc-export-json" class="primary">↓ Export JSON</button><button id="pc-import-json">↑ Import JSON</button><input type="file" accept=".json,application/json" id="pc-json-file" hidden></div>
 <details><summary>Nemáš File API? Vlož JSON jako text</summary><textarea id="pc-json-paste" rows="4" style="width:100%;background:#152c3b;color:#fff;border:1px solid #426276;border-radius:8px" placeholder="{ ... MD.js Ultra state ... }"></textarea><button id="pc-import-paste">Obnovit vložený JSON</button></details>
 <p id="pc-storage-status" class="muted" role="status">Export a import JSON fungují nezávisle na localStorage.</p>
-<p class="muted">Snapshot zahrnuje RAM, CPU, BIOS a stav dostupných chipsetů fáze 1. Neobsahuje žádnou cizí ROM; při obnově se použije vestavěný svobodný testovací firmware.</p>
+<p class="muted">Snapshot zahrnuje RAM, CPU, BIOS, chipsety, video RAM a připojené diskety (pozor na velikost JSON). Neobsahuje žádnou cizí ROM; při obnově se použije vestavěný svobodný testovací firmware.</p>
 </section>
 <div class="layout">
 <section class="panel"><h2>CPU registr / stav</h2><div id="regs" class="registers"></div><p id="mode" class="muted"></p></section>
@@ -19,7 +32,7 @@
 <section class="panel"><h2>Paměť · byte view</h2><div class="split"><label for="address">Fyzická adresa hex</label><input id="address" value="F0100" maxlength="6" size="9" aria-label="Memory address"><button id="showmemory">Zobrazit</button></div><pre class="memory" id="memory"></pre></section>
 <section class="panel"><h2>Protokol skutečných instrukcí</h2><pre class="trace" id="trace"></pre></section>
 <section class="panel wide"><h2>Testovací kontrolní body</h2><div class="split"><button id="selftest">Spustit diagnostiku</button><span id="testresult" class="muted">Připraveno</span></div><p class="muted">Diagnostika provede boot XT, boot AT, test 286 GDT/LMSW, ModR/M + REP, ALU/SHIFT, BCD, #DE/#BR, AT IRQ10 a hranici 1 MiB. Každý test používá přímo implementovaný CPU, ne mock.</p></section>
-</div><footer>Neznámý opcode vyvolá CPUFault; nevydává se za úspěšnou emulaci. Binární programy z dokumentů se nikdy nespouštějí automaticky. Plná Gate 1 zůstává otevřená.</footer>
+</div><footer>Neznámý opcode vyvolá CPUFault; nevydává se za úspěšnou emulaci. Binární programy z dokumentů se nikdy nespouštějí automaticky. Fáze 1 uzavřena jako otestovaný základ; Gate 2: video a FDD demo prošly; FreeDOS boot stále čeká.</footer>
 </main>
 <script id="mdjs-state-worker" type="text/plain">
 self.onmessage = function(event){
@@ -28,7 +41,9 @@ self.onmessage = function(event){
 </script>
 <script src="../../MD-Runtime.js"></script>
 <script src="PC-Core.js"></script>
+<script src="PC-Video.js"></script>
 <script src="PC-BIOS.js"></script>
+<script src="PC-Floppy.js"></script>
 <script src="PC-Machine.js"></script>
 <script>
 (()=>{'use strict';
@@ -43,12 +58,13 @@ function refresh(){const c=machine.cpu,state=c.snapshot();
  const vals=[['RAM',`${machine.conventional/1024}+${machine.extended/1024} KiB`],['A20',machine.profile==='at'?(machine.a20?'ON':'OFF'):'N/A'],['PIC IRQ',fmt(machine.pic.irr,2)],['DMA mask',fmt(machine.dma.mask,2)]];
  el('stats').innerHTML=vals.map(([a,b])=>`<div class="stat"><div class="meta">${a}</div><div class="num">${b}</div></div>`).join('');
  el('bio').textContent=`BIOS calls: ${machine.biosCalls.map(n=>'INT '+fmt(n,2)+'h').join(' · ')||'none'}`;
- el('trace').textContent=messages.join('\n');el('trace').scrollTop=el('trace').scrollHeight;drawMemory();
+ el('trace').textContent=messages.join('\n');el('trace').scrollTop=el('trace').scrollHeight;drawMemory();renderVideo();
 }
+function renderVideo(){const v=machine.video;v.render(el('video-screen').getContext('2d'));el('video-status').textContent=`${v.adapter.toUpperCase()} | ${v.isGraphics?'GRAPHICS':'TEXT'} | BIOS mode ${v.mode} | ${v.dimensions.join('×')} | ${v.vram.length/1024} KiB video RAM`; }
 function drawMemory(){const raw=el('address').value.trim();if(!/^[0-9a-fA-F]{1,6}$/.test(raw)){el('memory').textContent='Neplatná hex adresa';return;}
  let a=parseInt(raw,16),out=[];for(let row=0;row<12;row++){const bytes=[];for(let i=0;i<16;i++)bytes.push(fmt(machine.read8(a+i),2));out.push(fmt(a,6)+': '+bytes.join(' '));a+=16;}el('memory').textContent=out.join('\n');}
 function safe(task){try{task();}catch(e){trace(`ERROR [${e.name}]: ${e.message}`);}refresh();}
-function reboot(p){machine=new PCMachine(p);messages=[];trace(`${p.toUpperCase()} RESET · ${fmt(machine.cpu.s[S.CS])}:${fmt(machine.cpu.ip)} · hidden CS base ${fmt(machine.cpu.base[S.CS],6)}`);refresh();}
+function reboot(p){machine=new PCMachine(p,{videoAdapter:el('video-adapter').value});messages=[];trace(`${p.toUpperCase()} RESET · ${fmt(machine.cpu.s[S.CS])}:${fmt(machine.cpu.ip)} · hidden CS base ${fmt(machine.cpu.base[S.CS],6)}`);refresh();}
 function cpuStep(){const c=machine.cpu,at=fmt(c.s[S.CS])+':'+fmt(c.ip),op=machine.read8(c.physical(S.CS,c.ip));const count=c.steps;c.step();trace(`${at} [${fmt(op,2)}] → ${fmt(c.s[S.CS])}:${fmt(c.ip)}  ${c.halted?'HALT':''}  #${count+1}`);}
 el('machine').addEventListener('change',e=>reboot(e.target.value));el('reset').addEventListener('click',()=>reboot(el('machine').value));
 el('step').addEventListener('click',()=>safe(cpuStep));el('boot').addEventListener('click',()=>safe(()=>{const result=machine.run(2000);trace(`BOOT ROM: ${result.executed} instructions · ${result.halted?'HALTED':'budget exhausted'} · AX=${fmt(machine.cpu.reg('AX'))}`);}));
@@ -169,11 +185,84 @@ el('selftest').addEventListener('click',()=>safe(()=>{const report=[];
  report.push(`286 BOUND #BR: ${boundsFaultDemo(new PCMachine('at')).ok?'PASS':'FAIL'}`);
  let cap=false;try{new PCMachine('at',{conventional:640*1024,extended:385*1024});}catch(e){cap=true;}report.push(`1 MiB RAM cap: ${cap?'PASS':'FAIL'}`);
  el('testresult').textContent=report.join(' | ');trace(report.join('  ·  '));}));
+// Phase-2 video acceptance demos: CPU executes real guest instructions and BIOS INT 10h.
+function runGuestAt(bytes,address=0x2800){
+ const c=machine.cpu;c.halted=false;c.loadSegment(S.CS,0);c.ip=address;
+ c.loadSegment(S.DS,0);c.loadSegment(S.SS,0);c.loadSegment(S.ES,0);c.r[R.SP]=0x7000;
+ machine.ram.set(bytes,address);return machine.run(500);
+}
+function videoTextDemo(){
+ reboot(el('machine').value);
+ const v=machine.video,txt='MD.js Ultra  -  '+(v.adapter==='cga'?'CGA':'HERCULES')+'  XT / AT';
+ const bytes=[0xb8,v.adapter==='cga'?3:7,0,0xcd,0x10];
+ for(const ch of txt){bytes.push(0xb8,ch.charCodeAt(0),0x0e,0xcd,0x10);}
+ bytes.push(0xf4);const result=runGuestAt(bytes);
+ trace(`BIOS INT 10h · ${txt.length} characters / guest real-mode IRQ calls · ${result.halted?'PASS':'FAIL'}`);
+}
+function videoCgaDemo(){
+ el('video-adapter').value='cga';reboot(el('machine').value);
+ // MOV AX,0004 ; INT 10h ; MOV AX,B800 ; MOV ES,AX ; MOV DI,0000 ; MOV AX,1B1B ; MOV CX,0040 ; REP STOSW ; HLT
+ const result=runGuestAt([0xb8,4,0,0xcd,0x10,0xb8,0,0xb8,0x8e,0xc0,0xbf,0,0,0xb8,0x1b,0x1b,0xb9,0x40,0,0xf3,0xab,0xf4]);
+ // Exercise the real VRAM banks with a JS diagnostic pattern (no image bitmap/asset).
+ const v=machine.video;for(let y=4;y<200;y++)for(let x=0;x<320;x++){
+  const color=((x>>5)+(y>>4))&3;v.setPixel(x,y,color);
+ }
+ // Guest uses INT 10h AH=0Ch to draw a white pixel.
+ const r=runGuestAt([0xb8,3,0x0c,0xb9,40,0,0xba,40,0,0xcd,0x10,0xf4],0x2900);
+ trace(`CGA guest mode 04h / ES:B800 / REP STOSW / INT10 pixel 40,40 → ${result.halted&&r.halted?'PASS':'FAIL'}`);
+}
+function videoHercDemo(){
+ el('video-adapter').value='hercules';reboot(el('machine').value);
+ // Real x86 instructions set HGC configuration and graphics mode through OUT DX,AL.
+ const r=runGuestAt([0xba,0xbf,3,0xb0,3,0xee,0xba,0xb8,3,0xb0,0x0a,0xee,0xf4]);
+ const v=machine.video;
+ for(let y=0;y<348;y++)for(let x=0;x<720;x++){
+  if(((x>>4)^(y>>3))%13===0 || Math.abs(y-(x*347/719))<2 || Math.abs(y-347+(x*347/719))<2)v.setPixel(x,y,1);
+ }
+ trace(`Hercules HGC guest OUT 03BFh/03B8h + 4 banked VRAM: ${r.halted&&v.isGraphics?'PASS':'FAIL'}`);
+}
+el('video-adapter').addEventListener('change',()=>safe(()=>reboot(el('machine').value)));
+el('video-text-demo').addEventListener('click',()=>safe(videoTextDemo));
+el('video-cga-demo').addEventListener('click',()=>safe(videoCgaDemo));
+el('video-herc-demo').addEventListener('click',()=>safe(videoHercDemo));
+el('video-render').addEventListener('click',()=>safe(()=>trace('Video framebuffer repainted from mapped VRAM.')));
+
+// FDD workflow: user supplies raw sectors; nothing is fetched or executed automatically.
+const driveIndex=()=>Number(el('fdd-drive').value);
+function fddStatus(msg){el('fdd-status').textContent=msg;trace(msg);refresh();}
+function makeDemoDisk(){
+ const disk=new Uint8Array(720*1024),label='MD.JS ULTRA · BOOT OK';
+ const prog=[0xfa,0xb8,0,0,0x8e,0xd0,0xbc,0,0x7c,0xfb];
+ for(const ch of label){const c=ch.charCodeAt(0);prog.push(0xb8,c<=127?c:0x20,0x0e,0xcd,0x10);}
+ prog.push(0xf4);disk.set(prog);disk[510]=0x55;disk[511]=0xaa;
+ return disk;
+}
+el('fdd-mount').addEventListener('click',()=>el('fdd-file').click());
+el('fdd-file').addEventListener('change',async e=>{
+ const file=e.target.files&&e.target.files[0];e.target.value='';if(!file)return;
+ try{const bytes=await runtime.readFile(file,1474560),d=driveIndex(),g=machine.mountDisk(d,bytes,file.name);
+  fddStatus(`FDD ${d?'B':'A'}: mounted ${file.name} (${g.type}, ${g.cylinders}×${g.heads}×${g.sectors})`);
+ }catch(err){fddStatus('FDD rejected: '+err.message);}
+});
+el('fdd-paste').addEventListener('click',()=>safe(()=>{
+ const raw=el('fdd-base64').value.replace(/\s/g,''),bytes=runtime.base64ToBytes(raw,1474560),d=driveIndex(),g=machine.mountDisk(d,bytes,'pasted.img');
+ fddStatus(`FDD ${d?'B':'A'}: Base64 image mounted (${g.type})`);
+}));
+el('fdd-create').addEventListener('click',()=>safe(()=>{
+ const g=machine.mountDisk(0,makeDemoDisk(),'MDJS-HELLO-720K.img');
+ fddStatus(`A: demo boot image created ${g.type} (NOT FreeDOS). Click Boot A:.`);
+}));
+el('fdd-boot').addEventListener('click',()=>safe(()=>{
+ const boot=machine.bootFloppy(0),r=machine.run(600);
+ fddStatus(`A: guest boot ${fmt(boot.cs)}:${fmt(boot.ip)} → ${r.halted?'HALT':'RUNNING'} after ${r.executed} instructions; BIOS calls: ${machine.biosCalls.map(n=>'INT '+fmt(n,2)).join(',')}`);
+}));
+el('fdd-eject').addEventListener('click',()=>safe(()=>{const d=driveIndex();machine.fdd.eject(d);fddStatus(`${d?'B':'A'}: ejected`);}));
+
 const PC_SAVE_KEY='mdjs-ultra:pc:phase1';
 const status=(msg)=>{el('pc-storage-status').textContent=msg;trace(msg);refresh();};
 function currentSnapshot(){return runtime.wrapState('pc',machine.exportState(runtime));}
 function importPCSnapshot(doc){const data=runtime.parseState(doc,'pc');const candidate=PCMachine.fromState(data,runtime);
- machine=candidate;el('machine').value=machine.profile;messages=['Snapshot restored: '+machine.profile.toUpperCase()];refresh();return machine;
+ machine=candidate;el('machine').value=machine.profile;el('video-adapter').value=machine.video.adapter;messages=['Snapshot restored: '+machine.profile.toUpperCase()];refresh();return machine;
 }
 el('pc-save-local').addEventListener('click',()=>safe(()=>{
  const r=runtime.saveLocal(PC_SAVE_KEY,currentSnapshot());status(r.ok?'PC: stav uložen do localStorage':'PC: localStorage selhal ('+r.error+'). Použij Export JSON.');
@@ -189,7 +278,7 @@ el('pc-export-json').addEventListener('click',async()=>{
 el('pc-import-json').addEventListener('click',()=>el('pc-json-file').click());
 el('pc-json-file').addEventListener('change',async(e)=>{
  const file=e.target.files&&e.target.files[0];e.target.value='';if(!file)return;
- try{const bytes=await runtime.readFile(file,6*1024*1024);const json=new TextDecoder().decode(bytes);
+ try{const bytes=await runtime.readFile(file,12*1024*1024);const json=new TextDecoder().decode(bytes);
  importPCSnapshot(json);status('PC: JSON snapshot úspěšně obnoven.');}catch(err){status('PC: Import odmítnut: '+err.message);}
 });
 el('pc-import-paste').addEventListener('click',()=>safe(()=>{importPCSnapshot(el('pc-json-paste').value);status('PC: stav obnoven z vloženého JSON.');}));

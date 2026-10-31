@@ -1,7 +1,7 @@
 # MD.js Ultra — PC Environment V1.1 (FROZEN)
 
 **Date:** 22 Oct 2026  
-**Status:** Phase-1 foundation acceptance completed 23 Oct 2026 (bounded CPU implementation; no full ISA or DOS boot claims). Phase 2 still pending.  
+**Status:** Phase-1 foundation acceptance completed 23 Oct 2026 (bounded CPU implementation; no full ISA or DOS boot claims). Phase 2 in progress: Hercules/CGA/INT 10h and FDD/INT 13h basic browser-tested implementation released in v0.7.8; FreeDOS XT/AT boot gate remains OPEN.  
 **Distribution:** Optional PC lab in MD.js Ultra. Mermaid and Charts remain built-in standard modules.
 
 ## Locked machine configurations

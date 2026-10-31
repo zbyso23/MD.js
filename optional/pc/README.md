@@ -1,3 +1,13 @@
+# PC Environment Phase 2 — v0.7.8 (current)
+
+CGA/Hercules video hardware, usable BIOS `INT 10h`, and basic FDD/NEC 765/BIOS `INT 13h`/`INT 19h` have been added to the existing XT and 286 testbed. Native JavaScript, no build. The browser renders graphics directly from video RAM. Both platforms execute a self-created boot sector from a mounted disk. **Actual FreeDOS boot is not yet verified, so Gate 2 is open.**
+
+To try it: open `optional/pc/index.html` (file:// or HTTP) and use *INT 10h text demo*, *CGA*, *Hercules*, *Vytvořit testovací A:* and *Boot A:*. Upload your own legally usable raw `.img/.ima` disk through the file selector; exporting machine JSON includes the image. Run `npm run test:release` for development regression. The user-supplied SE Basic ROM is available only in personal archive.
+
+Full details in [`../../PC-PHASE2-VIDEO-FDD-v0.7.8.md`](../../PC-PHASE2-VIDEO-FDD-v0.7.8.md).
+
+---
+
 # PC Workbench — Phase 1 Alpha (MD.js Ultra)
 
 **Date:** 2026-10-22 · v0.7.5 native JavaScript CPU/chipset hardening  

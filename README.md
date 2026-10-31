@@ -1,3 +1,16 @@
+# MD.js Ultra v0.7.8 — Phase 2 CGA/Hercules + FDD milestone
+
+**Latest release:** video and floppy hardware now work as native, readable JavaScript in the optional PC Workbench. Both XT and AT execute BIOS `INT 10h` text/graphics and can load/execute a real guest boot sector from a raw floppy image via `INT 13h` and `INT 19h`. **FreeDOS has NOT been booted yet; Gate 2 is open.**
+
+- **Display:** `PC-Video.js` implements CGA text/4-color/mono graphics and Hercules 720×348 monochrome, mapped video RAM, video ports, and a Canvas screen reading the true VRAM buffer.
+- **Floppy:** `PC-Floppy.js` implements A:/B:, image uploads, limited NEC 765 I/O, DMA2/IRQ6, CHS BIOS services, boot-sector execution and transferable JSON media snapshots. No copyright-protected disk images are bundled.
+- **Testing:** 235 PC, 192 Markdown/runtime, 49 Blockly/Arduino, 31 ZX tests (**507 PASS**), plus real Chromium video/floppy/ZX/browser E2E. `npm run test:release` rechecks them. FreeDOS prompt remains an unpassed Gate 2 test.
+- **Absolutely unchanged:** no build, WASM, ES modules or required web server; source-only JS. Max 80286, max 1 MiB system RAM; no 386. Original user's ZX ROM is included only in the personal ZIP, not the public clean-source ZIP.
+
+Detailed report: [`PC-PHASE2-VIDEO-FDD-v0.7.8.md`](PC-PHASE2-VIDEO-FDD-v0.7.8.md). The historical release notes below are retained for provenance.
+
+---
+
 # MD.js Ultra v0.7.7 — PC Phase 1 foundation release
 
 **Distribution:** This working directory is the *personal* build with the user's supplied ZX 16KiB SE Basic ROM and inline Base64 fallback. Do not publicly redistribute the bundled ROM without permission from its copyright holder. A separate clean-source archive omits these ROM bytes and allows the user to load their own ROM.
@@ -25,7 +38,7 @@ One distribution, small optional labs. Pure vanilla JavaScript. No npm/CDN/brows
 | Blocks Lite | `optional/blockly/` | **No** | Visual blocks, exports JS/Python/Arduino |
 | Arduino Toy Lab | `optional/blockly/index.html?preset=playground` | **No** | Virtual LED, button, switch, pot, PWM, servo, stepper, synthetic mic |
 | ZX Ultra | `zx/` + `zx-ultra.html` | **No** | Real 48K Z80/ROM emulator, BASIC/TAP/SNA/SCR, ASM Lite |
-| PC/XT + PC/AT Alpha | `optional/pc/index.html` | **No** | Executed 8086/partial 286 CPU, reset ROM, adapted DOSBox-X BIOS services, partial chipset; NOT DOS boot |
+| PC/XT + PC/AT Phase 2 | `optional/pc/index.html` | **No** | 8086/partial 286, CGA/Hercules, VRAM + INT 10h, FDD + INT 13h, test boot sector; **NOT FreeDOS boot** |
 
 Blockly and Arduino deliberately **share one optional environment**, not duplicate framework code. ZX is an independent optional environment. Markdown itself does not run source code or emulated binaries just because the document was opened.
 
@@ -92,7 +105,7 @@ Two builds are produced. `public-clean-source` contains ZX emulator sources unde
 
 ## Roadmap, not bundled emulators
 
-Atari 800, Apple II, C64 and Micro JS-Torch remain roadmap-only. PC/XT + PC/AT are now **Phase 1 Alpha only**: expanded 8086/286 instruction testbed and original BIOS stub/chipset prototypes in `optional/pc/`. **Gate 1 is not passed; this is not a DOS-capable emulator.** The four-phase frozen implementation plan is [`PC-ENV-ROADMAP-v1.1-FROZEN.md`](PC-ENV-ROADMAP-v1.1-FROZEN.md). See [`PC-PHASE-1-ALPHA-REPORT.md`](PC-PHASE-1-ALPHA-REPORT.md). Optional 3D/CAD concepts remain deferred.
+Atari 800, Apple II, C64 and Micro JS-Torch remain roadmap-only. PC/XT + PC/AT are currently at **Phase 2 video/FDD milestone**: XT/AT CPU foundation, CGA/Hercules + FDD/boot-sector capability in `optional/pc/`. **Gate 2 remains open; no FreeDOS prompt is claimed.** The four-phase frozen implementation plan is [`PC-ENV-ROADMAP-v1.1-FROZEN.md`](PC-ENV-ROADMAP-v1.1-FROZEN.md). See [`PC-PHASE-1-ALPHA-REPORT.md`](PC-PHASE-1-ALPHA-REPORT.md). Optional 3D/CAD concepts remain deferred.
 
 ## Scope and security
 

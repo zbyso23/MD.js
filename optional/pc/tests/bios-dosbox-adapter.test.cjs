@@ -62,8 +62,8 @@ test('IRQ0 BIOS handler increments time and acknowledges PIC',()=>{
  assert.equal(m.pic.isr,1);m.run(10);
  assert.equal(m.bios.get32(BDA.TICKS),1);assert.equal(m.pic.isr,0);
 });
-test('INT 13h fails closed while FDD is unimplemented; returns AH error and CF',()=>{
- const m=program(command(2,0x13));m.run();assert.equal(m.cpu.get8(4),1);assert.ok(m.cpu.flags&F.CF);
+test('INT 13h fails closed with no mounted disk; returns AH=80h and CF',()=>{
+ const m=program(command(2,0x13));m.run();assert.equal(m.cpu.get8(4),0x80);assert.ok(m.cpu.flags&F.CF);
 });
 test('INT 15h AH=88 reports bounded extended RAM and clears saved CF',()=>{
  const m=program(command(0x88,0x15),'at',{conventional:640*1024,extended:384*1024});m.run();assert.equal(m.cpu.r[R.AX],384);assert.equal(m.cpu.flags&F.CF,0);
@@ -71,8 +71,8 @@ test('INT 15h AH=88 reports bounded extended RAM and clears saved CF',()=>{
 test('Unsupported INT 15h service uses conventional unsupported status / CF',()=>{
  const m=program(command(0x99,0x15));m.run();assert.equal(m.cpu.get8(4),0x86);assert.ok(m.cpu.flags&F.CF);
 });
-test('No device memory mapping or disk emulation added by BIOS adapter',()=>{
- for(const p of ['xt','at']){const m=new PCMachine(p);assert.equal(m.read8(0xa0000),255);assert.equal(m.read8(0xb8000),255);assert.equal(typeof m.mountDisk,'undefined');assert.equal(m.conventional+m.extended, p==='xt'?640*1024:1024*1024);}
+test('Video VRAM and FDD adapters mapped; empty floppy list',()=>{
+ for(const p of ['xt','at']){const m=new PCMachine(p);assert.equal(m.read8(0xa0000),255);assert.equal(m.read8(0xb8000),0);assert.equal(typeof m.mountDisk,'function');assert.equal(m.fdd.disks[0],null);assert.equal(m.conventional+m.extended, p==='xt'?640*1024:1024*1024);}
 });
 test('13 DOSBox-X source snapshots are intact and listed with SHA-256',()=>{
  const dir=path.join(__dirname,'../vendor/dosbox-x-reference');
