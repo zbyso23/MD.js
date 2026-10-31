@@ -5,11 +5,12 @@
  const norm=s=>String(s||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('cs').replace(/\s+/g,' ').trim();
  function find(list,section,category,term){
    const tokens=norm(term).split(' ').filter(Boolean);
-   return list.filter(c=>c.section===section&&(category==='Vše'||c.category===category)&&tokens.every(q=>c._search.includes(q)));
+   const near=(a,b)=>{if(Math.abs(a.length-b.length)>1)return false;let prev=Array.from({length:b.length+1},(_,i)=>i);for(let i=1;i<=a.length;i++){const cur=[i];for(let j=1;j<=b.length;j++)cur[j]=Math.min(cur[j-1]+1,prev[j]+1,prev[j-1]+(a[i-1]===b[j-1]?0:1));prev=cur;}return prev[b.length]<=1;};
+   return list.filter(c=>c.section===section&&(category==='Vše'||c.category===category)&&tokens.every(q=>c._search.includes(q)||(q.length>=4&&c._keywords.some(w=>Math.abs(w.length-q.length)<=1&&near(w,q)))));
  }
  function mount(){
    if(!supports||document.getElementById('md-ency-overlay'))return null;
-   const lessons=source.map(c=>Object.assign({},c,{_search:norm([c.title,c.summary,c.body,c.category,c.section].join(' '))}));
+   const lessons=source.map(c=>Object.assign({},c,{_search:norm([c.title,c.summary,c.body,c.category,c.section].join(' ')),_keywords:norm([c.title,c.category].join(' ')).split(/[^a-z0-9]+/).filter(Boolean)}));
    let section='Markdown',category='Vše',current=null,previous=null,history=[],historyPos=-1;
    const button=(text,cls='',title='')=>{const e=document.createElement('button');e.type='button';e.textContent=text;if(cls)e.className=cls;if(title)e.title=title;return e;};
    const div=(cls,tag='div')=>{const e=document.createElement(tag);e.className=cls;return e;};

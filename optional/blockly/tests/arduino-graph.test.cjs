@@ -51,3 +51,26 @@ test('detached print/servo/stepper never add Arduino dependencies or code',()=>{
  for(const n of [{type:'print',text:'UNEXECUTED'},{type:'servo',pin:10,value:90},{type:'stepper',steps:5}])p=G.add(p,n,'loose');
  assert.equal(B.generate(p,'arduino'),baseline);assert.equal(B.simulate(p,1).trace.length,0);
 });
+
+test('nested repeat exports valid Arduino C++ declarations, retaining JS let and Python range',()=>{
+ const p={version:1,setup:[],loop:[{type:'repeat',count:3,body:[{type:'repeat',count:2,body:[{type:'write',pin:13,state:'HIGH'}]}]}]};
+ const cpp=B.generate(p,'arduino'),js=B.generate(p,'javascript'),py=B.generate(p,'python');
+ assert.match(cpp,/for \(int _block_i1 = 0/);assert.match(cpp,/for \(int _block_i2 = 0/);
+ assert.doesNotMatch(cpp,/\blet\b/);assert.match(js,/for \(let _block_i1/);assert.match(py,/for _block_i1 in range\(3\)/);
+});
+
+test('nested repeat exports valid Arduino C++ declarations, retaining JS let and Python range',()=>{
+ const p={version:1,setup:[],loop:[{type:'repeat',count:3,body:[{type:'repeat',count:2,body:[{type:'write',pin:13,state:'HIGH'}]}]}]};
+ const cpp=B.generate(p,'arduino'),js=B.generate(p,'javascript'),py=B.generate(p,'python');
+ assert.match(cpp,/for \(int _block_i1 = 0/);assert.match(cpp,/for \(int _block_i2 = 0/);
+ assert.doesNotMatch(cpp,/\blet\b/);assert.match(js,/for \(let _block_i1/);assert.match(py,/for _block_i1 in range\(3\)/);
+});
+
+test('Arduino nested repeat C++ syntax compiles with stub APIs when g++ is installed', {skip:!require('node:child_process').spawnSync('g++',['--version'],{encoding:'utf8'}).status===0},()=>{
+ const cp=require('node:child_process'),os=require('node:os');
+ const p={version:1,setup:[],loop:[{type:'repeat',count:2,body:[{type:'repeat',count:3,body:[{type:'write',pin:13,state:'HIGH'}]}]}]};
+ const source='#define HIGH 1\nvoid digitalWrite(int,int){}\n'+B.generate(p,'arduino');
+ const dir=fs.mkdtempSync(path.join(os.tmpdir(),'mdjs-arduino-'));
+ try{const file=path.join(dir,'sketch.cpp');fs.writeFileSync(file,source);const result=cp.spawnSync('g++',['-std=c++11','-fsyntax-only',file],{encoding:'utf8'});assert.equal(result.status,0,result.stderr);}
+ finally{fs.rmSync(dir,{recursive:true,force:true});}
+});

@@ -66,7 +66,7 @@
         case 'pinMode':send(isPy ? `pinMode(${pstr(n.pin)}, ${JSON.stringify(n.mode)})` : `pinMode(${pstr(n.pin)}, ${dialect==='arduino'?n.mode:JSON.stringify(n.mode)});`);break;
         case 'write':send(isPy ? `digitalWrite(${pstr(n.pin)}, ${JSON.stringify(n.state)})` : `digitalWrite(${pstr(n.pin)}, ${dialect==='arduino'?n.state:JSON.stringify(n.state)});`);break;
         case 'repeat':{
-          const h=isPy ? `for _block_i${depth} in range(${n.count}):` : `for (let _block_i${depth} = 0; _block_i${depth} < ${n.count}; _block_i${depth}++) {`;
+          const h=isPy ? `for _block_i${depth} in range(${n.count}):` : `for (${dialect === 'arduino' ? 'int' : 'let'} _block_i${depth} = 0; _block_i${depth} < ${n.count}; _block_i${depth}++) {`;
           send(h);const body=statements(n.body,dialect,depth+1);out.push(body||((isPy ? '    ' : '  ').repeat(depth+1)+(isPy?'pass':'// empty')));if(!isPy)send('}');break;}
         case 'if':{
           send(isPy ? `if ${n.name} ${n.op} ${n.value}:` : `if (${n.name} ${dialect==='arduino'&&n.op==='=='?'==':n.op} ${n.value}) {`);
