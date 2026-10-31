@@ -1,0 +1,556 @@
+
+                             Standardní paměť CMOS
+                             ---------------------
+Třídy  počítačů AT obsahují hodiny reálného času napájené z vestavěných baterií
+a  64-bajtovou  nízkopříkonovou paměť CMOS (tato paměť je při vypnutém počítači
+napájena též z baterií).
+
+Paměť  CMOS  obsahuje  různé  informace,  včetně běžného času a data, nastavení
+hardwarové konfigurace a stavový bajt pro uzavření (uzavírací bajt se používá v
+mechanismu  umožňujícím  AT opakovaně startovat v místě, kde procesor program k
+ukončení ochranného módu).
+
+Pokud uvidíte během inicializačního testu POST hlášení "Run Setup" je to proto,
+že  některý  hardware  nemá  uložen  svůj záznam konfigurace nebo se v CMOS RAM
+vyskytly nějaké jiné problémy.
+
+
+Porty 0070H - 0071H: přístup k paměti CMOS, maskování přerušení NMI
+-------------------------------------------------------------------
+0070H - zápis: nastavení adresy CMOS (Bity 0 až 5: adr. 0 až 63; bit7: NMI)
+
+        U  počítače  AT slouží tento port současně k maskování nemaskovatelného
+        přerušení NMI. Jakýkoliv výstup na tento port s vynulovaným bitem číslo
+        7  umožňuje nemaskovatelné přerušení NMI; nastavení tohoto bitu způsobí
+        zákaz  přerušení  NMI  (Maskování  přerušení NMI u počítače PC/XT - viz
+        kapitola řadič přerušení).
+
+0071H - zápis: zápis dat do CMOS na adresu nastavenou pomocí OUT 70H,adr
+        čtení: čtení dat z CMOS z adresy nastavené pomocí OUT 70H,adr
+
+Ke  čtení  bajtu  z  paměti  CMOS  vyšlete nejdříve na port o adrese 70H adresu
+paměťového  místa  CMOS,  které  má  být čteno nebo do kterého bude zapisováno,
+potom  z  adresy  71H  můžete číst nebo na ni zapisovat data do CMOS na uvedené
+adrese.
+
+Příklad:                               ; čtení typu pevného disku
+         mov       al,12h              ; adresa údaje o disku = 12H
+         out       70h,al              ; nastavnení adresy CMOS na 12H
+         jmp       $+2                 ; malá prodleva k ustálení dat CMOS
+         in        al,71h              ; AL nyní obsahuje typ pevného disku
+
+Adresy  10H  až  20H  jsou  chráněny metodou kontrolního součtu, aby bylo možné
+detekovat,  když  jsou  baterie vybité nebo byl do paměti zapsán neplatný zápis
+konfigurace (např. když se "zaběhne" program a náhodou se provede instrukce OUT
+71H  -  obvykle  se  změní nastavení pevného disku, které bylo čteno naposled).
+Kontrolní součet je jednoduchý 16-bitový součet chráněných bajtů.
+
+    Pozn.: Další   informace  o  hodinách  reálného  času  získáte  v  příručce
+           Motorolla MC146818.
+
+00H    - hodiny reálného času - sekunda
+01H    - alarm - sekundy
+02H    - hodiny reálného času - minuta
+03H    - alarm - minuty
+04H    - hodiny reálného času - hodina
+05H    - alarm - hodina
+06H    - hodiny reálného času - den v týdnu
+07H    - hodiny reálného času - den měsíce
+08H    - hodiny reálného času - měsíc
+09H    - hodiny reálného času - rok
+0AH    - stavový registr hodin reálného času - A (čtení)
+        +-+-+-+-+-+-+-+-+
+        |7 6 5 4 3 2 1 0|
+        +++++++++++++++++  bit
+         | | | | +-+-+-+-> 0-3: výběr rychlosti (nastaven na 0110)
+         | +-+-+---------> 4-6: 22-stupňová dělička (nastaveno na 010)
+         +---------------> 7: příznak průběžného uložení (UIP) (0=čtení OK)
+0BH    - stavový registr hodin reálného času - B (zápis)
+        +-+-+-+-+-+-+-+-+
+        |7 6 5 4 3 2 1 0|
+        +++++++++++++++++ bit
+         | | | | | | | +-> 0: možné uložení denního cyklu (0=standard) (0)
+         | | | | | | +---> 1: cyklus: 0=12; 1=24                       (1)
+         | | | | | +-----> 2: mód dat BCD: 1=binární; 0=BCD            (0)
+         | | | | +-------> 3: možný obdélníkový průběh: 1=ano; 0=ne    (0)
+         | | | +---------> 4: možné přerušení ukončení dne: 1=ano; 0=ne(0)
+         | | +-----------> 5: možné přerušení alarmem: 1=ano; 0=ne     (0)
+         | +-------------> 6: možné periodické přerušení: 1=ano; 0=ne  (0)
+         +---------------> 7: příznak průběžného uložení (UIP) (0=čtení OK)
+0CH    - stavový registr hodin reálného času - C (čtení)
+       - stavové bity příznaků přerušení
+0DH    - stavový registr hodin reálného času - D (zápis)
+       - bit 7 = 1 pokud CMOS=RAM je připojena k napájení
+               = 0 indikuje, že baterie je vybitá
+0EH    - stavový bajt diagnostiky při vnitřní inicializaci systému (POST)
+         tento bajt ukládá POST při inicializaci systému
+        +-+-+-+-+-+-+-+-+
+        |7 6 5 4 3 2 1 0|
+        +++++++++++++++++ bit
+         | | | | | | | +-> 0: = 0
+         | | | | | | +---> 1: = 0
+         | | | | | +-----> 2: 1=čas neplatí (např. není 30.únor)
+         | | | | +-------> 3: 1=špatný pevný disk (nelze z něj zavést OS)
+         | | | +---------> 4: 1=velikost paměti není správná
+         | | +-----------> 5: 1=záznam konfigurace není správný
+         | +-------------> 6: 1=kontrolní součet CMOS RAM nesouhlasí
+         +---------------> 7: 1=vybitá baterie CMOS RAM
+0FH    - stavový bajt přerušení
+         Tento  bajt  je čten při startu počítače po resetu procesoru kvůli
+         správnému  určení,  zda  byl  reset  použit jako cesta k přerušení
+         procesoru 80286 z ochranného módu.
+              0 = měkký reset (Ctrl-Alt-Del) nebo nevyjímečné přerušení
+              1 = přerušení po určení velikosti paměti
+              2 = přerušení po provedení testů paměti
+              3 = přerušení po chybě paměti (kontrola parity 1 nebo 2)
+              4 = přerušení s požadavkem zavaděče systému
+              5 = přerušení  instrukcí  FAR JMP (restart vnitřního řadiče a
+                  skok na adresu 0:[0467H])
+          6,7,8 = přerušení po provedení testu ochranného módu
+              9 = přerušení po provedení blokového přesunu (INT 15H/sl.87H)
+             10 = přerušení instrukcí FAR JMP (přímý skok na 0:[0467H])
+10H    - typ disketové mechaniky
+        +-+-+-+-+-+-+-+-+
+        |7 6 5 4 3 2 1 0|
+        +++++++++++++++++  bit                                 0000 = žádná
+         | | | | +-+-+-+-> 0-3: první disketová mechanika -+-> 0001 = 360K
+         +-+-+-+---------> 4-7: druhá disketová mechanika -+   0010 = 1.2M
+11H    - rezervováno
+12H    - typ jednotky pevného disku (pro disk C: a D:, pokud je 1 až 14)
+        +-+-+-+-+-+-+-+-+
+        |7 6 5 4 3 2 1 0|
+        +++++++++++++++++  bit
+         | | | | +-+-+-+-> 0-3: první pevný disk (C:) -+-> 0000 = žádný
+         +-+-+-+---------> 4-7: druhý pevný disk (D:) -+   jinak= typ
+                                                           1111 = 19H/1AH
+Pokud je pro daný disk udána hodnota 1111 (tj. typ 15), je pro typ disku použit
+údaj z adres 19H a 1AH paměti CMOS.
+
+Typy  mechanik  jsou  předdefinovány v ROM-BIOS. Vektory INT 41H a INT 46H jsou
+při  inicializaci nastaveny na tabulku ROM obsahující informace pro instalované
+typy mechanik pevných disků. Viz též Tabulka parametrů pevného disku.
+
++-------+----------+-------+-----------------+-------------+-----------+
+|  typ  |  válců   |  hlav | předkompenzace  | přistávací  | kapacita  |
+|       |          |       |zápisu (od stopy)|    zóna     |           |
++-------+----------+-------+-----------------+-------------+-----------+
+|   1   |   306    |    4  |      128        |    305      |   10MB    |
+|   2   |   615    |    4  |      300        |    615      |   21MB    |
+|   3   |   615    |    6  |      300        |    615      |   31MB    |
+|   4   |   940    |    8  |      512        |    940      |   64MB    |
+|   5   |   940    |    6  |      512        |    940      |   48MB    |
+|   6   |   615    |    4  |     FFFF        |    615      |   21MB    |
+|   7   |   462    |    8  |      256        |    511      |   31MB    |
+|   8   |   733    |    5  |     FFFF        |    733      |   31MB    |
+|   9   |   900    |   15  |     FFFF        |    901      |  151MB    |
+|  10   |   820    |    3  |     FFFF        |    820      |   21MB    |
+|  11   |   855    |    5  |     FFFF        |    855      |   36MB    |
+|  12   |   855    |    7  |     FFFF        |    855      |   51MB    |
+|  13   |   306    |    8  |      128        |    319      |   21MB    |
+|  14   |   733    |    7  |     FFFF        |    733      |   44MB    |
+|  15   |  (000)   |   (0) |     (000)       |   (000)     |  (00MB)   |
+|  16   |   612    |    4  |        0        |    663      |   21MB    |
+|  17   |   977    |    5  |      300        |    977      |   42MB    |
+|  18   |   977    |    7  |     FFFF        |    977      |   58MB    |
+|  19   |  1024    |    7  |      512        |   1023      |   61MB    |
+|  20   |   733    |    5  |      300        |    732      |   31MB    |
+|  21   |   733    |    7  |      300        |    732      |   42MB    |
+|  22   |   733    |    5  |      300        |    733      |   31MB    |
+|  23   |   306    |    4  |        0        |    336      |   10MB    |
+|  24   |   925    |    7  |        0        |    925      |   56MB    |
+|  25   |   925    |    9  |     FFFF        |    925      |   72MB    |
+|  26   |   754    |    7  |      754        |    754      |   46MB    |
+|  27   |   754    |   11  |     FFFF        |    754      |   72MB    |
+|  28   |   699    |    7  |      256        |    699      |   42MB    |
+|  29   |   823    |   10  |     FFFF        |    823      |   71MB    |
+|  30   |   918    |    7  |      918        |    918      |   55MB    |
+|  31   |  1024    |   11  |     FFFF        |   1024      |   98MB    |
+|  32   |  1024    |   15  |     FFFF        |   1024      |  133MB    |
+|  33   |  1024    |    5  |     1024        |   1024      |   44MB    |
+|  34   |   612    |    2  |      128        |    612      |   10MB    |
+|  35   |  1024    |    9  |     FFFF        |   1024      |   80MB    |
+|  36   |  1024    |    8  |      512        |   1024      |   71MB    |
+|  37   |   615    |    8  |      128        |    615      |   42MB    |
+|  38   |   987    |    3  |      987        |    987      |   25MB    |
+|  39   |   987    |    7  |      987        |    987      |   60MB    |
+|  40   |   820    |    6  |      820        |    820      |   42MB    |
+|  41   |   977    |    5  |      977        |    977      |   42MB    |
+|  42   |   981    |    5  |      981        |    981      |   42MB    |
+|  43   |   830    |    7  |      512        |    830      |   50MB    |
+|  44   |   830    |   10  |     FFFF        |    830      |   72MB    |
+|  45   |   917    |   15  |     FFFF        |    918      |  115MB    |
+|  46   |  (000)   |   (0) |     (000)       |   (000)     |  (00MB)   |
+|  47   |  1024    |    8  |        0        |      0      |   68MB    |
++-------+----------+-------+-----------------+-------------+-----------+
+
+Pozn.: Údaj  FFFF  ve  sloupci předkompenzace znamená, že předkompenzace se
+       nebude používat od žádné stopu.
+
+       Údaj  0 ve sloupci předkompenzace znamená, že se předkompenzace bude
+       používat pro všechny stopy (tj. od stopy 0).
+
+       Disk typu 1 je originální pevný disk XT.
+
+       Disk typu 2 je standardní pevný disk AT 20MB.
+
+       Typy 16-23 jsou připojeny do ROM-BIOSu od data 15.11.1985.
+
+       Pokud  je  typ  disku  15 (0FH) znamená to, že typ disku je uložen v
+       CMOS na adrese 19H (disk C:) nebo na adrese 1AH (disk D:).
+
+       Typ  disku  46  je  rezervován  a  nepoužívá  se.  Disk  číslo 47 je
+       uživatelsky definovaný disk.
+
+13H    - rezervováno
+14H    - bajt vybavení počítače
+        +-+-+-+-+-+-+-+-+
+        |7 6 5 4 3 2 1 0|
+        +++++++++++++++++  bit
+         | | | | | | | +->  0:  1=disketové jednotky jsou instalovány
+         | | | | | | +--->  1:  1=matematický koprocesor je instalován
+         | | | | | +----->  2:
+         | | | | +------->  3:
+         | | +-+---------> 4-5: primární displej: 00 - žádný nebo EGA
+         | |                                      01 - 40 pozic CGA
+         | |                                      10 - 80 pozic CGA
+         | |                                      11 - monochromní TTL
+         +-+-------------> 6-7: disketových mechanik - 1 (00=1; 01=2; atd.)
+15H    - základní paměť (nižší bajt) -+->0100H=256K; 0200H=512K; 0280H=640K
+16H    - základní paměť (vyšší bajt) -+
+17H    - rozšířená paměť nad 1M (nižší bajt) -+->(v Kilobajtech, 0-3C00H)
+18H    - rozšířená paměť nad 1M (vyšší bajt) -+  (viz INT 15H/služba 88H)
+19H    - typ pevného disku 0 (C:), pokud je (CMOS adresa 12H & 0FH) = 0FH
+1AH    - typ pevného disku 1 (D:), pokud je (CMOS adresa 12H & F0H) = F0H
+1BH-2DH - rezervováno
+2EH    - kontrolní součet CMOS - adresy 10H až 20H (vyšší bajt)
+2FH    - kontrolní součet CMOS - adresy 10H až 20H (nižší bajt)
+30H    - rozšířená paměť nad 1M (nižší bajt) -+->(v Kilobajtech, 0-3C00H)
+31H    - rozšířená paměť nad 1M (vyšší bajt) -+  (viz INT 15H/služba 88H)
+32H    - současné století v BCD (tj. 19H)
+33H    - všeobecné informace      bit7=instalována volba paměti IBM 128K
+                                  bit6=použito utilitou "Setup"
+34H-3FH - rezervováno. Zde můžete uložit na věky své jméno.
+
+                             CMOS pro AMI BIOS
+                             -----------------
+Identifik.  řetězec: "AMIBIOS", "0123AAAAMMMMIIIIBBBBIIIIOOOOSSSS((((CCCC))))".
+Procedura  pro  čtení  bajtu  AL  z  paměti  CMOS  ->  AL .... adresa F000:EE94
+Procedura pro zápis bajtu AH na adresu AL paměti CMOS .... adresa F000:EE9D
+
+00H    - hodiny reálného času - sekunda
+01H    - alarm - sekundy
+02H    - hodiny reálného času - minuta
+03H    - alarm - minuty
+04H    - hodiny reálného času - hodina
+05H    - alarm - hodina
+06H    - hodiny reálného času - den v týdnu
+07H    - hodiny reálného času - den měsíce
+08H    - hodiny reálného času - měsíc
+09H    - hodiny reálného času - rok
+0AH    - stavový registr hodin reálného času - A (čtení)
+        +-+-+-+-+-+-+-+-+
+        |7 6 5 4 3 2 1 0|
+        +++++++++++++++++  bit
+         | | | | +-+-+-+-> 0-3: výběr rychlosti (nastaven na 0110)
+         | +-+-+---------> 4-6: 22-stupňová dělička (nastaveno na 010)
+         +---------------> 7: příznak průběžného uložení (UIP) (0=čtení OK)
+0BH    - stavový registr hodin reálného času - B (zápis)
+        +-+-+-+-+-+-+-+-+
+        |7 6 5 4 3 2 1 0|
+        +++++++++++++++++ bit
+         | | | | | | | +-> 0: možné uložení denního cyklu (0=standard) (0)
+         | | | | | | +---> 1: cyklus: 0=12; 1=24                       (1)
+         | | | | | +-----> 2: mód dat BCD: 1=binární; 0=BCD            (0)
+         | | | | +-------> 3: možný obdélníkový průběh: 1=ano; 0=ne    (0)
+         | | | +---------> 4: možné přerušení ukončení dne: 1=ano; 0=ne(0)
+         | | +-----------> 5: možné přerušení alarmem: 1=ano; 0=ne     (0)
+         | +-------------> 6: možné periodické přerušení: 1=ano; 0=ne  (0)
+         +---------------> 7: příznak průběžného uložení (UIP) (0=čtení OK)
+0CH    - stavový registr hodin reálného času - C (čtení)
+       - stavové bity příznaků přerušení
+0DH    - stavový registr hodin reálného času - D (zápis)
+       - bit 7 = 1 pokud CMOS=RAM je připojena k napájení
+               = 0 indikuje, že baterie je vybitá
+0EH    - stavový bajt diagnostiky při vnitřní inicializaci systému (POST)
+         tento bajt ukládá POST při inicializaci systému
+        +-+-+-+-+-+-+-+-+
+        |7 6 5 4 3 2 1 0|
+        +++++++++++++++++ bit
+         | | | | | | | +-> 0: 1=probíhá obsluha SETUP BIOS
+         | | | | | | +---> 1: = 0
+         | | | | | +-----> 2: 1=čas neplatí (např. není 30.únor)
+         | | | | +-------> 3: 1=špatný pevný disk (nelze z něj zavést OS)
+         | | | +---------> 4: 1=velikost paměti není správná
+         | | +-----------> 5: 1=záznam konfigurace není správný
+         | +-------------> 6: 1=kontrolní součet CMOS RAM nesouhlasí
+         +---------------> 7: 1=vybitá baterie CMOS RAM
+0FH    - stavový bajt přerušení
+         Tento  bajt  je čten při startu počítače po resetu procesoru kvůli
+         správnému  určení,  zda  byl  reset  použit jako cesta k přerušení
+         procesoru 80286 z ochranného módu.
+              0 = měkký reset (Ctrl-Alt-Del) nebo nevyjímečné přerušení
+              1 = přerušení po určení velikosti paměti
+              2 = přerušení po provedení testů paměti
+              3 = přerušení po chybě paměti (kontrola parity 1 nebo 2)
+              4 = přerušení s požadavkem zavaděče systému
+              5 = přerušení  instrukcí  FAR JMP (restart vnitřního řadiče a
+                  skok na adresu 0:[0467H])
+          6,7,8 = přerušení po provedení testu ochranného módu
+              9 = přerušení po provedení blokového přesunu (INT 15H/sl.87H)
+             10 = přerušení instrukcí FAR JMP (přímý skok na 0:[0467H])
+10H    - typ disketové mechaniky
+        +-+-+-+-+-+-+-+-+
+        |7 6 5 4 3 2 1 0|
+        +++++++++++++++++  bit                                 0000 = žádná
+         | | | | +-+-+-+-> 0-3: první disketová mechanika -+-> 0001 = 360 KB
+         +-+-+-+---------> 4-7: druhá disketová mechanika -+   0010 = 1.2 MB
+                                                               0011 = 720 KB
+                                                               0100 = 1.44 MB
+                                                               0101 = 2.88 MB
+11H    - bit 0: 1=NUM LOCK při startu počítače zapnuto na ON (0=OFF)
+       - bit 1: 1=čekání na potvrzení chybového hlášení klávesou <F1>
+       - bit 2: 1=tabulka parametrů RAM pro pevný disk typu 47 je použita pro
+                  DOS 1 KB
+                0=tabulka parametrů RAM pro pevný disk typu 47 je na 0:300h
+       - bit 3: 1=zobrazení hlášení "Hit <DEL> ..." při startu počítače
+       - bit 4: 1=provádí se kontrola chyby parity paměti
+       - bit 5: 1=zvuková signalizace testu paměti (zvukové tiky)
+       - bit 6: 1=provádí se test paměti nad 1 MB (při startu počítače)
+                  (jinak se paměť pouze zapíše pro inicializaci)
+       - bit 7: 1=povolena podpora myši
+12H    - typ jednotky pevného disku (pro disk C: a D:, pokud je 1 až 14)
+        +-+-+-+-+-+-+-+-+
+        |7 6 5 4 3 2 1 0|
+        +++++++++++++++++  bit
+         | | | | +-+-+-+-> 0-3: první pevný disk (C:) -+-> 0000 = žádný
+         +-+-+-+---------> 4-7: druhý pevný disk (D:) -+   jinak= typ
+                                                           1111 = 19H/1AH
+Pokud je pro daný disk udána hodnota 1111 (tj. typ 15), je pro typ disku použit
+údaj z adres 19H a 1AH paměti CMOS.
+
+Typy  mechanik  jsou  předdefinovány v ROM-BIOS. Vektory INT 41H a INT 46H jsou
+při  inicializaci nastaveny na tabulku ROM obsahující informace pro instalované
+typy mechanik pevných disků. Viz též Tabulka parametrů pevného disku.
+
+Tabulka disků - viz standardní CMOS
+
+13H    - bit 2 až bit 4: rychlost generování znaků z klávesnice (autorepeat)
+                            000 = 6         100 = 15
+                            001 = 8         101 = 20
+                            010 = 10        110 = 24
+                            011 = 12        111 = 30  znaků/sec
+       - bit 5 až 6: počáteční prodleva generování znaků z klávesnice
+                            00 = 250, 01 = 500, 10 = 750, 11 = 1000 ms
+       - bit 7: 1=povoleno přednastavení rychlosti gener. znaků z klávesnice
+
+14H    - bajt vybavení počítače
+        +-+-+-+-+-+-+-+-+
+        |7 6 5 4 3 2 1 0|
+        +++++++++++++++++  bit
+         | | | | | | | +->  0:  1=disketové jednotky jsou instalovány
+         | | | | | | +--->  1:  1=matematický koprocesor je instalován
+         | | | | | +----->  2:  1=provádí se instalace (test) klávesnice
+         | | | | |                při startu, 0=klávesnice neinstalována
+         | | | | +------->  3:  1=primární displej instalován (platí bity
+         | | | |                  4 až 5), 0=primární displej nenainstal.
+         | | +-+---------> 4-5: primární displej: 00 - žádný nebo EGA
+         | |                                      01 - 40 pozic CGA
+         | |                                      10 - 80 pozic CGA
+         | |                                      11 - monochromní TTL
+         +-+-------------> 6-7: disketových mechanik - 1 (00=1; 01=2; atd.)
+
+15H    - základní paměť (nižší bajt) -+->0100H=256K; 0200H=512K; 0280H=640K
+16H    - základní paměť (vyšší bajt) -+
+17H    - rozšířená paměť nad 1M (nižší bajt) -+->(v Kilobajtech, 0-3C00H)
+18H    - rozšířená paměť nad 1M (vyšší bajt) -+  (viz INT 15H/služba 88H)
+19H    - typ pevného disku 0 (C:), pokud je (CMOS adresa 12H & 0FH) = 0FH
+1AH    - typ pevného disku 1 (D:), pokud je (CMOS adresa 12H & F0H) = F0H
+1Bh,1Ch - počet válců uživatelského disku C: (1Bh=LOW, 1Ch=HIGH)
+1Dh     - počet hlav uživatelského disku C:
+1Eh,1Fh - stopa pro předkompenzaci zápisu uživatelského disku C: (1Eh=LOW)
+20h     - (pro uživatelský disk C:)
+21h,22h - parkovací stopa uživatelského disku C: (21h=LOW, 22h=HIGH)
+23h     - počet sektorů na stopu uživatelského disku C:
+24h,25h - počet válců uživatelského disku D: (24h=LOW, 25h=HIGH)
+26h     - počet hlav uživatelského disku D:
+27h,28h - stopa pro předkompenzaci zápisu uživatelského disku D: (27h=LOW)
+29h     - (pro uživatelský disk D:)
+2Ah,2Bh - parkovací stopa uživatelského disku D: (2Ah=LOW, 2Bh=HIGH)
+2Ch     - počet sektorů na stopu uživatelského disku D:
+2DH    - bit 0: 1=povolena funkce přepínání režimu TURBO
+       - bit 1: 1=možné rychlé hradlování signálu A20
+       - bit 2: 1=interní paměť CACHE povolena (procedura F000:8BD2)
+                  (spolu s registrem ....)
+                nebo 1=je procesor CYRIX/TI 486 DLC CPU
+       - bit 3: 1=externí paměť CACHE povolena
+       - bit 4: 1=rychlost procesoru při startu vyšší (0=nižší)
+       - bit 5: 1=zavádění systému z disketové mechaniky A: (0=z disku C:)
+       - bit 6: 1=povoleno vystavení disketových mechanik při startu počítače
+       - bit 7: 1=nainstalován koprocesor WEITEK
+2EH    - kontrolní součet CMOS - adresy 10H až 2DH (vyšší bajt)
+2FH    - kontrolní součet CMOS - adresy 10H až 2DH (nižší bajt)
+              Procedura pro výpočet kontrolního součtu (adresa F000:17F2)
+                      xor   bx,bx
+                      mov   ah,0
+                      mov   cl,90h     ; počáteční adresa 10h
+                  L1: mov   al,cl
+                      out   70h,al
+                      jcxz  $+2
+                      jcxz  $+2
+                      in    al,71h
+                      jcxz  $+2
+                      add   bx,ax
+                      inc   cl
+                      cmp   cl,0adh    ; koncová adresa 2dh
+                      jbe   L1
+                       .....   (zápis 2Eh <- HIGH, 2Fh <- LOW)
+
+30H    - rozšířená paměť nad 1M (nižší bajt) -+->(v Kilobajtech, 0-3C00H)
+31H    - rozšířená paměť nad 1M (vyšší bajt) -+  (viz INT 15H/služba 88H)
+32H    - současné století v BCD (tj. 19H)
+33H    - všeobecné informace
+            bit 0: 1=povolena externí CACHE paměť
+            bit 1: 1=povolena CACHE paměť
+            bit 2: 1=povolena interní CACHE paměť
+            bit 4 až 6: rychlost procesoru (změřená rychlost)
+                         000 = 16 MHz      100 = 40 MHz
+                         001 = 20 MHz      101 = 50 MHz
+                         010 = 25 MHz      110 = 66 MHz
+                         011 = 33 MHz      111 = 66 MHz
+            bit 7: 1=nainstalováno více než 512 K základní operační paměti
+34H       bit 0: 1=povolena stínová RAM adaptér-ROM DC00h 16 KB
+          bit 1: 1=povolena stínová RAM adaptér-ROM D800h 16 KB
+          bit 2: 1=povolena stínová RAM adaptér-ROM D400h 16 KB
+          bit 3: 1=povolena stínová RAM adaptér-ROM D000h 16 KB
+          bit 4: 1=povolena stínová RAM adaptér-ROM CC00h 16 KB
+          bit 5: 1=povolena stínová RAM adaptér-ROM C800h 16 KB
+          bit 6: 1=kontrola hesla vždy; 0=kontrola hesla při SETUP
+          bit 7: 1=provádí se antivirová ochrana BOOT virů (+ registr ...)
+35h       bit 0: 1=provádí se test numerického procesoru (+ registr ...)
+          bit 1: 1=povolena stínová RAM video ROM C400h 16 KB  --+  nebo
+          bit 2: 1=povolena stínová RAM video ROM C000h 16 KB    | SHADOW-RAM
+          bit 3: 1=povolena stínová RAM system-ROM F000h 64 KB --+ 000 = zákaz
+                                                                   011 = video
+                                                                   100 = hlavní
+                                                                   111 = obě
+          bit 4: 1=povolena stínová RAM adaptér-ROM EC00h 16 KB --+   nebo
+          bit 5: 1=povolena stínová RAM adaptér-ROM E800h 16 KB   | system-ROM
+          bit 6: 1=povolena stínová RAM adaptér-ROM E400h 16 KB   |   64 KB
+          bit 7: 1=povolena stínová RAM adaptér-ROM E000h 16 KB --+
+36h    -  bit 5: 1=povolena funkce BYPASS AUTO_BUS
+          bit 6: 1=automatická konfigurace při startu počítače
+          bit 7: 1=povolen AUTO AT WAIT STATE
+37h    - bit 0 až 3: paleta barev SETUP
+       - bit 4 až 7: klíč pro kódování hesla (nebo kontrolní součet ?)
+38h až 3Dh - heslo (neplatné znaky za heslem jsou nastaveny na 0)
+3Eh,3Fh - kontrolní součet dat 34h až 6Eh (adresy 3Eh a 3Fh se přeskočí)
+          3Eh <- HIGH, 3Fh <- LOW
+              Procedura pro výpočet kontrolního součtu (adresa F000:180F)
+                      xor   bx,bx
+                      mov   ah,0
+                      mov   cx,0b4h    ; počáteční adresa 34h
+                  L1: mov   al,cl
+                      out   70h,al
+                      jcxz  $+2
+                      jcxz  $+2
+                      in    al,71h
+                      jcxz  $+2
+                      add   bx,ax
+                      inc   cx
+                      cmp   cx,0beh    ; adresa k přeskočení 3Eh
+                      jne   L2
+                      inc   cx
+                      inc   cx
+                  L2: cmp   cx,cs:[82b3h]   ; =0eeh, koncová adresa 6Eh
+                      jbe   L1
+                       .....   (zápis 3Eh <- HIGH, 3Fh <- LOW)
+
+60h   - bit 1: 1=povoleno řízení resetování klávesnice
+      - bit 2: 1=povolen AT Cycle Wait State
+      - bit 3: 1=povoleno Single ALE
+      - bit 4: volba zdroje hodin sběrnice AT  0=CLK, 1=CLK2
+61h   - bit 1: CACHE WRITE WAIT STATE   0 = 0 W/S, 1 = 1 W/S (obráceně ???)
+      - bit 5: 1=zákaz provádění kontroly chyby parity paměti
+      - bit 7: 1=povoleno Master Mode Byte Swap
+62h   - bit 0: 1=povolen SLOW REFRESH
+      - bit 2: 1=povolen HIDDEN REFRESH
+64h   - bit 3: 1=povolen mód SLOW 16M CPU Bus Mode
+65h   - bit 0 až 1: dělicí poměr hodin sběrnice AT BUS
+              00 = CLK/6, 01 = CLK/4, 10 = CLK/3, 11 = CLK/5
+        bit 3: 1=povoleno rychlé dekódování
+        bit 4 až 5: WRITE WAIT STATE paměti
+              00 = 0 W/S, 01 = 1 W/S, 10 = 2 W/S, 11 = 3 W/S
+        bit 6 až 7: READ WAIT STATE paměti
+              01 = 0 W/S, 10 = 1 W/S, 11 = 2 W/S
+67h   - bit 0 až 3: adresový rozsah CACHE paměti v násobcích 4 MB
+              0=64 MB, 1 až 15 = 4 až 60 MB
+        bit 4: 0=cachuje se prostor VIDEO BIOS, 1=zákaz cachování
+        bit 5: 1=povolena prodleva I/O Delay On Back to Back
+        bit 6: 1=povoleno generování signálu READY
+68h   - bit 0 až 1: bity 8 a 9 bázové adresy 1. necach. bloku paměti
+        bit 5 až 6: velikost 1. necachovaného bloku paměti
+              00 = 64 KB, 01 = 128 KB, 10 = 256 KB, 11 = 512 KB
+        bit 7: 0=povolen 1.necachovaný blok paměti, 1=zakázan 1.necach.blok
+69h   - bity 0 až 7 bázové adresy 1. necachovaného bloku paměti
+         (další 2 bity 8 a 9 jsou v bajtu 68h)
+           Bázová adresa udává adresu v násobcích 64 KB, musí být přitom
+           zarovnána na násobek velikosti bloku necachované paměti
+6Ah   - bit 0 až 1: bity 8 a 9 bázové adresy 2. necach. bloku paměti
+        bit 5 až 6: velikost 2. necachovaného bloku paměti
+              00 = 64 KB, 01 = 128 KB, 10 = 256 KB, 11 = 512 KB
+        bit 7: 0=povolen 2.necachovaný blok paměti, 1=zakázan 2.necach.blok
+6Bh   - bity 0 až 7 bázové adresy 2. necachovaného bloku paměti
+         (další 2 bity 8 a 9 jsou v bajtu 6Ah)
+           Bázová adresa udává adresu v násobcích 64 KB, musí být přitom
+           zarovnána na násobek velikosti bloku necachované paměti
+6Eh      bit 0 až 1: CACHE READ WAIT STATE
+             00 = 3-1-1-1, 01 = 2-1-1-1, 10 = 3-2-2-2, 11 = 2-2-2-2
+       - bit 7: 1=povolen 16M HIDDEN ENABLED
+
+Řadič sběrnice:
+--------------
+čtení registru AL řadiče sběrnice -> AL  (adresa F000:8E67)
+                out    22h,al
+                jcxz   $+2
+                jcxz   $+2
+                in     al,24h
+                jcxz   $+2
+                jcxz   $+2
+                ret
+
+zápis bajtu AH do registru AL řadiče sběrnice (adresa F000:8E74)
+                out    22h,al
+                jcxz   $+2
+                jcxz   $+2
+                xchg   ah,al
+                out    24h,al
+                jcxz   $+2
+                jcxz   $+2
+                xchg   ah,al
+                ret
+
+AMI BIOS - části využívající CMOS (paměť F000):
+----------------------------------------------
+1186 - test platnosti CMOS
+11B4 - test paměti, nastavení příznaku platnosti CMOS
+125D - určení typu displeje, inicializace videomódu
+1334 - rozlišení, zda je nějaký pevný disk
+140A - inicializace čítače systémových hodin podle CMOS (145E - neplatný čas)
+14B6 - test koprocesoru
+1598 - příznak pro tvrdý RESET
+1A3E - zobrazení rychlosti procesoru
+1A72 - nastavení 16M HIDDEN ENABLED
+1BBA - registr 64h, 65h
+1BEC - registr 36h (AUTO AT WAIT STATE), registr 60h
+1C7C - registr 61h
+1CB1 - nastavení velikosti CACHE paměti
+1E3F - nastavení WAIT STATE
+1FC5 - skok do protect módu
+3C26 - typ disket. mechaniky, typ pevného disku
+3DF0 - nastavení interní CACHE
+4E4F - nastavení velikosti paměti
+5044
+84CC - načtení obsahu CMOS do RAM pro modifikaci v SETUP
+8B63 - nastavení externí CACHE
+8FDB - změření rychlosti procesoru
+
