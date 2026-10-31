@@ -51,17 +51,37 @@ body.projector-view{background:#080e19}body.projector-view .mast,body.projector-
 <script>
 'use strict';
 const samples = {
-  katex: String.raw`# KaTeX Showcase — Math & Science
+  katex: String.raw`# KaTeX Showcase — Tested Math & Science
 
-**Inline:** Energy is $E=mc^2$ and the sampling interval is $T=1/f_s$.
+**Inline:** Energy is $E=mc^2$ and sampling interval is $T=1/f_s$.
+
+## Algebra and fractions
+
+$$\frac{a+b}{c}=\sqrt{x^2+y^2}$$
 
 ## Calculus
 
-$$\int_0^{\pi}\sin(x)\,dx = 2$$
+$$\int_0^{\pi}\sin(x)\,dx=2$$
 
-## Matrices
+## Matrices (multiple rows and columns)
 
-$$\begin{bmatrix}a&b\\c&d\end{bmatrix}\begin{bmatrix}x\\y\end{bmatrix}=\begin{bmatrix}ax+by\\cx+dy\end{bmatrix}$$
+$$
+\begin{bmatrix}
+a & b \\
+c & d
+\end{bmatrix}
+\begin{bmatrix}x\\y\end{bmatrix}
+=
+\begin{bmatrix}ax+by\\cx+dy\end{bmatrix}
+$$
+
+## Aligned equations
+
+$$\begin{aligned}a &= b+c \\ d &= e+f\end{aligned}$$
+
+## Piecewise function
+
+$$f(x)=\begin{cases}-x & x<0 \\ x & x\ge0\end{cases}$$
 
 ## Fourier transform (FFT)
 
@@ -71,14 +91,11 @@ $$X_k=\sum_{n=0}^{N-1}x_n e^{-i2\pi kn/N}$$
 
 $$\bar{x}=\frac1n\sum_{i=1}^n x_i,\qquad s^2=\frac{1}{n-1}\sum_{i=1}^n(x_i-\bar{x})^2$$
 
-## Piecewise
-
-$$f(x)=\begin{cases}-x&x<0\\x&x\ge 0\end{cases}$$
-
-**Try:** modify the source, toggle Reader/Projector, and Print. Math inside fenced code stays literal:
+## Markdown code must stay literal
 
 ~~~text
 $E=mc^2$
+\frac{1}{2}
 ~~~
 `,
 
