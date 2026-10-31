@@ -91,6 +91,16 @@ $$X_k=\sum_{n=0}^{N-1}x_n e^{-i2\pi kn/N}$$
 
 $$\bar{x}=\frac1n\sum_{i=1}^n x_i,\qquad s^2=\frac{1}{n-1}\sum_{i=1}^n(x_i-\bar{x})^2$$
 
+## Chemistry — MiniChem Basic
+
+Water $\ce{H2O}$ and sulfuric acid $\ce{H2SO4}$.
+
+$$\ce{2H2 + O2 -> 2H2O}$$
+
+$$\ce{Ca(OH)2} \qquad \ce{SO4^2-}$$
+
+MiniChem supports basic formulas, subscripts, ionic charges and reaction arrows; it is not full mhchem.
+
 ## Markdown code must stay literal
 
 ~~~text
@@ -446,6 +456,7 @@ $('mode-editor').onclick=()=>setMode('editor');$('mode-reader').onclick=()=>setM
 <link rel="stylesheet" href="../optional/math/vendor/katex.min.css">
 <link rel="stylesheet" href="../optional/math/math.css">
 <script src="../optional/math/vendor/katex.min.js"></script>
+<script src="../optional/math/minichem.js"></script>
 <script src="../optional/math/math.js"></script>
 <script src="../MD-Encyclopedia.js"></script>
 </body>

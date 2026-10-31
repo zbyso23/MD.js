@@ -31,3 +31,9 @@ $$f(x)=\begin{cases}-x&x<0\\x&x\ge0\end{cases}$$
 ~~~text
 $E=mc^2$
 ~~~
+
+## MiniChem Basic — Chemistry
+
+Water $\ce{H2O}$; sulfate $\ce{SO4^2-}$.
+
+$$\ce{2H2 + O2 -> 2H2O}$$
