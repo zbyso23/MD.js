@@ -3,7 +3,9 @@
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MD.js Ultra / ZX Spectrum 48K</title>
 <link rel="stylesheet" href="MD.css"><link rel="stylesheet" href="zx/MD-ZX.css">
 <style>body{background:#e9eef5;color:#253a50;font:16px/1.5 system-ui,sans-serif;margin:0}main{max-width:1100px;margin:auto;padding:26px 14px}h1{margin:0;font-size:clamp(23px,3vw,36px)}.intro{color:#587084}.zx-title{display:flex;justify-content:space-between;gap:15px;align-items:center;flex-wrap:wrap}code{background:#dae5f0;padding:2px 5px;border-radius:4px}details{background:#fff;border:1px solid #c6d2df;padding:12px 18px;border-radius:10px;margin-top:20px}pre.sample{background:#102033;color:#d1f5e8;padding:15px;border-radius:10px}</style>
-<link rel="stylesheet" href="MD-UX-Shell.css"><link rel="stylesheet" href="ZX-UX-Shell.css"></head><body><main>
+<link rel="stylesheet" href="MD-UX-Shell.css"><link rel="stylesheet" href="ZX-UX-Shell.css">
+<link rel="stylesheet" href="MD-Encyclopedia.css">
+</head><body><main>
 <div class="zx-title"><div><h1>MD.js Ultra <span aria-hidden="true">🧊</span> / ZX Spectrum 48K</h1><p class="intro">feature/zx-ultra · 48K BASIC ROM · Vanilla JavaScript · MIT CPU</p></div></div>
 <div id="zx-here"></div>
 <details><summary><strong>Jak to funguje?</strong></summary>
@@ -40,4 +42,11 @@ self.onmessage=function(e){if(e.data&&e.data.type==='stringify')self.postMessage
 </script>
 <script src="zx/ZX-Screen.js"></script><script src="zx/ZX-ASM.js"></script><script src="zx/MD-ZX.js"></script>
 <script>window.__zxWidget=window.MDZX.mount(document.getElementById('zx-here'));</script><script src="ZX-UX-Shell.js"></script>
+
+<script src="MD.js"></script>
+<script src="MD-diagrams.js"></script>
+<script src="MD-Charts.js"></script>
+<script src="MD-docux.js"></script>
+<script src="MD-Encyclopedia-Data.js"></script>
+<script src="MD-Encyclopedia.js"></script>
 </body></html>

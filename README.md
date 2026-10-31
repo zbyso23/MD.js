@@ -219,3 +219,12 @@ Run `npm run test:ux:browser` for the added real Chromium checks. The existing `
 - The PC Workbench's XT/AT profile selector, Reset, and video adapter change now boot the embedded FreeDOS image automatically. The AT profile clearly notes that the provided DEBUG.COM uses an unsupported 386 detection path; 286 emulation is **not** upgraded to 386.
 - New deterministic timing tests and a real Chromium LED timing gate; old tests adapted to the current UX. For details and limitations see `STABILIZATION-2-UX.md`.
 - Caution: unrelated hard-gates still open, including authentic `file://` cross-browser certification, full 286 protected-mode/TSS semantics, and Hercules historical CRT aspect ratio.
+
+
+## Phase 4O-A: F2 Encyclopedia (26 local chapters)
+
+F2 or the fixed `📖 Encyklopedie` button opens a common overlay in the landing page, Markdown editor/reader, ZX workbench, PC Workbench and Blocks. Two top sections: **Markdown**, **Assembler**; each has categories and offline search. Source code is embedded as plain text, enhanced using the shipped `MD.js` / DocUX / Charts Mini / Mermaid subset. No runtime downloads or guest autorun.
+
+Verified source transcriptions: `optional/pc/phase4/HGCFRAC.s`, `CGAFRAC.s`, `MANDEL.s` and `optional/pc/phase3/TUNE.s` are byte-identical to the 4O lessons; each has a source download button. Other hardware chapters explicitly state when they are reference-only rather than guest-tested.
+
+`npm run test:encyclopedia:unit` covers structure and source provenance. `npm run test:encyclopedia:browser` checks F2/Esc, categories, search, guest focus restore and native host inputs on Chromium. This executor's administrator policies prohibit Chromium navigation to `file://` **and** localhost, so the browser test cannot certify UI here. The implementation uses classic `<script src>` and local embedded data, with no `fetch`, modules, WASM or bundling; test `file://` in an unrestricted user's browser. See `PHASE4O-F2-ENCYCLOPEDIA-SPEC.md` for the gap list.

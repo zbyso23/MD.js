@@ -26,6 +26,8 @@
   #status { font-size: 12px; color: #93a7c4; font-weight: 500; }
   @media (max-width: 930px) { main { grid-template-columns: 1fr; } #source { height: 330px; min-height: 330px; } .preview-wrap { max-height: initial; } }
 </style>
+
+<link rel="stylesheet" href="../MD-Encyclopedia.css">
 </head>
 <body>
 <header class="mast"><div><h1>MD.js <span>Reborn</span> <small>↗</small></h1><p>ARCTIC EDITION · PHASE 4.5 · Document UX · Vanilla ES6</p></div><span class="tag">ZERO IMPORTS · SVG-FIRST · LIGHT / DARK</span></header>
@@ -373,5 +375,8 @@ document.getElementById('reset').addEventListener('click', () => use('overview')
 document.querySelectorAll('[data-example]').forEach(b => b.addEventListener('click', () => use(b.dataset.example)));
 use('overview');
 </script>
+
+<script src="../MD-Encyclopedia-Data.js"></script>
+<script src="../MD-Encyclopedia.js"></script>
 </body>
 </html>

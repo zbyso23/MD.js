@@ -1,5 +1,7 @@
 <!doctype html>
-<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>MD.js Ultra — Blocks Lite Arduino Playground</title><link rel="stylesheet" href="MD-Blocks.css"><link rel="stylesheet" href="../../MD-UX-Shell.css"><link rel="stylesheet" href="Blocks-UX-Shell.css"></head>
+<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>MD.js Ultra — Blocks Lite Arduino Playground</title><link rel="stylesheet" href="MD-Blocks.css"><link rel="stylesheet" href="../../MD-UX-Shell.css"><link rel="stylesheet" href="Blocks-UX-Shell.css">
+<link rel="stylesheet" href="../../MD.css"><link rel="stylesheet" href="../../MD-Encyclopedia.css">
+</head>
 <body>
 <header><div><div class="eyebrow">MD.js ULTRA · OPTIONAL ENV</div><h1>Blocks Lite <span>Arduino Playground</span></h1><p>Programuj bloky → JS / Python / Arduino C++ · hraj si se senzory a motory · 100% offline</p></div><div class="header-actions"><button id="theme" class="ghost">◐ Téma</button><select id="preset" aria-label="Lekce"><option value="playground">🧪 Playground</option><option value="blink">💡 Blink</option></select><button id="reset">↺ Reset lekce</button><button id="load">↑ Import JSON</button><button id="save">↓ Export JSON</button><input id="file" type="file" accept=".json,application/json" hidden></div></header>
 <main>
@@ -16,4 +18,11 @@
     </div>
     <div class="run-actions"><button id="run" class="primary">▶ Přehrát 3 cykly</button><button id="stop" class="ghost">Ⅱ Pozastavit</button><button id="single-step" class="ghost">⏭ Další krok</button><label for="teaching-pace">Výukové tempo</label><select id="teaching-pace" aria-label="Tempo animace"><option value="2000" selected>Pomalu · 2 s / změna</option><option value="3500">Velmi pomalu · 3,5 s</option><option value="1200">Svižně · 1,2 s</option></select></div><p id="playback-status" class="hint" role="status" aria-live="polite">Připraveno · animace je záměrně pomalejší než skutečné Arduino.</p><pre id="console" class="console" aria-live="polite">Připraveno. Stiskni Spustit simulaci.</pre></section></aside>
 </main><footer>Blocks Lite v0.8.1 · Original Native Drag & Drop Arduino Toy Lab · žádný eval, žádné importy, žádné přímé řízení fyzického hardware · žádný assembler</footer>
-<script src="../../MD-UX-Shell.js"></script><script src="MD-Blocks.js"></script><script src="Blocks-Playback.js"></script><script src="MD-Blocks-UI.js"></script><script src="Blocks-UX-Shell.js"></script></body></html>
+<script src="../../MD-UX-Shell.js"></script><script src="MD-Blocks.js"></script><script src="Blocks-Playback.js"></script><script src="MD-Blocks-UI.js"></script><script src="Blocks-UX-Shell.js"></script>
+<script src="../../MD.js"></script>
+<script src="../../MD-diagrams.js"></script>
+<script src="../../MD-Charts.js"></script>
+<script src="../../MD-docux.js"></script>
+<script src="../../MD-Encyclopedia-Data.js"></script>
+<script src="../../MD-Encyclopedia.js"></script>
+</body></html>

@@ -1,6 +1,10 @@
-# Phase 4O — F2 Encyclopedia / interactive handbook (agreed scope, NOT IMPLEMENTED in 4N)
+# Phase 4O — F2 Encyclopedia / interactive handbook (original scope + Phase 4O-A delivery)
 
-Status: **FROZEN SCOPE / PLANNED**. This document records requirements for the NEXT phase, not a claim that the encyclopedia exists.
+Status: **Phase 4O-A implemented (navigation + curated content)**; remaining advanced example validations below are still planned. 2026-10-29.
+
+Delivered in this slice: two named sections (Markdown, Assembler); per-section categories; local text search; persistent visible icon; F2 overlay; Esc/focus handling; 26 locally embedded lessons including four full, existing tested ASM programs. **No guest code is auto-executed.**
+
+Not yet certified here: real browser event/focus flows under local security policy (Chromium blocks both file:// and localhost in this executor); exact cross-browser `file://` certification; guest compilation and end-to-end verification of newly authored DMA/TSR/286 protected-mode examples (they are labeled reference-only). Browser gate script is supplied and must pass in an unrestricted browser before declaring 4O fully closed.
 
 ## Entry point and delivery
 

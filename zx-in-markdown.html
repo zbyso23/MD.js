@@ -2,6 +2,8 @@
 <html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MD.js – ZX block inside Markdown</title>
 <link rel="stylesheet" href="MD.css"><link rel="stylesheet" href="zx/MD-ZX.css">
 <style>body{font-family:system-ui,sans-serif;background:#edf1f6;padding:20px}article{max-width:930px;margin:auto;padding:22px;border-radius:14px;background:#fff;box-shadow:0 5px 35px #1112}</style>
+
+<link rel="stylesheet" href="MD-Encyclopedia.css">
 </head><body><article class="md-root" id="md-article"></article>
 <script src="MD.js"></script><script src="MD-diagrams.js"></script><script src="MD-docux.js"></script><script src="MD-UX.js"></script>
 <script id="mdjs-state-worker" type="text/plain">
@@ -42,4 +44,8 @@ The document controls and diagrams are independent of the optional ZX emulator. 
 const article=document.getElementById('md-article');
 new MD({mode:'extended'}).mount(article,source);
 MDZX.enhance(article);
-</script></body></html>
+</script>
+<script src="MD-Charts.js"></script>
+<script src="MD-Encyclopedia-Data.js"></script>
+<script src="MD-Encyclopedia.js"></script>
+</body></html>
