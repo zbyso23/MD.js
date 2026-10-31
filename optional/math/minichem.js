@@ -1,33 +1,82 @@
-/* MiniChem Basic: small, intentionally limited chemical typography helper. */
+/* MiniChem Plus II — offline chemical typography; no execution. */
 (function(root){'use strict';
  class MiniChem {
-  static formula(input) {
-   if(typeof input!=='string'||input.length>2048)throw new Error('MiniChem: invalid input length');
+  static formula(input){
+   if(typeof input!=='string'||!input.length||input.length>2048)throw Error('MiniChem: invalid input length');
    const arrows={'<=>':'\\rightleftharpoons','<->':'\\leftrightarrow','->':'\\rightarrow','<-':'\\leftarrow'};
-   let out='',i=0;
-   const group=(s)=>'\\mathrm{'+s+'}';
+   const atom=x=>'\\mathrm{'+x+'}';
+   let out='',i=0,depth=0,needSpecies=true;
+   function charge(s){if(!/^(?:[1-9][0-9]*)?[+-]$/.test(s))throw Error('MiniChem: invalid ionic charge');return '^{'+s+'}';}
    while(i<input.length){
-    let s=input.slice(i),arrow=Object.keys(arrows).find(a=>s.startsWith(a));
-    if(arrow){if(i===0 || !input.slice(i+arrow.length).trim())throw new Error('MiniChem: incomplete reaction');out+='\\;'+arrows[arrow]+'\\;';i+=arrow.length;continue;}
+    let rest=input.slice(i),a=Object.keys(arrows).find(x=>rest.startsWith(x));
+    if(a){
+      if(needSpecies)throw Error('MiniChem: missing left species');
+      i+=a.length;
+      const annotations=[];
+      while(input[i]==='['){
+       if(annotations.length===2)throw Error('MiniChem: too many arrow annotations');
+       const end=input.indexOf(']',i+1);
+       if(end<0)throw Error('MiniChem: unclosed arrow annotation');
+       const label=input.slice(i+1,end).trim();
+       if(!label||label.length>48||!/^[A-Za-z0-9 .,+°/()_-]+$/.test(label))throw Error('MiniChem: unsupported arrow annotation');
+       annotations.push(label);i=end+1;
+      }
+      if(!input.slice(i).trim())throw Error('MiniChem: missing right species');
+      if(annotations.length){
+       // A closed, deliberately restricted plain-text label: no raw TeX commands.
+       const label=x=>'\\text{'+x.replace(/([{}\\])/g,'\\$1')+'}';
+       const extensible={'->':'\\xrightarrow','<-':'\\xleftarrow','<->':'\\xleftrightarrow','<=>':'\\xrightleftharpoons'};
+       let cmd=extensible[a];
+       out+='\\;'+cmd+(annotations[1]?'['+label(annotations[1])+']':'')+'{'+label(annotations[0])+'}\\;';
+      }else out+='\\;'+arrows[a]+'\\;';
+      needSpecies=true;continue;
+     }
     let c=input[i];
-    if(/\s/.test(c)){out+='\\;';while(/\s/.test(input[++i]||'')){}continue;}
-    if(c==='+' && !(i===input.length-1|| /[\s+]/.test(input[i+1]||''))){out+='\\; + \\;';i++;continue;}
-    if(c==='+') {if(i===input.length-1 && /[A-Za-z0-9\])]/.test(input[i-1]||'')){out+='^{+}';}else out+='\\;+\\;';i++;continue;}
+    if(/\s/.test(c)){while(i<input.length&&/\s/.test(input[i]))i++;if(!needSpecies)out+='\\;';continue;}
     if(c==='^'){
-      let m=input.slice(i).match(/^\^\{([^{}]+)\}/)||input.slice(i).match(/^\^([0-9]*[+-]|[+-])/);
-      if(!m|| !/^[0-9]*[+-]$|^[+-]$/.test(m[1]))throw new Error('MiniChem: expected ionic charge');
-      out+='^{'+m[1]+'}';i+=m[0].length;continue;
+      // Leading isotope or explicit ionic charge. Nested braces supported at the outer \\ce level.
+      let m=rest.match(/^\^\{([0-9]+)\}/)||rest.match(/^\^([0-9]+)(?=_|[A-Z])/);
+      if(m && (needSpecies || (i>0 && input[i-1]==='_'))){out+='^{'+m[1]+'}';i+=m[0].length;continue;}
+      m=rest.match(/^\^\{([^{}]+)\}/)||rest.match(/^\^([0-9]*[+-]|[+-])/);
+      if(!m)throw Error('MiniChem: malformed superscript');out+=charge(m[1]);i+=m[0].length;needSpecies=false;continue;
     }
-    if(c==='-') {if(i===input.length-1){out+='^{-}';i++;continue;}throw new Error('MiniChem: unsupported dash');}
-    if(/[A-Z]/.test(c)){let m=input.slice(i).match(/^[A-Z][a-z]?/)[0];out+=group(m);i+=m.length;continue;}
-    if(/[0-9]/.test(c)){let m=input.slice(i).match(/^\d+/)[0];
-      let initial=i===0|| /(?:\s|\+|>|<)/.test(input[i-1]);out+=initial?m:'_{'+m+'}';i+=m.length;continue;}
-    if('()[]'.includes(c)){out+=c==='['?'\\lbrack ':c===']'?'\\rbrack ':c;i++;continue;}
-    throw new Error('MiniChem: unsupported token '+c);
+    if(c==='_'){
+      let m=rest.match(/^_\{([0-9]+)\}/)||rest.match(/^_([0-9]+)/);
+      if(!m || !needSpecies)throw Error('MiniChem: invalid isotope subscript');out+='_{'+m[1]+'}';i+=m[0].length;continue;
+    }
+    const state=rest.match(/^\((aq|s|l|g)\)(?![A-Za-z0-9])/);
+    if(state&&!needSpecies){out+='\\,\\mathrm{('+state[1]+')}';i+=state[0].length;continue;}
+    // Hydrate separator: * and middle dot; coefficients after the separator are not subscripts.
+    if(c==='*'||c==='·'||c==='•'){
+      if(needSpecies||!input.slice(i+1).trim())throw Error('MiniChem: incomplete hydrate');
+      out+='\\cdot ';i++;needSpecies=true;continue;
+    }
+    if(c==='+'){
+      if(!needSpecies && (i===input.length-1 || (i+1<input.length && /\s/.test(input[i+1]) && !input.slice(i+1).trim()))){out+=charge('+');i++;needSpecies=false;continue;}
+      if(needSpecies)throw Error('MiniChem: unexpected plus');
+      // Adjacent + after a formula denotes an ionic charge; a spaced + with next species is a separator.
+      if(i>0&&!/\s/.test(input[i-1]) && i+1<input.length&&/\s/.test(input[i+1])){
+       const remaining=input.slice(i+1).trim();if(remaining && !remaining.startsWith('+')){out+='\\;+\\;';i++;needSpecies=true;continue;}
+      }
+      out+='\\;+\\;';i++;needSpecies=true;continue;
+    }
+    if(c==='-'){if(!needSpecies&&(i===input.length-1|| /\s/.test(input[i+1]||''))){out+=charge('-');i++;continue;}throw Error('MiniChem: unsupported dash');}
+    if(/[A-Z]/.test(c)){const m=rest.match(/^[A-Z][a-z]?/)[0];out+=atom(m);i+=m.length;needSpecies=false;continue;}
+    if(/[0-9]/.test(c)){const m=rest.match(/^\d+/)[0];out+=needSpecies?m:'_{'+m+'}';i+=m.length;needSpecies=false;continue;}
+    if('(['.includes(c)){out+=c==='['?'\\lbrack ':'(';depth++;i++;needSpecies=true;continue;}
+    if(')]'.includes(c)){if(!depth)throw Error('MiniChem: unmatched bracket');out+=c===']'?'\\rbrack ':')';depth--;i++;needSpecies=false;continue;}
+    throw Error('MiniChem: unsupported token '+c);
    }
-   return out;
+   if(depth||needSpecies)throw Error('MiniChem: incomplete formula');return out;
   }
-  static expand(tex){return tex.replace(/\\ce\{([^{}]*)\}/g,(_,content)=>MiniChem.formula(content));}
+  static expand(tex){
+   if(typeof tex!=='string')throw Error('MiniChem: expected TeX string');
+   let out='',i=0;
+   while(i<tex.length){const p=tex.indexOf('\\ce{',i);if(p<0){out+=tex.slice(i);break;}out+=tex.slice(i,p);let j=p+4,depth=1;
+    const start=j;while(j<tex.length&&depth){if(tex[j]==='{')depth++;if(tex[j]==='}')depth--;j++;}
+    if(depth)throw Error('MiniChem: unmatched \\ce braces');out+=MiniChem.formula(tex.slice(start,j-1));i=j;
+   }return out;
+  }
  }
  root.MiniChem=MiniChem;
 })(typeof window!=='undefined'?window:globalThis);

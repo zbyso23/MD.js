@@ -91,7 +91,7 @@ $$X_k=\sum_{n=0}^{N-1}x_n e^{-i2\pi kn/N}$$
 
 $$\bar{x}=\frac1n\sum_{i=1}^n x_i,\qquad s^2=\frac{1}{n-1}\sum_{i=1}^n(x_i-\bar{x})^2$$
 
-## Chemistry — MiniChem Basic
+## Chemistry — MiniChem Plus I
 
 Water $\ce{H2O}$ and sulfuric acid $\ce{H2SO4}$.
 
@@ -99,7 +99,32 @@ $$\ce{2H2 + O2 -> 2H2O}$$
 
 $$\ce{Ca(OH)2} \qquad \ce{SO4^2-}$$
 
-MiniChem supports basic formulas, subscripts, ionic charges and reaction arrows; it is not full mhchem.
+MiniChem Plus I also supports isotopes, hydrate dots and physical states.
+
+Carbon-14 $\ce{^{14}C}$ and uranium-235 $\ce{^{235}_{92}U}$.
+
+Iron(III) $\ce{Fe^{3+}}$, liquid water $\ce{H2O(l)}$ and aqueous sodium chloride $\ce{NaCl(aq)}$.
+
+$$\ce{CuSO4 * 5H2O}$$
+
+This is a deliberately small subset of mhchem; it does not balance equations.
+
+## MiniChem Plus II — reactions, catalysts and equilibrium
+
+Ammonia synthesis (equilibrium):
+
+$$\ce{N2 + 3H2 <=> 2NH3}$$
+
+Heat above a reaction arrow:
+
+$$\ce{CaCO3 ->[heat] CaO + CO2}$$
+
+Catalyst and conditions above/below an arrow:
+
+$$\ce{2SO2 + O2 ->[V2O5][450 C] 2SO3}$$
+
+This is chemical **typesetting** only. MiniChem never balances reactions.
+
 
 ## Markdown code must stay literal
 
