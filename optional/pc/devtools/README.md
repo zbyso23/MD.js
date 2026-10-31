@@ -1,23 +1,47 @@
-# MD.js Ultra B: Developer floppy (bootstrap)
+# Phase 4M.1 — shared developer B: (XT / AT/286)
 
-This is a real **720 KiB FAT12** disk image used by **both XT and AT/286**.
-It is **write-protected** by default, just like the bundled FreeDOS A:.
+`x86DEV-720K-XT286.img` is a real 720-KiB FAT12 disk, embedded byte-for-byte
+as `MDPC_EMBEDDED.devtools720k` for offline `file://` operation.
+It mounts **automatically as B: read-only** alongside FreeDOS A: read-only on
+both XT and AT/286. For writing, use the **Pracovni kopie B: (RW)** control,
+then export your working image; the original always stays immutable.
 
-It contains the actual project DEBUG.COM, an original 8086 DOS line editor
-EDIT.COM (source `EDIT.S`), example `HELLO.ASM` and `HELLO.C`, and DEVHELP.TXT.
+## Programs in the developer B:
 
-Important: at this checkpoint, `mininasm`, `NASM16`, Small-C compiler, linker,
-and Insight are **not present**. Their upstream DOS binaries were not available
-locally and could not be downloaded in this execution environment. Never label
-this as a complete installed C toolchain until the requested binaries are
-physically present, license reviewed, and executed in the emulator.
+`EDIT.COM` (small DOS line editor with source `EDIT.S`), `DEBUG.COM`,
+`CC.EXE` (Small-C 2.5), `ASM.EXE` (Small-Assembler 1.2), `YLINK.EXE` (1.2),
+`CLIB.LIB`, `STDIO.H`, `HELLO.C`, `DEVHELP.TXT`, `NOTICE.TXT`.
 
-The `build_devdisk.js` script creates the image and embeds it in
-`PC-EmbeddedAssets.js`. It can accept verified locally supplied binaries with
-`--tool FILENAME=PATH` and checks filenames, size, and FAT12 space. Only include
-redistributable and tested binaries.
+### Verified guest compilation in *both* XT and AT/286
 
-Writing files requires a *separate writable drive* (AT IDE C:), or replacing B:
-with a writable work floppy in XT. Both built-in disks are read-only intentionally.
-A duplicate of this bootstrap IMG can be exported and mounted writable with
-explicit user action.
+```dos
+B:
+CC HELLO
+ASM HELLO
+YLINK HELLO.OBJ,CLIB.LIB -e=HELLOC.EXE
+HELLOC
+```
+
+Output: `Hello from 16-bit DOS C!`, real 4,896-byte MZ EXE.
+`CC` generates `HELLO.ASM` from `HELLO.C` on the writable B: copy.
+
+## Rebuild 720-KiB image and embedded offline payload
+
+```sh
+node optional/pc/devtools/build_devdisk.js --bundle-verified
+```
+
+NASM is **excluded from this version** because the historical binary archive
+lacked the matching source/license material. There is no NASM executable,
+archived binary or NASM-only example in the deliverable. `mininasm-master.zip`
+is retained as **source only**, not installed as a DOS executable. The
+verified Small-Assembler still works for Small-C-generated assembly.
+
+## Attribution
+
+- Small-C / Small-Assembler / YLink: `upstream/SMALL-C-LICENSE.txt` (historical custom license; preserve notices and required credit), original source `upstream/Small-C-master.zip`.
+- mininasm source: `upstream/mininasm-master.zip`, BSD-2-Clause, not compiled or installed.
+- `DEBUG.COM` / `EDIT.COM`: see project `LICENSING.md` and `EDIT.S`.
+
+Guest tests cover the stated C/ASM/OBJ/EXE workflow. They do not prove full
+historical CPU, DOS or compiler compatibility.

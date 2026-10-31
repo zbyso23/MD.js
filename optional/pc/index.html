@@ -42,7 +42,7 @@
 <div class="actions"><label for="quick-media-target">Cíl</label><select id="quick-media-target"><option value="auto">Automaticky podle velikosti</option><option value="floppy">Disketa B: (FAT12)</option><option value="ide">IDE C: (AT/286, FAT16)</option></select><button class="primary" id="quick-media-button">↑ Soubor(y) → IMG</button><input type="file" id="quick-media-file" multiple hidden><button id="quick-media-export" disabled>↓ Uložit vytvořený IMG</button></div>
 <p id="quick-media-status" class="muted" role="status">Maximálně 5 MiB souborů celkem; velikost virtuálního IDE disku až 80 MB. Původní A: FreeDOS zůstává zachována.</p>
 </details>
-<p class="muted" id="fdd-status">Při prvním spuštění se automaticky vloží A: FreeDOS a B: vývojová FAT12 disketa. Obě jsou chráněné proti zápisu. Pro vlastní práci můžeš výslovně vytvořit pracovní RW kopii B:. EDIT.COM a DEBUG.COM fungují na XT i 286; C překladač a linker nejsou v tomto bootstrap obrazu dosud dodané.</p>
+<p class="muted" id="fdd-status">Při prvním spuštění se automaticky vloží A: FreeDOS a B: vývojová FAT12 disketa. Obě jsou chráněné proti zápisu. Pro vlastní práci můžeš výslovně vytvořit pracovní RW kopii B:. XT i AT/286: EDIT, DEBUG, Small-C (CC), ASM, YLINK a CLIB. Na AT/286 navíc NASM. Před kompilací vytvoř pracovní RW kopii B:. Nápověda je v DEVHELP.TXT.</p>
 <p class="muted">Podporované RAW obrazy 160/180/320/360/720 KiB, 1,2/1,44 MiB. INT 13h CHS čtení, zápis, ověření a geometrie; omezené 765 porty + DMA2. Vestavěný osobní obraz používá 720 KiB FreeDOS a obsahuje DEBUG.COM (~22 KiB) a TUNE.COM (137 bajtů, sedmitónová melodie přes skutečné OPL2 porty).</p>
 </section>
 <section class="panel" id="pc-ide" aria-label="AT IDE hard disk">
@@ -329,7 +329,7 @@ function cpuFrame(){if(!running)return;frameId=0;
   pumpKeyboard();const r=machine.run(45000);pumpKeyboard();if(audioOutput.enabled)audioOutput.enqueue(machine.audio.takePCM());
   if(r.halted){pauseCPU(false);el('pc-boot-progress').textContent='CPU HLT · stroj pozastaven';refresh();return;}
   const line=lastTextLine();
-  if(autoStopAtPrompt&&((/^A:\\>\s*$/.test(line))||line==='-')){
+  if(autoStopAtPrompt&&((/^[A-Z]:\\>\s*$/.test(line))||line==='-')){
    autoStopAtPrompt=false;stopAtDOSPrompt();el('pc-boot-progress').textContent='DOS/DEBUG připraven · '+line+' · Klikni do monitoru a piš.';refresh();return;
   }
   const now=performance.now();if(now-lastVideoRefresh>110){lastVideoRefresh=now;refresh();el('pc-boot-progress').textContent=`CPU běží · ${machine.cpu.steps.toLocaleString('cs-CZ')} instrukcí · ${machine.bios.get32(0x46c)} BIOS ticků`}

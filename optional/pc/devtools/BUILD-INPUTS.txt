@@ -1,6 +1,6 @@
-Optional distribution candidates; not shipped in this checkpoint:
-* mininasm.com (pts/mininasm, 8086 DOS, check BSD-2-Clause notice)
-* NASM 0.98.39 8086 host (license check and size)
-* TE DOS tiny editor or Insight debugger (license/8086 validation)
-* Small-C + Small-Assembler + YLink + libraries (license notices, memory, size)
-Do not label files as installed without obtaining/test-running the real files.
+Phase 4M.1 XT/AT shared developer disk - no NASM distributed.
+asm.exe: 64352 bytes; sha256=5944b382cf88ac121cfd2719e1bf737f402f6b425c7de22b0a1eb1185e81f6ad
+cc.exe: 82272 bytes; sha256=9694a5815da3c808309a4270fd235e1f9bb2434a158a704558df198f4164e11d
+clib.lib: 32368 bytes; sha256=ceee80eb55fba1db014fde7caaf1dab1555462ffc1c577f7f9b6396af045fe9a
+stdio.h: 4213 bytes; sha256=c6d6527672c200585be30bea448a267b095d3b27c87b2e22272fc832ad6f1cc7
+ylink.exe: 37104 bytes; sha256=8d34609ab49dc359d5098eb5a39b4a1dd7271951a840702016b82bd6a2f6744a

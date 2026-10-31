@@ -21,17 +21,17 @@ with sync_playwright() as pw:
         assert page.evaluate("__mdPCUniversal.machine.fdd.writeSector(1,0,0,2,new Uint8Array(512).fill(0x55))") is False
         page.evaluate("__mdPCUniversal.queueText('DIR B:\\n')")
         page.wait_for_function('''() => {const v=__mdPCUniversal.machine.video; for(let y=0;y<25;y++){let s='';for(let x=0;x<80;x++){let c=v.readCell(y,x)?.char??32;s+=c>=32?String.fromCharCode(c):' ';} if(s.includes('DEVHELP')&&s.includes('TXT'))return true;}return false;}''',timeout=90000)
-        page.evaluate("__mdPCUniversal.queueText('B:EDIT B:HELLO.ASM\\n')")
+        page.evaluate("__mdPCUniversal.queueText('B:EDIT B:HELLO.C\\n')")
         page.wait_for_function('''() => {const v=__mdPCUniversal.machine.video;for(let y=0;y<25;y++){let s='';for(let x=0;x<80;x++){let c=v.readCell(y,x)?.char??32;s+=c>=32?String.fromCharCode(c):' ';}if(s.includes('edit>'))return true;}return false;}''',timeout=90000)
         page.evaluate("__mdPCUniversal.queueText(':L\\n')")
-        page.wait_for_function('''() => {const v=__mdPCUniversal.machine.video;for(let y=0;y<25;y++){let s='';for(let x=0;x<80;x++){let c=v.readCell(y,x)?.char??32;s+=c>=32?String.fromCharCode(c):' ';}if(s.includes('HELLO FROM XT/286'))return true;}return false;}''',timeout=90000)
+        page.wait_for_function('''() => {const v=__mdPCUniversal.machine.video;for(let y=0;y<25;y++){let s='';for(let x=0;x<80;x++){let c=v.readCell(y,x)?.char??32;s+=c>=32?String.fromCharCode(c):' ';}if(s.includes('Hello from 16-bit DOS C!'))return true;}return false;}''',timeout=90000)
         page.evaluate("__mdPCUniversal.queueText(':Q\\n')")
         page.wait_for_function('!__mdPCUniversal.running',timeout=90000)
         page.evaluate("__mdPCUniversal.queueText('B:DEBUG\\n')")
         page.wait_for_function('''() => {const v=__mdPCUniversal.machine.video;for(let y=0;y<25;y++){let s='';for(let x=0;x<80;x++){let c=v.readCell(y,x)?.char??32;s+=c>=32?String.fromCharCode(c):' ';}if(s.includes('B:DEBUG'))return true;}return false;}''',timeout=90000)
         page.evaluate("__mdPCUniversal.queueText('Q\\n')")
         page.wait_for_function('!__mdPCUniversal.running',timeout=90000)
-        print('PASS',profile.upper(),'FreeDOS DIR B:, EDIT B:HELLO.ASM :L/:Q, B:DEBUG Q, A/B RO')
+        print('PASS',profile.upper(),'FreeDOS DIR B:, EDIT B:HELLO.C :L/:Q, B:DEBUG Q, A/B RO')
         page.locator('#reset').click();page.wait_for_function('!__mdPCUniversal.running',timeout=120000)
         assert page.evaluate('__mdPCUniversal.machine.fdd.disks[1].writeProtected') is True
     # Default developer B: refuses writes from a REAL DOS program.

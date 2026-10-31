@@ -6,12 +6,17 @@
 const fs=require('fs'),path=require('path');
 const PC=path.resolve(__dirname,'..');
 const {packFiles}=require(path.join(PC,'PC-Disk-Images.js'));
-const required=['EDIT.COM','DEBUG.COM','HELLO.ASM','HELLO.C','DEVHELP.TXT'];
+const required=['EDIT.COM','DEBUG.COM','HELLO.C','DEVHELP.TXT','NOTICE.TXT'];
+const verified=['CC.EXE','ASM.EXE','YLINK.EXE','CLIB.LIB','STDIO.H'];
 const files=required.map(name=>({name,data:fs.readFileSync(name==='DEBUG.COM'?path.join(PC,'DEBUG.COM'):path.join(__dirname,name))}));
+const useBundle=process.argv.includes('--bundle-verified');
+if(useBundle){for(const name of verified){const p=path.join(__dirname,'vendor',name.toLowerCase());if(!fs.existsSync(p))throw Error('Verified tool unavailable: '+name);files.push({name,data:fs.readFileSync(p)});}}
 for(let i=2;i<process.argv.length;i++){
+ if(process.argv[i]==='--bundle-verified')continue;
  if(process.argv[i]!=='--tool'||!process.argv[i+1])throw Error('Use --tool DOSNAME.COM=/path/to/verified/binary');
  const [name,...rest]=process.argv[++i].split('=');const src=rest.join('=');
  if(!/^[A-Z0-9_]{1,8}\.(COM|EXE|OBJ|LIB|H|TXT)$/i.test(name)||!src)throw Error('Invalid 8.3 tool filename/path');
+ if(name.toUpperCase()==='NASM.EXE')throw Error('NASM is excluded from this release');
  const bytes=fs.readFileSync(src);if(!bytes.length||bytes.length>700000)throw RangeError('Tool empty/too large for floppy');
  if(files.some(x=>x.name.toUpperCase()===name.toUpperCase()))throw Error('Duplicate DOS name');
  files.push({name:name.toUpperCase(),data:bytes});

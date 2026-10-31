@@ -1,0 +1,23 @@
+MD.JS ULTRA DEVELOPER DISK 4M.1 - NOTICE
+No NASM executable, archive or NASM sample is bundled.
+Small-C 2.5 / ASM 1.2 / YLink 1.2 / CLIB:
+Jim Hendrix; based on Ron Cain; YLink by Zane Wagner.
+Original license follows:
+Notice of Public Domain Status
+
+The source code for the Small-C Compiler and runtime libraries (CP/M & DOS),
+Small-Mac Assembler (CP/M), Small-Assembler (DOS), Small-Tools programs and
+Small-Windows library to which I hold copyrights are hereby available for
+royalty free use in private or commerical endeavors. The only obligation
+being that the users retain the original copyright notices and credit all
+prior authors (Ron Cain, James Hendrix, Zane Wagner, etc.) in derivative
+versions.
+
+James E. Hendrix Jr.
+Zane Wagner
+
+DEBUG.COM: FreeDOS DEBUG, MIT; see project licensing documents.
+EDIT.COM: MD.js Ultra editor; source devtools/EDIT.S;
+license as described in the project (GPL-3.0-only).
+See devtools/README.md, upstream/SMALL-C-LICENSE.txt,
+LICENSING.md for notices and source provenance.

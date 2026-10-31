@@ -1,0 +1,4999 @@
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:release
+> npm test && npm run test:blocks && npm run test:zx:unit && npm run test:pc:phase1 && npm run test:pc:browser && npm run test:pc:phase2:browser && npm run test:runtime:browser && npm run test:ultra:browser && npm run test:ux:browser && npm run test:ux:shell && npm run test:pc:phase3:compat && npm run test:pc:phase4a && npm run test:pc:phase4b && npm run test:pc:phase4d && npm run test:pc:phase4e:hardening && npm run test:pc:closure && npm run test:pc:disk-images && npm run test:pc:phase4i && npm run test:pc:phase4j && npm run test:pc:phase4k && npm run test:pc:devdisk && npm run test:pc:phase4m
+
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test
+> node --test test/*.test.js
+
+TAP version 13
+# Subtest: short GFM delimiter is parsed into table: -|--|--
+ok 1 - short GFM delimiter is parsed into table: -|--|--
+  ---
+  duration_ms: 4.667381
+  type: 'test'
+  ...
+# Subtest: short GFM delimiter is parsed into table: ---|---|---
+ok 2 - short GFM delimiter is parsed into table: ---|---|---
+  ---
+  duration_ms: 0.510545
+  type: 'test'
+  ...
+# Subtest: single hyphen GFM alignment renders
+ok 3 - single hyphen GFM alignment renders
+  ---
+  duration_ms: 0.471507
+  type: 'test'
+  ...
+# Subtest: ordinary text remains text
+ok 4 - ordinary text remains text
+  ---
+  duration_ms: 0.625308
+  type: 'test'
+  ...
+# Subtest: chart parse bar
+ok 5 - chart parse bar
+  ---
+  duration_ms: 0.672088
+  type: 'test'
+  ...
+# Subtest: chart parse bar-horizontal
+ok 6 - chart parse bar-horizontal
+  ---
+  duration_ms: 0.254972
+  type: 'test'
+  ...
+# Subtest: chart parse line
+ok 7 - chart parse line
+  ---
+  duration_ms: 0.143716
+  type: 'test'
+  ...
+# Subtest: chart parse pie
+ok 8 - chart parse pie
+  ---
+  duration_ms: 0.109144
+  type: 'test'
+  ...
+# Subtest: chart output is opt-in and always escaped
+ok 9 - chart output is opt-in and always escaped
+  ---
+  duration_ms: 0.769054
+  type: 'test'
+  ...
+# Subtest: chart source fallback if optional JS not loaded
+ok 10 - chart source fallback if optional JS not loaded
+  ---
+  duration_ms: 0.532439
+  type: 'test'
+  ...
+# Subtest: chart protects limits and rejects malformed/negative values
+ok 11 - chart protects limits and rejects malformed/negative values
+  ---
+  duration_ms: 0.547721
+  type: 'test'
+  ...
+# Subtest: chart accepts large 24 slices but not 25
+ok 12 - chart accepts large 24 slices but not 25
+  ---
+  duration_ms: 0.277416
+  type: 'test'
+  ...
+# Subtest: valid diagram: flow LR
+ok 13 - valid diagram: flow LR
+  ---
+  duration_ms: 2.065198
+  type: 'test'
+  ...
+# Subtest: valid diagram: flow TB
+ok 14 - valid diagram: flow TB
+  ---
+  duration_ms: 0.881192
+  type: 'test'
+  ...
+# Subtest: valid diagram: flow RL
+ok 15 - valid diagram: flow RL
+  ---
+  duration_ms: 0.257937
+  type: 'test'
+  ...
+# Subtest: valid diagram: flow BT
+ok 16 - valid diagram: flow BT
+  ---
+  duration_ms: 0.214431
+  type: 'test'
+  ...
+# Subtest: valid diagram: state
+ok 17 - valid diagram: state
+  ---
+  duration_ms: 1.41985
+  type: 'test'
+  ...
+# Subtest: valid diagram: sequence
+ok 18 - valid diagram: sequence
+  ---
+  duration_ms: 0.816645
+  type: 'test'
+  ...
+# Subtest: valid diagram: pie
+ok 19 - valid diagram: pie
+  ---
+  duration_ms: 0.374271
+  type: 'test'
+  ...
+# Subtest: valid diagram: flow chained
+ok 20 - valid diagram: flow chained
+  ---
+  duration_ms: 0.109515
+  type: 'test'
+  ...
+# Subtest: valid diagram: subgraph
+ok 21 - valid diagram: subgraph
+  ---
+  duration_ms: 0.330165
+  type: 'test'
+  ...
+# Subtest: valid diagram: class
+ok 22 - valid diagram: class
+  ---
+  duration_ms: 0.80695
+  type: 'test'
+  ...
+# Subtest: valid diagram: timeline
+ok 23 - valid diagram: timeline
+  ---
+  duration_ms: 0.352208
+  type: 'test'
+  ...
+# Subtest: valid diagram: long Unicode
+ok 24 - valid diagram: long Unicode
+  ---
+  duration_ms: 0.223305
+  type: 'test'
+  ...
+# Subtest: reject unsupported: javascript
+ok 25 - reject unsupported: javascript
+  ---
+  duration_ms: 0.361632
+  type: 'test'
+  ...
+# Subtest: reject unsupported: HTML style directive
+ok 26 - reject unsupported: HTML style directive
+  ---
+  duration_ms: 0.114662
+  type: 'test'
+  ...
+# Subtest: reject unsupported: unknown type
+ok 27 - reject unsupported: unknown type
+  ---
+  duration_ms: 0.058879
+  type: 'test'
+  ...
+# Subtest: reject unsupported: invalid ID
+ok 28 - reject unsupported: invalid ID
+  ---
+  duration_ms: 0.057917
+  type: 'test'
+  ...
+# Subtest: reject unsupported: unknown arrow
+ok 29 - reject unsupported: unknown arrow
+  ---
+  duration_ms: 0.054602
+  type: 'test'
+  ...
+# Subtest: reject unsupported: conflicting declaration
+ok 30 - reject unsupported: conflicting declaration
+  ---
+  duration_ms: 0.063275
+  type: 'test'
+  ...
+# Subtest: reject unsupported: missing bracket
+ok 31 - reject unsupported: missing bracket
+  ---
+  duration_ms: 0.054211
+  type: 'test'
+  ...
+# Subtest: reject unsupported: unclosed group
+ok 32 - reject unsupported: unclosed group
+  ---
+  duration_ms: 0.155293
+  type: 'test'
+  ...
+# Subtest: reject unsupported: nested group
+ok 33 - reject unsupported: nested group
+  ---
+  duration_ms: 0.175053
+  type: 'test'
+  ...
+# Subtest: reject unsupported: long input
+ok 34 - reject unsupported: long input
+  ---
+  duration_ms: 0.057406
+  type: 'test'
+  ...
+# Subtest: reject unsupported: control label
+ok 35 - reject unsupported: control label
+  ---
+  duration_ms: 0.058077
+  type: 'test'
+  ...
+# Subtest: reject unsupported: bidi control
+ok 36 - reject unsupported: bidi control
+  ---
+  duration_ms: 0.055623
+  type: 'test'
+  ...
+# Subtest: reject unsupported: unpaired activation
+ok 37 - reject unsupported: unpaired activation
+  ---
+  duration_ms: 0.07969
+  type: 'test'
+  ...
+# Subtest: reject unsupported: sequence unknown
+ok 38 - reject unsupported: sequence unknown
+  ---
+  duration_ms: 0.063695
+  type: 'test'
+  ...
+# Subtest: reject unsupported: pie negative
+ok 39 - reject unsupported: pie negative
+  ---
+  duration_ms: 0.172338
+  type: 'test'
+  ...
+# Subtest: reject unsupported: pie non-numeric
+ok 40 - reject unsupported: pie non-numeric
+  ---
+  duration_ms: 0.066119
+  type: 'test'
+  ...
+# Subtest: reject unsupported: pie empty
+ok 41 - reject unsupported: pie empty
+  ---
+  duration_ms: 0.045759
+  type: 'test'
+  ...
+# Subtest: reject unsupported: unknown state
+ok 42 - reject unsupported: unknown state
+  ---
+  duration_ms: 0.125488
+  type: 'test'
+  ...
+# Subtest: reject unsupported: oversize label
+ok 43 - reject unsupported: oversize label
+  ---
+  duration_ms: 0.076905
+  type: 'test'
+  ...
+# Subtest: reject unsupported: bare script
+ok 44 - reject unsupported: bare script
+  ---
+  duration_ms: 0.049714
+  type: 'test'
+  ...
+# Subtest: reject unsupported: class unsafe directive
+ok 45 - reject unsupported: class unsafe directive
+  ---
+  duration_ms: 0.037526
+  type: 'test'
+  ...
+# Subtest: reject unsupported: class unclosed body
+ok 46 - reject unsupported: class unclosed body
+  ---
+  duration_ms: 0.051357
+  type: 'test'
+  ...
+# Subtest: reject unsupported: timeline unsupported config
+ok 47 - reject unsupported: timeline unsupported config
+  ---
+  duration_ms: 0.087752
+  type: 'test'
+  ...
+# Subtest: reject unsupported: Mermaid config
+ok 48 - reject unsupported: Mermaid config
+  ---
+  duration_ms: 0.041793
+  type: 'test'
+  ...
+# Subtest: escaping of diagram fences in parser HTML fallback
+ok 49 - escaping of diagram fences in parser HTML fallback
+  ---
+  duration_ms: 2.090015
+  type: 'test'
+  ...
+# Subtest: fallback in basic mode still carries diagram marker
+ok 50 - fallback in basic mode still carries diagram marker
+  ---
+  duration_ms: 0.137236
+  type: 'test'
+  ...
+# Subtest: reused parser remains deterministic and unchanged
+ok 51 - reused parser remains deterministic and unchanged
+  ---
+  duration_ms: 1.090626
+  type: 'test'
+  ...
+# Subtest: SVG renderer creates only namespaced text-safe nodes
+ok 52 - SVG renderer creates only namespaced text-safe nodes
+  ---
+  duration_ms: 3.794522
+  type: 'test'
+  ...
+# Subtest: bounded randomized parser does not spin indefinitely
+ok 53 - bounded randomized parser does not spin indefinitely
+  ---
+  duration_ms: 108.359922
+  type: 'test'
+  ...
+# Subtest: ES6 test surface — no dependencies and no execution
+ok 54 - ES6 test surface — no dependencies and no execution
+  ---
+  duration_ms: 1.150205
+  type: 'test'
+  ...
+# Subtest: typo tolerance — insertion deletion substitution transposition
+ok 55 - typo tolerance — insertion deletion substitution transposition
+  ---
+  duration_ms: 2.152418
+  type: 'test'
+  ...
+# Subtest: short queries are intentionally strict
+ok 56 - short queries are intentionally strict
+  ---
+  duration_ms: 0.129254
+  type: 'test'
+  ...
+# Subtest: no unsafe URL or HTML in details/faq bodies
+ok 57 - no unsafe URL or HTML in details/faq bodies
+  ---
+  duration_ms: 3.00014
+  type: 'test'
+  ...
+# Subtest: details preserve markdown and have bounded unclosed fallback
+ok 58 - details preserve markdown and have bounded unclosed fallback
+  ---
+  duration_ms: 0.722493
+  type: 'test'
+  ...
+# Subtest: tabs fence is never interpreted as script or HTML
+ok 59 - tabs fence is never interpreted as script or HTML
+  ---
+  duration_ms: 0.45332
+  type: 'test'
+  ...
+# Subtest: diff blocks remain escaped
+ok 60 - diff blocks remain escaped
+  ---
+  duration_ms: 0.162934
+  type: 'test'
+  ...
+# Subtest: numeric columns sort correctly including decimal commas
+ok 61 - numeric columns sort correctly including decimal commas
+  ---
+  duration_ms: 7.332268
+  type: 'test'
+  ...
+# Subtest: document index scoring bounds and denial-of-service guard
+ok 62 - document index scoring bounds and denial-of-service guard
+  ---
+  duration_ms: 0.455744
+  type: 'test'
+  ...
+# Subtest: tasklist checked: - [x] complete
+ok 63 - tasklist checked: - [x] complete
+  ---
+  duration_ms: 3.578367
+  type: 'test'
+  ...
+# Subtest: tasklist checked: * [X] complete
+ok 64 - tasklist checked: * [X] complete
+  ---
+  duration_ms: 0.676585
+  type: 'test'
+  ...
+# Subtest: tasklist checked: + [x] complete
+ok 65 - tasklist checked: + [x] complete
+  ---
+  duration_ms: 0.350816
+  type: 'test'
+  ...
+# Subtest: tasklist checked: 1. [x] complete
+ok 66 - tasklist checked: 1. [x] complete
+  ---
+  duration_ms: 0.248332
+  type: 'test'
+  ...
+# Subtest: task list empty, immutable, no forms or event attributes
+ok 67 - task list empty, immutable, no forms or event attributes
+  ---
+  duration_ms: 0.769114
+  type: 'test'
+  ...
+# Subtest: literal code with task syntax is never parsed
+ok 68 - literal code with task syntax is never parsed
+  ---
+  duration_ms: 0.926009
+  type: 'test'
+  ...
+# Subtest: task list inside a quoted block
+ok 69 - task list inside a quoted block
+  ---
+  duration_ms: 0.413971
+  type: 'test'
+  ...
+# Subtest: basic mode preserves literal task markers
+ok 70 - basic mode preserves literal task markers
+  ---
+  duration_ms: 0.210426
+  type: 'test'
+  ...
+# Subtest: full reference link with title
+ok 71 - full reference link with title
+  ---
+  duration_ms: 1.556314
+  type: 'test'
+  ...
+# Subtest: collapsed and shortcut reference forms
+ok 72 - collapsed and shortcut reference forms
+  ---
+  duration_ms: 0.965639
+  type: 'test'
+  ...
+# Subtest: reference names are case-insensitive and normalize whitespace
+ok 73 - reference names are case-insensitive and normalize whitespace
+  ---
+  duration_ms: 0.405758
+  type: 'test'
+  ...
+# Subtest: image reference alt safely escaped
+ok 74 - image reference alt safely escaped
+  ---
+  duration_ms: 0.331707
+  type: 'test'
+  ...
+# Subtest: unsafe reference schemes remain inert
+ok 75 - unsafe reference schemes remain inert
+  ---
+  duration_ms: 0.11324
+  type: 'test'
+  ...
+# Subtest: entity-obfuscated unsafe reference rejected after decoding
+ok 76 - entity-obfuscated unsafe reference rejected after decoding
+  ---
+  duration_ms: 0.144246
+  type: 'test'
+  ...
+# Subtest: definitions fenced as code do not participate
+ok 77 - definitions fenced as code do not participate
+  ---
+  duration_ms: 0.272028
+  type: 'test'
+  ...
+# Subtest: reference definitions cleared per parse
+ok 78 - reference definitions cleared per parse
+  ---
+  duration_ms: 0.141482
+  type: 'test'
+  ...
+# Subtest: first duplicate reference definition takes precedence
+ok 79 - first duplicate reference definition takes precedence
+  ---
+  duration_ms: 0.117626
+  type: 'test'
+  ...
+# Subtest: basic mode keeps reference definitions visible
+ok 80 - basic mode keeps reference definitions visible
+  ---
+  duration_ms: 0.08702
+  type: 'test'
+  ...
+# Subtest: notes have named backlinks and render emphasis
+ok 81 - notes have named backlinks and render emphasis
+  ---
+  duration_ms: 0.269334
+  type: 'test'
+  ...
+# Subtest: notes are numbered in order of appearance and support repeated citations
+ok 82 - notes are numbered in order of appearance and support repeated citations
+  ---
+  duration_ms: 0.248132
+  type: 'test'
+  ...
+# Subtest: missing note remains literal
+ok 83 - missing note remains literal
+  ---
+  duration_ms: 0.288833
+  type: 'test'
+  ...
+# Subtest: definitions reset across parse calls
+ok 84 - definitions reset across parse calls
+  ---
+  duration_ms: 0.165569
+  type: 'test'
+  ...
+# Subtest: two parser instances use separate anchor ID prefixes
+ok 85 - two parser instances use separate anchor ID prefixes
+  ---
+  duration_ms: 0.423355
+  type: 'test'
+  ...
+# Subtest: reference cannot create executable content in footnote
+ok 86 - reference cannot create executable content in footnote
+  ---
+  duration_ms: 0.387731
+  type: 'test'
+  ...
+# Subtest: footnotes in code do not become live links
+ok 87 - footnotes in code do not become live links
+  ---
+  duration_ms: 0.205659
+  type: 'test'
+  ...
+# Subtest: multiline note definition accepts indented continuation
+ok 88 - multiline note definition accepts indented continuation
+  ---
+  duration_ms: 0.130546
+  type: 'test'
+  ...
+# Subtest: GitHub alert NOTE
+ok 89 - GitHub alert NOTE
+  ---
+  duration_ms: 0.297366
+  type: 'test'
+  ...
+# Subtest: GitHub alert TIP
+ok 90 - GitHub alert TIP
+  ---
+  duration_ms: 0.072639
+  type: 'test'
+  ...
+# Subtest: GitHub alert IMPORTANT
+ok 91 - GitHub alert IMPORTANT
+  ---
+  duration_ms: 0.134922
+  type: 'test'
+  ...
+# Subtest: GitHub alert WARNING
+ok 92 - GitHub alert WARNING
+  ---
+  duration_ms: 0.218087
+  type: 'test'
+  ...
+# Subtest: GitHub alert CAUTION
+ok 93 - GitHub alert CAUTION
+  ---
+  duration_ms: 0.076916
+  type: 'test'
+  ...
+# Subtest: unknown GitHub alert becomes ordinary quote
+ok 94 - unknown GitHub alert becomes ordinary quote
+  ---
+  duration_ms: 0.266269
+  type: 'test'
+  ...
+# Subtest: rendering an alert does not allow hostile tags
+ok 95 - rendering an alert does not allow hostile tags
+  ---
+  duration_ms: 0.176074
+  type: 'test'
+  ...
+# Subtest: hard line break via backslash at EOL
+ok 96 - hard line break via backslash at EOL
+  ---
+  duration_ms: 0.21381
+  type: 'test'
+  ...
+# Subtest: entity names and decimal numeric entities decode exactly once
+ok 97 - entity names and decimal numeric entities decode exactly once
+  ---
+  duration_ms: 0.095744
+  type: 'test'
+  ...
+# Subtest: HTML entity decoded tag is re-escaped
+ok 98 - HTML entity decoded tag is re-escaped
+  ---
+  duration_ms: 0.242624
+  type: 'test'
+  ...
+# Subtest: invalid numeric entity becomes replacement char
+ok 99 - invalid numeric entity becomes replacement char
+  ---
+  duration_ms: 0.417086
+  type: 'test'
+  ...
+# Subtest: entities inside code are not decoded
+ok 100 - entities inside code are not decoded
+  ---
+  duration_ms: 0.095463
+  type: 'test'
+  ...
+# Subtest: bare HTTP URL autolink trims trailing punctuation
+ok 101 - bare HTTP URL autolink trims trailing punctuation
+  ---
+  duration_ms: 0.409334
+  type: 'test'
+  ...
+# Subtest: www autolink uses https
+ok 102 - www autolink uses https
+  ---
+  duration_ms: 0.197666
+  type: 'test'
+  ...
+# Subtest: balanced parentheses are kept, stray closing bracket dropped
+ok 103 - balanced parentheses are kept, stray closing bracket dropped
+  ---
+  duration_ms: 0.329084
+  type: 'test'
+  ...
+# Subtest: inline code disables bare autolinking
+ok 104 - inline code disables bare autolinking
+  ---
+  duration_ms: 0.129314
+  type: 'test'
+  ...
+# Subtest: no automatic HTML from bare protocols not allowed
+ok 105 - no automatic HTML from bare protocols not allowed
+  ---
+  duration_ms: 0.188503
+  type: 'test'
+  ...
+# Subtest: large list of HTML alert payloads cannot inject scripts/events
+ok 106 - large list of HTML alert payloads cannot inject scripts/events
+  ---
+  duration_ms: 2.0665
+  type: 'test'
+  ...
+# Subtest: constructor, mode, no global U, and parse are available
+ok 107 - constructor, mode, no global U, and parse are available
+  ---
+  duration_ms: 2.646029
+  type: 'test'
+  ...
+# Subtest: configuration rejects null and arrays
+ok 108 - configuration rejects null and arrays
+  ---
+  duration_ms: 0.408012
+  type: 'test'
+  ...
+# Subtest: same instance is deterministic across different parse calls
+ok 109 - same instance is deterministic across different parse calls
+  ---
+  duration_ms: 6.053499
+  type: 'test'
+  ...
+# Subtest: ATX heading H1
+ok 110 - ATX heading H1
+  ---
+  duration_ms: 0.348042
+  type: 'test'
+  ...
+# Subtest: ATX heading H2
+ok 111 - ATX heading H2
+  ---
+  duration_ms: 0.245708
+  type: 'test'
+  ...
+# Subtest: ATX heading H3
+ok 112 - ATX heading H3
+  ---
+  duration_ms: 0.125848
+  type: 'test'
+  ...
+# Subtest: ATX heading H4
+ok 113 - ATX heading H4
+  ---
+  duration_ms: 0.247131
+  type: 'test'
+  ...
+# Subtest: ATX heading H5
+ok 114 - ATX heading H5
+  ---
+  duration_ms: 0.123285
+  type: 'test'
+  ...
+# Subtest: ATX heading H6
+ok 115 - ATX heading H6
+  ---
+  duration_ms: 0.371708
+  type: 'test'
+  ...
+# Subtest: H7 is not a heading
+ok 116 - H7 is not a heading
+  ---
+  duration_ms: 0.666199
+  type: 'test'
+  ...
+# Subtest: a space is required after ATX heading marks
+ok 117 - a space is required after ATX heading marks
+  ---
+  duration_ms: 0.90647
+  type: 'test'
+  ...
+# Subtest: setext headings H1/H2
+ok 118 - setext headings H1/H2
+  ---
+  duration_ms: 0.291106
+  type: 'test'
+  ...
+# Subtest: headings escape untrusted text
+ok 119 - headings escape untrusted text
+  ---
+  duration_ms: 0.257796
+  type: 'test'
+  ...
+# Subtest: raw HTML is never interpreted as a tag
+ok 120 - raw HTML is never interpreted as a tag
+  ---
+  duration_ms: 0.188362
+  type: 'test'
+  ...
+# Subtest: less-than, ampersand and quotes escape safely
+ok 121 - less-than, ampersand and quotes escape safely
+  ---
+  duration_ms: 0.117156
+  type: 'test'
+  ...
+# Subtest: strong, emphasis and short one-letter emphasis
+ok 122 - strong, emphasis and short one-letter emphasis
+  ---
+  duration_ms: 0.464907
+  type: 'test'
+  ...
+# Subtest: strike-through
+ok 123 - strike-through
+  ---
+  duration_ms: 0.190205
+  type: 'test'
+  ...
+# Subtest: inline code protects Markdown and raw HTML
+ok 124 - inline code protects Markdown and raw HTML
+  ---
+  duration_ms: 0.137486
+  type: 'test'
+  ...
+# Subtest: code spans with double backticks
+ok 125 - code spans with double backticks
+  ---
+  duration_ms: 0.117386
+  type: 'test'
+  ...
+# Subtest: fenced code renders escaped code
+ok 126 - fenced code renders escaped code
+  ---
+  duration_ms: 0.612839
+  type: 'test'
+  ...
+# Subtest: tilde fences and unclosed fences
+ok 127 - tilde fences and unclosed fences
+  ---
+  duration_ms: 0.323625
+  type: 'test'
+  ...
+# Subtest: indented code
+ok 128 - indented code
+  ---
+  duration_ms: 0.254272
+  type: 'test'
+  ...
+# Subtest: javascript highlighter outputs escaped tokens
+ok 129 - javascript highlighter outputs escaped tokens
+  ---
+  duration_ms: 0.162724
+  type: 'test'
+  ...
+# Subtest: basic highlights only core languages
+ok 130 - basic highlights only core languages
+  ---
+  duration_ms: 0.164748
+  type: 'test'
+  ...
+# Subtest: escape sequences render literal Markdown punctuation
+ok 131 - escape sequences render literal Markdown punctuation
+  ---
+  duration_ms: 0.169004
+  type: 'test'
+  ...
+# Subtest: thematic break
+ok 132 - thematic break
+  ---
+  duration_ms: 0.102443
+  type: 'test'
+  ...
+# Subtest: paragraph softbreak
+ok 133 - paragraph softbreak
+  ---
+  duration_ms: 0.342904
+  type: 'test'
+  ...
+# Subtest: paragraph hardbreak
+ok 134 - paragraph hardbreak
+  ---
+  duration_ms: 0.163635
+  type: 'test'
+  ...
+# Subtest: blockquotes
+ok 135 - blockquotes
+  ---
+  duration_ms: 0.343355
+  type: 'test'
+  ...
+# Subtest: nested blockquotes
+ok 136 - nested blockquotes
+  ---
+  duration_ms: 0.214942
+  type: 'test'
+  ...
+# Subtest: normal unordered list
+ok 137 - normal unordered list
+  ---
+  duration_ms: 0.15333
+  type: 'test'
+  ...
+# Subtest: asterisk unordered list
+ok 138 - asterisk unordered list
+  ---
+  duration_ms: 0.20032
+  type: 'test'
+  ...
+# Subtest: plus unordered list
+ok 139 - plus unordered list
+  ---
+  duration_ms: 0.16707
+  type: 'test'
+  ...
+# Subtest: ordered list
+ok 140 - ordered list
+  ---
+  duration_ms: 0.162664
+  type: 'test'
+  ...
+# Subtest: ordered start number
+ok 141 - ordered start number
+  ---
+  duration_ms: 0.161452
+  type: 'test'
+  ...
+# Subtest: ordered with right paren
+ok 142 - ordered with right paren
+  ---
+  duration_ms: 0.134442
+  type: 'test'
+  ...
+# Subtest: nested list
+ok 143 - nested list
+  ---
+  duration_ms: 0.225578
+  type: 'test'
+  ...
+# Subtest: table with text alignment
+ok 144 - table with text alignment
+  ---
+  duration_ms: 0.191377
+  type: 'test'
+  ...
+# Subtest: tables support literal escaped pipe
+ok 145 - tables support literal escaped pipe
+  ---
+  duration_ms: 0.49342
+  type: 'test'
+  ...
+# Subtest: table content escapes raw HTML
+ok 146 - table content escapes raw HTML
+  ---
+  duration_ms: 0.187952
+  type: 'test'
+  ...
+# Subtest: legacy compact table works in extended
+ok 147 - legacy compact table works in extended
+  ---
+  duration_ms: 0.31347
+  type: 'test'
+  ...
+# Subtest: compact table is NOT active in basic
+ok 148 - compact table is NOT active in basic
+  ---
+  duration_ms: 0.135804
+  type: 'test'
+  ...
+# Subtest: standard link and rel for external targets
+ok 149 - standard link and rel for external targets
+  ---
+  duration_ms: 1.130576
+  type: 'test'
+  ...
+# Subtest: relative link
+ok 150 - relative link
+  ---
+  duration_ms: 0.323916
+  type: 'test'
+  ...
+# Subtest: image HTTPS URL and alt escape
+ok 151 - image HTTPS URL and alt escape
+  ---
+  duration_ms: 0.334502
+  type: 'test'
+  ...
+# Subtest: image title does not become executable HTML
+ok 152 - image title does not become executable HTML
+  ---
+  duration_ms: 0.388432
+  type: 'test'
+  ...
+# Subtest: disallow data images
+ok 153 - disallow data images
+  ---
+  duration_ms: 0.214161
+  type: 'test'
+  ...
+# Subtest: unsafe link destination is never emitted: javascript:alert(1)
+ok 154 - unsafe link destination is never emitted: javascript:alert(1)
+  ---
+  duration_ms: 0.222153
+  type: 'test'
+  ...
+# Subtest: unsafe link destination is never emitted: JAVASCRIPT:alert(1)
+ok 155 - unsafe link destination is never emitted: JAVASCRIPT:alert(1)
+  ---
+  duration_ms: 0.10623
+  type: 'test'
+  ...
+# Subtest: unsafe link destination is never emitted: vbscript:msgbox(1)
+ok 156 - unsafe link destination is never emitted: vbscript:msgbox(1)
+  ---
+  duration_ms: 0.090416
+  type: 'test'
+  ...
+# Subtest: unsafe link destination is never emitted: data:text/html,hi
+ok 157 - unsafe link destination is never emitted: data:text/html,hi
+  ---
+  duration_ms: 0.08645
+  type: 'test'
+  ...
+# Subtest: unsafe link destination is never emitted: file:///etc/passwd
+ok 158 - unsafe link destination is never emitted: file:///etc/passwd
+  ---
+  duration_ms: 0.11349
+  type: 'test'
+  ...
+# Subtest: unsafe link destination is never emitted: //evil.example/path
+ok 159 - unsafe link destination is never emitted: //evil.example/path
+  ---
+  duration_ms: 0.137777
+  type: 'test'
+  ...
+# Subtest: unsafe link destination is never emitted: javascript&\#58;alert(1)
+ok 160 - unsafe link destination is never emitted: javascript&\#58;alert(1)
+  ---
+  duration_ms: 0.260922
+  type: 'test'
+  ...
+# Subtest: unsafe link destination is never emitted: java&\#x73;cript:alert(1)
+ok 161 - unsafe link destination is never emitted: java&\#x73;cript:alert(1)
+  ---
+  duration_ms: 0.131207
+  type: 'test'
+  ...
+# Subtest: valid href query params escape ampersands
+ok 162 - valid href query params escape ampersands
+  ---
+  duration_ms: 0.414582
+  type: 'test'
+  ...
+# Subtest: link text HTML injection blocked
+ok 163 - link text HTML injection blocked
+  ---
+  duration_ms: 1.316525
+  type: 'test'
+  ...
+# Subtest: code highlighter plugin cannot inject HTML through token text
+ok 164 - code highlighter plugin cannot inject HTML through token text
+  ---
+  duration_ms: 0.268673
+  type: 'test'
+  ...
+# Subtest: code highlighter plugin cannot invent CSS classes
+ok 165 - code highlighter plugin cannot invent CSS classes
+  ---
+  duration_ms: 0.201623
+  type: 'test'
+  ...
+# Subtest: highlighter callback throwing falls back safely
+ok 166 - highlighter callback throwing falls back safely
+  ---
+  duration_ms: 0.250947
+  type: 'test'
+  ...
+# Subtest: highlighter language class cannot inject attributes
+ok 167 - highlighter language class cannot inject attributes
+  ---
+  duration_ms: 0.184788
+  type: 'test'
+  ...
+# Subtest: malformed Markdown does not crash
+ok 168 - malformed Markdown does not crash
+  ---
+  duration_ms: 2.564507
+  type: 'test'
+  ...
+# Subtest: max document length enforced
+ok 169 - max document length enforced
+  ---
+  duration_ms: 0.251337
+  type: 'test'
+  ...
+# Subtest: long single lines guarded
+ok 170 - long single lines guarded
+  ---
+  duration_ms: 0.249364
+  type: 'test'
+  ...
+# Subtest: untrusted SVG/script inside Mermaid fence remains code text
+ok 171 - untrusted SVG/script inside Mermaid fence remains code text
+  ---
+  duration_ms: 0.224767
+  type: 'test'
+  ...
+# Subtest: large linear plain text does not explode
+ok 172 - large linear plain text does not explode
+  ---
+  duration_ms: 79.794104
+  type: 'test'
+  ...
+# Subtest: original javascript mode is available and HTML-safe
+ok 173 - original javascript mode is available and HTML-safe
+  ---
+  duration_ms: 0.295012
+  type: 'test'
+  ...
+# Subtest: original python mode is available and HTML-safe
+ok 174 - original python mode is available and HTML-safe
+  ---
+  duration_ms: 0.489855
+  type: 'test'
+  ...
+# Subtest: original bash mode is available and HTML-safe
+ok 175 - original bash mode is available and HTML-safe
+  ---
+  duration_ms: 0.178518
+  type: 'test'
+  ...
+# Subtest: original html mode is available and HTML-safe
+ok 176 - original html mode is available and HTML-safe
+  ---
+  duration_ms: 0.083224
+  type: 'test'
+  ...
+# Subtest: original css mode is available and HTML-safe
+ok 177 - original css mode is available and HTML-safe
+  ---
+  duration_ms: 0.420831
+  type: 'test'
+  ...
+# Subtest: original ini mode is available and HTML-safe
+ok 178 - original ini mode is available and HTML-safe
+  ---
+  duration_ms: 0.237786
+  type: 'test'
+  ...
+# Subtest: original php mode is available and HTML-safe
+ok 179 - original php mode is available and HTML-safe
+  ---
+  duration_ms: 0.130426
+  type: 'test'
+  ...
+# Subtest: safe custom highlighter deliberately receives tokens rather than HTML
+ok 180 - safe custom highlighter deliberately receives tokens rather than HTML
+  ---
+  duration_ms: 0.154462
+  type: 'test'
+  ...
+# Subtest: sanitization adversarial corpus (deterministic transformations)
+ok 181 - sanitization adversarial corpus (deterministic transformations)
+  ---
+  duration_ms: 11.648337
+  type: 'test'
+  ...
+# Subtest: hostile unmatched link delimiters are handled without a quadratic storm
+ok 182 - hostile unmatched link delimiters are handled without a quadratic storm
+  ---
+  duration_ms: 0.212609
+  type: 'test'
+  ...
+# Subtest: Base64 round-trip including 1 MiB boundary and zero bytes
+ok 183 - Base64 round-trip including 1 MiB boundary and zero bytes
+  ---
+  duration_ms: 48.69515
+  type: 'test'
+  ...
+# Subtest: Base64 rejects oversized/invalid data
+ok 184 - Base64 rejects oversized/invalid data
+  ---
+  duration_ms: 0.495473
+  type: 'test'
+  ...
+# Subtest: fetch success and failure keep manual fallback, never fabricate bytes
+ok 185 - fetch success and failure keep manual fallback, never fabricate bytes
+  ---
+  duration_ms: 0.737046
+  type: 'test'
+  ...
+# Subtest: File API modern arrayBuffer reads local file
+ok 186 - File API modern arrayBuffer reads local file
+  ---
+  duration_ms: 0.329615
+  type: 'test'
+  ...
+# Subtest: JSON snapshots are versioned, machine-specific and reject malformed input
+ok 187 - JSON snapshots are versioned, machine-specific and reject malformed input
+  ---
+  duration_ms: 0.523715
+  type: 'test'
+  ...
+# Subtest: localStorage failure returns error while independent JSON remains available
+ok 188 - localStorage failure returns error while independent JSON remains available
+  ---
+  duration_ms: 0.236074
+  type: 'test'
+  ...
+# Subtest: xt: PC snapshot round-trip retains ROM, RAM, CPU and board
+ok 189 - xt: PC snapshot round-trip retains ROM, RAM, CPU and board
+  ---
+  duration_ms: 26.309882
+  type: 'test'
+  ...
+# Subtest: at: PC snapshot round-trip retains ROM, RAM, CPU and board
+ok 190 - at: PC snapshot round-trip retains ROM, RAM, CPU and board
+  ---
+  duration_ms: 30.884705
+  type: 'test'
+  ...
+# Subtest: 286 snapshot preserves protected-mode hidden segment base after guest execution
+ok 191 - 286 snapshot preserves protected-mode hidden segment base after guest execution
+  ---
+  duration_ms: 16.259999
+  type: 'test'
+  ...
+# Subtest: 286 LDTR and TR descriptor cache persists across independent JSON export/import
+ok 192 - 286 LDTR and TR descriptor cache persists across independent JSON export/import
+  ---
+  duration_ms: 15.009283
+  type: 'test'
+  ...
+1..192
+# tests 192
+# suites 0
+# pass 192
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 426.947079
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:blocks
+> node optional/blockly/tests/test.mjs
+
+PASS demo valid
+PASS simulation blink state
+PASS sim trace output
+PASS javascript emits setup loop
+PASS javascript output runs independently
+PASS arduino code generation
+PASS python code generation
+PASS repeat and change variables
+PASS conditional comparisons
+PASS invalid version
+PASS missing setup
+PASS unknown block forbidden
+PASS prototype pollution variable rejected
+PASS reserved var rejected
+PASS malicious expression var rejected
+PASS HTML text preserved as data
+PASS invalid pin rejected
+PASS unknown output state rejected
+PASS mode rejected
+PASS delay negative rejected
+PASS massive repeat halted by budget
+PASS huge total time rejected
+PASS max block count enforced
+PASS max nesting enforced
+PASS mutation roundtrip
+PASS numerical pin accepted
+PASS out of range value rejected
+PASS invalid generator rejected
+PASS playground validates
+PASS default sensors defined
+PASS potentiometer maps 0 to PWM 0
+PASS potentiometer maps 1023 to PWM 255
+PASS microphone maps 1023 to servo 180
+PASS button drives LED high
+PASS button release drives LED low
+PASS switch drives stepper
+PASS switch off keeps stepper still
+PASS environment rejects analog out of range
+PASS environment rejects non-integer button
+PASS invalid PWM pin rejected
+PASS invalid servo pin rejected
+PASS unknown analog pin rejected
+PASS unsafe variable in actuator rejected
+PASS negative stepper step supported
+PASS stepper step bound enforced
+PASS Arduino output includes Servo and driver helper
+PASS JS generated playground compiles and runs
+PASS Python generated playground has map and servo
+PASS block import/export preserves references
+PASS blink builds 6 slow visible changes
+PASS even very short virtual delay is visible for at least 2 sec
+PASS teaching playback caps wait for large virtual delay
+PASS simultaneous virtual output events are grouped
+PASS nonmonotonic times rejected
+TOTAL 54 PASS
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:zx:unit
+> node --test zx/tests/*.test.cjs
+
+TAP version 13
+# Subtest: two-pass labels and loops, gold opcode bytes
+ok 1 - two-pass labels and loops, gold opcode bytes
+  ---
+  duration_ms: 2.439218
+  type: 'test'
+  ...
+# Subtest: forward CALL + JP and address little endian
+ok 2 - forward CALL + JP and address little endian
+  ---
+  duration_ms: 0.352409
+  type: 'test'
+  ...
+# Subtest: direct video RAM and DB/DW
+ok 3 - direct video RAM and DB/DW
+  ---
+  duration_ms: 0.395293
+  type: 'test'
+  ...
+# Subtest: illegal assembly fails closed and never evaluates expressions
+ok 4 - illegal assembly fails closed and never evaluates expressions
+  ---
+  duration_ms: 0.527191
+  type: 'test'
+  ...
+# Subtest: bounded source code and no write past RAM
+ok 5 - bounded source code and no write past RAM
+  ---
+  duration_ms: 0.942464
+  type: 'test'
+  ...
+# Subtest: independent Python oracle agrees with JS on deterministic TAP corpus
+ok 6 - independent Python oracle agrees with JS on deterministic TAP corpus
+  ---
+  duration_ms: 679.526099
+  type: 'test'
+  ...
+# Subtest: SCR exact 6912 bytes only
+ok 7 - SCR exact 6912 bytes only
+  ---
+  duration_ms: 1.182884
+  type: 'test'
+  ...
+# Subtest: black screen palette and image dimensions
+ok 8 - black screen palette and image dimensions
+  ---
+  duration_ms: 4.774061
+  type: 'test'
+  ...
+# Subtest: ZX bitmap layout row y=0,1,8,64 and attribute row indexing
+ok 9 - ZX bitmap layout row y=0,1,8,64 and attribute row indexing
+  ---
+  duration_ms: 4.055893
+  type: 'test'
+  ...
+# Subtest: INK/PAPER/BRIGHT and FLASH inversion
+ok 10 - INK/PAPER/BRIGHT and FLASH inversion
+  ---
+  duration_ms: 10.50718
+  type: 'test'
+  ...
+# Subtest: untrusted data cannot modify input or inject HTML
+ok 11 - untrusted data cannot modify input or inject HTML
+  ---
+  duration_ms: 2.249023
+  type: 'test'
+  ...
+# Subtest: all demo TAP blocks are checksummed and payloads independent
+ok 12 - all demo TAP blocks are checksummed and payloads independent
+  ---
+  duration_ms: 1.94024
+  type: 'test'
+  ...
+# Subtest: multiple blocks, zero payload and high byte length encoding
+ok 13 - multiple blocks, zero payload and high byte length encoding
+  ---
+  duration_ms: 1.788814
+  type: 'test'
+  ...
+# Subtest: invalid zero length, one length, truncated header, truncated payload, mutated checksum
+ok 14 - invalid zero length, one length, truncated header, truncated payload, mutated checksum
+  ---
+  duration_ms: 0.57362
+  type: 'test'
+  ...
+# Subtest: two consecutive blocks and input mutation do not modify decoded data
+ok 15 - two consecutive blocks and input mutation do not modify decoded data
+  ---
+  duration_ms: 0.162804
+  type: 'test'
+  ...
+# Subtest: ROM trap skips header block, copies payload, records next cursor
+ok 16 - ROM trap skips header block, copies payload, records next cursor
+  ---
+  duration_ms: 0.301742
+  type: 'test'
+  ...
+# Subtest: ROM trap enforces ROM read-only, even if request straddles ROM/RAM boundary
+ok 17 - ROM trap enforces ROM read-only, even if request straddles ROM/RAM boundary
+  ---
+  duration_ms: 0.171206
+  type: 'test'
+  ...
+# Subtest: ROM trap does not write on missing or insufficient tape blocks
+ok 18 - ROM trap does not write on missing or insufficient tape blocks
+  ---
+  duration_ms: 0.212058
+  type: 'test'
+  ...
+# Subtest: ROM trap returns from wrapped SP=FFFF correctly
+ok 19 - ROM trap returns from wrapped SP=FFFF correctly
+  ---
+  duration_ms: 0.166379
+  type: 'test'
+  ...
+# Subtest: ROM trap verify mode preserves RAM, succeeds when equal
+ok 20 - ROM trap verify mode preserves RAM, succeeds when equal
+  ---
+  duration_ms: 0.407271
+  type: 'test'
+  ...
+# Subtest: ROM trap handles RAM end at 0xFFFF without index overflow
+ok 21 - ROM trap handles RAM end at 0xFFFF without index overflow
+  ---
+  duration_ms: 0.490856
+  type: 'test'
+  ...
+# Subtest: ROM trap rejects crossing 0xFFFF without wrap
+ok 22 - ROM trap rejects crossing 0xFFFF without wrap
+  ---
+  duration_ms: 0.224577
+  type: 'test'
+  ...
+# Subtest: valid demo has BASIC header + data
+ok 23 - valid demo has BASIC header + data
+  ---
+  duration_ms: 1.838417
+  type: 'test'
+  ...
+# Subtest: empty, truncated, tiny, checksum, and oversize rejected
+ok 24 - empty, truncated, tiny, checksum, and oversize rejected
+  ---
+  duration_ms: 0.631888
+  type: 'test'
+  ...
+# Subtest: tape parser immutable from caller edits
+ok 25 - tape parser immutable from caller edits
+  ---
+  duration_ms: 0.17995
+  type: 'test'
+  ...
+# Subtest: ROM trap copies data, updates IX/DE, restores PC/SP, sets carry
+ok 26 - ROM trap copies data, updates IX/DE, restores PC/SP, sets carry
+  ---
+  duration_ms: 0.982588
+  type: 'test'
+  ...
+# Subtest: failed verification clears carry without writing RAM
+ok 27 - failed verification clears carry without writing RAM
+  ---
+  duration_ms: 0.265468
+  type: 'test'
+  ...
+# Subtest: no trap at non-ROM addresses
+ok 28 - no trap at non-ROM addresses
+  ---
+  duration_ms: 0.194492
+  type: 'test'
+  ...
+# Subtest: Z80: LD A,n, INC A, LD (nn),A, HALT
+ok 29 - Z80: LD A,n, INC A, LD (nn),A, HALT
+  ---
+  duration_ms: 3.94753
+  type: 'test'
+  ...
+# Subtest: Z80: CALL subroutine, XOR A, RET, JP, HALT
+ok 30 - Z80: CALL subroutine, XOR A, RET, JP, HALT
+  ---
+  duration_ms: 2.004928
+  type: 'test'
+  ...
+# Subtest: Z80: DEC, carry, zero, PC wrap, independent state
+ok 31 - Z80: DEC, carry, zero, PC wrap, independent state
+  ---
+  duration_ms: 1.015673
+  type: 'test'
+  ...
+1..31
+# tests 31
+# suites 0
+# pass 31
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 733.350256
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:phase1
+> node --test optional/pc/tests/*.test.cjs
+
+TAP version 13
+# Subtest: BIOS BDA initialized and adapted memory size is reported, no fixed 640 KiB stub
+ok 1 - BIOS BDA initialized and adapted memory size is reported, no fixed 640 KiB stub
+  ---
+  duration_ms: 5.879776
+  type: 'test'
+  ...
+# Subtest: BIOS INT 11h reads equipment word from BDA
+ok 2 - BIOS INT 11h reads equipment word from BDA
+  ---
+  duration_ms: 0.73864
+  type: 'test'
+  ...
+# Subtest: INT 16h AH=01 reports empty buffer via saved ZF and does not consume keys
+ok 3 - INT 16h AH=01 reports empty buffer via saved ZF and does not consume keys
+  ---
+  duration_ms: 1.371842
+  type: 'test'
+  ...
+# Subtest: INT 16h keyboard peek, read, then empty checks
+ok 4 - INT 16h keyboard peek, read, then empty checks
+  ---
+  duration_ms: 0.580053
+  type: 'test'
+  ...
+# Subtest: INT 16h AH=00 blocks without a fabricated key, then resumes with injected input
+ok 5 - INT 16h AH=00 blocks without a fabricated key, then resumes with injected input
+  ---
+  duration_ms: 0.354418
+  type: 'test'
+  ...
+# Subtest: keyboard ring buffer wraps at BIOS 0x40:3e and preserves ordering
+ok 6 - keyboard ring buffer wraps at BIOS 0x40:3e and preserves ordering
+  ---
+  duration_ms: 0.501777
+  type: 'test'
+  ...
+# Subtest: INT 16h AH=02 returns BDA shift flags
+ok 7 - INT 16h AH=02 returns BDA shift flags
+  ---
+  duration_ms: 0.372875
+  type: 'test'
+  ...
+# Subtest: INT 1Ah AH=00 returns BIOS ticks and clears midnight flag
+ok 8 - INT 1Ah AH=00 returns BIOS ticks and clears midnight flag
+  ---
+  duration_ms: 0.266166
+  type: 'test'
+  ...
+# Subtest: INT 1Ah AH=01 sets ticks from CX:DX, clears midnight
+ok 9 - INT 1Ah AH=01 sets ticks from CX:DX, clears midnight
+  ---
+  duration_ms: 0.381368
+  type: 'test'
+  ...
+# Subtest: IRQ0 BIOS handler increments time and acknowledges PIC
+ok 10 - IRQ0 BIOS handler increments time and acknowledges PIC
+  ---
+  duration_ms: 0.88018
+  type: 'test'
+  ...
+# Subtest: INT 13h fails closed with no mounted disk; returns AH=80h and CF
+ok 11 - INT 13h fails closed with no mounted disk; returns AH=80h and CF
+  ---
+  duration_ms: 0.375839
+  type: 'test'
+  ...
+# Subtest: INT 15h AH=88 reports bounded extended RAM and clears saved CF
+ok 12 - INT 15h AH=88 reports bounded extended RAM and clears saved CF
+  ---
+  duration_ms: 0.312876
+  type: 'test'
+  ...
+# Subtest: Unsupported INT 15h service uses conventional unsupported status / CF
+ok 13 - Unsupported INT 15h service uses conventional unsupported status / CF
+  ---
+  duration_ms: 0.441788
+  type: 'test'
+  ...
+# Subtest: Video VRAM and FDD adapters mapped; empty floppy list
+ok 14 - Video VRAM and FDD adapters mapped; empty floppy list
+  ---
+  duration_ms: 0.273828
+  type: 'test'
+  ...
+# Subtest: 13 DOSBox-X source snapshots are intact and listed with SHA-256
+ok 15 - 13 DOSBox-X source snapshots are intact and listed with SHA-256
+  ---
+  duration_ms: 2.63382
+  type: 'test'
+  ...
+# Subtest: xt: ModRM register MOV, XOR, memory direct and 16-bit value roundtrip
+ok 16 - xt: ModRM register MOV, XOR, memory direct and 16-bit value roundtrip
+  ---
+  duration_ms: 4.998557
+  type: 'test'
+  ...
+# Subtest: xt: ModRM all 8086 address forms with displacements and default SS on BP
+ok 17 - xt: ModRM all 8086 address forms with displacements and default SS on BP
+  ---
+  duration_ms: 1.288074
+  type: 'test'
+  ...
+# Subtest: xt: DS override for BP and SS override for BX
+ok 18 - xt: DS override for BP and SS override for BX
+  ---
+  duration_ms: 1.691919
+  type: 'test'
+  ...
+# Subtest: xt: reg/mem 8-bit MOV and C6 imm8 store
+ok 19 - xt: reg/mem 8-bit MOV and C6 imm8 store
+  ---
+  duration_ms: 0.571711
+  type: 'test'
+  ...
+# Subtest: xt: arithmetic byte flags carry overflow and compare
+ok 20 - xt: arithmetic byte flags carry overflow and compare
+  ---
+  duration_ms: 0.61815
+  type: 'test'
+  ...
+# Subtest: xt: group 80/81/83 arithmetic writes through memory
+ok 21 - xt: group 80/81/83 arithmetic writes through memory
+  ---
+  duration_ms: 0.335299
+  type: 'test'
+  ...
+# Subtest: xt: REP MOVSB and STOSW with DI+SI and DF
+ok 22 - xt: REP MOVSB and STOSW with DI+SI and DF
+  ---
+  duration_ms: 1.113998
+  type: 'test'
+  ...
+# Subtest: xt: REPE CMPSB stops at first mismatch
+ok 23 - xt: REPE CMPSB stops at first mismatch
+  ---
+  duration_ms: 0.595707
+  type: 'test'
+  ...
+# Subtest: xt: LOOPNZ/LOOP/JCXZ flow control with CX
+ok 24 - xt: LOOPNZ/LOOP/JCXZ flow control with CX
+  ---
+  duration_ms: 0.503249
+  type: 'test'
+  ...
+# Subtest: xt: LEA, XCHG, TEST, LAHF and POP r/m16
+ok 25 - xt: LEA, XCHG, TEST, LAHF and POP r/m16
+  ---
+  duration_ms: 0.842564
+  type: 'test'
+  ...
+# Subtest: xt: unsupported LOCK prefix fails closed
+ok 26 - xt: unsupported LOCK prefix fails closed
+  ---
+  duration_ms: 0.708795
+  type: 'test'
+  ...
+# Subtest: xt: protected undefined CPU instruction fails closed
+ok 27 - xt: protected undefined CPU instruction fails closed
+  ---
+  duration_ms: 0.324423
+  type: 'test'
+  ...
+# Subtest: at: ModRM register MOV, XOR, memory direct and 16-bit value roundtrip
+ok 28 - at: ModRM register MOV, XOR, memory direct and 16-bit value roundtrip
+  ---
+  duration_ms: 0.493134
+  type: 'test'
+  ...
+# Subtest: at: ModRM all 8086 address forms with displacements and default SS on BP
+ok 29 - at: ModRM all 8086 address forms with displacements and default SS on BP
+  ---
+  duration_ms: 0.44302
+  type: 'test'
+  ...
+# Subtest: at: DS override for BP and SS override for BX
+ok 30 - at: DS override for BP and SS override for BX
+  ---
+  duration_ms: 0.290432
+  type: 'test'
+  ...
+# Subtest: at: reg/mem 8-bit MOV and C6 imm8 store
+ok 31 - at: reg/mem 8-bit MOV and C6 imm8 store
+  ---
+  duration_ms: 0.31601
+  type: 'test'
+  ...
+# Subtest: at: arithmetic byte flags carry overflow and compare
+ok 32 - at: arithmetic byte flags carry overflow and compare
+  ---
+  duration_ms: 0.354758
+  type: 'test'
+  ...
+# Subtest: at: group 80/81/83 arithmetic writes through memory
+ok 33 - at: group 80/81/83 arithmetic writes through memory
+  ---
+  duration_ms: 0.363751
+  type: 'test'
+  ...
+# Subtest: at: REP MOVSB and STOSW with DI+SI and DF
+ok 34 - at: REP MOVSB and STOSW with DI+SI and DF
+  ---
+  duration_ms: 0.174429
+  type: 'test'
+  ...
+# Subtest: at: REPE CMPSB stops at first mismatch
+ok 35 - at: REPE CMPSB stops at first mismatch
+  ---
+  duration_ms: 2.848801
+  type: 'test'
+  ...
+# Subtest: at: LOOPNZ/LOOP/JCXZ flow control with CX
+ok 36 - at: LOOPNZ/LOOP/JCXZ flow control with CX
+  ---
+  duration_ms: 0.327267
+  type: 'test'
+  ...
+# Subtest: at: LEA, XCHG, TEST, LAHF and POP r/m16
+ok 37 - at: LEA, XCHG, TEST, LAHF and POP r/m16
+  ---
+  duration_ms: 0.385634
+  type: 'test'
+  ...
+# Subtest: at: unsupported LOCK prefix fails closed
+ok 38 - at: unsupported LOCK prefix fails closed
+  ---
+  duration_ms: 0.429018
+  type: 'test'
+  ...
+# Subtest: at: protected undefined CPU instruction fails closed
+ok 39 - at: protected undefined CPU instruction fails closed
+  ---
+  duration_ms: 0.495598
+  type: 'test'
+  ...
+# Subtest: XT rejects 286-only PUSHA and PUSH imm
+ok 40 - XT rejects 286-only PUSHA and PUSH imm
+  ---
+  duration_ms: 0.775985
+  type: 'test'
+  ...
+# Subtest: AT PUSHA and POPA preserve originals with saved SP
+ok 41 - AT PUSHA and POPA preserve originals with saved SP
+  ---
+  duration_ms: 0.442329
+  type: 'test'
+  ...
+# Subtest: AT PUSH imm8 sign extends to 16 bits and POP r/m16 reads signed value
+ok 42 - AT PUSH imm8 sign extends to 16 bits and POP r/m16 reads signed value
+  ---
+  duration_ms: 0.324453
+  type: 'test'
+  ...
+# Subtest: AT 286 SMSW r/m, SGDT memory and LMSW preserves PE
+ok 43 - AT 286 SMSW r/m, SGDT memory and LMSW preserves PE
+  ---
+  duration_ms: 2.125163
+  type: 'test'
+  ...
+# Subtest: 286 protected mode rejects word crossing segment limit
+ok 44 - 286 protected mode rejects word crossing segment limit
+  ---
+  duration_ms: 0.518281
+  type: 'test'
+  ...
+# Subtest: 8086 real mode word at segment FFFF wraps offset to 0000
+ok 45 - 8086 real mode word at segment FFFF wraps offset to 0000
+  ---
+  duration_ms: 0.330702
+  type: 'test'
+  ...
+# Subtest: xt: NOT word and byte do not modify flags
+ok 46 - xt: NOT word and byte do not modify flags
+  ---
+  duration_ms: 4.596244
+  type: 'test'
+  ...
+# Subtest: xt: NEG byte detects signed overflow and carry
+ok 47 - xt: NEG byte detects signed overflow and carry
+  ---
+  duration_ms: 0.586446
+  type: 'test'
+  ...
+# Subtest: xt: TEST imm8/imm16 leaves register unchanged
+ok 48 - xt: TEST imm8/imm16 leaves register unchanged
+  ---
+  duration_ms: 3.142046
+  type: 'test'
+  ...
+# Subtest: xt: unsigned MUL byte AL -> AX
+ok 49 - xt: unsigned MUL byte AL -> AX
+  ---
+  duration_ms: 0.311173
+  type: 'test'
+  ...
+# Subtest: xt: unsigned MUL word AX -> DX:AX
+ok 50 - xt: unsigned MUL word AX -> DX:AX
+  ---
+  duration_ms: 0.296711
+  type: 'test'
+  ...
+# Subtest: xt: signed IMUL byte signed value and overflow
+ok 51 - xt: signed IMUL byte signed value and overflow
+  ---
+  duration_ms: 0.287188
+  type: 'test'
+  ...
+# Subtest: xt: unsigned DIV byte 0x0123 / 10 produces AL quotient, AH remainder
+ok 52 - xt: unsigned DIV byte 0x0123 / 10 produces AL quotient, AH remainder
+  ---
+  duration_ms: 0.299346
+  type: 'test'
+  ...
+# Subtest: xt: signed IDIV byte -101 / 10 rounds toward zero
+ok 53 - xt: signed IDIV byte -101 / 10 rounds toward zero
+  ---
+  duration_ms: 0.336411
+  type: 'test'
+  ...
+# Subtest: xt: unsigned DIV word 0x10000 / 256
+ok 54 - xt: unsigned DIV word 0x10000 / 256
+  ---
+  duration_ms: 0.847862
+  type: 'test'
+  ...
+# Subtest: xt: divide by zero and quotient overflow fail closed
+ok 55 - xt: divide by zero and quotient overflow fail closed
+  ---
+  duration_ms: 1.201919
+  type: 'test'
+  ...
+# Subtest: xt: shift SHL/SAR/SHR set carry and zero/parity/overflow
+ok 56 - xt: shift SHL/SAR/SHR set carry and zero/parity/overflow
+  ---
+  duration_ms: 0.85361
+  type: 'test'
+  ...
+# Subtest: xt: ROL/ROR carry with flags unaffected except OF
+ok 57 - xt: ROL/ROR carry with flags unaffected except OF
+  ---
+  duration_ms: 0.606293
+  type: 'test'
+  ...
+# Subtest: xt: rotate through carry and zero-count preserve flags
+ok 58 - xt: rotate through carry and zero-count preserve flags
+  ---
+  duration_ms: 0.422749
+  type: 'test'
+  ...
+# Subtest: xt: FE/FF INC/DEC memory preserves CF
+ok 59 - xt: FE/FF INC/DEC memory preserves CF
+  ---
+  duration_ms: 0.438863
+  type: 'test'
+  ...
+# Subtest: xt: FF near indirect CALL and RET resume at caller
+ok 60 - xt: FF near indirect CALL and RET resume at caller
+  ---
+  duration_ms: 0.296922
+  type: 'test'
+  ...
+# Subtest: xt: FF far JMP from m16:16
+ok 61 - xt: FF far JMP from m16:16
+  ---
+  duration_ms: 0.367777
+  type: 'test'
+  ...
+# Subtest: xt: reserved FE and F6 selectors raise CPUFault
+ok 62 - xt: reserved FE and F6 selectors raise CPUFault
+  ---
+  duration_ms: 2.72154
+  type: 'test'
+  ...
+# Subtest: at: NOT word and byte do not modify flags
+ok 63 - at: NOT word and byte do not modify flags
+  ---
+  duration_ms: 1.357932
+  type: 'test'
+  ...
+# Subtest: at: NEG byte detects signed overflow and carry
+ok 64 - at: NEG byte detects signed overflow and carry
+  ---
+  duration_ms: 0.238214
+  type: 'test'
+  ...
+# Subtest: at: TEST imm8/imm16 leaves register unchanged
+ok 65 - at: TEST imm8/imm16 leaves register unchanged
+  ---
+  duration_ms: 0.319135
+  type: 'test'
+  ...
+# Subtest: at: unsigned MUL byte AL -> AX
+ok 66 - at: unsigned MUL byte AL -> AX
+  ---
+  duration_ms: 0.20827
+  type: 'test'
+  ...
+# Subtest: at: unsigned MUL word AX -> DX:AX
+ok 67 - at: unsigned MUL word AX -> DX:AX
+  ---
+  duration_ms: 0.248169
+  type: 'test'
+  ...
+# Subtest: at: signed IMUL byte signed value and overflow
+ok 68 - at: signed IMUL byte signed value and overflow
+  ---
+  duration_ms: 0.327097
+  type: 'test'
+  ...
+# Subtest: at: unsigned DIV byte 0x0123 / 10 produces AL quotient, AH remainder
+ok 69 - at: unsigned DIV byte 0x0123 / 10 produces AL quotient, AH remainder
+  ---
+  duration_ms: 0.237854
+  type: 'test'
+  ...
+# Subtest: at: signed IDIV byte -101 / 10 rounds toward zero
+ok 70 - at: signed IDIV byte -101 / 10 rounds toward zero
+  ---
+  duration_ms: 0.237013
+  type: 'test'
+  ...
+# Subtest: at: unsigned DIV word 0x10000 / 256
+ok 71 - at: unsigned DIV word 0x10000 / 256
+  ---
+  duration_ms: 0.26888
+  type: 'test'
+  ...
+# Subtest: at: divide by zero and quotient overflow fail closed
+ok 72 - at: divide by zero and quotient overflow fail closed
+  ---
+  duration_ms: 0.707293
+  type: 'test'
+  ...
+# Subtest: at: shift SHL/SAR/SHR set carry and zero/parity/overflow
+ok 73 - at: shift SHL/SAR/SHR set carry and zero/parity/overflow
+  ---
+  duration_ms: 0.843545
+  type: 'test'
+  ...
+# Subtest: at: ROL/ROR carry with flags unaffected except OF
+ok 74 - at: ROL/ROR carry with flags unaffected except OF
+  ---
+  duration_ms: 0.544972
+  type: 'test'
+  ...
+# Subtest: at: rotate through carry and zero-count preserve flags
+ok 75 - at: rotate through carry and zero-count preserve flags
+  ---
+  duration_ms: 0.736736
+  type: 'test'
+  ...
+# Subtest: at: FE/FF INC/DEC memory preserves CF
+ok 76 - at: FE/FF INC/DEC memory preserves CF
+  ---
+  duration_ms: 0.205425
+  type: 'test'
+  ...
+# Subtest: at: FF near indirect CALL and RET resume at caller
+ok 77 - at: FF near indirect CALL and RET resume at caller
+  ---
+  duration_ms: 0.349971
+  type: 'test'
+  ...
+# Subtest: at: FF far JMP from m16:16
+ok 78 - at: FF far JMP from m16:16
+  ---
+  duration_ms: 0.276031
+  type: 'test'
+  ...
+# Subtest: at: reserved FE and F6 selectors raise CPUFault
+ok 79 - at: reserved FE and F6 selectors raise CPUFault
+  ---
+  duration_ms: 0.4641
+  type: 'test'
+  ...
+# Subtest: 8086 PUSH SP pushes decremented SP, 286 pushes prior SP
+ok 80 - 8086 PUSH SP pushes decremented SP, 286 pushes prior SP
+  ---
+  duration_ms: 0.360026
+  type: 'test'
+  ...
+# Subtest: 8086 CL shift count is unmasked; 286 masks count to five bits
+ok 81 - 8086 CL shift count is unmasked; 286 masks count to five bits
+  ---
+  duration_ms: 0.381748
+  type: 'test'
+  ...
+# Subtest: 286 C0/C1 immediate shifts work; 8086 rejects them
+ok 82 - 286 C0/C1 immediate shifts work; 8086 rejects them
+  ---
+  duration_ms: 1.957334
+  type: 'test'
+  ...
+# Subtest: 286 ENTER and LEAVE form and unwind a stack frame
+ok 83 - 286 ENTER and LEAVE form and unwind a stack frame
+  ---
+  duration_ms: 0.62526
+  type: 'test'
+  ...
+# Subtest: pure browser JavaScript CPU path has no compilation or WASM requirement
+ok 84 - pure browser JavaScript CPU path has no compilation or WASM requirement
+  ---
+  duration_ms: 2.347854
+  type: 'test'
+  ...
+# Subtest: 286 protected-mode software INT uses 8-byte IDT gate, IRET returns
+ok 85 - 286 protected-mode software INT uses 8-byte IDT gate, IRET returns
+  ---
+  duration_ms: 0.843976
+  type: 'test'
+  ...
+# Subtest: 286 protected-mode trap gate preserves IF
+ok 86 - 286 protected-mode trap gate preserves IF
+  ---
+  duration_ms: 0.373506
+  type: 'test'
+  ...
+# Subtest: 286 IDT limit and invalid gate types fail closed
+ok 87 - 286 IDT limit and invalid gate types fail closed
+  ---
+  duration_ms: 2.149946
+  type: 'test'
+  ...
+# Subtest: xt 8-bit ALU 6000+ randomized deterministic oracle assertions including flags
+ok 88 - xt 8-bit ALU 6000+ randomized deterministic oracle assertions including flags
+  ---
+  duration_ms: 31.681104
+  type: 'test'
+  ...
+# Subtest: at 8-bit ALU 6000+ randomized deterministic oracle assertions including flags
+ok 89 - at 8-bit ALU 6000+ randomized deterministic oracle assertions including flags
+  ---
+  duration_ms: 24.387799
+  type: 'test'
+  ...
+# Subtest: xt 16-bit ALU deterministic independent oracle over 3600 operations
+ok 90 - xt 16-bit ALU deterministic independent oracle over 3600 operations
+  ---
+  duration_ms: 23.556492
+  type: 'test'
+  ...
+# Subtest: at 16-bit ALU deterministic independent oracle over 3600 operations
+ok 91 - at 16-bit ALU deterministic independent oracle over 3600 operations
+  ---
+  duration_ms: 16.759035
+  type: 'test'
+  ...
+# Subtest: xt: unhandled DIV zero raises host CPUFault without scribbling registers/stack
+ok 92 - xt: unhandled DIV zero raises host CPUFault without scribbling registers/stack
+  ---
+  duration_ms: 8.301156
+  type: 'test'
+  ...
+# Subtest: xt: real-mode INT 0 receives divide error and stacks FLAGS/CS/IP
+ok 93 - xt: real-mode INT 0 receives divide error and stacks FLAGS/CS/IP
+  ---
+  duration_ms: 0.726281
+  type: 'test'
+  ...
+# Subtest: xt: quotient overflow vectors INT 0 without modifying AX
+ok 94 - xt: quotient overflow vectors INT 0 without modifying AX
+  ---
+  duration_ms: 1.898175
+  type: 'test'
+  ...
+# Subtest: xt: real-mode handler IRET matches generation-specific \#DE return IP
+ok 95 - xt: real-mode handler IRET matches generation-specific \#DE return IP
+  ---
+  duration_ms: 2.647711
+  type: 'test'
+  ...
+# Subtest: at: unhandled DIV zero raises host CPUFault without scribbling registers/stack
+ok 96 - at: unhandled DIV zero raises host CPUFault without scribbling registers/stack
+  ---
+  duration_ms: 0.793481
+  type: 'test'
+  ...
+# Subtest: at: real-mode INT 0 receives divide error and stacks FLAGS/CS/IP
+ok 97 - at: real-mode INT 0 receives divide error and stacks FLAGS/CS/IP
+  ---
+  duration_ms: 0.662897
+  type: 'test'
+  ...
+# Subtest: at: quotient overflow vectors INT 0 without modifying AX
+ok 98 - at: quotient overflow vectors INT 0 without modifying AX
+  ---
+  duration_ms: 0.626583
+  type: 'test'
+  ...
+# Subtest: at: real-mode handler IRET matches generation-specific \#DE return IP
+ok 99 - at: real-mode handler IRET matches generation-specific \#DE return IP
+  ---
+  duration_ms: 0.718649
+  type: 'test'
+  ...
+# Subtest: 286 protected mode delivers DIV fault through IDT, handler repairs register and retries
+ok 100 - 286 protected mode delivers DIV fault through IDT, handler repairs register and retries
+  ---
+  duration_ms: 1.239945
+  type: 'test'
+  ...
+# Subtest: 286 protected mode \#DE is a hardware fault, not privilege-checked software INT
+ok 101 - 286 protected mode \#DE is a hardware fault, not privilege-checked software INT
+  ---
+  duration_ms: 0.836796
+  type: 'test'
+  ...
+# Subtest: 286 invalid \#DE IDT gate fails closed without changing AX or SP
+ok 102 - 286 invalid \#DE IDT gate fails closed without changing AX or SP
+  ---
+  duration_ms: 0.609837
+  type: 'test'
+  ...
+# Subtest: fault restart IP includes instruction prefixes on 286
+ok 103 - fault restart IP includes instruction prefixes on 286
+  ---
+  duration_ms: 0.462048
+  type: 'test'
+  ...
+# Subtest: repeat guest exception path remains pure JS, no WASM or runtime build
+ok 104 - repeat guest exception path remains pure JS, no WASM or runtime build
+  ---
+  duration_ms: 0.67194
+  type: 'test'
+  ...
+# Subtest: 286 BOUND inclusive signed range executes without changing flags
+ok 105 - 286 BOUND inclusive signed range executes without changing flags
+  ---
+  duration_ms: 0.305675
+  type: 'test'
+  ...
+# Subtest: 286 real-mode BOUND \#BR vectors 5, handler repairs AX, IRET retries instruction
+ok 106 - 286 real-mode BOUND \#BR vectors 5, handler repairs AX, IRET retries instruction
+  ---
+  duration_ms: 0.364853
+  type: 'test'
+  ...
+# Subtest: 286 protected-mode BOUND uses IDT vector 5 (not real-mode IVT)
+ok 107 - 286 protected-mode BOUND uses IDT vector 5 (not real-mode IVT)
+  ---
+  duration_ms: 0.414056
+  type: 'test'
+  ...
+# Subtest: 8086 does not silently execute 286 BOUND instruction
+ok 108 - 8086 does not silently execute 286 BOUND instruction
+  ---
+  duration_ms: 0.53099
+  type: 'test'
+  ...
+# Subtest: BOUND memory-form required and unhandled bounds fault fails closed
+ok 109 - BOUND memory-form required and unhandled bounds fault fails closed
+  ---
+  duration_ms: 0.764448
+  type: 'test'
+  ...
+# Subtest: xt CBW sign extends AL without touching flags
+ok 110 - xt CBW sign extends AL without touching flags
+  ---
+  duration_ms: 3.335404
+  type: 'test'
+  ...
+# Subtest: xt CWD sign extends AX into DX
+ok 111 - xt CWD sign extends AX into DX
+  ---
+  duration_ms: 0.380136
+  type: 'test'
+  ...
+# Subtest: xt AAM and AAD support explicit decimal base
+ok 112 - xt AAM and AAD support explicit decimal base
+  ---
+  duration_ms: 2.675162
+  type: 'test'
+  ...
+# Subtest: xt AAM zero base raises guest \#DE
+ok 113 - xt AAM zero base raises guest \#DE
+  ---
+  duration_ms: 0.658681
+  type: 'test'
+  ...
+# Subtest: xt XLAT loads table at DS:BX+AL
+ok 114 - xt XLAT loads table at DS:BX+AL
+  ---
+  duration_ms: 0.439664
+  type: 'test'
+  ...
+# Subtest: xt XLAT honours CS override
+ok 115 - xt XLAT honours CS override
+  ---
+  duration_ms: 0.358113
+  type: 'test'
+  ...
+# Subtest: xt AAA adjusts decimal digit and AF/CF
+ok 116 - xt AAA adjusts decimal digit and AF/CF
+  ---
+  duration_ms: 1.727031
+  type: 'test'
+  ...
+# Subtest: xt AAS adjusts decimal digit and AF/CF
+ok 117 - xt AAS adjusts decimal digit and AF/CF
+  ---
+  duration_ms: 0.210122
+  type: 'test'
+  ...
+# Subtest: xt DAA corrects packed BCD 09+09 = 18
+ok 118 - xt DAA corrects packed BCD 09+09 = 18
+  ---
+  duration_ms: 0.67891
+  type: 'test'
+  ...
+# Subtest: xt DAS corrects packed BCD 20-01 = 19
+ok 119 - xt DAS corrects packed BCD 20-01 = 19
+  ---
+  duration_ms: 0.511752
+  type: 'test'
+  ...
+# Subtest: xt WAIT without FPU proceeds; INTO with clear OF proceeds
+ok 120 - xt WAIT without FPU proceeds; INTO with clear OF proceeds
+  ---
+  duration_ms: 0.236713
+  type: 'test'
+  ...
+# Subtest: xt INTO with OF vectors guest INT 4
+ok 121 - xt INTO with OF vectors guest INT 4
+  ---
+  duration_ms: 0.259025
+  type: 'test'
+  ...
+# Subtest: xt LES loads far pointer and ES segment
+ok 122 - xt LES loads far pointer and ES segment
+  ---
+  duration_ms: 0.851998
+  type: 'test'
+  ...
+# Subtest: xt LDS loads far pointer and DS segment
+ok 123 - xt LDS loads far pointer and DS segment
+  ---
+  duration_ms: 0.201981
+  type: 'test'
+  ...
+# Subtest: xt LES register form rejected
+ok 124 - xt LES register form rejected
+  ---
+  duration_ms: 0.642437
+  type: 'test'
+  ...
+# Subtest: at CBW sign extends AL without touching flags
+ok 125 - at CBW sign extends AL without touching flags
+  ---
+  duration_ms: 0.391803
+  type: 'test'
+  ...
+# Subtest: at CWD sign extends AX into DX
+ok 126 - at CWD sign extends AX into DX
+  ---
+  duration_ms: 0.307418
+  type: 'test'
+  ...
+# Subtest: at AAM and AAD support explicit decimal base
+ok 127 - at AAM and AAD support explicit decimal base
+  ---
+  duration_ms: 1.43762
+  type: 'test'
+  ...
+# Subtest: at AAM zero base raises guest \#DE
+ok 128 - at AAM zero base raises guest \#DE
+  ---
+  duration_ms: 0.273106
+  type: 'test'
+  ...
+# Subtest: at XLAT loads table at DS:BX+AL
+ok 129 - at XLAT loads table at DS:BX+AL
+  ---
+  duration_ms: 0.230843
+  type: 'test'
+  ...
+# Subtest: at XLAT honours CS override
+ok 130 - at XLAT honours CS override
+  ---
+  duration_ms: 1.434666
+  type: 'test'
+  ...
+# Subtest: at AAA adjusts decimal digit and AF/CF
+ok 131 - at AAA adjusts decimal digit and AF/CF
+  ---
+  duration_ms: 0.229232
+  type: 'test'
+  ...
+# Subtest: at AAS adjusts decimal digit and AF/CF
+ok 132 - at AAS adjusts decimal digit and AF/CF
+  ---
+  duration_ms: 0.218736
+  type: 'test'
+  ...
+# Subtest: at DAA corrects packed BCD 09+09 = 18
+ok 133 - at DAA corrects packed BCD 09+09 = 18
+  ---
+  duration_ms: 0.204425
+  type: 'test'
+  ...
+# Subtest: at DAS corrects packed BCD 20-01 = 19
+ok 134 - at DAS corrects packed BCD 20-01 = 19
+  ---
+  duration_ms: 0.20792
+  type: 'test'
+  ...
+# Subtest: at WAIT without FPU proceeds; INTO with clear OF proceeds
+ok 135 - at WAIT without FPU proceeds; INTO with clear OF proceeds
+  ---
+  duration_ms: 0.194109
+  type: 'test'
+  ...
+# Subtest: at INTO with OF vectors guest INT 4
+ok 136 - at INTO with OF vectors guest INT 4
+  ---
+  duration_ms: 0.187089
+  type: 'test'
+  ...
+# Subtest: at LES loads far pointer and ES segment
+ok 137 - at LES loads far pointer and ES segment
+  ---
+  duration_ms: 0.215691
+  type: 'test'
+  ...
+# Subtest: at LDS loads far pointer and DS segment
+ok 138 - at LDS loads far pointer and DS segment
+  ---
+  duration_ms: 0.160299
+  type: 'test'
+  ...
+# Subtest: at LES register form rejected
+ok 139 - at LES register form rejected
+  ---
+  duration_ms: 0.522417
+  type: 'test'
+  ...
+# Subtest: 286 IMUL immediate forms calculate signed product and flags
+ok 140 - 286 IMUL immediate forms calculate signed product and flags
+  ---
+  duration_ms: 0.327497
+  type: 'test'
+  ...
+# Subtest: 286 IMUL overflow sets CF and OF
+ok 141 - 286 IMUL overflow sets CF and OF
+  ---
+  duration_ms: 0.211145
+  type: 'test'
+  ...
+# Subtest: 8086 rejects later immediate IMUL
+ok 142 - 8086 rejects later immediate IMUL
+  ---
+  duration_ms: 0.2891
+  type: 'test'
+  ...
+# Subtest: 286 REP OUTSB calls actual machine port with DS:SI bytes
+ok 143 - 286 REP OUTSB calls actual machine port with DS:SI bytes
+  ---
+  duration_ms: 0.558741
+  type: 'test'
+  ...
+# Subtest: 286 REP INSB calls actual machine port and writes ES:DI
+ok 144 - 286 REP INSB calls actual machine port and writes ES:DI
+  ---
+  duration_ms: 0.971466
+  type: 'test'
+  ...
+# Subtest: 8086 rejects INS/OUTS opcodes (introduced in 80186)
+ok 145 - 8086 rejects INS/OUTS opcodes (introduced in 80186)
+  ---
+  duration_ms: 0.337022
+  type: 'test'
+  ...
+# Subtest: 286 entering protected mode retains real-mode SS hidden descriptor cache
+ok 146 - 286 entering protected mode retains real-mode SS hidden descriptor cache
+  ---
+  duration_ms: 0.208981
+  type: 'test'
+  ...
+# Subtest: 286 loading a null selector allows DS load but rejects subsequent memory read
+ok 147 - 286 loading a null selector allows DS load but rejects subsequent memory read
+  ---
+  duration_ms: 0.340777
+  type: 'test'
+  ...
+# Subtest: 286 rejects null SS selector
+ok 148 - 286 rejects null SS selector
+  ---
+  duration_ms: 0.300357
+  type: 'test'
+  ...
+# Subtest: 286 read-only data descriptor allows reads, denies writes
+ok 149 - 286 read-only data descriptor allows reads, denies writes
+  ---
+  duration_ms: 0.276872
+  type: 'test'
+  ...
+# Subtest: 286 expand-down data segment rejects <=limit and allows higher offsets
+ok 150 - 286 expand-down data segment rejects <=limit and allows higher offsets
+  ---
+  duration_ms: 0.283471
+  type: 'test'
+  ...
+# Subtest: 286 DPL data access rejects selector RPL greater than DPL
+ok 151 - 286 DPL data access rejects selector RPL greater than DPL
+  ---
+  duration_ms: 0.321819
+  type: 'test'
+  ...
+# Subtest: 286 ring0 cannot load ring3 SS descriptor
+ok 152 - 286 ring0 cannot load ring3 SS descriptor
+  ---
+  duration_ms: 0.276742
+  type: 'test'
+  ...
+# Subtest: 286 CS must be executable, not a data descriptor
+ok 153 - 286 CS must be executable, not a data descriptor
+  ---
+  duration_ms: 0.782795
+  type: 'test'
+  ...
+# Subtest: 286 protected word write crossing descriptor limit is atomic (no partial store)
+ok 154 - 286 protected word write crossing descriptor limit is atomic (no partial store)
+  ---
+  duration_ms: 0.529819
+  type: 'test'
+  ...
+# Subtest: 286 cannot write to readable code segment via DS
+ok 155 - 286 cannot write to readable code segment via DS
+  ---
+  duration_ms: 0.438012
+  type: 'test'
+  ...
+# Subtest: RAM cap remains exactly 1 MiB max and runtime has no WASM
+ok 156 - RAM cap remains exactly 1 MiB max and runtime has no WASM
+  ---
+  duration_ms: 0.706241
+  type: 'test'
+  ...
+# Subtest: PIC ICW1/2/3/4 sequence correctly initializes vector, mask and auto-EOI
+ok 157 - PIC ICW1/2/3/4 sequence correctly initializes vector, mask and auto-EOI
+  ---
+  duration_ms: 0.164525
+  type: 'test'
+  ...
+# Subtest: PIC single-chip initialization skips ICW3 and accepts ICW4
+ok 158 - PIC single-chip initialization skips ICW3 and accepts ICW4
+  ---
+  duration_ms: 0.076584
+  type: 'test'
+  ...
+# Subtest: PIC in-service IRQ blocks lower priority until EOI
+ok 159 - PIC in-service IRQ blocks lower priority until EOI
+  ---
+  duration_ms: 0.065117
+  type: 'test'
+  ...
+# Subtest: AT has cascade PIC ports while XT does not
+ok 160 - AT has cascade PIC ports while XT does not
+  ---
+  duration_ms: 0.583058
+  type: 'test'
+  ...
+# Subtest: AT cascaded IRQ10 delivers vector 72h through master IRQ2
+ok 161 - AT cascaded IRQ10 delivers vector 72h through master IRQ2
+  ---
+  duration_ms: 0.412624
+  type: 'test'
+  ...
+# Subtest: AT slave IRQ does not bypass masked master cascade IRQ2
+ok 162 - AT slave IRQ does not bypass masked master cascade IRQ2
+  ---
+  duration_ms: 0.41688
+  type: 'test'
+  ...
+# Subtest: XT rejects IRQ8 without an AT slave PIC
+ok 163 - XT rejects IRQ8 without an AT slave PIC
+  ---
+  duration_ms: 0.347287
+  type: 'test'
+  ...
+# Subtest: xt CALL FAR immediate transfers CS:IP and RETF restores caller
+ok 164 - xt CALL FAR immediate transfers CS:IP and RETF restores caller
+  ---
+  duration_ms: 0.388027
+  type: 'test'
+  ...
+# Subtest: at CALL FAR immediate transfers CS:IP and RETF restores caller
+ok 165 - at CALL FAR immediate transfers CS:IP and RETF restores caller
+  ---
+  duration_ms: 0.319465
+  type: 'test'
+  ...
+# Subtest: 286 ARPL raises operand RPL and sets ZF without changing upper selector bits
+ok 166 - 286 ARPL raises operand RPL and sets ZF without changing upper selector bits
+  ---
+  duration_ms: 0.378714
+  type: 'test'
+  ...
+# Subtest: 286 ARPL leaves selector unchanged and ZF=0 when destination RPL is high enough
+ok 167 - 286 ARPL leaves selector unchanged and ZF=0 when destination RPL is high enough
+  ---
+  duration_ms: 0.354177
+  type: 'test'
+  ...
+# Subtest: 286 ARPL in real mode is not silently accepted
+ok 168 - 286 ARPL in real mode is not silently accepted
+  ---
+  duration_ms: 0.434687
+  type: 'test'
+  ...
+# Subtest: 286 VERR and VERW inspect selector access rights without modifying GDT
+ok 169 - 286 VERR and VERW inspect selector access rights without modifying GDT
+  ---
+  duration_ms: 0.35565
+  type: 'test'
+  ...
+# Subtest: 286 VERW returns ZF=0 for a read-only data segment
+ok 170 - 286 VERW returns ZF=0 for a read-only data segment
+  ---
+  duration_ms: 0.541611
+  type: 'test'
+  ...
+# Subtest: 286 VERR rejects null selector by ZF=0 without host exception
+ok 171 - 286 VERR rejects null selector by ZF=0 without host exception
+  ---
+  duration_ms: 0.460455
+  type: 'test'
+  ...
+# Subtest: 286 LLDT / SLDT and LDT segment selectors execute guest instruction bytes
+ok 172 - 286 LLDT / SLDT and LDT segment selectors execute guest instruction bytes
+  ---
+  duration_ms: 4.997849
+  type: 'test'
+  ...
+# Subtest: 286 LTR / STR executes 16-bit TSS load and sets busy bit in descriptor
+ok 173 - 286 LTR / STR executes 16-bit TSS load and sets busy bit in descriptor
+  ---
+  duration_ms: 1.384821
+  type: 'test'
+  ...
+# Subtest: 286 LLDT rejects non-LDT system descriptor and loading TR twice rejects busy TSS
+ok 174 - 286 LLDT rejects non-LDT system descriptor and loading TR twice rejects busy TSS
+  ---
+  duration_ms: 2.182188
+  type: 'test'
+  ...
+# Subtest: 286 present bit and GDT/LDT selector validation identify the correct fault type
+ok 175 - 286 present bit and GDT/LDT selector validation identify the correct fault type
+  ---
+  duration_ms: 0.703678
+  type: 'test'
+  ...
+# Subtest: 286 guest \#NP handler receives selector error code, fixes resume IP and IRET continues
+ok 176 - 286 guest \#NP handler receives selector error code, fixes resume IP and IRET continues
+  ---
+  duration_ms: 1.630347
+  type: 'test'
+  ...
+# Subtest: 286 uninstalled \#GP handler fails closed with typed exception
+ok 177 - 286 uninstalled \#GP handler fails closed with typed exception
+  ---
+  duration_ms: 2.416076
+  type: 'test'
+  ...
+# Subtest: XT rejects 286 LDT and TSS opcodes rather than silently enabling 286 features
+ok 178 - XT rejects 286 LDT and TSS opcodes rather than silently enabling 286 features
+  ---
+  duration_ms: 1.136111
+  type: 'test'
+  ...
+# Subtest: 286 ring3 CLI, STI, HLT and port IO raise \#GP unless privilege permits
+ok 179 - 286 ring3 CLI, STI, HLT and port IO raise \#GP unless privilege permits
+  ---
+  duration_ms: 1.607102
+  type: 'test'
+  ...
+# Subtest: 286 privileged LGDT and LMSW are denied to ring3
+ok 180 - 286 privileged LGDT and LMSW are denied to ring3
+  ---
+  duration_ms: 1.223351
+  type: 'test'
+  ...
+# Subtest: 286 POPF ring3 cannot raise IOPL or IF when IOPL is zero
+ok 181 - 286 POPF ring3 cannot raise IOPL or IF when IOPL is zero
+  ---
+  duration_ms: 0.902924
+  type: 'test'
+  ...
+# Subtest: Phase 4M.1 developer B: ships verified XT/AT C toolchain and deliberately excludes NASM
+ok 182 - Phase 4M.1 developer B: ships verified XT/AT C toolchain and deliberately excludes NASM
+  ---
+  duration_ms: 2.404789
+  type: 'test'
+  ...
+# Subtest: XT and AT enforce read-only built-in B and independent work copy
+ok 183 - XT and AT enforce read-only built-in B and independent work copy
+  ---
+  duration_ms: 15.792055
+  type: 'test'
+  ...
+# Subtest: developer IMG is embedded byte-for-byte for offline mode and B prompt is recognized
+ok 184 - developer IMG is embedded byte-for-byte for offline mode and B prompt is recognized
+  ---
+  duration_ms: 8.869436
+  type: 'test'
+  ...
+# Subtest: toolchain builder and supplied source assets are present with provenance
+ok 185 - toolchain builder and supplied source assets are present with provenance
+  ---
+  duration_ms: 0.243052
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer FDD 160K: FAT12 BPB/FAT copies, usable in XT and AT
+ok 186 - ArrayBuffer FDD 160K: FAT12 BPB/FAT copies, usable in XT and AT
+  ---
+  duration_ms: 3.489394
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer FDD 180K: FAT12 BPB/FAT copies, usable in XT and AT
+ok 187 - ArrayBuffer FDD 180K: FAT12 BPB/FAT copies, usable in XT and AT
+  ---
+  duration_ms: 2.196179
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer FDD 320K: FAT12 BPB/FAT copies, usable in XT and AT
+ok 188 - ArrayBuffer FDD 320K: FAT12 BPB/FAT copies, usable in XT and AT
+  ---
+  duration_ms: 3.952032
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer FDD 360K: FAT12 BPB/FAT copies, usable in XT and AT
+ok 189 - ArrayBuffer FDD 360K: FAT12 BPB/FAT copies, usable in XT and AT
+  ---
+  duration_ms: 1.918575
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer FDD 720K: FAT12 BPB/FAT copies, usable in XT and AT
+ok 190 - ArrayBuffer FDD 720K: FAT12 BPB/FAT copies, usable in XT and AT
+  ---
+  duration_ms: 1.650736
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer FDD 1.2M: FAT12 BPB/FAT copies, usable in XT and AT
+ok 191 - ArrayBuffer FDD 1.2M: FAT12 BPB/FAT copies, usable in XT and AT
+  ---
+  duration_ms: 1.408697
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer FDD 1.44M: FAT12 BPB/FAT copies, usable in XT and AT
+ok 192 - ArrayBuffer FDD 1.44M: FAT12 BPB/FAT copies, usable in XT and AT
+  ---
+  duration_ms: 1.631568
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer IDE 8MiB: valid MBR + FAT16 partition and FAT entries
+ok 193 - ArrayBuffer IDE 8MiB: valid MBR + FAT16 partition and FAT entries
+  ---
+  duration_ms: 6.393657
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer IDE 16MiB: valid MBR + FAT16 partition and FAT entries
+ok 194 - ArrayBuffer IDE 16MiB: valid MBR + FAT16 partition and FAT entries
+  ---
+  duration_ms: 8.556366
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer IDE 32MiB: valid MBR + FAT16 partition and FAT entries
+ok 195 - ArrayBuffer IDE 32MiB: valid MBR + FAT16 partition and FAT entries
+  ---
+  duration_ms: 31.184121
+  type: 'test'
+  ...
+# Subtest: FDD changes export as copy; save/reload does not mutate previous ArrayBuffer
+ok 196 - FDD changes export as copy; save/reload does not mutate previous ArrayBuffer
+  ---
+  duration_ms: 2.071924
+  type: 'test'
+  ...
+# Subtest: IDE write overlay survives export/restore and base ArrayBuffer stays unchanged
+ok 197 - IDE write overlay survives export/restore and base ArrayBuffer stays unchanged
+  ---
+  duration_ms: 12.544874
+  type: 'test'
+  ...
+# Subtest: snapshot round-trip preserves FDD A/B and IDE contents and custom medium
+ok 198 - snapshot round-trip preserves FDD A/B and IDE contents and custom medium
+  ---
+  duration_ms: 34.919849
+  type: 'test'
+  ...
+# Subtest: malformed, oversized media and unmounted export reject safely
+ok 199 - malformed, oversized media and unmounted export reject safely
+  ---
+  duration_ms: 1.991144
+  type: 'test'
+  ...
+# Subtest: host HELLO.COM (22 bytes) becomes readable DOS file in FAT 720K
+ok 200 - host HELLO.COM (22 bytes) becomes readable DOS file in FAT 720K
+  ---
+  duration_ms: 4.333561
+  type: 'test'
+  ...
+# Subtest: host ART.JPG (400000 bytes) becomes readable DOS file in FAT 720K
+ok 201 - host ART.JPG (400000 bytes) becomes readable DOS file in FAT 720K
+  ---
+  duration_ms: 5.544242
+  type: 'test'
+  ...
+# Subtest: host FILE.ZIP (1000000 bytes) becomes readable DOS file in FAT 1.44M
+ok 202 - host FILE.ZIP (1000000 bytes) becomes readable DOS file in FAT 1.44M
+  ---
+  duration_ms: 10.963379
+  type: 'test'
+  ...
+# Subtest: host GAME.EXE (5242880 bytes) becomes readable DOS file in FAT 8MiB
+ok 203 - host GAME.EXE (5242880 bytes) becomes readable DOS file in FAT 8MiB
+  ---
+  duration_ms: 25.989736
+  type: 'test'
+  ...
+# Subtest: multiple files, empty file, truncation collisions, unsafe paths and opaque ZIP
+ok 204 - multiple files, empty file, truncation collisions, unsafe paths and opaque ZIP
+  ---
+  duration_ms: 2.457739
+  type: 'test'
+  ...
+# Subtest: forces floppy/IDE, no XT IDE; oversized payload rejects before disk creation
+ok 205 - forces floppy/IDE, no XT IDE; oversized payload rejects before disk creation
+  ---
+  duration_ms: 13.441248
+  type: 'test'
+  ...
+# Subtest: 80 MB FAT16 media: CHS, FAT cluster count, and IDE last-sector access
+ok 206 - 80 MB FAT16 media: CHS, FAT cluster count, and IDE last-sector access
+  ---
+  duration_ms: 64.131671
+  type: 'test'
+  ...
+# Subtest: copy-on-write isolation after packing and mounting
+ok 207 - copy-on-write isolation after packing and mounting
+  ---
+  duration_ms: 1.93525
+  type: 'test'
+  ...
+# Subtest: xt: floppy mount validates geometry & keeps installed RAM < 1MiB
+ok 208 - xt: floppy mount validates geometry & keeps installed RAM < 1MiB
+  ---
+  duration_ms: 3.141856
+  type: 'test'
+  ...
+# Subtest: xt: BIOS INT13 reads, writes, verifies and reports CHS geometry
+ok 209 - xt: BIOS INT13 reads, writes, verifies and reports CHS geometry
+  ---
+  duration_ms: 6.596137
+  type: 'test'
+  ...
+# Subtest: xt: BIOS INT13 fails on absent drive, invalid CHS, DMA boundary
+ok 210 - xt: BIOS INT13 fails on absent drive, invalid CHS, DMA boundary
+  ---
+  duration_ms: 1.769584
+  type: 'test'
+  ...
+# Subtest: xt: real 765 floppy I/O port + DMA2 transfers and asserts IRQ6
+ok 211 - xt: real 765 floppy I/O port + DMA2 transfers and asserts IRQ6
+  ---
+  duration_ms: 2.821089
+  type: 'test'
+  ...
+# Subtest: xt: guest boot sector at 0000:7C00 runs real INT10 then HLT
+ok 212 - xt: guest boot sector at 0000:7C00 runs real INT10 then HLT
+  ---
+  duration_ms: 2.29813
+  type: 'test'
+  ...
+# Subtest: xt: guest INT19 bootstraps A: through BIOS callback
+ok 213 - xt: guest INT19 bootstraps A: through BIOS callback
+  ---
+  duration_ms: 1.912367
+  type: 'test'
+  ...
+# Subtest: xt: JSON snapshot includes mounted floppy bytes
+ok 214 - xt: JSON snapshot includes mounted floppy bytes
+  ---
+  duration_ms: 6.551763
+  type: 'test'
+  ...
+# Subtest: at: floppy mount validates geometry & keeps installed RAM < 1MiB
+ok 215 - at: floppy mount validates geometry & keeps installed RAM < 1MiB
+  ---
+  duration_ms: 1.349469
+  type: 'test'
+  ...
+# Subtest: at: BIOS INT13 reads, writes, verifies and reports CHS geometry
+ok 216 - at: BIOS INT13 reads, writes, verifies and reports CHS geometry
+  ---
+  duration_ms: 1.944535
+  type: 'test'
+  ...
+# Subtest: at: BIOS INT13 fails on absent drive, invalid CHS, DMA boundary
+ok 217 - at: BIOS INT13 fails on absent drive, invalid CHS, DMA boundary
+  ---
+  duration_ms: 1.175721
+  type: 'test'
+  ...
+# Subtest: at: real 765 floppy I/O port + DMA2 transfers and asserts IRQ6
+ok 218 - at: real 765 floppy I/O port + DMA2 transfers and asserts IRQ6
+  ---
+  duration_ms: 0.902293
+  type: 'test'
+  ...
+# Subtest: at: guest boot sector at 0000:7C00 runs real INT10 then HLT
+ok 219 - at: guest boot sector at 0000:7C00 runs real INT10 then HLT
+  ---
+  duration_ms: 0.789505
+  type: 'test'
+  ...
+# Subtest: at: guest INT19 bootstraps A: through BIOS callback
+ok 220 - at: guest INT19 bootstraps A: through BIOS callback
+  ---
+  duration_ms: 2.063431
+  type: 'test'
+  ...
+# Subtest: at: JSON snapshot includes mounted floppy bytes
+ok 221 - at: JSON snapshot includes mounted floppy bytes
+  ---
+  duration_ms: 4.509833
+  type: 'test'
+  ...
+# Subtest: 80bit mantissa preserves 1+2^-60 that binary64 rounds to 1
+ok 222 - 80bit mantissa preserves 1+2^-60 that binary64 rounds to 1
+  ---
+  duration_ms: 1.896944
+  type: 'test'
+  ...
+# Subtest: 80bit arithmetic plus minus multiply divide and correct sign
+ok 223 - 80bit arithmetic plus minus multiply divide and correct sign
+  ---
+  duration_ms: 0.407577
+  type: 'test'
+  ...
+# Subtest: ten-byte x87 representation serializes and reimports exact mantissa
+ok 224 - ten-byte x87 representation serializes and reimports exact mantissa
+  ---
+  duration_ms: 0.230473
+  type: 'test'
+  ...
+# Subtest: guest 286 x87 FLD DWORD + FADD + FSTP TBYTE executes extended80, not host float64
+ok 225 - guest 286 x87 FLD DWORD + FADD + FSTP TBYTE executes extended80, not host float64
+  ---
+  duration_ms: 3.438348
+  type: 'test'
+  ...
+# Subtest: extended80 snapshot keeps sub-binary64 bits; old binary64 snapshot remains importable
+ok 226 - extended80 snapshot keeps sub-binary64 bits; old binary64 snapshot remains importable
+  ---
+  duration_ms: 15.780921
+  type: 'test'
+  ...
+# Subtest: extended80 compare distinguishes values that binary64 sees as equal
+ok 227 - extended80 compare distinguishes values that binary64 sees as equal
+  ---
+  duration_ms: 0.377041
+  type: 'test'
+  ...
+# Subtest: golden x87 extended80 1/3 mantissa 0xAAAAAAAAAAAAAAAB (nearest even)
+ok 228 - golden x87 extended80 1/3 mantissa 0xAAAAAAAAAAAAAAAB (nearest even)
+  ---
+  duration_ms: 0.129483
+  type: 'test'
+  ...
+# Subtest: x87 FNSTCW/FLDCW/FNSTSW m16 guest instructions preserve all 16 bits
+ok 229 - x87 FNSTCW/FLDCW/FNSTSW m16 guest instructions preserve all 16 bits
+  ---
+  duration_ms: 4.799535
+  type: 'test'
+  ...
+# Subtest: x87 FCHS/FABS, FLD ST(i), FXCH, FNOP change stack and preserve exact extended80 mantissa
+ok 230 - x87 FCHS/FABS, FLD ST(i), FXCH, FNOP change stack and preserve exact extended80 mantissa
+  ---
+  duration_ms: 1.991294
+  type: 'test'
+  ...
+# Subtest: FILD/FISTP m16 signed boundary, guest-memory preserved, FPU emptied
+ok 231 - FILD/FISTP m16 signed boundary, guest-memory preserved, FPU emptied
+  ---
+  duration_ms: 0.624961
+  type: 'test'
+  ...
+# Subtest: FILD/FISTP m32 signed value round trip
+ok 232 - FILD/FISTP m32 signed value round trip
+  ---
+  duration_ms: 1.346194
+  type: 'test'
+  ...
+# Subtest: x87 rounding control: 2.5 ties even, ceil and floor through guest CW + FISTP
+ok 233 - x87 rounding control: 2.5 ties even, ceil and floor through guest CW + FISTP
+  ---
+  duration_ms: 1.227567
+  type: 'test'
+  ...
+# Subtest: x87 80bit FRNDINT preserves 64-bit integer exactly, binary64 FSQRT works
+ok 234 - x87 80bit FRNDINT preserves 64-bit integer exactly, binary64 FSQRT works
+  ---
+  duration_ms: 2.607421
+  type: 'test'
+  ...
+# Subtest: FPUCHECK.COM tiny AT guest checks x87 without host math injection
+ok 235 - FPUCHECK.COM tiny AT guest checks x87 without host math injection
+  ---
+  duration_ms: 0.985427
+  type: 'test'
+  ...
+# MANDEL VGA SHA256 9defe63ef2c8413014add2e68f37a26e9f0d465f03e06ba15a37bb505456273b FPU operations 687064 colors 13
+# Subtest: 80287XL is AT-only, optional and shares configured CPU/FPU clock
+ok 236 - 80287XL is AT-only, optional and shares configured CPU/FPU clock
+  ---
+  duration_ms: 5.057338
+  type: 'test'
+  ...
+# Subtest: x87 ESC FPU machine instructions, status flags, and stack reset
+ok 237 - x87 ESC FPU machine instructions, status flags, and stack reset
+  ---
+  duration_ms: 4.23267
+  type: 'test'
+  ...
+# Subtest: real 16bit MANDEL.COM performs x87 operations and changes VGA framebuffer deterministically
+ok 238 - real 16bit MANDEL.COM performs x87 operations and changes VGA framebuffer deterministically
+  ---
+  duration_ms: 707.740563
+  type: 'test'
+  ...
+# Subtest: FPU snapshot rejects malformed values and restores compatible previous snapshots
+ok 239 - FPU snapshot rejects malformed values and restores compatible previous snapshots
+  ---
+  duration_ms: 1.55148
+  type: 'test'
+  ...
+# Subtest: XT no-FPU ESC still consumes ModR/M without x87 execution
+ok 240 - XT no-FPU ESC still consumes ModR/M without x87 execution
+  ---
+  duration_ms: 0.708404
+  type: 'test'
+  ...
+# Subtest: embedded FAT12 disk includes exact user DEBUG.COM bytes in a valid file chain
+ok 241 - embedded FAT12 disk includes exact user DEBUG.COM bytes in a valid file chain
+  ---
+  duration_ms: 1.00148
+  type: 'test'
+  ...
+# Subtest: XT: actual FreeDOS A:> + DIR + DEBUG prompt and registers
+ok 242 - XT: actual FreeDOS A:> + DIR + DEBUG prompt and registers
+  ---
+  duration_ms: 1442.935829
+  type: 'test'
+  ...
+# Subtest: XT: real DEBUG A/U/G executes DOS INT21 to print letter A and exits back
+ok 243 - XT: real DEBUG A/U/G executes DOS INT21 to print letter A and exits back
+  ---
+  duration_ms: 1304.830631
+  type: 'test'
+  ...
+# Subtest: XT and AT: FreeDOS writes and removes FAT12 files via real DOS commands
+ok 244 - XT and AT: FreeDOS writes and removes FAT12 files via real DOS commands
+  ---
+  duration_ms: 1865.033544
+  type: 'test'
+  ...
+# Subtest: x87 FSUBP DE E9 computes ST1-ST0, not opposite
+ok 245 - x87 FSUBP DE E9 computes ST1-ST0, not opposite
+  ---
+  duration_ms: 3.920025
+  type: 'test'
+  ...
+# Subtest: x87 FSUBRP DE E1 computes ST0-ST1
+ok 246 - x87 FSUBRP DE E1 computes ST0-ST1
+  ---
+  duration_ms: 1.41115
+  type: 'test'
+  ...
+# Subtest: x87 FDIVP DE F9 computes ST1/ST0
+ok 247 - x87 FDIVP DE F9 computes ST1/ST0
+  ---
+  duration_ms: 0.754993
+  type: 'test'
+  ...
+# Subtest: x87 FDIVRP DE F1 computes ST0/ST1
+ok 248 - x87 FDIVRP DE F1 computes ST0/ST1
+  ---
+  duration_ms: 0.711969
+  type: 'test'
+  ...
+# Subtest: x87 FCOM clears stale C1 condition flag
+ok 249 - x87 FCOM clears stale C1 condition flag
+  ---
+  duration_ms: 0.14131
+  type: 'test'
+  ...
+# Subtest: PIT latch command preserves programmed access mode and captures stable counter
+ok 250 - PIT latch command preserves programmed access mode and captures stable counter
+  ---
+  duration_ms: 0.362149
+  type: 'test'
+  ...
+# Subtest: DMA terminal-count status clears on status-port read
+ok 251 - DMA terminal-count status clears on status-port read
+  ---
+  duration_ms: 0.189231
+  type: 'test'
+  ...
+# Subtest: PC snapshot rejects PIC out-of-range mask and corrupt IRQ priority registers
+ok 252 - PC snapshot rejects PIC out-of-range mask and corrupt IRQ priority registers
+  ---
+  duration_ms: 5.707445
+  type: 'test'
+  ...
+# Subtest: nonfinite x87 snapshot values survive portable JSON without becoming null or strings
+ok 253 - nonfinite x87 snapshot values survive portable JSON without becoming null or strings
+  ---
+  duration_ms: 0.655305
+  type: 'test'
+  ...
+# Subtest: PIT advances a huge tick interval in bounded time and requests only one pending IRQ
+ok 254 - PIT advances a huge tick interval in bounded time and requests only one pending IRQ
+  ---
+  duration_ms: 0.51084
+  type: 'test'
+  ...
+# Subtest: fixed MANDEL source is installed on FAT12 disk and matches embedded disk bytes
+ok 255 - fixed MANDEL source is installed on FAT12 disk and matches embedded disk bytes
+  ---
+  duration_ms: 1.68665
+  type: 'test'
+  ...
+# Subtest: only AT has IDE and media is absent by default
+ok 256 - only AT has IDE and media is absent by default
+  ---
+  duration_ms: 2.689844
+  type: 'test'
+  ...
+# Subtest: disk validates size, never mutates original buffer and supports eject
+ok 257 - disk validates size, never mutates original buffer and supports eject
+  ---
+  duration_ms: 3.202456
+  type: 'test'
+  ...
+# Subtest: ATA IDENTIFY returns geometry and capacity through data port
+ok 258 - ATA IDENTIFY returns geometry and capacity through data port
+  ---
+  duration_ms: 2.883392
+  type: 'test'
+  ...
+# Subtest: read disk sector through real guest instructions IN AX,DX
+ok 259 - read disk sector through real guest instructions IN AX,DX
+  ---
+  duration_ms: 3.668311
+  type: 'test'
+  ...
+# Subtest: PIO write sector and readback maintains write-isolation
+ok 260 - PIO write sector and readback maintains write-isolation
+  ---
+  duration_ms: 4.707688
+  type: 'test'
+  ...
+# Subtest: out of bounds ATA command sets ABRT/error and does not alter disk
+ok 261 - out of bounds ATA command sets ABRT/error and does not alter disk
+  ---
+  duration_ms: 1.407135
+  type: 'test'
+  ...
+# Subtest: ATA PIO primary master rejects slave/unimplemented commands
+ok 262 - ATA PIO primary master rejects slave/unimplemented commands
+  ---
+  duration_ms: 1.875592
+  type: 'test'
+  ...
+# Subtest: PIO transfers respect 256-word sector boundary and persist export/import
+ok 263 - PIO transfers respect 256-word sector boundary and persist export/import
+  ---
+  duration_ms: 5.055966
+  type: 'test'
+  ...
+# Subtest: snapshot stores IDE working disk, transfer position; older snapshots remain supported
+ok 264 - snapshot stores IDE working disk, transfer position; older snapshots remain supported
+  ---
+  duration_ms: 11.151409
+  type: 'test'
+  ...
+# Subtest: corrupt IDE snapshot fails instead of partially restoring medium
+ok 265 - corrupt IDE snapshot fails instead of partially restoring medium
+  ---
+  duration_ms: 5.070598
+  type: 'test'
+  ...
+# Subtest: BIOS INT13 DL80 reads and writes actual virtual HDD, not floppy
+ok 266 - BIOS INT13 DL80 reads and writes actual virtual HDD, not floppy
+  ---
+  duration_ms: 3.92994
+  type: 'test'
+  ...
+# Subtest: BIOS rejects reads beyond HDD and respects 64KiB segment boundary
+ok 267 - BIOS rejects reads beyond HDD and respects 64KiB segment boundary
+  ---
+  duration_ms: 2.148208
+  type: 'test'
+  ...
+# Subtest: BIOS HDD reset fails on XT or AT without mounted HDD, rather than claiming nonexistent disk
+ok 268 - BIOS HDD reset fails on XT or AT without mounted HDD, rather than claiming nonexistent disk
+  ---
+  duration_ms: 0.455689
+  type: 'test'
+  ...
+# Subtest: MANDEL output matches independently calculated points rather than just a hash
+ok 269 - MANDEL output matches independently calculated points rather than just a hash
+  ---
+  duration_ms: 397.091571
+  type: 'test'
+  ...
+# Subtest: MANDEL 339B executable includes FPU presence guard and original FreeDOS asset stays correct
+ok 270 - MANDEL 339B executable includes FPU presence guard and original FreeDOS asset stays correct
+  ---
+  duration_ms: 5.598463
+  type: 'test'
+  ...
+# Subtest: IDE rejects malformed snapshot atomically, preserving original disk, overlay, and registers
+ok 271 - IDE rejects malformed snapshot atomically, preserving original disk, overlay, and registers
+  ---
+  duration_ms: 61.247989
+  type: 'test'
+  ...
+# Subtest: IDE real 16-bit PIO multi-sector read/write and copy-on-write original
+ok 272 - IDE real 16-bit PIO multi-sector read/write and copy-on-write original
+  ---
+  duration_ms: 6.757168
+  type: 'test'
+  ...
+# Subtest: FDD read-only lock blocks direct sectors and BIOS INT13h writes, survives snapshot
+ok 273 - FDD read-only lock blocks direct sectors and BIOS INT13h writes, survives snapshot
+  ---
+  duration_ms: 5.131548
+  type: 'test'
+  ...
+# Subtest: Quick media boundary at 5 MiB and 80MB disk with no accidental input mutation
+ok 274 - Quick media boundary at 5 MiB and 80MB disk with no accidental input mutation
+  ---
+  duration_ms: 5.859312
+  type: 'test'
+  ...
+# Subtest: 80286 real mode POPF/PUSHF mask 12..15 under all bit combinations
+ok 275 - 80286 real mode POPF/PUSHF mask 12..15 under all bit combinations
+  ---
+  duration_ms: 10.29256
+  type: 'test'
+  ...
+# Subtest: xt: 386 operand size prefix 66h fails closed, not silently accepted
+ok 276 - xt: 386 operand size prefix 66h fails closed, not silently accepted
+  ---
+  duration_ms: 1.281899
+  type: 'test'
+  ...
+# Subtest: xt: ROM boot snapshot preserves mode, A20, memory and guest FLAGS
+ok 277 - xt: ROM boot snapshot preserves mode, A20, memory and guest FLAGS
+  ---
+  duration_ms: 7.253216
+  type: 'test'
+  ...
+# Subtest: at: 386 operand size prefix 66h fails closed, not silently accepted
+ok 278 - at: 386 operand size prefix 66h fails closed, not silently accepted
+  ---
+  duration_ms: 0.750667
+  type: 'test'
+  ...
+# Subtest: at: ROM boot snapshot preserves mode, A20, memory and guest FLAGS
+ok 279 - at: ROM boot snapshot preserves mode, A20, memory and guest FLAGS
+  ---
+  duration_ms: 9.531278
+  type: 'test'
+  ...
+# Subtest: 80287XL remains AT-only and experimental 80bit precision opt-in
+ok 280 - 80287XL remains AT-only and experimental 80bit precision opt-in
+  ---
+  duration_ms: 0.60499
+  type: 'test'
+  ...
+# Subtest: PIC priority: IRQ0 preempts in-service IRQ5; IRQ7 waits until EOI
+ok 281 - PIC priority: IRQ0 preempts in-service IRQ5; IRQ7 waits until EOI
+  ---
+  duration_ms: 1.086357
+  type: 'test'
+  ...
+# Subtest: PIT latch survives full PC state JSON roundtrip, including half-read count
+ok 282 - PIT latch survives full PC state JSON roundtrip, including half-read count
+  ---
+  duration_ms: 15.202538
+  type: 'test'
+  ...
+# Subtest: older PC snapshot without PIT latch fields remains importable
+ok 283 - older PC snapshot without PIT latch fields remains importable
+  ---
+  duration_ms: 4.310206
+  type: 'test'
+  ...
+# Subtest: PIT latch itself is not altered by clock advances or repeated latch requests
+ok 284 - PIT latch itself is not altered by clock advances or repeated latch requests
+  ---
+  duration_ms: 0.250303
+  type: 'test'
+  ...
+# Subtest: PIT period arithmetic matches a modular reference over varied tick counts
+ok 285 - PIT period arithmetic matches a modular reference over varied tick counts
+  ---
+  duration_ms: 0.362169
+  type: 'test'
+  ...
+# Subtest: DMA count/addr programming survives status read; terminal-count bits clear only on read
+ok 286 - DMA count/addr programming survives status read; terminal-count bits clear only on read
+  ---
+  duration_ms: 0.43638
+  type: 'test'
+  ...
+# Subtest: FPU nonfinite and PIC state survive JSON snapshot while invalid PIC is rejected
+ok 287 - FPU nonfinite and PIC state survive JSON snapshot while invalid PIC is rejected
+  ---
+  duration_ms: 19.346738
+  type: 'test'
+  ...
+# Subtest: IDE two-sector PIO read uses exact sector boundary, count decrement and IRQ flag
+ok 288 - IDE two-sector PIO read uses exact sector boundary, count decrement and IRQ flag
+  ---
+  duration_ms: 0.876094
+  type: 'test'
+  ...
+# Subtest: IDE two-sector write is isolated and exported, with no mutation of caller image
+ok 289 - IDE two-sector write is isolated and exported, with no mutation of caller image
+  ---
+  duration_ms: 0.816505
+  type: 'test'
+  ...
+# Subtest: VGA mode 13 pixel and palette survives cross-device snapshot with IDE, FPU, PIC and keyboard
+ok 290 - VGA mode 13 pixel and palette survives cross-device snapshot with IDE, FPU, PIC and keyboard
+  ---
+  duration_ms: 13.042894
+  type: 'test'
+  ...
+# Subtest: Guest 286 FLAGS behavior does not emulate 386 high bits
+ok 291 - Guest 286 FLAGS behavior does not emulate 386 high bits
+  ---
+  duration_ms: 1.799519
+  type: 'test'
+  ...
+# Subtest: xt: reset ROM has far jump and boots BIOS stubs
+ok 292 - xt: reset ROM has far jump and boots BIOS stubs
+  ---
+  duration_ms: 5.77147
+  type: 'test'
+  ...
+# Subtest: xt: arithmetic, flags and conditional branch execute
+ok 293 - xt: arithmetic, flags and conditional branch execute
+  ---
+  duration_ms: 0.666111
+  type: 'test'
+  ...
+# Subtest: xt: memory store/load and ROM write protection
+ok 294 - xt: memory store/load and ROM write protection
+  ---
+  duration_ms: 0.781724
+  type: 'test'
+  ...
+# Subtest: xt: INT pushes frame and executes BIOS IRET
+ok 295 - xt: INT pushes frame and executes BIOS IRET
+  ---
+  duration_ms: 0.5713
+  type: 'test'
+  ...
+# Subtest: xt: instructions for port IO reach physical PIC
+ok 296 - xt: instructions for port IO reach physical PIC
+  ---
+  duration_ms: 9.90889
+  type: 'test'
+  ...
+# Subtest: xt: unsupported instruction traps, no fake success
+ok 297 - xt: unsupported instruction traps, no fake success
+  ---
+  duration_ms: 1.00772
+  type: 'test'
+  ...
+# Subtest: at: reset ROM has far jump and boots BIOS stubs
+ok 298 - at: reset ROM has far jump and boots BIOS stubs
+  ---
+  duration_ms: 0.822665
+  type: 'test'
+  ...
+# Subtest: at: arithmetic, flags and conditional branch execute
+ok 299 - at: arithmetic, flags and conditional branch execute
+  ---
+  duration_ms: 0.573354
+  type: 'test'
+  ...
+# Subtest: at: memory store/load and ROM write protection
+ok 300 - at: memory store/load and ROM write protection
+  ---
+  duration_ms: 0.841853
+  type: 'test'
+  ...
+# Subtest: at: INT pushes frame and executes BIOS IRET
+ok 301 - at: INT pushes frame and executes BIOS IRET
+  ---
+  duration_ms: 0.969683
+  type: 'test'
+  ...
+# Subtest: at: instructions for port IO reach physical PIC
+ok 302 - at: instructions for port IO reach physical PIC
+  ---
+  duration_ms: 0.536228
+  type: 'test'
+  ...
+# Subtest: at: unsupported instruction traps, no fake success
+ok 303 - at: unsupported instruction traps, no fake success
+  ---
+  duration_ms: 0.367588
+  type: 'test'
+  ...
+# Subtest: XT cannot execute 286 opcodes
+ok 304 - XT cannot execute 286 opcodes
+  ---
+  duration_ms: 0.358234
+  type: 'test'
+  ...
+# Subtest: AT 286 executes LGDT, LMSW and far JMP through GDT
+ok 305 - AT 286 executes LGDT, LMSW and far JMP through GDT
+  ---
+  duration_ms: 0.331684
+  type: 'test'
+  ...
+# Subtest: AT 286 rejects absent executable segment
+ok 306 - AT 286 rejects absent executable segment
+  ---
+  duration_ms: 0.392033
+  type: 'test'
+  ...
+# Subtest: AT 286 enforces segment limit
+ok 307 - AT 286 enforces segment limit
+  ---
+  duration_ms: 0.345565
+  type: 'test'
+  ...
+# Subtest: AT 286 reset hidden CS base differs from XT
+ok 308 - AT 286 reset hidden CS base differs from XT
+  ---
+  duration_ms: 0.231504
+  type: 'test'
+  ...
+# Subtest: AT A20 routes 1 MiB address either to low RAM or installed extended RAM
+ok 309 - AT A20 routes 1 MiB address either to low RAM or installed extended RAM
+  ---
+  duration_ms: 0.17501
+  type: 'test'
+  ...
+# Subtest: AT BIOS INT 15 AH=88 reports 384 KiB extended
+ok 310 - AT BIOS INT 15 AH=88 reports 384 KiB extended
+  ---
+  duration_ms: 0.407557
+  type: 'test'
+  ...
+# Subtest: hard cap: neither XT nor AT may allocate >1 MiB installed RAM
+ok 311 - hard cap: neither XT nor AT may allocate >1 MiB installed RAM
+  ---
+  duration_ms: 1.572411
+  type: 'test'
+  ...
+# Subtest: AT memory hole does not silently become RAM
+ok 312 - AT memory hole does not silently become RAM
+  ---
+  duration_ms: 0.492873
+  type: 'test'
+  ...
+# Subtest: PIC masking, request, ack and EOI
+ok 313 - PIC masking, request, ack and EOI
+  ---
+  duration_ms: 0.239256
+  type: 'test'
+  ...
+# Subtest: PIT channel 0 asserts IRQ0 after reload count
+ok 314 - PIT channel 0 asserts IRQ0 after reload count
+  ---
+  duration_ms: 0.541857
+  type: 'test'
+  ...
+# Subtest: DMA channel registers and flip-flop
+ok 315 - DMA channel registers and flip-flop
+  ---
+  duration_ms: 0.18096
+  type: 'test'
+  ...
+# Subtest: AT CMOS port select/data, XT no CMOS
+ok 316 - AT CMOS port select/data, XT no CMOS
+  ---
+  duration_ms: 0.680353
+  type: 'test'
+  ...
+# Subtest: keyboard scancode injection requests PIC IRQ1
+ok 317 - keyboard scancode injection requests PIC IRQ1
+  ---
+  duration_ms: 0.351714
+  type: 'test'
+  ...
+# Subtest: multiple simultaneous PCs have isolated RAM, chipset and CPU state
+ok 318 - multiple simultaneous PCs have isolated RAM, chipset and CPU state
+  ---
+  duration_ms: 0.306156
+  type: 'test'
+  ...
+# Subtest: real 80286 PUSHF masks FLAGS high nibble, restoring DEBUG v2.50 generation detection
+ok 319 - real 80286 PUSHF masks FLAGS high nibble, restoring DEBUG v2.50 generation detection
+  ---
+  duration_ms: 3.019825
+  type: 'test'
+  ...
+# Subtest: 286 real-mode POPF cannot set FLAGS high nibble, and IRET restores masked flags
+ok 320 - 286 real-mode POPF cannot set FLAGS high nibble, and IRET restores masked flags
+  ---
+  duration_ms: 0.583488
+  type: 'test'
+  ...
+# Subtest: 286 protected-mode PUSHF retains IOPL (real-mode masking must not leak)
+ok 321 - 286 protected-mode PUSHF retains IOPL (real-mode masking must not leak)
+  ---
+  duration_ms: 1.469478
+  type: 'test'
+  ...
+# Subtest: FDD restore preserves mounted/empty drives and controller status
+ok 322 - FDD restore preserves mounted/empty drives and controller status
+  ---
+  duration_ms: 12.767084
+  type: 'test'
+  ...
+# Subtest: invalid B disk in snapshot never partially replaces existing A disk
+ok 323 - invalid B disk in snapshot never partially replaces existing A disk
+  ---
+  duration_ms: 9.411604
+  type: 'test'
+  ...
+# Subtest: DOSBox-X CPU source provenance pinned to supplied commit
+ok 324 - DOSBox-X CPU source provenance pinned to supplied commit
+  ---
+  duration_ms: 0.958497
+  type: 'test'
+  ...
+# Subtest: DOSBox-X CPU references retain exact recorded SHA-256 bytes
+ok 325 - DOSBox-X CPU references retain exact recorded SHA-256 bytes
+  ---
+  duration_ms: 3.018633
+  type: 'test'
+  ...
+# Subtest: No 386/full/dynamic CPU cores imported into active reference folder
+ok 326 - No 386/full/dynamic CPU cores imported into active reference folder
+  ---
+  duration_ms: 0.319165
+  type: 'test'
+  ...
+# Subtest: both graphics COM demos are real FreeDOS FAT12 root files
+ok 327 - both graphics COM demos are real FreeDOS FAT12 root files
+  ---
+  duration_ms: 1.51175
+  type: 'test'
+  ...
+# Subtest: original TUNE/DEBUG and boot assets survive VGA install, twin FATs identical
+ok 328 - original TUNE/DEBUG and boot assets survive VGA install, twin FATs identical
+  ---
+  duration_ms: 0.267307
+  type: 'test'
+  ...
+# Subtest: embedded offline FreeDOS image equals on-disk 720KiB version with VGA demos
+ok 329 - embedded offline FreeDOS image equals on-disk 720KiB version with VGA demos
+  ---
+  duration_ms: 4.053494
+  type: 'test'
+  ...
+# Subtest: XT never acquires VGA, AT retains 1 MiB installed system RAM cap
+ok 330 - XT never acquires VGA, AT retains 1 MiB installed system RAM cap
+  ---
+  duration_ms: 2.556395
+  type: 'test'
+  ...
+# Subtest: AT VGA text-mode FreeDOS-compatible B8000 cells remain readable
+ok 331 - AT VGA text-mode FreeDOS-compatible B8000 cells remain readable
+  ---
+  duration_ms: 2.29797
+  type: 'test'
+  ...
+# Subtest: real guest INT10 Mode 13h and REP STOSB write to chained A000 VRAM
+ok 332 - real guest INT10 Mode 13h and REP STOSB write to chained A000 VRAM
+  ---
+  duration_ms: 8.629245
+  type: 'test'
+  ...
+# Subtest: VGA DAC 3C8/3C9 guest port triplets update palette with 6-bit values and index auto-increment
+ok 333 - VGA DAC 3C8/3C9 guest port triplets update palette with 6-bit values and index auto-increment
+  ---
+  duration_ms: 0.919459
+  type: 'test'
+  ...
+# Subtest: Mode 12h four planar bytes, bit order and map mask write
+ok 334 - Mode 12h four planar bytes, bit order and map mask write
+  ---
+  duration_ms: 0.634054
+  type: 'test'
+  ...
+# Subtest: VGA read-map select + graphics read mode 1 compare plane data
+ok 335 - VGA read-map select + graphics read mode 1 compare plane data
+  ---
+  duration_ms: 1.925106
+  type: 'test'
+  ...
+# Subtest: Guest INT10 pixel write/read for 12h and 13h, mode query
+ok 336 - Guest INT10 pixel write/read for 12h and 13h, mode query
+  ---
+  duration_ms: 1.05511
+  type: 'test'
+  ...
+# Subtest: VGA snapshot preserves DAC, video RAM, sequencer and per-plane registers
+ok 337 - VGA snapshot preserves DAC, video RAM, sequencer and per-plane registers
+  ---
+  duration_ms: 7.212817
+  type: 'test'
+  ...
+# Subtest: Invalid VGA mode and video-memory addresses fail closed
+ok 338 - Invalid VGA mode and video-memory addresses fail closed
+  ---
+  duration_ms: 1.7938
+  type: 'test'
+  ...
+# Subtest: xt: CGA INT10 mode03, text character via guest interrupt and IRET
+ok 339 - xt: CGA INT10 mode03, text character via guest interrupt and IRET
+  ---
+  duration_ms: 6.271716
+  type: 'test'
+  ...
+# Subtest: xt: CGA graphics mode4 banked VRAM 2-bits per pixel
+ok 340 - xt: CGA graphics mode4 banked VRAM 2-bits per pixel
+  ---
+  duration_ms: 1.710195
+  type: 'test'
+  ...
+# Subtest: xt: CGA mode6 640x200 one-bit pixels and port palette
+ok 341 - xt: CGA mode6 640x200 one-bit pixels and port palette
+  ---
+  duration_ms: 1.288187
+  type: 'test'
+  ...
+# Subtest: xt: Hercules 720x348 4-bank graphics and mono text
+ok 342 - xt: Hercules 720x348 4-bank graphics and mono text
+  ---
+  duration_ms: 4.885792
+  type: 'test'
+  ...
+# Subtest: xt: INT10 AH09 repeated text, cursor set/read and mode query
+ok 343 - xt: INT10 AH09 repeated text, cursor set/read and mode query
+  ---
+  duration_ms: 1.602085
+  type: 'test'
+  ...
+# Subtest: xt: video snapshot round-trip and independent system-RAM ceiling
+ok 344 - xt: video snapshot round-trip and independent system-RAM ceiling
+  ---
+  duration_ms: 6.956114
+  type: 'test'
+  ...
+# Subtest: xt: no inserted floppy, INT13 still fails closed
+ok 345 - xt: no inserted floppy, INT13 still fails closed
+  ---
+  duration_ms: 0.702236
+  type: 'test'
+  ...
+# Subtest: at: CGA INT10 mode03, text character via guest interrupt and IRET
+ok 346 - at: CGA INT10 mode03, text character via guest interrupt and IRET
+  ---
+  duration_ms: 1.013719
+  type: 'test'
+  ...
+# Subtest: at: CGA graphics mode4 banked VRAM 2-bits per pixel
+ok 347 - at: CGA graphics mode4 banked VRAM 2-bits per pixel
+  ---
+  duration_ms: 0.964045
+  type: 'test'
+  ...
+# Subtest: at: CGA mode6 640x200 one-bit pixels and port palette
+ok 348 - at: CGA mode6 640x200 one-bit pixels and port palette
+  ---
+  duration_ms: 1.025386
+  type: 'test'
+  ...
+# Subtest: at: Hercules 720x348 4-bank graphics and mono text
+ok 349 - at: Hercules 720x348 4-bank graphics and mono text
+  ---
+  duration_ms: 0.572693
+  type: 'test'
+  ...
+# Subtest: at: INT10 AH09 repeated text, cursor set/read and mode query
+ok 350 - at: INT10 AH09 repeated text, cursor set/read and mode query
+  ---
+  duration_ms: 0.621585
+  type: 'test'
+  ...
+# Subtest: at: video snapshot round-trip and independent system-RAM ceiling
+ok 351 - at: video snapshot round-trip and independent system-RAM ceiling
+  ---
+  duration_ms: 10.740298
+  type: 'test'
+  ...
+# Subtest: at: no inserted floppy, INT13 still fails closed
+ok 352 - at: no inserted floppy, INT13 still fails closed
+  ---
+  duration_ms: 0.684188
+  type: 'test'
+  ...
+# Subtest: XT CGA fixed-point Mandelbrot matches independent cells and video memory
+ok 353 - XT CGA fixed-point Mandelbrot matches independent cells and video memory
+  ---
+  duration_ms: 203.828855
+  type: 'test'
+  ...
+# Subtest: XT HGC fixed-point Mandelbrot matches independent cells and video memory
+ok 354 - XT HGC fixed-point Mandelbrot matches independent cells and video memory
+  ---
+  duration_ms: 197.162721
+  type: 'test'
+  ...
+1..354
+# tests 354
+# suites 0
+# pass 354
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 5188.445831
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:browser
+> python3 optional/pc/tests/test_browser.py
+
+TRACE AT SELFTEST AT RESET · F000:FFF0 · hidden CS base FF0000
+FDD media preserved across reset (including empty/ejected drives).
+[CPU TEST · isolated] 286 LGDT / LMSW / FAR JMP: PASS AX=1234 CS base=003000
+XT: PASS  ·  AT: PASS  ·  286 protected: PASS  ·  CPU ModR/M + REP: PASS  ·  ALU/SHIFT: PASS  ·  #DE guest INT 00h: PASS  ·  BCD 8086/286: PASS  ·  AT IRQ10 slave PIC: PASS  ·  286 BOUND #BR: PASS  ·  1 MiB RAM cap: PASS
+PASS: REAL Chromium XT ROM boot, AT 286 protected code, 10 selftests + CPU ModR/M/REP, ALU/SHIFT, IDT, guest #DE and #BR demos, PIT IRQ0, no page errors
+Screenshot: /mnt/data/mdjs-phase4m-nasmfree-work/optional/pc/pc-phase1-browser.png
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:phase2:browser
+> python3 optional/pc/tests/test_video_browser.py && python3 optional/pc/tests/test_floppy_browser.py && python3 optional/pc/tests/test_freedos_browser.py
+
+PASS: 13 isolated CPU/video diagnostics preserve running FreeDOS RAM, VRAM, registers, disk and CPU steps
+PASS: Chromium XT/AT mounted embedded 720KiB FreeDOS image, exercised ROM boot, snapshot, binary preserved in JSON snapshot after reset/import
+PASS: XT FreeDOS prompt {'profile': 'xt', 'steps': 4185000, 'ticks': 63, 'running': False}
+PASS: XT DEBUG started {'profile': 'xt', 'steps': 4500000, 'ticks': 70, 'running': False}
+PASS: XT DEBUG R registers {'profile': 'xt', 'steps': 4545000, 'ticks': 70, 'running': False}
+PASS: XT DEBUG Q returns DOS {'profile': 'xt', 'steps': 4680000, 'ticks': 73, 'running': False}
+PASS: AT FreeDOS prompt {'profile': 'at', 'steps': 4185000, 'ticks': 63, 'running': False}
+PASS: AT directory listing {'profile': 'at', 'steps': 4725000, 'ticks': 74, 'running': False}
+PASS: true browser FreeDOS 1.4 on XT/AT; XT physical keyboard -> DEBUG R/Q; AT DIR, amber Hercules
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:runtime:browser
+> python3 optional/pc/tests/test_universal_browser.py && python3 zx/tests/e2e/test_universal_zx_browser.py
+
+PC OFFLINE OPAQUE-ORIGIN PASS (file:// navigation itself is admin-blocked); Blob Worker: True
+ZX OPAQUE-ORIGIN PASS: ROM via File API + JSON restore Z80 + 48KiB RAM; ROM excluded from snapshot
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:ultra:browser
+> python3 test/e2e/test_ultra_browser.py
+
+BROWSER PASS: 4 charts + short GFM table + 3-way sort + filter + SVG export + optional routes + Arduino/Blockly
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:ux:browser
+> python3 optional/blockly/tests/browser.py && python3 optional/blockly/tests/test_dnd_browser.py && python3 optional/blockly/tests/test_education_playback_browser.py && python3 zx/tests/e2e/test_keyboard_ux_browser.py && python3 optional/pc/tests/test_video_browser.py
+
+BROWSER PASS: workspace, JS/Python/Arduino, 4 sensors + LED/PWM/servo/stepper, Blink regression, theme; JS exceptions: 0
+BLOCKS boot errors []
+toolbox 15 slots 18 blocks 15
+bbox {'x': 60.1875, 'y': 631, 'width': 190, 'height': 40} {'x': 296.1875, 'y': 303, 'width': 527.4375, 'height': 13}
+after blocks 16 console Připraveno · 16 bloků.
+nested bboxes {'x': 60.1875, 'y': 822, 'width': 190, 'height': 40} {'x': 333.046875, 'y': 885.953125, 'width': 466.53125, 'height': 14.296875}
+nested after count 17
+BLOCKS PASS
+backspace matrices {'shift': 254, 'zero': 254}
+ZX MATRIX PASS
+PASS: slow Blink HIGH(0ms) → LOW(1000ms), pause freezes time, manual step HIGH(2000ms), preset cancels stale playback
+Virtual J creates [108, 111, 97, 100, 32, 13]
+Virtual DELETE leaves [108, 111, 97, 100, 13, 128]
+ZX VIRTUAL 40 KEYS PASS
+PASS: 13 isolated CPU/video diagnostics preserve running FreeDOS RAM, VRAM, registers, disk and CPU steps
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:ux:shell
+> python3 test/e2e/test_ux_shell_v082.py
+
+PC: FreeDOS prompt + 30 drawer toggles + isolated ALU/BCD + native HGC and CGA 2x/1x/fit PASS
+ZX: overlay/tape/debug + keyboard 40 keys + live ROM boot PASS
+Blocks: 25 code panel cycles + sim + toolbox + intact program PASS
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:phase3:compat
+> npm run test:pc:phase3:preflight && npm run test:pc:phase3:browser && npm run test:pc:phase3:tune
+
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:phase3:preflight
+> node --test optional/pc/phase3/*.test.cjs
+
+TAP version 13
+# Subtest: xt: Covox gate — guest OUT 378h, no fake sound before first write
+ok 1 - xt: Covox gate — guest OUT 378h, no fake sound before first write
+  ---
+  duration_ms: 25.997195
+  type: 'test'
+  ...
+# Subtest: xt: OPL2 gate — real registers, timer and deterministic FM
+ok 2 - xt: OPL2 gate — real registers, timer and deterministic FM
+  ---
+  duration_ms: 1.82853
+  type: 'test'
+  ...
+# Subtest: xt: SB2 gate — DSP reset, real DMA1 RAM, IRQ acknowledgment
+ok 3 - xt: SB2 gate — DSP reset, real DMA1 RAM, IRQ acknowledgment
+  ---
+  duration_ms: 1.367142
+  type: 'test'
+  ...
+# Subtest: xt: full reset/snapshot keeps Covox/OPL/SB2 state but never queues stale PCM
+ok 4 - xt: full reset/snapshot keeps Covox/OPL/SB2 state but never queues stale PCM
+  ---
+  duration_ms: 10.440702
+  type: 'test'
+  ...
+# Subtest: at: Covox gate — guest OUT 378h, no fake sound before first write
+ok 5 - at: Covox gate — guest OUT 378h, no fake sound before first write
+  ---
+  duration_ms: 23.959756
+  type: 'test'
+  ...
+# Subtest: at: OPL2 gate — real registers, timer and deterministic FM
+ok 6 - at: OPL2 gate — real registers, timer and deterministic FM
+  ---
+  duration_ms: 0.888414
+  type: 'test'
+  ...
+# Subtest: at: SB2 gate — DSP reset, real DMA1 RAM, IRQ acknowledgment
+ok 7 - at: SB2 gate — DSP reset, real DMA1 RAM, IRQ acknowledgment
+  ---
+  duration_ms: 0.768324
+  type: 'test'
+  ...
+# Subtest: at: full reset/snapshot keeps Covox/OPL/SB2 state but never queues stale PCM
+ok 8 - at: full reset/snapshot keeps Covox/OPL/SB2 state but never queues stale PCM
+  ---
+  duration_ms: 12.435146
+  type: 'test'
+  ...
+# Subtest: xt: guest x86 OUT/IN to port 61h preserves existing latch (speaker transport)
+ok 9 - xt: guest x86 OUT/IN to port 61h preserves existing latch (speaker transport)
+  ---
+  duration_ms: 4.711222
+  type: 'test'
+  ...
+# Subtest: xt: guest x86 programs existing PIT2 reload via 43h/42h (speaker timing)
+ok 10 - xt: guest x86 programs existing PIT2 reload via 43h/42h (speaker timing)
+  ---
+  duration_ms: 1.45912
+  type: 'test'
+  ...
+# Subtest: xt: guest x86 programs existing DMA1 address register (DMA registers)
+ok 11 - xt: guest x86 programs existing DMA1 address register (DMA registers)
+  ---
+  duration_ms: 2.554315
+  type: 'test'
+  ...
+# Subtest: at: guest x86 OUT/IN to port 61h preserves existing latch (speaker transport)
+ok 12 - at: guest x86 OUT/IN to port 61h preserves existing latch (speaker transport)
+  ---
+  duration_ms: 5.487507
+  type: 'test'
+  ...
+# Subtest: at: guest x86 programs existing PIT2 reload via 43h/42h (speaker timing)
+ok 13 - at: guest x86 programs existing PIT2 reload via 43h/42h (speaker timing)
+  ---
+  duration_ms: 0.940512
+  type: 'test'
+  ...
+# Subtest: at: guest x86 programs existing DMA1 address register (DMA registers)
+ok 14 - at: guest x86 programs existing DMA1 address register (DMA registers)
+  ---
+  duration_ms: 0.676506
+  type: 'test'
+  ...
+# Subtest: OPEN HARDWARE FIDELITY: PIT mode 0/1/4/5, port 61h bit5 output, analog filtering and cycle-accurate 8253 speaker (not part of functional Phase 3 acceptance)
+ok 15 - OPEN HARDWARE FIDELITY: PIT mode 0/1/4/5, port 61h bit5 output, analog filtering and cycle-accurate 8253 speaker (not part of functional Phase 3 acceptance) # TODO
+  ---
+  duration_ms: 0.134993
+  type: 'test'
+  ...
+# Subtest: xt Covox: guest OUT DX,AL generates two real held DAC amplitudes
+ok 16 - xt Covox: guest OUT DX,AL generates two real held DAC amplitudes
+  ---
+  duration_ms: 12.552442
+  type: 'test'
+  ...
+# Subtest: xt Covox: disabled capture neither queues nor changes DOS memory
+ok 17 - xt Covox: disabled capture neither queues nor changes DOS memory
+  ---
+  duration_ms: 3.944462
+  type: 'test'
+  ...
+# Subtest: xt OPL2: real guest x86 OUT 388/389 programs FM and yields PCM
+ok 18 - xt OPL2: real guest x86 OUT 388/389 programs FM and yields PCM
+  ---
+  duration_ms: 45.800711
+  type: 'test'
+  ...
+# Subtest: xt OPL timer status, masked IRQ and reset
+ok 19 - xt OPL timer status, masked IRQ and reset
+  ---
+  duration_ms: 0.909856
+  type: 'test'
+  ...
+# Subtest: xt OPL/Covox snapshot roundtrip and validation
+ok 20 - xt OPL/Covox snapshot roundtrip and validation
+  ---
+  duration_ms: 7.043953
+  type: 'test'
+  ...
+# Subtest: at Covox: guest OUT DX,AL generates two real held DAC amplitudes
+ok 21 - at Covox: guest OUT DX,AL generates two real held DAC amplitudes
+  ---
+  duration_ms: 7.511094
+  type: 'test'
+  ...
+# Subtest: at Covox: disabled capture neither queues nor changes DOS memory
+ok 22 - at Covox: disabled capture neither queues nor changes DOS memory
+  ---
+  duration_ms: 4.540066
+  type: 'test'
+  ...
+# Subtest: at OPL2: real guest x86 OUT 388/389 programs FM and yields PCM
+ok 23 - at OPL2: real guest x86 OUT 388/389 programs FM and yields PCM
+  ---
+  duration_ms: 16.470604
+  type: 'test'
+  ...
+# Subtest: at OPL timer status, masked IRQ and reset
+ok 24 - at OPL timer status, masked IRQ and reset
+  ---
+  duration_ms: 0.767913
+  type: 'test'
+  ...
+# Subtest: at OPL/Covox snapshot roundtrip and validation
+ok 25 - at OPL/Covox snapshot roundtrip and validation
+  ---
+  duration_ms: 5.150041
+  type: 'test'
+  ...
+# Subtest: OPL key off decays, rhythm-mode reports unsupported rather than claiming full compatibility
+ok 26 - OPL key off decays, rhythm-mode reports unsupported rather than claiming full compatibility
+  ---
+  duration_ms: 16.986528
+  type: 'test'
+  ...
+# Subtest: xt SB2 DSP reset handshake and version 2.01 through guest x86 OUT
+ok 27 - xt SB2 DSP reset handshake and version 2.01 through guest x86 OUT
+  ---
+  duration_ms: 5.171443
+  type: 'test'
+  ...
+# Subtest: xt guest x86 config DMA1 + SB2 commands -> guest RAM PCM -> IRQ5
+ok 28 - xt guest x86 config DMA1 + SB2 commands -> guest RAM PCM -> IRQ5
+  ---
+  duration_ms: 35.16052
+  type: 'test'
+  ...
+# Subtest: xt DMA1 64KiB crossing wraps OFFSET while holding PAGE
+ok 29 - xt DMA1 64KiB crossing wraps OFFSET while holding PAGE
+  ---
+  duration_ms: 0.66582
+  type: 'test'
+  ...
+# Subtest: xt auto-init repeats DMA block and stops after exit command at boundary
+ok 30 - xt auto-init repeats DMA block and stops after exit command at boundary
+  ---
+  duration_ms: 1.559942
+  type: 'test'
+  ...
+# Subtest: xt DMA wrong direction or mask does NOT invent PCM or IRQ
+ok 31 - xt DMA wrong direction or mask does NOT invent PCM or IRQ
+  ---
+  duration_ms: 4.331582
+  type: 'test'
+  ...
+# Subtest: xt SB2 export/restore no stale PCM buffers
+ok 32 - xt SB2 export/restore no stale PCM buffers
+  ---
+  duration_ms: 8.298157
+  type: 'test'
+  ...
+# Subtest: at SB2 DSP reset handshake and version 2.01 through guest x86 OUT
+ok 33 - at SB2 DSP reset handshake and version 2.01 through guest x86 OUT
+  ---
+  duration_ms: 1.288344
+  type: 'test'
+  ...
+# Subtest: at guest x86 config DMA1 + SB2 commands -> guest RAM PCM -> IRQ5
+ok 34 - at guest x86 config DMA1 + SB2 commands -> guest RAM PCM -> IRQ5
+  ---
+  duration_ms: 27.690455
+  type: 'test'
+  ...
+# Subtest: at DMA1 64KiB crossing wraps OFFSET while holding PAGE
+ok 35 - at DMA1 64KiB crossing wraps OFFSET while holding PAGE
+  ---
+  duration_ms: 0.962915
+  type: 'test'
+  ...
+# Subtest: at auto-init repeats DMA block and stops after exit command at boundary
+ok 36 - at auto-init repeats DMA block and stops after exit command at boundary
+  ---
+  duration_ms: 2.243457
+  type: 'test'
+  ...
+# Subtest: at DMA wrong direction or mask does NOT invent PCM or IRQ
+ok 37 - at DMA wrong direction or mask does NOT invent PCM or IRQ
+  ---
+  duration_ms: 2.732181
+  type: 'test'
+  ...
+# Subtest: at SB2 export/restore no stale PCM buffers
+ok 38 - at SB2 export/restore no stale PCM buffers
+  ---
+  duration_ms: 6.798305
+  type: 'test'
+  ...
+# Subtest: reference fixture with matching commit, SHA, and declared license is accepted for next-stage manual review
+ok 39 - reference fixture with matching commit, SHA, and declared license is accepted for next-stage manual review
+  ---
+  duration_ms: 5.477783
+  type: 'test'
+  ...
+# Subtest: missing peripheral reference closes source gate
+ok 40 - missing peripheral reference closes source gate
+  ---
+  duration_ms: 3.182397
+  type: 'test'
+  ...
+# Subtest: changed C++ bytes after manifest generation are rejected
+ok 41 - changed C++ bytes after manifest generation are rejected
+  ---
+  duration_ms: 1.517047
+  type: 'test'
+  ...
+# Subtest: mixed commits are rejected
+ok 42 - mixed commits are rejected
+  ---
+  duration_ms: 1.563487
+  type: 'test'
+  ...
+# Subtest: GPL-2.0-only declaration is explicitly blocked
+ok 43 - GPL-2.0-only declaration is explicitly blocked
+  ---
+  duration_ms: 4.243941
+  type: 'test'
+  ...
+# Subtest: unexpected path traversal and duplicate source requirements are rejected
+ok 44 - unexpected path traversal and duplicate source requirements are rejected
+  ---
+  duration_ms: 1.683928
+  type: 'test'
+  ...
+# Subtest: real reference intake now has Phase 3 reference files but unknown upstream commit still blocks release provenance gate
+ok 45 - real reference intake now has Phase 3 reference files but unknown upstream commit still blocks release provenance gate
+  ---
+  duration_ms: 4.027346
+  type: 'test'
+  ...
+# Subtest: xt PIT2/61h: genuine guest x86 loop yields deterministic audible square wave
+ok 46 - xt PIT2/61h: genuine guest x86 loop yields deterministic audible square wave
+  ---
+  duration_ms: 68.25687
+  type: 'test'
+  ...
+# Subtest: xt port61 speaker-enable bit0/bit1 gates PCM; non-audio I/O unchanged
+ok 47 - xt port61 speaker-enable bit0/bit1 gates PCM; non-audio I/O unchanged
+  ---
+  duration_ms: 5.004412
+  type: 'test'
+  ...
+# Subtest: xt PIT2 readback progresses; mode0 deliberately silent instead of fake waveform
+ok 48 - xt PIT2 readback progresses; mode0 deliberately silent instead of fake waveform
+  ---
+  duration_ms: 0.738709
+  type: 'test'
+  ...
+# Subtest: xt state import suppresses queued sound, preserves phase and old snapshot compatibility
+ok 49 - xt state import suppresses queued sound, preserves phase and old snapshot compatibility
+  ---
+  duration_ms: 5.849481
+  type: 'test'
+  ...
+# Subtest: at PIT2/61h: genuine guest x86 loop yields deterministic audible square wave
+ok 50 - at PIT2/61h: genuine guest x86 loop yields deterministic audible square wave
+  ---
+  duration_ms: 35.037114
+  type: 'test'
+  ...
+# Subtest: at port61 speaker-enable bit0/bit1 gates PCM; non-audio I/O unchanged
+ok 51 - at port61 speaker-enable bit0/bit1 gates PCM; non-audio I/O unchanged
+  ---
+  duration_ms: 8.285057
+  type: 'test'
+  ...
+# Subtest: at PIT2 readback progresses; mode0 deliberately silent instead of fake waveform
+ok 52 - at PIT2 readback progresses; mode0 deliberately silent instead of fake waveform
+  ---
+  duration_ms: 0.654803
+  type: 'test'
+  ...
+# Subtest: at state import suppresses queued sound, preserves phase and old snapshot compatibility
+ok 53 - at state import suppresses queued sound, preserves phase and old snapshot compatibility
+  ---
+  duration_ms: 5.414657
+  type: 'test'
+  ...
+# Subtest: silent/off mode generates no PCM queue; 10 second PCM limit is bounded
+ok 54 - silent/off mode generates no PCM queue; 10 second PCM limit is bounded
+  ---
+  duration_ms: 9.969434
+  type: 'test'
+  ...
+# Subtest: malformed speaker snapshot is rejected rather than silently corrupting guest
+ok 55 - malformed speaker snapshot is rejected rather than silently corrupting guest
+  ---
+  duration_ms: 1.935185
+  type: 'test'
+  ...
+# Subtest: TUNE.COM is a tiny, actual 16-bit DOS program
+ok 56 - TUNE.COM is a tiny, actual 16-bit DOS program
+  ---
+  duration_ms: 1.256536
+  type: 'test'
+  ...
+# Subtest: Two identical FAT12 copies and bootable 720KiB personal image
+ok 57 - Two identical FAT12 copies and bootable 720KiB personal image
+  ---
+  duration_ms: 0.932459
+  type: 'test'
+  ...
+# Subtest: TUNE.COM is genuinely on DOS A: and byte-identical to delivered binary
+ok 58 - TUNE.COM is genuinely on DOS A: and byte-identical to delivered binary
+  ---
+  duration_ms: 0.49953
+  type: 'test'
+  ...
+# Subtest: DEBUG.COM remains on disk and original boot/startup files remain present
+ok 59 - DEBUG.COM remains on disk and original boot/startup files remain present
+  ---
+  duration_ms: 0.209595
+  type: 'test'
+  ...
+# Subtest: Inlined browser image is bit-identical to FAT12 image with TUNE.COM
+ok 60 - Inlined browser image is bit-identical to FAT12 image with TUNE.COM
+  ---
+  duration_ms: 7.209291
+  type: 'test'
+  ...
+1..60
+# tests 60
+# suites 0
+# pass 59
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 1
+# duration_ms 391.797606
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:phase3:browser
+> python3 optional/pc/phase3/test_audio_browser.py
+
+PASS xt audio-covox-demo Covox LPT1 378h: 19389 vzorků; guest x86 I/O; živý FreeDOS nedotčen. Omezené HW preview.
+PASS xt audio-opl-demo AdLib OPL2 388h/389h: 10169 vzorků; guest x86 I/O; živý FreeDOS nedotčen. Omezené HW preview.
+PASS xt audio-sb-demo SB 2.0 DMA1+IRQ5: 20339 vzorků; guest x86 I/O; živý FreeDOS nedotčen. Omezené HW preview.
+PASS at audio-covox-demo Covox LPT1 378h: 7707 vzorků; guest x86 I/O; živý FreeDOS nedotčen. Omezené HW preview.
+PASS at audio-opl-demo AdLib OPL2 388h/389h: 4042 vzorků; guest x86 I/O; živý FreeDOS nedotčen. Omezené HW preview.
+PASS at audio-sb-demo SB 2.0 DMA1+IRQ5: 8084 vzorků; guest x86 I/O; živý FreeDOS nedotčen. Omezené HW preview.
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:phase3:tune
+> node --test optional/pc/phase3/tune-fat12.test.cjs && python3 optional/pc/phase3/test_tune_dos_browser.py
+
+TAP version 13
+# Subtest: TUNE.COM is a tiny, actual 16-bit DOS program
+ok 1 - TUNE.COM is a tiny, actual 16-bit DOS program
+  ---
+  duration_ms: 0.698158
+  type: 'test'
+  ...
+# Subtest: Two identical FAT12 copies and bootable 720KiB personal image
+ok 2 - Two identical FAT12 copies and bootable 720KiB personal image
+  ---
+  duration_ms: 0.527232
+  type: 'test'
+  ...
+# Subtest: TUNE.COM is genuinely on DOS A: and byte-identical to delivered binary
+ok 3 - TUNE.COM is genuinely on DOS A: and byte-identical to delivered binary
+  ---
+  duration_ms: 0.467241
+  type: 'test'
+  ...
+# Subtest: DEBUG.COM remains on disk and original boot/startup files remain present
+ok 4 - DEBUG.COM remains on disk and original boot/startup files remain present
+  ---
+  duration_ms: 0.130445
+  type: 'test'
+  ...
+# Subtest: Inlined browser image is bit-identical to FAT12 image with TUNE.COM
+ok 5 - Inlined browser image is bit-identical to FAT12 image with TUNE.COM
+  ---
+  duration_ms: 4.240333
+  type: 'test'
+  ...
+1..5
+# tests 5
+# suites 0
+# pass 5
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 54.087843
+PASS xt FreeDOS TUNE.COM: 7 key-on, 8 key-off, 38635 nonzero PCM; DOS/DEBUG připraven · A:\> · Klikni do monitoru a piš.
+PASS at FreeDOS TUNE.COM: 7 key-on, 8 key-off, 61676 nonzero PCM; DOS/DEBUG připraven · A:\> · Klikni do monitoru a piš.
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:phase4a
+> node --test optional/pc/tests/vga-*.test.cjs && python3 optional/pc/tests/test_vga_phase4_browser.py && python3 optional/pc/tests/test_vga_dos_com_browser.py
+
+TAP version 13
+# Subtest: both graphics COM demos are real FreeDOS FAT12 root files
+ok 1 - both graphics COM demos are real FreeDOS FAT12 root files
+  ---
+  duration_ms: 1.639701
+  type: 'test'
+  ...
+# Subtest: original TUNE/DEBUG and boot assets survive VGA install, twin FATs identical
+ok 2 - original TUNE/DEBUG and boot assets survive VGA install, twin FATs identical
+  ---
+  duration_ms: 0.205268
+  type: 'test'
+  ...
+# Subtest: embedded offline FreeDOS image equals on-disk 720KiB version with VGA demos
+ok 3 - embedded offline FreeDOS image equals on-disk 720KiB version with VGA demos
+  ---
+  duration_ms: 5.732974
+  type: 'test'
+  ...
+# Subtest: XT never acquires VGA, AT retains 1 MiB installed system RAM cap
+ok 4 - XT never acquires VGA, AT retains 1 MiB installed system RAM cap
+  ---
+  duration_ms: 3.37845
+  type: 'test'
+  ...
+# Subtest: AT VGA text-mode FreeDOS-compatible B8000 cells remain readable
+ok 5 - AT VGA text-mode FreeDOS-compatible B8000 cells remain readable
+  ---
+  duration_ms: 3.540703
+  type: 'test'
+  ...
+# Subtest: real guest INT10 Mode 13h and REP STOSB write to chained A000 VRAM
+ok 6 - real guest INT10 Mode 13h and REP STOSB write to chained A000 VRAM
+  ---
+  duration_ms: 5.506994
+  type: 'test'
+  ...
+# Subtest: VGA DAC 3C8/3C9 guest port triplets update palette with 6-bit values and index auto-increment
+ok 7 - VGA DAC 3C8/3C9 guest port triplets update palette with 6-bit values and index auto-increment
+  ---
+  duration_ms: 2.147683
+  type: 'test'
+  ...
+# Subtest: Mode 12h four planar bytes, bit order and map mask write
+ok 8 - Mode 12h four planar bytes, bit order and map mask write
+  ---
+  duration_ms: 0.991528
+  type: 'test'
+  ...
+# Subtest: VGA read-map select + graphics read mode 1 compare plane data
+ok 9 - VGA read-map select + graphics read mode 1 compare plane data
+  ---
+  duration_ms: 0.941883
+  type: 'test'
+  ...
+# Subtest: Guest INT10 pixel write/read for 12h and 13h, mode query
+ok 10 - Guest INT10 pixel write/read for 12h and 13h, mode query
+  ---
+  duration_ms: 1.509175
+  type: 'test'
+  ...
+# Subtest: VGA snapshot preserves DAC, video RAM, sequencer and per-plane registers
+ok 11 - VGA snapshot preserves DAC, video RAM, sequencer and per-plane registers
+  ---
+  duration_ms: 8.135989
+  type: 'test'
+  ...
+# Subtest: Invalid VGA mode and video-memory addresses fail closed
+ok 12 - Invalid VGA mode and video-memory addresses fail closed
+  ---
+  duration_ms: 1.483516
+  type: 'test'
+  ...
+1..12
+# tests 12
+# suites 0
+# pass 12
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 117.558243
+PASS AT VGA FreeDOS text profile: {'profile': 'at', 'adapter': 'vga', 'mode': 3, 'ram': 1048576, 'prompt': 'DOS/DEBUG připraven · A:\\> · Klikni do monitoru a piš.'}
+PASS VGA mode 13h guest CPU framebuffer: {'width': 320, 'height': 200, 'status': 'AT · VGA · VGA 13h 320×200×256 · guest A000/INT10 · PASS', 'pixel': [61, 206, 12, 255]}
+PASS VGA mode 12h guest CPU planar framebuffer: {'width': 640, 'height': 480, 'status': 'AT · VGA · VGA 12h 640×480×16 · guest A000/INT10 · PASS'}
+PASS CRT 4:3 CSS only, no guest mutation: {'w': '640px', 'h': '480px', 'desc': '320×200 → 640×480 CSS px · AUTO · CRT 4:3'}
+PASS raw square pixels retained: {'w': '640px', 'h': '400px'}
+PASS FreeDOS VGA13.COM graph mode and guest VRAM: {'profile': 'at', 'mode': 19, 'pixel0': 0, 'pixel1': 16, 'center': 224, 'corner': None, 'waiting': True}
+PASS return to FreeDOS text mode 03h: VGA13
+PASS FreeDOS VGA12.COM graph mode and guest VRAM: {'profile': 'at', 'mode': 18, 'pixel0': 0, 'pixel1': 1, 'center': 3, 'corner': 15, 'waiting': True}
+PASS return to FreeDOS text mode 03h: VGA12
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:phase4b
+> node --test optional/pc/tests/ide-phase4b.test.cjs && python3 optional/pc/tests/test_ide_phase4_browser.py
+
+TAP version 13
+# Subtest: only AT has IDE and media is absent by default
+ok 1 - only AT has IDE and media is absent by default
+  ---
+  duration_ms: 2.370647
+  type: 'test'
+  ...
+# Subtest: disk validates size, never mutates original buffer and supports eject
+ok 2 - disk validates size, never mutates original buffer and supports eject
+  ---
+  duration_ms: 6.394845
+  type: 'test'
+  ...
+# Subtest: ATA IDENTIFY returns geometry and capacity through data port
+ok 3 - ATA IDENTIFY returns geometry and capacity through data port
+  ---
+  duration_ms: 3.118089
+  type: 'test'
+  ...
+# Subtest: read disk sector through real guest instructions IN AX,DX
+ok 4 - read disk sector through real guest instructions IN AX,DX
+  ---
+  duration_ms: 3.760643
+  type: 'test'
+  ...
+# Subtest: PIO write sector and readback maintains write-isolation
+ok 5 - PIO write sector and readback maintains write-isolation
+  ---
+  duration_ms: 3.04608
+  type: 'test'
+  ...
+# Subtest: out of bounds ATA command sets ABRT/error and does not alter disk
+ok 6 - out of bounds ATA command sets ABRT/error and does not alter disk
+  ---
+  duration_ms: 1.795894
+  type: 'test'
+  ...
+# Subtest: ATA PIO primary master rejects slave/unimplemented commands
+ok 7 - ATA PIO primary master rejects slave/unimplemented commands
+  ---
+  duration_ms: 1.854062
+  type: 'test'
+  ...
+# Subtest: PIO transfers respect 256-word sector boundary and persist export/import
+ok 8 - PIO transfers respect 256-word sector boundary and persist export/import
+  ---
+  duration_ms: 6.647834
+  type: 'test'
+  ...
+# Subtest: snapshot stores IDE working disk, transfer position; older snapshots remain supported
+ok 9 - snapshot stores IDE working disk, transfer position; older snapshots remain supported
+  ---
+  duration_ms: 16.846065
+  type: 'test'
+  ...
+# Subtest: corrupt IDE snapshot fails instead of partially restoring medium
+ok 10 - corrupt IDE snapshot fails instead of partially restoring medium
+  ---
+  duration_ms: 7.314355
+  type: 'test'
+  ...
+# Subtest: BIOS INT13 DL80 reads and writes actual virtual HDD, not floppy
+ok 11 - BIOS INT13 DL80 reads and writes actual virtual HDD, not floppy
+  ---
+  duration_ms: 3.127572
+  type: 'test'
+  ...
+# Subtest: BIOS rejects reads beyond HDD and respects 64KiB segment boundary
+ok 12 - BIOS rejects reads beyond HDD and respects 64KiB segment boundary
+  ---
+  duration_ms: 0.851377
+  type: 'test'
+  ...
+# Subtest: BIOS HDD reset fails on XT or AT without mounted HDD, rather than claiming nonexistent disk
+ok 13 - BIOS HDD reset fails on XT or AT without mounted HDD, rather than claiming nonexistent disk
+  ---
+  duration_ms: 0.71329
+  type: 'test'
+  ...
+1..13
+# tests 13
+# suites 0
+# pass 13
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 126.058185
+PASS IDE mounted+copy-on-write browser: {'original': 0, 'current': 165, 'modified': 1}
+PASS IDE preserved across adapter changes and AT→XT→AT profile resets
+PASS IDE explicit eject clears medium
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:phase4d
+> node --test optional/pc/tests/phase4d-debug-audio.test.cjs && python3 optional/pc/tests/test_phase4d_debug_browser.py && python3 optional/pc/tests/test_vga_dos_com_browser.py && python3 optional/pc/phase3/test_tune_dos_browser.py
+
+TAP version 13
+# Subtest: real 80286 PUSHF masks FLAGS high nibble, restoring DEBUG v2.50 generation detection
+ok 1 - real 80286 PUSHF masks FLAGS high nibble, restoring DEBUG v2.50 generation detection
+  ---
+  duration_ms: 4.191822
+  type: 'test'
+  ...
+# Subtest: 286 real-mode POPF cannot set FLAGS high nibble, and IRET restores masked flags
+ok 2 - 286 real-mode POPF cannot set FLAGS high nibble, and IRET restores masked flags
+  ---
+  duration_ms: 0.783987
+  type: 'test'
+  ...
+# Subtest: 286 protected-mode PUSHF retains IOPL (real-mode masking must not leak)
+ok 3 - 286 protected-mode PUSHF retains IOPL (real-mode masking must not leak)
+  ---
+  duration_ms: 2.144168
+  type: 'test'
+  ...
+1..3
+# tests 3
+# suites 0
+# pass 3
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 76.938981
+PASS AT/286 FreeDOS DEBUG.COM ready (-)
+PASS AT/286 DEBUG registers R
+PASS AT/286 DEBUG Q returns FreeDOS
+PASS FreeDOS VGA13.COM graph mode and guest VRAM: {'profile': 'at', 'mode': 19, 'pixel0': 0, 'pixel1': 16, 'center': 224, 'corner': None, 'waiting': True}
+PASS return to FreeDOS text mode 03h: VGA13
+PASS FreeDOS VGA12.COM graph mode and guest VRAM: {'profile': 'at', 'mode': 18, 'pixel0': 0, 'pixel1': 1, 'center': 3, 'corner': 15, 'waiting': True}
+PASS return to FreeDOS text mode 03h: VGA12
+PASS xt FreeDOS TUNE.COM: 7 key-on, 8 key-off, 38635 nonzero PCM; DOS/DEBUG připraven · A:\> · Klikni do monitoru a piš.
+PASS at FreeDOS TUNE.COM: 7 key-on, 8 key-off, 61676 nonzero PCM; DOS/DEBUG připraven · A:\> · Klikni do monitoru a piš.
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:phase4e:hardening
+> node --test optional/pc/tests/hardening-regressions-20261029.test.cjs optional/pc/tests/pc-integration-hardening-20261029.test.cjs optional/pc/tests/mandel-geometry-regression.test.cjs && python3 optional/pc/tests/test_mandel_dos_browser.py
+
+TAP version 13
+# Subtest: x87 FSUBP DE E9 computes ST1-ST0, not opposite
+ok 1 - x87 FSUBP DE E9 computes ST1-ST0, not opposite
+  ---
+  duration_ms: 5.147461
+  type: 'test'
+  ...
+# Subtest: x87 FSUBRP DE E1 computes ST0-ST1
+ok 2 - x87 FSUBRP DE E1 computes ST0-ST1
+  ---
+  duration_ms: 1.532038
+  type: 'test'
+  ...
+# Subtest: x87 FDIVP DE F9 computes ST1/ST0
+ok 3 - x87 FDIVP DE F9 computes ST1/ST0
+  ---
+  duration_ms: 0.738117
+  type: 'test'
+  ...
+# Subtest: x87 FDIVRP DE F1 computes ST0/ST1
+ok 4 - x87 FDIVRP DE F1 computes ST0/ST1
+  ---
+  duration_ms: 0.791588
+  type: 'test'
+  ...
+# Subtest: x87 FCOM clears stale C1 condition flag
+ok 5 - x87 FCOM clears stale C1 condition flag
+  ---
+  duration_ms: 0.209133
+  type: 'test'
+  ...
+# Subtest: PIT latch command preserves programmed access mode and captures stable counter
+ok 6 - PIT latch command preserves programmed access mode and captures stable counter
+  ---
+  duration_ms: 0.325909
+  type: 'test'
+  ...
+# Subtest: DMA terminal-count status clears on status-port read
+ok 7 - DMA terminal-count status clears on status-port read
+  ---
+  duration_ms: 0.223676
+  type: 'test'
+  ...
+# Subtest: PC snapshot rejects PIC out-of-range mask and corrupt IRQ priority registers
+ok 8 - PC snapshot rejects PIC out-of-range mask and corrupt IRQ priority registers
+  ---
+  duration_ms: 6.15979
+  type: 'test'
+  ...
+# Subtest: nonfinite x87 snapshot values survive portable JSON without becoming null or strings
+ok 9 - nonfinite x87 snapshot values survive portable JSON without becoming null or strings
+  ---
+  duration_ms: 0.797677
+  type: 'test'
+  ...
+# Subtest: PIT advances a huge tick interval in bounded time and requests only one pending IRQ
+ok 10 - PIT advances a huge tick interval in bounded time and requests only one pending IRQ
+  ---
+  duration_ms: 0.49348
+  type: 'test'
+  ...
+# Subtest: fixed MANDEL source is installed on FAT12 disk and matches embedded disk bytes
+ok 11 - fixed MANDEL source is installed on FAT12 disk and matches embedded disk bytes
+  ---
+  duration_ms: 4.845868
+  type: 'test'
+  ...
+# Subtest: MANDEL output matches independently calculated points rather than just a hash
+ok 12 - MANDEL output matches independently calculated points rather than just a hash
+  ---
+  duration_ms: 328.819973
+  type: 'test'
+  ...
+# Subtest: MANDEL 339B executable includes FPU presence guard and original FreeDOS asset stays correct
+ok 13 - MANDEL 339B executable includes FPU presence guard and original FreeDOS asset stays correct
+  ---
+  duration_ms: 5.114843
+  type: 'test'
+  ...
+# Subtest: PIC priority: IRQ0 preempts in-service IRQ5; IRQ7 waits until EOI
+ok 14 - PIC priority: IRQ0 preempts in-service IRQ5; IRQ7 waits until EOI
+  ---
+  duration_ms: 0.888853
+  type: 'test'
+  ...
+# Subtest: PIT latch survives full PC state JSON roundtrip, including half-read count
+ok 15 - PIT latch survives full PC state JSON roundtrip, including half-read count
+  ---
+  duration_ms: 12.24717
+  type: 'test'
+  ...
+# Subtest: older PC snapshot without PIT latch fields remains importable
+ok 16 - older PC snapshot without PIT latch fields remains importable
+  ---
+  duration_ms: 3.778047
+  type: 'test'
+  ...
+# Subtest: PIT latch itself is not altered by clock advances or repeated latch requests
+ok 17 - PIT latch itself is not altered by clock advances or repeated latch requests
+  ---
+  duration_ms: 0.175743
+  type: 'test'
+  ...
+# Subtest: PIT period arithmetic matches a modular reference over varied tick counts
+ok 18 - PIT period arithmetic matches a modular reference over varied tick counts
+  ---
+  duration_ms: 0.34627
+  type: 'test'
+  ...
+# Subtest: DMA count/addr programming survives status read; terminal-count bits clear only on read
+ok 19 - DMA count/addr programming survives status read; terminal-count bits clear only on read
+  ---
+  duration_ms: 0.651968
+  type: 'test'
+  ...
+# Subtest: FPU nonfinite and PIC state survive JSON snapshot while invalid PIC is rejected
+ok 20 - FPU nonfinite and PIC state survive JSON snapshot while invalid PIC is rejected
+  ---
+  duration_ms: 16.629384
+  type: 'test'
+  ...
+# Subtest: IDE two-sector PIO read uses exact sector boundary, count decrement and IRQ flag
+ok 21 - IDE two-sector PIO read uses exact sector boundary, count decrement and IRQ flag
+  ---
+  duration_ms: 0.937426
+  type: 'test'
+  ...
+# Subtest: IDE two-sector write is isolated and exported, with no mutation of caller image
+ok 22 - IDE two-sector write is isolated and exported, with no mutation of caller image
+  ---
+  duration_ms: 0.728763
+  type: 'test'
+  ...
+# Subtest: VGA mode 13 pixel and palette survives cross-device snapshot with IDE, FPU, PIC and keyboard
+ok 23 - VGA mode 13 pixel and palette survives cross-device snapshot with IDE, FPU, PIC and keyboard
+  ---
+  duration_ms: 12.707692
+  type: 'test'
+  ...
+# Subtest: Guest 286 FLAGS behavior does not emulate 386 high bits
+ok 24 - Guest 286 FLAGS behavior does not emulate 386 high bits
+  ---
+  duration_ms: 1.941603
+  type: 'test'
+  ...
+1..24
+# tests 24
+# suites 0
+# pass 24
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 401.535707
+PASS: FPU disabled: DOS displays explicit 80287XL warning, no green VGA screen
+PASS: FreeDOS MANDEL.COM: guest FPU operations 687064 colors 18 steps 5167385
+PASS: exit MANDEL -> FreeDOS text 03h
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:closure
+> node --test optional/pc/tests/pc-286-compat-20261029.test.cjs optional/pc/tests/fpu-extended80-20261029.test.cjs optional/pc/phase3/audio-closure-20261029.test.cjs && python3 optional/pc/tests/test_80bit_browser.py
+
+TAP version 13
+# Subtest: xt: Covox gate — guest OUT 378h, no fake sound before first write
+ok 1 - xt: Covox gate — guest OUT 378h, no fake sound before first write
+  ---
+  duration_ms: 32.547099
+  type: 'test'
+  ...
+# Subtest: xt: OPL2 gate — real registers, timer and deterministic FM
+ok 2 - xt: OPL2 gate — real registers, timer and deterministic FM
+  ---
+  duration_ms: 2.344869
+  type: 'test'
+  ...
+# Subtest: xt: SB2 gate — DSP reset, real DMA1 RAM, IRQ acknowledgment
+ok 3 - xt: SB2 gate — DSP reset, real DMA1 RAM, IRQ acknowledgment
+  ---
+  duration_ms: 0.93276
+  type: 'test'
+  ...
+# Subtest: xt: full reset/snapshot keeps Covox/OPL/SB2 state but never queues stale PCM
+ok 4 - xt: full reset/snapshot keeps Covox/OPL/SB2 state but never queues stale PCM
+  ---
+  duration_ms: 9.343731
+  type: 'test'
+  ...
+# Subtest: at: Covox gate — guest OUT 378h, no fake sound before first write
+ok 5 - at: Covox gate — guest OUT 378h, no fake sound before first write
+  ---
+  duration_ms: 15.809163
+  type: 'test'
+  ...
+# Subtest: at: OPL2 gate — real registers, timer and deterministic FM
+ok 6 - at: OPL2 gate — real registers, timer and deterministic FM
+  ---
+  duration_ms: 0.634933
+  type: 'test'
+  ...
+# Subtest: at: SB2 gate — DSP reset, real DMA1 RAM, IRQ acknowledgment
+ok 7 - at: SB2 gate — DSP reset, real DMA1 RAM, IRQ acknowledgment
+  ---
+  duration_ms: 0.39947
+  type: 'test'
+  ...
+# Subtest: at: full reset/snapshot keeps Covox/OPL/SB2 state but never queues stale PCM
+ok 8 - at: full reset/snapshot keeps Covox/OPL/SB2 state but never queues stale PCM
+  ---
+  duration_ms: 11.381509
+  type: 'test'
+  ...
+# Subtest: 80bit mantissa preserves 1+2^-60 that binary64 rounds to 1
+ok 9 - 80bit mantissa preserves 1+2^-60 that binary64 rounds to 1
+  ---
+  duration_ms: 1.450677
+  type: 'test'
+  ...
+# Subtest: 80bit arithmetic plus minus multiply divide and correct sign
+ok 10 - 80bit arithmetic plus minus multiply divide and correct sign
+  ---
+  duration_ms: 0.382014
+  type: 'test'
+  ...
+# Subtest: ten-byte x87 representation serializes and reimports exact mantissa
+ok 11 - ten-byte x87 representation serializes and reimports exact mantissa
+  ---
+  duration_ms: 0.207601
+  type: 'test'
+  ...
+# Subtest: guest 286 x87 FLD DWORD + FADD + FSTP TBYTE executes extended80, not host float64
+ok 12 - guest 286 x87 FLD DWORD + FADD + FSTP TBYTE executes extended80, not host float64
+  ---
+  duration_ms: 3.136727
+  type: 'test'
+  ...
+# Subtest: extended80 snapshot keeps sub-binary64 bits; old binary64 snapshot remains importable
+ok 13 - extended80 snapshot keeps sub-binary64 bits; old binary64 snapshot remains importable
+  ---
+  duration_ms: 14.798767
+  type: 'test'
+  ...
+# Subtest: extended80 compare distinguishes values that binary64 sees as equal
+ok 14 - extended80 compare distinguishes values that binary64 sees as equal
+  ---
+  duration_ms: 0.295783
+  type: 'test'
+  ...
+# Subtest: golden x87 extended80 1/3 mantissa 0xAAAAAAAAAAAAAAAB (nearest even)
+ok 15 - golden x87 extended80 1/3 mantissa 0xAAAAAAAAAAAAAAAB (nearest even)
+  ---
+  duration_ms: 0.13337
+  type: 'test'
+  ...
+# Subtest: 80286 real mode POPF/PUSHF mask 12..15 under all bit combinations
+ok 16 - 80286 real mode POPF/PUSHF mask 12..15 under all bit combinations
+  ---
+  duration_ms: 21.003908
+  type: 'test'
+  ...
+# Subtest: xt: 386 operand size prefix 66h fails closed, not silently accepted
+ok 17 - xt: 386 operand size prefix 66h fails closed, not silently accepted
+  ---
+  duration_ms: 0.830977
+  type: 'test'
+  ...
+# Subtest: xt: ROM boot snapshot preserves mode, A20, memory and guest FLAGS
+ok 18 - xt: ROM boot snapshot preserves mode, A20, memory and guest FLAGS
+  ---
+  duration_ms: 8.073725
+  type: 'test'
+  ...
+# Subtest: at: 386 operand size prefix 66h fails closed, not silently accepted
+ok 19 - at: 386 operand size prefix 66h fails closed, not silently accepted
+  ---
+  duration_ms: 0.59306
+  type: 'test'
+  ...
+# Subtest: at: ROM boot snapshot preserves mode, A20, memory and guest FLAGS
+ok 20 - at: ROM boot snapshot preserves mode, A20, memory and guest FLAGS
+  ---
+  duration_ms: 8.46328
+  type: 'test'
+  ...
+# Subtest: 80287XL remains AT-only and experimental 80bit precision opt-in
+ok 21 - 80287XL remains AT-only and experimental 80bit precision opt-in
+  ---
+  duration_ms: 0.45995
+  type: 'test'
+  ...
+1..21
+# tests 21
+# suites 0
+# pass 21
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 134.346496
+PASS: Chromium native JS BigInt 80bit arithmetic and Workbench precision selector {'mode': 'extended80', 'clock': 12000000, 'sample': [8, 0, 0, 32768, 16383], 'vga': 'vga'}
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:disk-images
+> node --test optional/pc/tests/disk-image-arraybuffer-20261029.test.cjs && python3 optional/pc/tests/test_disk_images_browser_20261029.py && python3 optional/pc/tests/test_dos_hdd_c_drive_browser_20261029.py && npm run test:pc:quick-media
+
+TAP version 13
+# Subtest: ArrayBuffer FDD 160K: FAT12 BPB/FAT copies, usable in XT and AT
+ok 1 - ArrayBuffer FDD 160K: FAT12 BPB/FAT copies, usable in XT and AT
+  ---
+  duration_ms: 3.196627
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer FDD 180K: FAT12 BPB/FAT copies, usable in XT and AT
+ok 2 - ArrayBuffer FDD 180K: FAT12 BPB/FAT copies, usable in XT and AT
+  ---
+  duration_ms: 1.787362
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer FDD 320K: FAT12 BPB/FAT copies, usable in XT and AT
+ok 3 - ArrayBuffer FDD 320K: FAT12 BPB/FAT copies, usable in XT and AT
+  ---
+  duration_ms: 1.502545
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer FDD 360K: FAT12 BPB/FAT copies, usable in XT and AT
+ok 4 - ArrayBuffer FDD 360K: FAT12 BPB/FAT copies, usable in XT and AT
+  ---
+  duration_ms: 0.816024
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer FDD 720K: FAT12 BPB/FAT copies, usable in XT and AT
+ok 5 - ArrayBuffer FDD 720K: FAT12 BPB/FAT copies, usable in XT and AT
+  ---
+  duration_ms: 1.455894
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer FDD 1.2M: FAT12 BPB/FAT copies, usable in XT and AT
+ok 6 - ArrayBuffer FDD 1.2M: FAT12 BPB/FAT copies, usable in XT and AT
+  ---
+  duration_ms: 1.473841
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer FDD 1.44M: FAT12 BPB/FAT copies, usable in XT and AT
+ok 7 - ArrayBuffer FDD 1.44M: FAT12 BPB/FAT copies, usable in XT and AT
+  ---
+  duration_ms: 1.518088
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer IDE 8MiB: valid MBR + FAT16 partition and FAT entries
+ok 8 - ArrayBuffer IDE 8MiB: valid MBR + FAT16 partition and FAT entries
+  ---
+  duration_ms: 5.281475
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer IDE 16MiB: valid MBR + FAT16 partition and FAT entries
+ok 9 - ArrayBuffer IDE 16MiB: valid MBR + FAT16 partition and FAT entries
+  ---
+  duration_ms: 9.147406
+  type: 'test'
+  ...
+# Subtest: ArrayBuffer IDE 32MiB: valid MBR + FAT16 partition and FAT entries
+ok 10 - ArrayBuffer IDE 32MiB: valid MBR + FAT16 partition and FAT entries
+  ---
+  duration_ms: 34.735894
+  type: 'test'
+  ...
+# Subtest: FDD changes export as copy; save/reload does not mutate previous ArrayBuffer
+ok 11 - FDD changes export as copy; save/reload does not mutate previous ArrayBuffer
+  ---
+  duration_ms: 2.63866
+  type: 'test'
+  ...
+# Subtest: IDE write overlay survives export/restore and base ArrayBuffer stays unchanged
+ok 12 - IDE write overlay survives export/restore and base ArrayBuffer stays unchanged
+  ---
+  duration_ms: 12.051475
+  type: 'test'
+  ...
+# Subtest: snapshot round-trip preserves FDD A/B and IDE contents and custom medium
+ok 13 - snapshot round-trip preserves FDD A/B and IDE contents and custom medium
+  ---
+  duration_ms: 27.672765
+  type: 'test'
+  ...
+# Subtest: malformed, oversized media and unmounted export reject safely
+ok 14 - malformed, oversized media and unmounted export reject safely
+  ---
+  duration_ms: 1.715084
+  type: 'test'
+  ...
+1..14
+# tests 14
+# suites 0
+# pass 14
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 178.5883
+PASS FDD B: in-memory FAT12 -> export/reimport -> GUI write protect/unprotect -> reset
+PASS AT IDE MBR/FAT16 -> write overlay -> .img download -> import -> XT/AT switches
+PASS explicit FDD A: eject remains ejected through reset; browser page errors: 0
+PASS REAL FreeDOS AT/286 C: created MBR/FAT16 -> COPY A: -> DIR C: -> export IMG -> eject/import -> reset -> DIR C: file persists
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:quick-media
+> node --test optional/pc/tests/file-to-disk-20261029.test.cjs && python3 optional/pc/tests/test_quick_media_browser_20261029.py
+
+TAP version 13
+# Subtest: host HELLO.COM (22 bytes) becomes readable DOS file in FAT 720K
+ok 1 - host HELLO.COM (22 bytes) becomes readable DOS file in FAT 720K
+  ---
+  duration_ms: 4.430843
+  type: 'test'
+  ...
+# Subtest: host ART.JPG (400000 bytes) becomes readable DOS file in FAT 720K
+ok 2 - host ART.JPG (400000 bytes) becomes readable DOS file in FAT 720K
+  ---
+  duration_ms: 4.999946
+  type: 'test'
+  ...
+# Subtest: host FILE.ZIP (1000000 bytes) becomes readable DOS file in FAT 1.44M
+ok 3 - host FILE.ZIP (1000000 bytes) becomes readable DOS file in FAT 1.44M
+  ---
+  duration_ms: 5.232494
+  type: 'test'
+  ...
+# Subtest: host GAME.EXE (5242880 bytes) becomes readable DOS file in FAT 8MiB
+ok 4 - host GAME.EXE (5242880 bytes) becomes readable DOS file in FAT 8MiB
+  ---
+  duration_ms: 18.985593
+  type: 'test'
+  ...
+# Subtest: multiple files, empty file, truncation collisions, unsafe paths and opaque ZIP
+ok 5 - multiple files, empty file, truncation collisions, unsafe paths and opaque ZIP
+  ---
+  duration_ms: 1.579668
+  type: 'test'
+  ...
+# Subtest: forces floppy/IDE, no XT IDE; oversized payload rejects before disk creation
+ok 6 - forces floppy/IDE, no XT IDE; oversized payload rejects before disk creation
+  ---
+  duration_ms: 11.692248
+  type: 'test'
+  ...
+# Subtest: 80 MB FAT16 media: CHS, FAT cluster count, and IDE last-sector access
+ok 7 - 80 MB FAT16 media: CHS, FAT cluster count, and IDE last-sector access
+  ---
+  duration_ms: 54.877449
+  type: 'test'
+  ...
+# Subtest: copy-on-write isolation after packing and mounting
+ok 8 - copy-on-write isolation after packing and mounting
+  ---
+  duration_ms: 1.255723
+  type: 'test'
+  ...
+1..8
+# tests 8
+# suites 0
+# pass 8
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 172.1373
+PASS XT: upload TXT/ZIP -> B: 720K FAT12 -> real FreeDOS DIR -> export IMG
+PASS auto XT -> AT: upload EXE -> FAT16 C: -> DIR -> IMG -> reimport -> DIR persists
+PASS over-limit rejects without changing media; page errors: 0
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:phase4i
+> node --test optional/pc/tests/xt-fractals-phase4i.test.cjs && python3 optional/pc/tests/test_xt_fractals_browser_phase4i.py
+
+TAP version 13
+# Subtest: XT CGA fixed-point Mandelbrot matches independent cells and video memory
+ok 1 - XT CGA fixed-point Mandelbrot matches independent cells and video memory
+  ---
+  duration_ms: 204.395831
+  type: 'test'
+  ...
+# Subtest: XT HGC fixed-point Mandelbrot matches independent cells and video memory
+ok 2 - XT HGC fixed-point Mandelbrot matches independent cells and video memory
+  ---
+  duration_ms: 202.338897
+  type: 'test'
+  ...
+1..2
+# tests 2
+# suites 0
+# pass 2
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 467.041465
+PASS FreeDOS XT CGAFRAC.COM graphic result: {'adapter': 'cga', 'mode': 4, 'steps': 5733427, 'colors': [3, 2, 1, 0], 'waiting': True}
+PASS return to XT FreeDOS text mode: CGAFRAC
+PASS FreeDOS XT HGCFRAC.COM graphic result: {'adapter': 'hercules', 'mode': 7, 'steps': 6014986, 'colors': [1, 0], 'waiting': True}
+PASS return to XT FreeDOS text mode: HGCFRAC
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:phase4j
+> node --test optional/pc/tests/cpu-arithmetic-oracle-phase4j.test.cjs optional/pc/tests/fpu-instruction-hardening-phase4j.test.cjs && python3 optional/pc/tests/test_fpucheck_dos_browser_phase4j.py
+
+TAP version 13
+# Subtest: xt 8-bit ALU 6000+ randomized deterministic oracle assertions including flags
+ok 1 - xt 8-bit ALU 6000+ randomized deterministic oracle assertions including flags
+  ---
+  duration_ms: 29.131294
+  type: 'test'
+  ...
+# Subtest: at 8-bit ALU 6000+ randomized deterministic oracle assertions including flags
+ok 2 - at 8-bit ALU 6000+ randomized deterministic oracle assertions including flags
+  ---
+  duration_ms: 22.790476
+  type: 'test'
+  ...
+# Subtest: xt 16-bit ALU deterministic independent oracle over 3600 operations
+ok 3 - xt 16-bit ALU deterministic independent oracle over 3600 operations
+  ---
+  duration_ms: 18.763515
+  type: 'test'
+  ...
+# Subtest: at 16-bit ALU deterministic independent oracle over 3600 operations
+ok 4 - at 16-bit ALU deterministic independent oracle over 3600 operations
+  ---
+  duration_ms: 9.82403
+  type: 'test'
+  ...
+# Subtest: x87 FNSTCW/FLDCW/FNSTSW m16 guest instructions preserve all 16 bits
+ok 5 - x87 FNSTCW/FLDCW/FNSTSW m16 guest instructions preserve all 16 bits
+  ---
+  duration_ms: 4.180984
+  type: 'test'
+  ...
+# Subtest: x87 FCHS/FABS, FLD ST(i), FXCH, FNOP change stack and preserve exact extended80 mantissa
+ok 6 - x87 FCHS/FABS, FLD ST(i), FXCH, FNOP change stack and preserve exact extended80 mantissa
+  ---
+  duration_ms: 2.405991
+  type: 'test'
+  ...
+# Subtest: FILD/FISTP m16 signed boundary, guest-memory preserved, FPU emptied
+ok 7 - FILD/FISTP m16 signed boundary, guest-memory preserved, FPU emptied
+  ---
+  duration_ms: 0.595855
+  type: 'test'
+  ...
+# Subtest: FILD/FISTP m32 signed value round trip
+ok 8 - FILD/FISTP m32 signed value round trip
+  ---
+  duration_ms: 1.507021
+  type: 'test'
+  ...
+# Subtest: x87 rounding control: 2.5 ties even, ceil and floor through guest CW + FISTP
+ok 9 - x87 rounding control: 2.5 ties even, ceil and floor through guest CW + FISTP
+  ---
+  duration_ms: 1.282985
+  type: 'test'
+  ...
+# Subtest: x87 80bit FRNDINT preserves 64-bit integer exactly, binary64 FSQRT works
+ok 10 - x87 80bit FRNDINT preserves 64-bit integer exactly, binary64 FSQRT works
+  ---
+  duration_ms: 1.678559
+  type: 'test'
+  ...
+# Subtest: FPUCHECK.COM tiny AT guest checks x87 without host math injection
+ok 11 - FPUCHECK.COM tiny AT guest checks x87 without host math injection
+  ---
+  duration_ms: 1.033541
+  type: 'test'
+  ...
+1..11
+# tests 11
+# suites 0
+# pass 11
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 147.333447
+PASS real FreeDOS FPUCHECK.COM: 80287XL FPU NOT ENABLED
+PASS real FreeDOS FPUCHECK.COM: 80287XL FPU OK
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:phase4k
+> node --test optional/pc/tests/media-resilience-phase4k.test.cjs && python3 optional/pc/tests/test_disk_images_browser_20261029.py
+
+TAP version 13
+# Subtest: IDE rejects malformed snapshot atomically, preserving original disk, overlay, and registers
+ok 1 - IDE rejects malformed snapshot atomically, preserving original disk, overlay, and registers
+  ---
+  duration_ms: 65.554109
+  type: 'test'
+  ...
+# Subtest: IDE real 16-bit PIO multi-sector read/write and copy-on-write original
+ok 2 - IDE real 16-bit PIO multi-sector read/write and copy-on-write original
+  ---
+  duration_ms: 6.007598
+  type: 'test'
+  ...
+# Subtest: FDD read-only lock blocks direct sectors and BIOS INT13h writes, survives snapshot
+ok 3 - FDD read-only lock blocks direct sectors and BIOS INT13h writes, survives snapshot
+  ---
+  duration_ms: 4.386738
+  type: 'test'
+  ...
+# Subtest: Quick media boundary at 5 MiB and 80MB disk with no accidental input mutation
+ok 4 - Quick media boundary at 5 MiB and 80MB disk with no accidental input mutation
+  ---
+  duration_ms: 7.111012
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 166.423067
+PASS FDD B: in-memory FAT12 -> export/reimport -> GUI write protect/unprotect -> reset
+PASS AT IDE MBR/FAT16 -> write overlay -> .img download -> import -> XT/AT switches
+PASS explicit FDD A: eject remains ejected through reset; browser page errors: 0
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:devdisk
+> node --test optional/pc/tests/devdisk-bootstrap.test.cjs && python3 optional/pc/tests/test_dev_disk_browser.py
+
+TAP version 13
+# Subtest: Phase 4M.1 developer B: ships verified XT/AT C toolchain and deliberately excludes NASM
+ok 1 - Phase 4M.1 developer B: ships verified XT/AT C toolchain and deliberately excludes NASM
+  ---
+  duration_ms: 1.944867
+  type: 'test'
+  ...
+# Subtest: XT and AT enforce read-only built-in B and independent work copy
+ok 2 - XT and AT enforce read-only built-in B and independent work copy
+  ---
+  duration_ms: 13.63799
+  type: 'test'
+  ...
+# Subtest: developer IMG is embedded byte-for-byte for offline mode and B prompt is recognized
+ok 3 - developer IMG is embedded byte-for-byte for offline mode and B prompt is recognized
+  ---
+  duration_ms: 4.719579
+  type: 'test'
+  ...
+# Subtest: toolchain builder and supplied source assets are present with provenance
+ok 4 - toolchain builder and supplied source assets are present with provenance
+  ---
+  duration_ms: 0.214963
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 71.016781
+PASS XT FreeDOS DIR B:, EDIT B:HELLO.C :L/:Q, B:DEBUG Q, A/B RO
+PASS AT FreeDOS DIR B:, EDIT B:HELLO.C :L/:Q, B:DEBUG Q, A/B RO
+PASS DOS EDIT: write denied on default RO B:, successful on explicit writable work copy
+PASS eject B:, reset preserves empty drive; restore B: returns default RO image
+
+> mdjs-ultra@0.8.2-phase4m1-nasm-free-developer-disk test:pc:phase4m
+> node --test optional/pc/tests/devdisk-bootstrap.test.cjs && python3 optional/pc/tests/test_dev_toolchain_browser_phase4m.py xt && python3 optional/pc/tests/test_dev_toolchain_browser_phase4m.py at
+
+TAP version 13
+# Subtest: Phase 4M.1 developer B: ships verified XT/AT C toolchain and deliberately excludes NASM
+ok 1 - Phase 4M.1 developer B: ships verified XT/AT C toolchain and deliberately excludes NASM
+  ---
+  duration_ms: 2.173462
+  type: 'test'
+  ...
+# Subtest: XT and AT enforce read-only built-in B and independent work copy
+ok 2 - XT and AT enforce read-only built-in B and independent work copy
+  ---
+  duration_ms: 12.386018
+  type: 'test'
+  ...
+# Subtest: developer IMG is embedded byte-for-byte for offline mode and B prompt is recognized
+ok 3 - developer IMG is embedded byte-for-byte for offline mode and B prompt is recognized
+  ---
+  duration_ms: 6.565612
+  type: 'test'
+  ...
+# Subtest: toolchain builder and supplied source assets are present with provenance
+ok 4 - toolchain builder and supplied source assets are present with provenance
+  ---
+  duration_ms: 0.227892
+  type: 'test'
+  ...
+1..4
+# tests 4
+# suites 0
+# pass 4
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 79.752225
+PASS XT Small-C -> ASM -> YLINK -> 4896-byte DOS EXE, run HELLOC; NASM excluded
+PASS browser guest toolchain with working-copy B:, no WASM or external resources
+PASS AT Small-C -> ASM -> YLINK -> 4896-byte DOS EXE, run HELLOC; NASM excluded
+PASS browser guest toolchain with working-copy B:, no WASM or external resources
