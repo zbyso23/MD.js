@@ -58,7 +58,8 @@
     "test:pc:paste": "node --test optional/pc/tests/paste-keyboard-phase4p.test.cjs && python3 optional/pc/tests/test_paste_code_browser_phase4p.py xt && python3 optional/pc/tests/test_paste_code_browser_phase4p.py at",
     "test:encyclopedia:browser:http": "python3 optional/pc/tests/test_encyclopedia_browser_phase4o.py",
     "test:pc:phase4q": "node --test optional/pc/tests/phase4q-*.test.cjs",
-    "test:arduino:graph": "node --test optional/blockly/tests/arduino-graph.test.cjs && python3 optional/blockly/tests/test_graph_browser.py"
+    "test:arduino:graph": "node --test optional/blockly/tests/arduino-graph.test.cjs && python3 optional/blockly/tests/test_graph_browser.py",
+    "test:phase4x": "node --test optional/micror/micro-r.test.cjs optional/pc/tests/encyclopedia-phase4x.test.cjs"
   },
   "dependencies": {},
   "devDependencies": {}

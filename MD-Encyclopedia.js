@@ -1,6 +1,7 @@
 /* MD.js Ultra Phase 4O - F2 encyclopaedia. No external deps, no fetch/eval/storage. */
 (function(root){'use strict';
  const source=root.MDEncyclopediaChapters;
+ const scriptBase=(document.currentScript&&document.currentScript.src)?new URL('.',document.currentScript.src):new URL('.',root.location.href);
  const supports=typeof document!=='undefined'&&Array.isArray(source)&&typeof root.MD==='function';
  const norm=s=>String(s||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('cs').replace(/\s+/g,' ').trim();
  function find(list,section,category,term){
@@ -67,6 +68,7 @@
        const url=URL.createObjectURL(new Blob([c.source],{type:'text/plain;charset=utf-8'}));
        const a=document.createElement('a');a.href=url;const stamp=new Date();const ts=stamp.getFullYear()+String(stamp.getMonth()+1).padStart(2,'0')+String(stamp.getDate()).padStart(2,'0')+String(stamp.getHours()).padStart(2,'0')+String(stamp.getMinutes()).padStart(2,'0')+String(stamp.getSeconds()).padStart(2,'0');a.download=c.filename.replace(/(\.[^.]+)?$/,('_'+ts+'$1'));reader.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
      });top.appendChild(download);}
+     if(c.id==='p4x-micror'){const lab=button(L('📊 Otevřít Micro R Lab','📊 Open Micro R Lab'));lab.addEventListener('click',()=>{const url=new URL('optional/micror/index.html',scriptBase);root.open(url.href,'_blank','noopener');});top.appendChild(lab);}
      const print=button(L('🖨 Tisk','🖨 Print'));print.addEventListener('click',()=>root.print());top.appendChild(print);reader.appendChild(top);
      const article=div('md-ency-article');reader.appendChild(article);renderer.mount(article,bodyOf(c));if(root.MDMathPlugin)root.MDMathPlugin.render(article);
      reader.scrollTop=0;
