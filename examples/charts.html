@@ -87,5 +87,9 @@ const md=new MD({mode:'extended'});let debounce=0;
 const draw=()=>{md.mount(article,source.value);window.dispatchEvent(new Event('resize'));};source.addEventListener('input',()=>{clearTimeout(debounce);debounce=setTimeout(draw,120);});draw();
 </script>
 <script src="../MD-Encyclopedia-Data.js"></script>
+<link rel="stylesheet" href="../optional/math/vendor/katex.min.css">
+<link rel="stylesheet" href="../optional/math/math.css">
+<script src="../optional/math/vendor/katex.min.js"></script>
+<script src="../optional/math/math.js"></script>
 <script src="../MD-Encyclopedia.js"></script>
 </body></html>

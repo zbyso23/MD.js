@@ -68,7 +68,7 @@
        const a=document.createElement('a');a.href=url;const stamp=new Date();const ts=stamp.getFullYear()+String(stamp.getMonth()+1).padStart(2,'0')+String(stamp.getDate()).padStart(2,'0')+String(stamp.getHours()).padStart(2,'0')+String(stamp.getMinutes()).padStart(2,'0')+String(stamp.getSeconds()).padStart(2,'0');a.download=c.filename.replace(/(\.[^.]+)?$/,('_'+ts+'$1'));reader.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
      });top.appendChild(download);}
      const print=button(L('🖨 Tisk','🖨 Print'));print.addEventListener('click',()=>root.print());top.appendChild(print);reader.appendChild(top);
-     const article=div('md-ency-article');reader.appendChild(article);renderer.mount(article,bodyOf(c));
+     const article=div('md-ency-article');reader.appendChild(article);renderer.mount(article,bodyOf(c));if(root.MDMathPlugin)root.MDMathPlugin.render(article);
      reader.scrollTop=0;
    }
    function select(id,track=true){const c=lessons.find(c=>c.id===id);if(!c)return;
