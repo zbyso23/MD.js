@@ -1,0 +1,1202 @@
+
+              O p e r a č n í   s y s t é m   M S   D O S
+                          (c) Miroslav Němeček
+
+    MS  DOS  je  Diskový Operační Systém firmy MicroSoft. Vedle tohoto
+operačního  systému  je  dalším  nejrozšířenějším  operačním  systémem
+DRúDOS, jehož autorem je firma Digital Research. Tyto operační systémy
+jsou  převážně slučitelné. Na drobné odlišnosti v použití příkazů ope-
+račního  systému  bude  upozorněno  v textu. Jednou drobnou odlišností
+všech  programů  operačního  systému  DR DOS je pravidlo, že po zadání
+parametru "?" nebo "/h" za příkazem se vypíše nápověda k použití toho-
+to příkazu.
+
+
+
+
+      K o n f i g u r a č n í   s o u b o r   C O N F I G . S Y S
+
+    Při  zavádění  operačního  systému  se  zavádí  z  disku do paměti
+nejdříve  modul  IBMIO.COM  (resp.  IO.SYS).  Tento  program  prohlédá
+základní  adresář  a  hledá  soubor  označený  CONFIG.SYS. Pokud tento
+soubor  nalezne,  čte  jej  a  interpretuje  jej jako sérii povelů pro
+nastavení  konfigurace operačního systému. Tento soubor je uložen jako
+běžný  textový  soubor  ve  formátu  ASCII. Každý řádek tohoto souboru
+obsahuje jeden příkaz pro nastavení konfigurace. Řádek začíná povelem,
+za  kterým  následuje  znak  rovnítka  a konfigurační parametry. Každý
+řádek  je  ukončen dvojicí znaků CR/LF (kódy 0DH a 0AH). Konec souboru
+může  být  označen  znakem  EOF  (kód  1AH).  V textu lze používat bez
+rozdílu  velká  i  malá  písmena  a znak rovnítka může předcházet nebo
+následovat   libovolný   počet  mezer.  Numerické  parametry  (jsou-li
+použity) se udávají v dekadickém tvaru.
+
+BREAK={ON|OFF}
+         - nastavuje úroveň testování klávesy Ctrl-Break v DOS
+           Nastavte  BREAK=ON,  pokud  chcete  mít  možnost přerušovat
+           programy  ručně z klávesnice při jakékoliv vstupně/výstupní
+           operaci.  Pokud  nastavíte  BREAK=OFF,  bude možné přerušit
+           program pouze při operaci vstupu nebo výstupu na konzolu.
+
+BUFFERS=<počet bufferů>
+         - Nastavuje  počet  vyrovnávacích pamětí pro diskové sektory,
+           které  DOS  bude  přidělovat  a  používat. Při vyšším počtu
+           vyrovnávacích  paměti  budou  operace  s  diskem rychlejší,
+           zvětšují  se  však  nároky  na  paměť.  Lze  nastavit počet
+           bufferů v rozmezí 2 až 99. Standardně je v systému nastaven
+           počet  bufferů 2. Počet bufferů by měl být nastaven alespoň
+           na  takovou  hodnotu,  aby bylo možné načíst celou alokační
+           tabulku  souborů,  neboť tato je čtena velmi často. Použití
+           více bufferů napomáhá též rychkejšímu přístupu při dlouhých
+           adresářích.  Příliš mnoho bufferů sníží přístupovou dobu na
+           disk,  neboť DOS ztratí mnoho času testováním stavu každého
+           bufferu   (zda   je   potřeba   jej  vyprázdnit  nebo  ne).
+           Doporučovaný  počet, aby ještě nenastalo zpomalení operací,
+           je asi 50 bufferů.
+
+           Zde jsou uvedena typická nastavení povelu BUFFERS:
+              AT s pevným diskem 20M nebo 30M:   BUFFERS= 32
+              XT s pevným diskem 10M:            BUFFERS= 16
+              PC (pouze disketová mechanika):    BUFFERS= 4
+
+COUNTRY=<kód země>
+         - Nastavuje  "aktuální  zemi",  tak jak ji používá funkce DOS
+           38H. To má vliv na formáty zobrazení a vstupu povelů TIME a
+           DATE  (čas  a  datum) v povelovém interpreteru COMMAND.COM.
+           Výpis   kódů   zemí  naleznete  u  popisu  funkce  DOS  38H
+           (nastavení kódu země). Standardě je nastaven kód 001 (USA).
+
+DEVICE=<specifikace souboru>
+         - Instaluje driver zařízení jako vnitřní driver zařízení DOS.
+           Specifikace souboru driveru zařízení se udává plným jménem,
+           lze též uvést přístupovou cestu k tomuto souboru.
+
+    DEVICE=ANSI.SYS
+         - instaluje driver pro rozšířené ovládání konzoly
+
+    DEVICE=VDISK.SYS [velikost] [sektor] [adres.] [/E[:max.s.]]
+         - instaluje driver pro RAM disk
+              [velikost] je celková kapacita v KB (stand. 64)
+              [sektor] velikost sektoru (standardně 128)
+              [adres.] je max. počet položek zákl.adres.(st.64)
+              /E specifikuje  uložení  RAM  disku  do rozšířené paměti
+                 procesoru 286 (tedy do prostoru nad 1 MB)
+              [:max.s.] se  používá  s  přepínačem  /E  u  DOS  3.2  a
+                        nastavuje  maximální  počet  sektorů, které se
+                        budou  přenášet naráz (1-8, standardně 8). Při
+                        přístupu  do  rozšířené paměti jsou hardwarová
+                        přerušení zakázána. Minimalizovaná potenciální
+                        přerušení   se  ztrácí  (jako  shodné  sériové
+                        vstupy/ výstupy). Viz též přerušení INTú15H.
+
+    DEVICE=DRIVER.SYS /D:disk [/T:st.][/S:se.][/H:hl.][/C][/N][/F:n]
+         - instaluje logický disk (DOS › 3.2)
+              /D:disk - číslo fyzického disku (0-3=disket. mechanika)
+                                              (128,129=winchester 1,2)
+              /T:st. - počet stop na stranu (standardně=80)
+              /S:se. - počet sektorů na stopu (standardně=9)
+              /H:hl. - počet hlav v mechanice (standardně=2)
+              /C - indikuje požadavek podpory linky výměny diskety
+              /N - specifikuje, že médium je nevýměnné (pevný disk)
+              /F:n - specifikuje číslo typu formátu:
+                     0 = 160/180K (1 strana) nebo 320/360K (2 strany)
+                     1 = mechanika s vysokou kapacitou HD (1.2 MB)
+                     2 = formát 720 KB (3 1/2 palce diskety)
+
+DRIVPARM=
+         - Tento  příkaz  je  obsluhován  modulem IBMIO.COM (IO.SYS) a
+           není blíže dokumentovaný.
+
+FCBS=<maximální počet>,<ponechaný počet>
+         - Povel  nastavuje  počet řídících bloků souboru (FCB), které
+           mohou  být  otevřeny  ve  stejnou dobu při aktivním sdílení
+           souborů.  <maximální  počet>  specifikuje  maximální  počet
+           aktuálně   otevřených  souborů  (1-255;  standardně=4)  při
+           nainstalovaném   driveru   pro   sdílení   souborů   SHARE.
+           <ponechaný počet> specifikuje, kolik řídících bloků souboru
+           (FCB)   je   chráněno   před  automatickým  uzavíráním  při
+           dosáhnutí maximálního počtu otevřených FCB. To říká driveru
+           SHARE,  že pokud uzavírá soubor, ponechá prvních <ponechaný
+           počet> souborů, které byly otevřeny.
+
+FILES=<maximální počet identifikátorů>
+         - Nastavuje  maximální  počet  identifikátorů  souborů, které
+           mohou  být  otevřeny ve stejný čas (5 až 99, standardně 8).
+           Mnoho aplikačních programů požaduje nastavení FILES=20.
+
+LASTDRIVE=<disk>
+         - Nastavuje  omezení  počtu disků diskových driverů a používá
+           se  především ve spojení povelem DOS SUBST (pro DOS › 3.1).
+           <disk>  je  označení disku (A až Z, standardně = E). DOS si
+           ponechává  80-bajtový prostor pro každý disk. Pro fyzické a
+           logické  drivery  obsahuje cestu k aktuálnímu adresáři. Pro
+           drivery  SUBST  obsahuje  aktuální disk a cestu k adresáři,
+           který je reprezentován označením disku.
+
+SHELL=<specifikace souboru> [parametry]
+         - Nahrazuje    povelový   interpreter   (COMMAND.COM)   jiným
+           programem.  Také se používá k nastavení velikosti prostředí
+           DOS pro COMMAND.COM.
+
+           Ke zvětšení velikosti prostředí DOS použijte:
+              SHELL=COMMAND.COM /E:1000 /P
+           /E nastaví počet bajtů prostředí a /P vnutí AUTOEXEC.BAT
+
+SWITCHAR=<znak>
+         - Tento   nedokumentovaný  povel  se  používá  v  DOS  2.x  k
+           nastavení  přepínacího  znaku  pro  povelový řádek DOS (viz
+           funkce  DOS 37H) - standardní znak je '/'. Původní myšlenka
+           měla  umožnit  uživateli  nastavit jako oddělovací znak pro
+           volby  v  povelovém  řádku  jiný znak (např. pomlčku '-') a
+           uvolnit  tak  znak  lomítka '/' pro použití v adresářích. V
+           DOS  3.2  tento povel již není povolený, přesto však funkce
+           DOS 37H dosud ještě existuje.
+
+STACKS=<počet rámů>,<velikost rámů>
+         - Tento  příkaz  řeší  problém hardwarových přerušení. <počet
+           rámů>  udává počet rámů zásobníku, které jsou přiděleny DOS
+           (8  až  64,  standardně  =  9). <velikost rámů> je velikost
+           každého  zásobníku v bajtech (32 až 512, standardně = 128).
+           Při  každém hardwarovém přerušení přidělí DOS rám zásobníku
+           z tabulky a nastaví SS:SP pro ovladač přerušení. Po návratu
+           z přerušení se navrátí rám zásobníku zpět do tabulky.
+
+
+
+
+ 1 .   I n t e r n í   p ř í k a z y
+
+
+
+ B R E A K
+
+    Povoluje  nebo  znemožňuje  přerušení  programu  kombinací  kláves
+<Ctrl>+<Break>. Bez parametrů zobrazuje současné nastavení. Standardně
+je nastaven stav OFF.
+
+Formát:  BREAK [ON|OFF]
+              ON   - DOS  provádí  kontrolu  <Ctrl>-<Break>  při všech
+                     standardních   operací   přístupu   na   zařízení
+                     (konzolu, disk atd.)
+              OFF  - DOS provádí kontrolu <Ctrl>-<Break> pouze během:
+                        - standardních výstupních operací
+                        - standardních vstupních operací
+                        - standardních tiskových operací
+                        - standardních rozšiřujících operací
+
+
+
+ C H C P
+
+    Zvolí  kódovou  stránku  nnn  jako systémovou. Transformaci pomocí
+této kódové stránky použije systém při všech odpovídajících operacích.
+Bez parametrů zobrazí současně používanou stránku.
+
+Formát:  CHCP [nnn]
+
+
+
+ C H D I R   (zkratka  C D)
+
+    Změní  běžný  (pracovní)  adresář.  Bez  parametrů  zobrazí  běžný
+adresář.
+
+Formát:  CHDIR [d:][<cesta>]
+
+         nebo
+
+         CD [d:][<cesta>]
+
+              d: - disková jednotka, na které se nachází nový adresář
+              <cesta> - jméno nového běžného adresáře
+
+
+
+ C L S
+
+    Vymaže obrazovku displeje.
+
+Formát:  CLS
+
+
+
+ C O P Y
+
+    Vytváří  kopii  jednoho  nebo  více souborů. Druhá varianta zápisu
+umožňuje rovněž spojování souborů. První parametr specifikuje zdrojový
+soubor (skupinu souborů), druhý cílovou kopii.
+
+Formát:  COPY [/A][/B][d:][<cesta>]<jméno souboru>[.<typ>]
+         [/A][/B][d:][<cesta>][<jméno souboru>[.<typ>]][/A][/B][/V]
+
+         nebo
+
+         COPY [/A][/B][d:][<cesta>]<jméno souboru>[.<typ>][/A][/B]
+         [+[d:][<cesta>][<jméno souboru>[.<typ>]][/A][/B]...]
+         [d:][<cesta>][<jméno souboru>[.<typ>]][/A][/B][/V]
+
+              /V - zajistí verifikaci zápisu kopie
+
+              Přepínače  /A  a  /B  indikují  rozsah dat, který má být
+              příkazem COPY zpracován. Při použití se zdrojovým soubo-
+              rem mají význam:
+              /A - na  zdrojový soubor se pohlíží jako na ASCII soubor
+                   (textový  soubor),  který  je kopírován až po první
+                   znak konce souboru (tj. 1AH), jenž se nekopíruje.
+              /B - bude  kopírován  celý  soubor s délkou odpovídající
+                   délce udané v adresáři bez ohledu na obsah.
+
+              Při použití u druhého parametru mají význam:
+              /A - na  konec  souboru bude připojen znak konce souboru
+                   typu ASCII (tj. 1AH)
+              /B - na konec souboru nebude připojen znak konce souboru
+
+
+
+ C T T Y
+
+    Změní standardní vstupně/výstupní zařízení a jiné.
+
+Formát:  CTTY <jméno zařízení>
+
+              <jméno zařízení> - definuje  zařízení, které bude nadále
+                                 používáno jako standardní vstupní/vý-
+                                 stupní.   Použitelná  jména  zařízení
+                                 jsou CON, AUX, COM1 až COM4.
+
+
+ D A T E
+
+    Změní  systémové  datum.  Formát uvedený v parametru je závislý na
+definici příkazem COUNTRY.
+
+Formát:  DATE [mm-dd-rr]|[dd-mm-rr][rr-mm-dd]
+
+              mm - určuje měsíc v číselném rozsahu 1 až 12
+              dd - určuje den v měsíci v číselném rozsahu 1 až 31
+              rr - určuje rok. Může být vložen jako dvojčíslí v rozsa-
+                   hu 80 až 99 nebo čtyřčíslí v rozsahu 1980 až 2099.
+
+
+
+ D E L
+
+    Vymaže specifikovaný soubor.
+
+Formát:  DEL [d:][<cesta>]<jméno souboru>[.<typ>]
+
+
+
+ D I R
+
+    Zobrazí  seznam  všech  nebo  vybraných  souborů ve specifikovaném
+adresáři. Nejsou zobrazeny skryté soubory.
+
+Formát:  DIR [d:][<cesta>][<jméno souboru>[.<typ>]][/P][/W]
+
+              /P - zobrazuje seznam souborů ve stránkovém módu
+              /W - zobrazuje  seznam  souborů  ve  zhuštěné formě (pět
+                   jmen souborů na řádek)
+
+
+
+ M K D I R  (zkratka  M D)
+
+    Vytvoří  podřízený  adresář  na specifikovaném disku nebo v běžném
+adresáři.
+
+Formát:  MKDIR [d:]<cesta>   nebo   MD [d:]<cesta>
+
+              d: - specifikuje diskovou jednotku
+              <cesta> - specifikuje cestu ve struktuře adresářů vedou-
+                        cí k vytvářenému adresáři
+
+
+
+ P A T H
+
+    Specifikuje  cestu  pro hledání spustitelných souborů (.BAT, .COM,
+.EXE),  pokud  nejsou  nalezeny  v běžném adresáři. Bez udání cesty se
+zobrazí současné nastavení cesty PATH.
+
+Formát:  PATH [[[d:]<cesta>[;[d:]<cesta>]]
+
+
+
+ P R O M P T
+
+    Umožňuje změnu znaku připravenosti systému - promptu.
+
+Formát:  PROMPT [[$<znak>|<text>]...]
+
+              <znak> - jeden  ze souborů speciálních znaků, které jsou
+                       předcházeny  znakem  $  a  umožňují  měnit tvar
+                       zobrazovaného promptu:
+              t      - zobrazí běžný čas
+              d      - zobrazí běžné datum
+              p      - zobrazí běžný adresář na pracovním disku
+              v      - zobrazí verzi operačního systému
+              n      - zobrazí písmeno, odpovídající běžnému disku
+              g      - zobrazí znak ">"
+              l      - zobrazí znak "<"
+              b      - zobrazí znak "|"
+              q      - zobrazí znak "="
+              h      - vymaže poslední zapsaný znak
+              e      - znak <Esc>
+              _      - provede přechod na novou řádku
+              <text> - text  uvedený  v  příkazu  se  vypíše  na místo
+                       promptu
+
+
+
+ R E N A M E   (zkratka  R E N)
+
+    Změní  jméno  souboru  specifikovaného  prvním parametrem na jméno
+udané v druhém parametru.
+
+Formát:  REN[AME] [d:][<cesta>]<jméno souboru>[.<typ>] [d:][<cesta>]
+         <jméno souboru>[.<typ>]
+
+
+
+ R E P L A C E
+
+    Selektivně   nahrazuje   soubory   na  cílovém  disku  soubory  ze
+zdrojového  disku  nebo  k  souborům  na  cílovém  disku  tyto soubory
+přidává.
+
+Formát:  REPLACE [d:][<cesta>]<jméno souboru>[.<typ>] [d:][<cesta>]
+         [/A][/P][/R][/S][/W]
+
+         [d:][<cesta>]<jméno souboru>[.<typ>] - specifikuje soubory na
+                         zdrojovém  disku, které mají nahradit soubory
+                         na cílovém disku nebo kúnim mají být přidány
+         [d:][<cesta>] - určuje cílový disk a adresář
+         /A            - kopíruje  všechny soubory ze zdrojového disku
+                         na  cílový  disk  s  vyjímkou  těch, které na
+                         cílovém   disku  již  existují,  což  umoňuje
+                         připojování  souborů  (nesmí  být  použit  ve
+                         spojení se /S)
+         /P            - před   každým   nahrazením  nebo  kopírováním
+                         souboru  ze  zdrojového  disku  na  cílový si
+                         vyžádá potvrzení operace od uživatele
+         /R            - nahradí  pouze  ty  soubory na cílovém disku,
+                         které mají atribut "read-only"
+         /S            - prohlíží všechny pdřízené adresáře na cílovém
+                         disku  při  hledání  souboru,  který  má  být
+                         nahrazen  (nesmí  být  použit  ve  spojení  s
+                         přepínačem /A)
+         /W            - čeká  na  vložení nové diskety před spuštěním
+                         programu
+
+
+
+ R M D I R   (zkratka  R D)
+
+    Ruší  prázdný  adresář  na  specifikovaném disku. Základní (root),
+naplněný a běžný adresář nemohou být zrušeny.
+
+Formát:  RMDIR [d:]<cesta>  nebo   RD [d:]<cesta>
+
+
+
+ S E T
+
+    Vkládá  řetězec  do  prostředí  příkazového  příkazového procesoru
+aúzpřístupňuje  tento  řetězec  všem  příkazům  operačního  systému  a
+aplikačním programům.
+
+Formát:  SET [<jméno>=[<řetězec>]...]
+
+              <jméno> - jméno  parametru,  pod  kterým  bude přiřazený
+                        řetězec přístupný
+              <řetězec> - obsah parametru
+
+
+
+ T I M E
+
+    Zobrazuje  nebo  mění  současně nastavený čas v operačním systému.
+Jako  oddělovače  lze použít též teček. Tvar zobrazení a zadávání času
+závisí na nastavení národního kódu (podobně jako DATE).
+
+Formát:  TIME [hh:mm[:ss[.xx]]]
+
+              hh   - hodiny (0 až 23)
+              mm   - minuty (0 až 59)
+              ss   - sekundy (0 až 59)
+              xx   - setiny sekundy (0 až 99)
+
+
+
+ T Y P E
+
+    Zobrazí  obsah  specifikovaného  souboru  na standardním výstupním
+zařízení.
+
+Formát:  TYPE [d:][<cesta>]<jméno souboru>[.<typ>]
+
+              [d:][<cesta>]<jméno souboru>[.<typ>] udává úplnou speci-
+                                                   fikaci souboru
+
+
+ V E R
+
+    Zobrazí  číslo verze používaného operačního systému na standardním
+výstupním zařízení.
+
+
+
+ V E R I F Y
+
+    Zajišťuje  nebo  potlačuje  verifikaci  dat  (tj.  zpětné ověření)
+zapisovaných  na disk. Implicitně je tato funkce vypnuta. Je vhodné ji
+zapnout  pro  méně kvalitní paměťová média, rychlost diskových operací
+se tím však samozřejmě prodlouží.
+
+Formát:  VERIFY [ON|OFF]
+              ON   - data jsou verifikována
+              OFF  - data nejsou verifikována
+
+
+
+ V O L
+
+    Zobrazuje návěští (label) vybraného disku.
+
+Formát:  VOL [d:]
+              d:   - označení disku, jehož návěští má být zobrazeno
+
+
+
+
+ 2 .   E x t e r n í   p ř í k a z y
+
+
+
+ A P P E N D
+
+    Vytváří  přístupovou  cestu  k souborům jiného typu než .BAT, .EXE
+nebo .COM ležícím mimo běžný adresář.
+
+Formát:  APPEND d: <cesta> [;[d:]<cesta>...]
+
+         nebo
+
+         APPEND [/X] [/E]
+
+              /X - určuje  způsob vyhledávání cesty, použitý při práci
+                   příkazu
+              /E - cesta   k   požadovaným   souborům   bude   uložena
+                   vúprostředí  operačního  systému  podobně  jako pro
+                   příkaz PATH
+
+
+
+ A S S I G N
+
+    Zajišťuje,  že  všechny  příkazy  směrované na diskovou jednotku x
+budou  prováděny  na  diskové  jednotce  y.  Příkaz bez parametrů ruší
+všechna nastavení provedená předcházejícími příkazy ASSIGN.
+
+Formát:  ASSIGN [x[=]y[...]]
+
+
+
+ A T T R I B
+
+    Modifikuje  atributy  souboru nebo vybrané skupiny souborů v daném
+adresáři.
+
+Formát:  ATTRIB [+R|-R][+A|-A][d:][<cesta>]<jméno souboru>[.<typ>][/S]
+
+              +R - nastavuje atribut souboru na stav "read-only"
+              -R - ruší nastavení atributu "read-only"
+              +A - nastavuje archivní bit
+              -A - ruší nastavení archivního bitu
+              /S - zajišťuje   modifikaci   souborů  i  v  podřízených
+                   adresářích
+
+
+
+ B A C K U P
+
+    Vyrváří   nezhuštěnou   archivní  kopii  souborů  na  jiném  disku
+(disketě).
+
+Formát:  BACKUP d:[<cesta>][<jméno souboru>[.<typ>]]d:[/S][/M][/A][D:
+         mm-dd-rr][/T:hh:mm:ss][/F][/L[:[d:][<cesta>]]<jméno souboru>
+         [.<typ>]]]
+
+              d: - specifikuje  diskovou jednotku, která obsahuje sou-
+                   bory pro archivaci
+              [<cesta>][<jméno souboru>[.<typ>]] - specifikuje  soubor
+                                                   nebo skupinu soubo-
+                                                   rů,  jež  mají  být
+                                                   archivovány
+              /S - zajistí  archivaci souborů jak v určeném (nebo běž-
+                   ném) adresáři, tak i v podřízených adresářích
+              /M - archivuje  pouze soubory, které byly modifikovány v
+                   době od poslední archivace příkazem BACKUP
+              /A - připojuje  archivované soubory k souborům, které na
+                   archivačním médiu již existují
+              /D - archivuje pouze soubory, které byly modifikovány po
+                   zadaném  datu  včetně. Formát data např. [dd-mm-rr]
+                   závisí   na   oblastním   kódu,  zvoleném  příkazem
+                   COUNTRY.
+              /T - archivuje pouze soubory, které byly modifikovány po
+                   udaném  čase  a  datu včetně. Formát časového údaje
+                   závisí   na   oblastním   kódu,  zvoleném  příkazem
+                   COUNTRY.
+              /F - formátuje  archivační  médium,  pokud nebylo předem
+                   naformátováno.  Příkaz  operačního  systému  FORMAT
+                   musí  být  umístěn  v běžném adresáři nebo musí být
+                   přístupný prostřednictvím nastavené cesty (path).
+              /L - vytváří  soubor - protokol o archivaci. Pokud jméno
+                   tohoto  souboru  není specifikováno, příkaz vytvoří
+                   soubor  BACKUP.LOG  v hlavním adresáři; existuje-li
+                   již protokol, je pouze doplněn.
+
+
+
+ C H K D S K
+
+    Analyzuje adresáře, soubory a FAT na disku, zobrazí hlášení o sta-
+vu souborů na disku a informuje o nesrovnalostech.
+
+Formát:  CHKDSK [d:][<cesta>][<jméno souboru>[.<typ>]][/F][/V]
+
+              /F - v případě, že jsou nalezeny nesrovnalosti v uložení
+                   souborů na disku, CHKDSK se pokusí obnovit porušené
+                   vazby a vzniklé soubory zapíše na disk.
+              /V - průběžně informuje o činnosti programu
+
+
+ C O M P
+
+    Porovnává  obsahy  dvou  souborů  nebo dvě skupiny souborů. Soubor
+nebo  skupina  souborů  uvedená  v  prvním  parametru  je  na  výstupu
+označována jako primární.
+
+Formát:  COMP [d:][<cesta>][<jméno souboru>[.<typ>]] [d:][<cesta>]
+         [<jméno souboru>[.<typ>]]
+
+
+
+ D I S K C O M P
+
+    Porovnává  obsah  diskety  v  mechanice  d1:  s  obsahem diskety v
+mechanice  d2:.  Jsou-li  vynechány  všechny  parametry,  porovnání se
+provede v jedné mechanice.
+
+Formát:  DISKCOMP [d1: [d2:]][/1][/8]
+
+              /1 - porovná  pouze  první stranu diskety i když disketa
+                   bude oboustranná
+              /8 - porovná pouze prvních 8 sektorů diskety i když jich
+                   bude obsahovat více (9 nebo 15).
+
+
+
+ D I S K C O P Y
+
+    Kopíruje  obsah zdrojové diskety d1: na cílovou disketu d2:. Pokud
+cílová  disketa není formátována, během procesu kopírování ji formátu-
+je. Jsou-li vynechány všechny parametry, kopírování se provede v jedné
+mechanice.
+
+Formát:  DISKCOPY [d1:[d2:]][/1]
+
+              /1 - Kopíruje  pouze  první  stranu diskety nezávisle na
+                   médiu či mechanice
+
+
+
+ F A S T O P E N
+
+    Uloží  do  operační  paměti údaje o umístění adresářů a otevřených
+souborů na disku, čímž urychlí přístup k souborům.
+
+Formát:  FASTOPEN d:[=nnn][d:[=nnn]...]
+
+              nnn - specifikuje   maximální  počet  položek  uložených
+                    vúpaměti  pro  disk  d:.  Minimální hodnota je 10,
+                    maximální 999. Implicitní hodnota je 34.
+
+
+
+ F D I S K
+
+    Umožňuje vytvoření několika souvislých logických oblastí na jednom
+(fyzickém) disky (tzv. partitions). Příkaz se ovládá pomocí menu, kte-
+ré je zobrazováno během činnosti.
+
+
+
+ F O R M A T
+
+    Formátuje  disk  ve specifikované mechanice, analyzuje jeho povrch
+súohledem  na  špatné  stopy  a  připravuje  systémové oblasti pro DOS
+(zaváděcí  sektor,  FAT, základní adresář). Všechny příkazy operačního
+systému,  s vyjímkou DISKCOPY, vyžadují, aby disk, s nímž pracují, byl
+předem  naformátován  příkazem  FORMAT.  Disk  s  vadnými  sektory lze
+používat  běžným způsobem, disk má pouze menší kapacitu. Výjimkou jsou
+vadné sektory v zaváděcím sektoru disku, v tabulce FAT nebo v kořenném
+adresáři disku; v těchto případech je disk nepoužitelný.
+
+Formát:  FORMAT d:[/S][/1][/8][/V][/B][/4][/N:xx][/T:yy]
+
+              /S - po formátování přepíše na formátované médium systé-
+                   mové soubory
+              /1 - formátuje disketu jako jednostrannou
+              /8 - formátuje disketu pouze s osmi sektory na stopu
+              /V - zapíše  na  disk  návěští,  jehož text si vyžádá od
+                   uživatele (max. 11 znaků)
+              /B - formátuje disketu s osmi sektory na stopu a vytváří
+                   prostor  pro  umístění systémových modulů libovolné
+                   verze   DOSu   pomocí   příkazu   SYS  (pokud  není
+                   specifikován  parametr /B, je možno na disk umístit
+                   pouze verzi 3.30).
+              /4 - umožňuje  formátovat  jednostranné nebo oboustranné
+                   diskety  s  nižší kapacitou (40 stop - 320 nebo 360
+                   KB)  v mechanice pro diskety s vysokou hustotou (80
+                   stop - 1.2 MB)
+              /N:xx - specifikuje počet sektorů na stopu, pokud má být
+                      jiný než standardní
+              /T:yy - specifikuje počet stop, pokud má být formát jiný
+                      než standardní
+
+
+
+ G R A F T A B L
+
+    Zavádí  do paměti znaky z horní poloviny tabulky ASCII pro práci v
+grafickém režimu.
+
+Formát:  GRAFTABL [nnn|/STATUS]
+
+              nnn - číslo použité kódové stránky
+              /STATUS - zobrazí číslo používané kódové stránky
+
+
+ G R A P H I C S
+
+    Umožňuje   tisk   grafické  informace  na  tiskárně  s  grafickými
+možnostmi tisku.
+
+Formát:  GRAPHICS [<typ tiskárny>][/R][/B]
+
+              <typ tiskárny> - specifikuje typ použité tiskárny, která
+                               má  být  použita  pro  tisk (implicitně
+                               GRAPHICS)
+              /R - tiskne  pozitivně,  tzn.  že  černá  na monitoru je
+                   černá i na tiskárně (jinak se tiskne negativně)
+              /B - tiskne i barvu pozadí (pouze pro barevné tiskárny)
+
+
+ J O I N
+
+    Přiřadí  adresáři  na  diskové  jednotce  logické číslo disku. Bez
+parametrů zobrazí současné přiřazení.
+
+Formát:  JOIN [d:][d:\<adresář>][/D]
+
+              d: - specifikuje  logické  číslo  disku,  které  má  být
+                   přiřazeno adresáři na jiné diskové jednotce
+              d:\<adresář> - specifikuje    adresář,    kterému   bude
+                             přiřazeno nové logické číslo disku
+              /D - zruší  přiřazení  (nutno specifikovat logické číslo
+                   disku, které má být zrušeno)
+
+
+ L A B E L
+
+    Vytvoří,  změní  nebo  vymaže návěští disku. Bez parametrů zobrazí
+současné návěští pracovního disku a umožní jeho opravu.
+
+Formát:  LABEL [d:][<návěští disku>]
+
+              d: - specifikuje   disk,  na  kterém  se  má  operace  s
+                   návěštím provést
+
+
+
+ M O D E
+
+    Nastavuje parametry práce tiskárny (první formát), displeje (druhý
+formát), komunikačních rozhranní (třetí formát) atd.
+
+Formát:  MODE LPT#[:][n][,[m][,P]]
+              Nastavuje parametry práce tiskárny.
+
+              # - číslo tiskárny (1, 2 nebo 3)
+              n - počet znaků na řádek (80 nebo 132)
+              m - nastavení  řádkování  tiskárny;  může  být  6 nebo 8
+                  řádků na palec
+              P - nastaví  režim  trvalého opakování předávaného znaku
+                  při chybě časování (time-out)
+
+Formát:  MODE [n],m[,T]
+              Nastavuje parametry práce displeje.
+
+              n - nastavuje  šířku  a typ zobrazení a může mít jednu z
+                  hodnot 40, 80, BW40, BW80, CO40, CO80, MONO.
+              m - posouvá  zobrazení  na  stínítku  doprava  (L)  nebo
+                  doleva  (R)  maximálně o 2 znaky v každém směru (pro
+                  80 znaků na řádek).
+              T - zobrazení  na  displeji,  testovací vzor pro správné
+                  nastavení okrajů obrazu.
+
+Formát:  MODE COM#[:] <rychlost přenosu>[,[<parita>][,[<počet bitů>][,
+         [<počet stop-bitů>][,P]]]]
+              Nastavuje  parametry  protokolu  přenosu na komunikačním
+              rozhraní.
+
+              <rychlost přenosu> - rychlost  přenosu  po  lince, která
+                                   může  být  nastavena  na  110, 150,
+                                   300,  600,  1200,  2400, 4800, 9600
+                                   nebo 19ú200 bitů/sekundu (postačují
+                                   pouze první dvě číslice).
+              <parita>           - nastavuje  přenos  se sudou paritou
+                                   (E),  lichou  paritou  (O) nebo bez
+                                   parity (N).
+              <počet bitů>       - může být 7 bitů nebo 8 bitů
+              <počet stop-bitů>  - může být 1 nebo 2
+              P                  - používá  se  při připojení tiskárny
+                                   na  sériový  interfejs  a zajišťuje
+                                   opakování    přenosu    při   chybě
+                                   časování.
+
+Formát:  MODE LPT#[:]=COMn
+              Přesměřuje výstupy směřující na tiskárnu LPT# na komuni-
+              kační adaptér COMn.
+
+              # - číslo tiskárny určené k přesměřování (1, 2 nebo 3).
+              n - číslo použitého komunikačního adaptéru
+
+Formát:  MODE <zařízení> CODEPAGE PREPARE =((<cplist>)[d:][<cesta>]
+         <jméno souboru>[.<typ>])
+              Připravuje kódové stránky k použití
+
+              <zařízení> - specifikuje  jedno  ze  zařízení  CON, PRN,
+                           LPT1, LPT2, LPT3
+              <cplist>   - specifikuje  kódové stránky, které mají být
+                           připraveny;   může  obsahovat  jenom  jedno
+                           číslo   stránky  nebo  seznam  stránek,  ve
+                           kterém   jsou   jednotlivá   čísla  stránek
+                           oddělena čárkami.
+              [d:][<cesta>]<jméno  souboru>[.<typ>] - určuje soubor na
+                           disku,   ve   kterém  jsou  kódové  stránky
+                           uloženy (soubor typu .CPI)
+
+Formát:  MODE <zařízení> CODEPAGE SELECT=<cp>
+              Vybírá nebo aktivuje kódovou stránku.
+
+              <cp> - číslo kódové stránky, která má být aktivována.
+
+Formát:  MODE <zařízení> CODEPAGE [/STATUS]
+              Zobrazuje   právě   aktivní   kódovou  stránku.  Stránky
+              aktivované   při   spuštění   systému  příkazem  DEVICE=
+              vúsouboru   CONFIG.SYS  jsou  označeny  v  seznamu  jako
+              hardwarové stránky.
+
+
+
+ M O R E
+
+    Filtr,  který  čte data ze standardního vstupního zařízení, posílá
+jednu  "obrazovku"  dat  na  standardní  výstupní zařízení a po vydání
+zprávy  --MORE--  čeká na stisknutí libovolné klávesy, aby mohl poslat
+další dávku dat.
+
+
+
+ N L S F U N C
+
+    Podporuje   používání   národních  standardů  pomocí  informačního
+souboru. Musí být vydán před použitím příkazu CHCP.
+
+Formát:  NLSFUNC [[d:][<cesta>]<jméno souboru>[.<typ>]]
+
+              [[d:][<cesta>]<jméno souboru>[.<typ>]] - úplné     jméno
+                                                       informačního
+                                                       souboru
+
+
+
+ P R I N T
+
+    Za běhu počítače tiskne soubory ze zadaného seznamu. Parametry /D,
+/B,  /Q,  /S,  /U a /M mohou být specifikovány pouze při prvním vydání
+příkazu PRINT. Bez parametrů zobrazí současnou tiskovou frontu.
+
+Formát:  PRINT [/D:<zařízení>][/B:<buffer>][/U:<busytik>][/M:<maxtik>]
+         [/S:<slice>][/Q:<délka>][/C][/T][/P][d:][<cesta>][<jméno sou-
+         boru>][.<typ>]
+
+         /D:<zařízení> - určuje  zařízení,  které  bude  považováno za
+                         tiskový  výstup  (implicitně  se  předpokládá
+                         PRN).
+         /B:<buffer>   - nastavuje velikost interní vyrovnávací paměti
+                         PRINT (implicitně 512 bajtů).
+         /U:<busytik>  - určuje  počet  "tiků"  systémových  hodin, po
+                         které   bude   PRINT  čekat  na  připravenost
+                         periferního  zařízení  (pokud do té doby není
+                         zařízení  připraveno, PRINT předá svůj časový
+                         úsek systému), implicitně 1.
+         /M:<maxtik>   - určuje  počet "tiků" systémových hodin, které
+                         jsou   vyhrazeny   pro  tisk  jednoho  znaku,
+                         implicitně 2.
+         /S:<slice>    - určuje  velikost  časového  úseku vyhrazeného
+                         příkazu PRINT, implicitně 8.
+         /Q:<délka>    - určuje  maximální  počet souborů, které mohou
+                         být  umístěny v tiskové frontě, implicitně 10
+                         a maximálně 32.
+         /C            - (cancel mode) umožňuje zrušit tisky vybraných
+                         souborů
+         /T            - (terminate mode) ruší okamžitě právě provádě-
+                         ný tisk a maže tiskovou frontu
+         /P            - (print  mode)  ruší  předcházející  nastavení
+                         uvedené  na stejném řádku (přepínače /C, /T a
+                         /P se mohou vyskytovat na stehném řádku a pak
+                         se vztahují vždy k právě předcházejícímu ménu
+                         souboru a ke všem následujícím.
+
+
+
+ R E C O V E R
+
+    Obnoví  soubor  na  disku,  který  obsahuje  vadný sektor. Data ve
+vadném  sektoru  nejsou  obnovena a tento sektor je pro systém označen
+jako  dále  nepoužitelný.  Druhá varianta zápisu se používá pro obnovu
+všech souborů (vadný sektor narušil adresář disku). Soubory na disku s
+porušeným adresářem budou pojmenovány jako FILEnnn.REC.
+
+Formát:  RECOVER [d:][<cesta>]<jméno souboru>[.<typ>]
+
+         nebo
+
+         RECOVER d:
+
+
+
+
+ R E S T O R E
+
+    Obnovuje  jeden  nebo více souborů na cílovém disku, které předtím
+byly archivovány příkazem BACKUP.
+
+Formát:  RESTORE d: [d:][<cesta>]<jméno souboru>[.<typ>][/S][/P]
+         [/B:mm-dd-rr][/A:mm-dd-rr][/M][/N][/L:<čas>][/E:<čas>]
+
+         d:  - specifikuje    diskovou    jednotku,   která   obsahuje
+               archivované soubory
+         [d:][<cesta>]<jméno souboru>[.<typ>] - určuje místo ukládání
+               obnovovaných  souborů,  popř.  soubory,  které mají být
+               obnoveny
+         /S  - obnoví  soubory i v adresářích podřízených specifikova-
+               nému adresáři
+         /P  - před  každým  obnovením  souboru, který byl od poslední
+               archivace příkazem BACKUP změněn nebo který má nastaven
+               atribut  na  "read-only", si vyžádá potvrzení opeace od
+               uživatele
+         /B:mm-dd-rr - obnoví všechny soubory, které byly modifikovány
+                       před  uvedeným  datem  včetně  (datum  musí být
+                       ukládáno  ve tvaru, který je nastaven oblastním
+                       kódem)
+         /A:mm-dd-rr - obnoví všechny soubory, které byly modifikovány
+                       po uvedeném datu včetně (datum musí být uvedeno
+                       ve tvaru, který je nastaven oblastním kódem)
+         /M  - obnoví  soubory,  které byly modifikovány nebo vymazány
+               od poslední archivace příkazem BACKUP.
+         /N  - obnoví   všechny   soubory,   které  na  cílovém  disku
+               neexistují
+         /L:<čas> - obnoví všechny soubory, které byly modifikovány po
+                    uvedeném čase včetně
+         /E:<čas> - obnoví  všechny  soubory,  které byly modifikovány
+                    před uvedeným časem včetně
+
+
+
+ S E L E C T
+
+    Instaluje   operační   systém  s  požadovaným  oblastním  kódem  a
+příslušnou národní klávesnicí na nový disk.
+
+Formát:  SELECT [[A:|B:][d:][<cesta>]] xxx yy
+
+              [A:|B:] - specifikuje   diskovou   jednotku,  obsahující
+                        generační verzi systému (implicitně A:)
+              [d:][<cesta>] - specifikuje  disk  a  adresář, kde budou
+                              uloženy   příkazy   operačního   systému
+                              (implicitně   jednotka   B:  a  základní
+                              adresář)
+              xxx     - určuje oblastní kód pro nově generovaný systém
+                        (oblastní  kód  odpovídá směrovému telefonnímu
+                        číslu příslušné země)
+              yy      - specifikuje nárnodní klávesnici
+
+
+
+ S O R T
+
+    Provádí  třídění  textových  řádků  vystupujících  z programů jako
+výstup na standardní zařízení (tj. působí jako filtr).
+
+Formát:  SUBST [/R][/+n]
+
+              /R   - řazení záznamů bude provedeno v opačném pořadí
+              /+n  - provede  řazení  záznamů  počínaje  až sloupcem n
+                     vúzáznamu
+
+
+
+ S U B S T
+
+    Umožňuje  použití  označení  diskové  jednotky  pro  označení jiné
+diskové   jednotky  nebo  adresáře.  Bez  parametrů  zobrazí  současné
+nastavení.
+
+Formát:  SUBST [d:][d:[<cesta>]][/D]
+
+              d:   - specifikuje označení diskové jednotky, které bude
+                     použito  jako  odkaz  na  jinou diskovou jednotku
+                     nebo adresář.
+              [d:[<cesta>]] - určuje pro kterou diskovou jednotku nebo
+                              adresář  bude  používat nastavenou refe-
+                              renci
+              /D   - ruší současné nastavení
+
+
+ S Y S
+
+    Kopíruje soubory operačního systému na určený disk.
+
+Formát:  SYS d:
+
+              d:   - určuje  disk, na který budou kopírovány systémové
+                     soubory z běžného disku
+
+
+
+ T R E E
+
+    Zobrazí  všechny adresáře na specifikovaném disku, popř. zobrazí i
+soubory v nich uložené.
+
+Formát:  TREE [d:][/F]
+
+              [d:] - specifikuje disk, jehož adresáře budou zobrazeny
+              /F   - zobrazí  i  soubory  podle uložení v jednotlivých
+                     adresářích
+
+
+
+ X C O P Y
+
+    Selektivně   kopíruje   soubory   nebo   skupiny   souborů  včetně
+podřízených adresářů.
+
+Formát:  XCOPY   d:[<cesta>][<jméno   souboru>][.<typ>]  [d:][<cesta>]
+         [<jméno souboru>][.<typ>][/A][/D:<datum>][/E][/M][/P][/S][/V]
+         [/W]
+
+         nebo
+
+         XCOPY    [d:]<cesta>[<jméno    souboru>][.<typ>][d:][<cesta>]
+         [<jméno     souboru>][.<typ>][/A][/D:<datum>][/E][/M][/P][/S]
+         [/V][/W]
+
+         nebo
+
+         XCOPY    [d:][<cesta>]<jméno    souboru>[.<typ>][d:][<cesta>]
+         [<jméno     souboru>][.<typ>][/A][/D:<datum>][/E][/M][/P][/S]
+         [/V][/W]
+
+              První  udaný  disk, cesta nebo soubor je zdrojový, druhý
+              je cílový.
+              /A   - kopíruje  pouze  soubory s nastaveným archivačním
+                     příznakem;    odpovídající   atribut   zdrojového
+                     souboru je nezměněn.
+              /D:<datum> - kopíruje pouze soubory, jejichž datum vzni-
+                           ku je stejné nebo pozdější, než je uvedeno.
+              /E   - vytváří  adresáře na cílovém disku i když původní
+                     adresáře na zdrojovém disku jsou prázdné.
+              /M   - kopíruje  pouze  soubory s nastaveným archivačním
+                     příznakem; odpovídající atribut zdrojového soubo-
+                     ru je po vytvoření cílové kopie nulován
+              /P   - před  každým  kopírováním  souboru  ze zdrojového
+                     disku  na cílový si vyžádá potvrzení této operace
+                     od uživatele
+              /S   - kopíruje   soubory  ze  specifikovaného  adresáře
+                     zdrojového  disku  včetně souborů z adresářů jemu
+                     podřízených; pokud není specifikován přepínač /E,
+                     nejsou   podřízené   adresáře  na  cílovém  disku
+                     vytvářeny
+              /V   - po  každém  zápisu  na cílový disk je tento zápis
+                     verifikován
+              /W   - čeká (před začátkem práce) na vložení diskety
+
+
+
+ 3 .   P ř í k a z y   d á v k o v é h o   z p r a c o v á n í
+
+
+ C A L L
+
+    Umožňuje  volat  povelový soubor z jiného povelového souboru, aniž
+by byl předcházející povelový soubor ukončen.
+
+Formát:  CALL [d:][<cesta>]<jméno souboru>
+
+
+
+ E C H O
+
+    Umožňuje  zobrazit  vykonávané  příkazy  z povelového souboru. Bez
+zadání  parametrů  se  zobrazí stav nastavení přepínače ECHO. Od verze
+operačního  systému  3.30 lze před příkaz uvést znak "@", který zamezí
+výpisu řádku s příkazem na výstupní zařízení.
+
+Formát:  [@]ECHO [ON|OFF]|<zpráva>
+
+              ON   - vykonávané příkazy budou zobrazovány na standard-
+                     ním výstupním zařízení
+              OFF  - vykonávané  příkazy  nebudou zobrazovány na stan-
+                     dardním výstupním zařízení
+              <zpráva> -  text  zprávy  bude  zobrazen  na standardním
+                          výstupním  zařízení  bez ohledu na nastavení
+                          přepínače ON|OFF.
+
+
+ F O R
+
+    Umožňuje opakované provádění příkazů operačního systému.
+
+Formát:  FOR %%<proměnná> IN <seznam> DO <příkaz>
+
+              %%<proměnná> - libovolná  proměnná,  která  bude použita
+                             jako parametr příkazu operačního systému
+              <seznam> - seznam,  obsahující  parametry, obvykle jména
+                         souborů,  která  budou  použita  ve spojení s
+                         příkazem operačního systému uvedeným za DO.
+              <příkaz> - příkaz   operačního  systému,  který  má  být
+                         opakovaně   prováděn  s  parametry  uvedenými
+                         vúseznamu
+
+
+ G O T O
+
+    Nepodmíněný skok na příkazy následující bezprostředně po návěští.
+
+Formát:  GOTO [:]<návěští>
+
+
+ I F
+
+    Podmíněné   provádění   příkazu   operačního  systému  na  základě
+vyhodnocení podmínky.
+
+Formát:  IF [NOT] <podmínka> <příkaz>
+
+              <příkaz>  - příkaz operačního systému
+              <podmínka>- parametr,   který  může  nabývat  jednoho  z
+                          tvarů:
+                   ERRORLEVEL <číslo> - podmínka  je  pravdivá  tehdy,
+                                        pokud  ukončovací kód programu
+                                        je roven nebo větší než desít-
+                                        kové  číslo specifikované jako
+                                        <číslo>
+                   <řetězec1>==<řetězec2> - podmínka    je    pravdivá
+                                            tehdy,   pokud   jsou  oba
+                                            řetězce identické
+                   EXIST [d:][<cesta>]<jméno souboru>[.<typ>]
+                                       - podmínka  je  pravdivá tehdy,
+                                         pokud   soubor,  jehož  úplné
+                                         jméno  je součástí specifika-
+                                         ce, existuje
+
+
+ P A U S E
+
+    Přeruší  zpracování  povelového souboru a na standardním výstupním
+zařízení zobrazí zprávu Strike a key when ready ... . Mimo tuto zprávu
+může  být  uživateli  předána  dodatečná informace uložená v parametru
+<zpráva>.
+
+Formát:  PAUSE [<zpráva>]
+
+
+
+ R E M
+
+    Příkaz slouží k ukládání poznámek do příkazového souboru. Pokud je
+ECHO   OFF,  poznámky  nejsou  zobrazovány  na  standardním  výstupním
+zařízení.
+
+Formát:  REM [<poznámka>]
+
+
+
+ S H I F T
+
+    Umožňuje  použití  více  než  deseti  parametrů  (tj. %0 až %9) ve
+volání příkazového souboru tím, že posouvá ukazatel na parametr vždy o
+jednu pozici dále (k následujícím parametrům).
+
+
+ 4 . -  K o n f i g u r a č n í   s o u b o r
+
+
+ B U F F E R S
+
+    Dovoluje determinovat počet diskových bufferů, které DOS umístí do
+paměti během své instalase.
+
+Formát:  BUFFERS = x
+              x    - počet  diskových  bufferů  (1  až  99), které DOS
+                     umístí   do  paměti  během  své  instalace.  Tuto
+                     hodnotu   nelze   měnit  až  do  nového  restartu
+                     počítače.  Pokud  BUFFERS není specifikován, bude
+                     provedeno rozdělení následujícně:
+                   1.- Buffers = 2
+                   2.- Buffersú=ú3  pokud  některý disketový driver má
+                       větší kapacitu než 360 KB
+                   3.- Buffersú=ú5  pokud velikost paměti je větší než
+                       128 KB
+                   4.- Buffersú=ú10 pokud velikost paměti je větší než
+                       256 KB
+                   5.- Buffersú=ú15 pokud velikost paměti je větší než
+                       512 KB
+
+
+
+
+                    S y s t é m o v é   s l u ž b y
+
+Vektory přerušení:
+
+
+INT 20h  - Ukončení programu
+
+              Vstup - adresa segmentu prefixu programového segmentu
+
+    Všechny  otevřené  soubory se uzavřou a vyrovnávací paměť disku se
+vymaže. Toto přerušení se používá téměř vždy pro ukončení činnosti při
+použití starších .COM souborů.
+    Pře  vyvoláním  tohoto přerušení musí CS obsahovat adresy segmentu
+prefixu  programového  segmentu.  Z prefixu programového segmentu jsou
+obnoveny následující výstupní adresy:
+
+
+
+
+
+INT 21h  - Volání funkce
+INT 22h  - Adresa ukončení
+INT 23h  - Adresa obsluhy CTRL-C
+INT 24h  - Adresa obsluhy fatálních chyb
+INT 25h  - Absolutní čtení z disku
+INT 26h  - Absolutní zápis na disk
+INT 27h  - Ukončení programu s jeho uchováním v paměti
+INT 28h-40h - Vyhrazeno (neužívat)
+

@@ -1,0 +1,155 @@
+
+                                8 0 8 7
+                          (c) Miroslav Němeček
+
+
+    Matematický  koprocesor  8087 je výkonný numerický procesor, který
+doplňuje  standardní  instrukční  soubor  hlavního procesoru řady 86 o
+aritmetické,  trigoniometrické,  exponenciální  a logaritmické funkce.
+Operace je možno provádět s celočíselnými operandy různých formátů, ve
+zobrazení  v  pohyblivé řádové čárce či v BCD formátu. Obvod 8087 můze
+spolupracovat  jako  matematický  procesor  s  hlavními procesory typu
+8086,  8088,  80186  a  80188.  Jeho  výkonnost  je  při matematických
+operacích až stonásobně vyšší než výkon hlavního procesoru.
+
+    Součinnost  koprocesoru  8087  s  hlavním  procesorem,  který musí
+pracovat   pracovat  v  maximálním  módu,  je  založena  na  předávání
+instrukčního  kódu  ESC  spolu  s  předáním  adres  operandů. Vzájemná
+synchronizace  činností  je  zajištěna schopností koprocesoru sledovat
+tok  instrukcí,  které  CPU vyzvedává z paměti. Činnost koprocesoru je
+odstartována převzetím instrukce ESC. O přůběhu operace informuje 8087
+hlavní  procesor  signálem BUSY na vstupu /TEST. CPU čeká na provedení
+operace  koprocesoru  v  instrukci WAIT. Koprocesor může vyslat signál
+přerušení při detekci chyby výpočtu nebo vyjímečného stavu.
+
+    Typy dat 8087:
+ +---------------+---------+----------+--+--+--+--+--+--+--+--+--+--+
+ | formát dat    | rozsah  | přesnost |10| 9| 8| 7| 6| 5| 4| 3| 2| 1|
+ +---------------+---------+----------+--+--+--+--+--+--+--+--+--+--+
+ |Byte Integer   |  102    |  8 bitů  |70|                          |
+ |Word Integer   |  104    | 16 bitů  |15--0|                       |
+ |Short Integer  |  109    | 32 bitů  |31--------0|                 |
+ |Long Integer   |  1018   | 64 bitů  |63--------------------0|     |
+ |Packed BCD     |  1018   |18 číslic |S D17----------------------D0|
+ |Short Real     |  10±38  | 24 bitů  |S E7-0 F1-23|                |
+ |Long Real      | 10±308  | 53 bitů  |S E10-0 F1----------F52|     |
+ |přechodný Real | 10±4932 | 64 bitů  |S E14-0 F0----------------F63|
+ +---------------+---------+----------+-----------------------------+
+  Exponent pro REAL je posunutý o polovinu své hodnoty.
+
+    Všechna  čísla  uvnitř  8087  jsou  v  přechodně  reálném formátu.
+Instrukce  naplnění a uložení dat automaticky převádí operandy uložené
+v  paměti  v  určitém  formátu  na přechodný reálný formát a zpět. Pro
+výpočty používá 8087 zásobník o velikosti 8 10-bajtových registrů.
+
+    Po  inicializaci  signálem  RESET  určí  koprocesor automaticky ze
+stavu  signálu  BHE/S7,  zda  je  hlavní  procesor  typu 8086/186 nebo
+8088/188  a  podle toho přizpůsobí délku instrukční fronty. Sledováním
+stavu  fronty instrukcí získává a dekóduje instrukce synchronně s CPU.
+CPU  rozliší instrukci ESC s odkazem na paměť, vypočte adresu operandu
+a  provádí  formálně čtení operandu z určené fyzické adresy (data však
+ignoruje).  Koprocesor zachytí tuto adresu a případně převezme i čtená
+data.  Čtení  dalších  bajtů  dat  nebo  zápis  do paměti provádí 8087
+vlastním přístupem na sběrnici.
+
+    Šířka  vnitřní sběrnice 8087 je 84 bitů - 68 bitů mantisa, 15 bitů
+exponent a 1 bit znaménko.
+
+    Po  dobu  provádění  operace  je  aktivní  indikační  výstup  BUSY
+používaný pro synchronizaci součinnosti s hlavním procesorem.
+
+
+
+                       Univerzální registry 8087
+
+    Pole  univerzálních  registrů 8087 obsahuje 8 80-bitových registrů
+se zásobníkovou organizací. Operandy jsou v nich uspořádány ve formátu
+pohyblivé  řádové čárky (bit 79=znaménko, bity 64 až 78=exponent, bity
+0  až  63=mantisa).  Při  implicitním  adresování  používá  8087  toho
+registru, který je právě označen za vrchol zásobníku. Ukazatel vrcholu
+zásobníku  je  obsažen v 3-bitovém poli (TOP) stavového registru 8087.
+Zásobník  je  plněn  od  registrů  s vyšší adresou k registrům s nižší
+adresou.
+
+                         Příznakové slovo 8087
+
+    Každému  univerzálnímu registru v zásobníku je přiřazen dvoubitový
+příznakový  registr,  kterým  je  indikován poslední stav jeho obsahu.
+Příznaky  stavu  zásobníkových  registrů  jsou  uspořádány  do jednoho
+16-bitového  slova (bity 0 a 1 = stav registru 0, ..... bity 14 a 15 =
+stav registru 7). Příznak registru může nabývat hodnot: 0=data platná,
+1=nula, 2=speciální, 3=prázdný.
+
+
+                          Stavové slovo 8087
+
+    Celkový  stav 8087 se odráží v 16-bitovém stavovém slovu:
+                                        +------ vyjím. stav ----+
+ 15  14  13  12  11  10   9   8   7   6   5   4   3   2   1   0
++---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+
+| B | C3| T   O   P | C2| C1| C0| IR| . | PE| UE| OE| ZE| DE| IE|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   neplatná
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   činnost
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   (Ilegal)
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   denormaliz.
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   operand
+  |   |   |   |   |   |   |   |   |   |   |   |   |   dělení 0 (Zero)
+  |   |   |   |   |   |   |   |   |   |   |   |   přetečení (Overfl.)
+  |   |   |   |   |   |   |   |   |   |   |   podtečení (Un.)
+  |   |   |   |   |   |   |   |   |   |   přesnost
+  |   |   |   |   |   |   |   |   |   rezervováno
+  |   |   |   |   |   |   |   |   žádost o přerušení (nastaven, je-li
+  |   |   |   |   |   |   |   |   nastaven libovolný nemaskovaný bit
+  |   |   |   |   |   |   |   |   výjimečného stavu) (Inter. Request)
+  |   +---+---+---+---+---+---+podmínkový kód (Condition)
+  |       +---+---+vrchol ukazatele zásobníku (Top)
+  operační jednotka v činnosti (Busy)
+
+
+                           Řídicí slovo 8087
+
+    Řídicí slovo umožňuje nastavit režim činnosti 8087.
+
+                                        +--- masky vyj. stavu --+
+ 15  14  13  12  11  10   9   8   7   6   5   4   3   2   1   0
++---+---+---+---+---+---+-------+---+---+---+---+---+---+---+---+
+| .   .   . | IC| R   C | P   C | M | . | PM| UM| OM| ZM| DM| IM|
++-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   neplatná
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   činnost
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   (Ileg.)
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   denormaliz.
+  |   |   |   |   |   |   |   |   |   |   |   |   |   |   operand
+  |   |   |   |   |   |   |   |   |   |   |   |   |   dělení 0 (Zero)
+  |   |   |   |   |   |   |   |   |   |   |   |   přetečení (Overfl.)
+  |   |   |   |   |   |   |   |   |   |   |   podtečení (Un.)
+  |   |   |   |   |   |   |   |   |   |   přesnost
+  |   |   |   |   |   |   |   |   |   rezervováno
+  |   |   |   |   |   |   |   |   maska přerušení (1=přer. maskováno)
+  |   |   |   |   |   |   +---+řízení přesnosti (Pr. Ctr.)
+  |   |   |   |   |   |        (00=24 b., 01=rez., 10=53 b., 11=64 b.)
+  |   |   |   |   +---+řízení zaokrouhlení (Ro. Ctr.)
+  |   |   |   |        00=na nejbližší/sudý, 01=dolů, 10=nahoru
+  |   |   |   |        11=osekáno směrem k nule
+  |   |   |   +řízení nekonečna (0=průmětové, 1=styčné)
+  +---+---+rezervováno
+
+
+                       Ukazatelé instrukcí a dat
+
+    Po  vniku  chybového  stavu  je  možné přesunout informace o stavu
+8087 do paměti:
+
+ Offset:
+  + 0 (2 bajty)         řídicí slovo
+  + 2 (2 bajty)         stavové slovo
+  + 4 (2 bajty)         příznakové slovo
+  + 6 (2 bajty)         ukazatel instrukcí (0-15)
+  + 8 (2 bajty)         ukazatel instrukcí (bity 12-15 = 16-19)
+                        0 (bit 11)
+                        oper. kód instrukce (bity 0-10 = 0-10)
+ + 10 (2 bajty)         ukazatel dat (0-15)
+ + 12 (2 bajty)         ukazatel dat (bity 12-15 = 16-19)

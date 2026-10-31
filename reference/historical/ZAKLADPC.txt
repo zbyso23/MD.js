@@ -1,0 +1,1450 @@
+
+Obsah:
+
+ 1. Proč a nač je počítač
+ 2. Co je to počítač
+ 3. Z čeho se skládá počítač
+ 4. Doplňující připojitelná zařízení
+ 5. Programy a data
+ 6. Historie vzniku počítačů řady IBM PC
+ 7. Operační systém
+ 8. Operační systém MS-DOS
+ 9. Architektura operačního systému MS-DOS
+10. Soubory
+11. Adresáře
+12. Označování souborů
+13. Spouštění programů
+14. Klávesnice počítače
+15. Start počítače
+16. Základní ovládání počítače
+
+                        +--------------------------+
+                        | 1. Proč a nač je počítač |
+                        +--------------------------+
+
+Již  odedávna  se  snažil  člověk usnadnit si nejen tělesnou, ale i duševní
+práci.  Vedly jej k tomu především neustále se zvyšující nároky na rychlost
+zpracování  informací  především  v  oblasti  výroby,  kde se člověk stával
+nejpomalejším  článkem.  Zpočátku  byly  vytvářeny pro základní matematické
+operace  mechanické  stroje.  Jejich  rychlost  však  nebyla značná a spíše
+sloužily k odstranění náročné rutinný práce.
+
+S  objevem elektronky se otevřely nové možnosti využití výpočetní techniky,
+dosud  běžnými  prostředky  nedostupné.  Elektronkové  počítače  se  začaly
+využívat  především  na  řešení složitých matematických úkolů. Bohužel tyto
+počítače  byly zatím velmi objemné (zabíraly několik místností) a ne příliš
+spolehlivé.
+
+Širšího  nasazení doznaly počítače až objevem tranzistoru. Především vlivem
+menších  rozměrů  a  nižších  energetických  nároků  tranzistoru bylo možno
+zmenšit velikost počítačů a snížit náklady na jejich pořízení a údržbu. Tím
+opustily počítače hranice výzkumného ústavu a začaly pronikat i do takových
+oblastí,  jako  je řízení technologických procesů. Jejich spolehlivost byla
+již  značně vyšší než elektronkových počítačů, často však ještě nebyla díky
+jejich velké složitosti dostatečná.
+
+Masové  rozšíření  počítačů  nastalo  až  s  využitím integrovaných obvodů.
+Integrované  obvody  umožňovaly  soustředit  na jednom čipu i několik desek
+tranzistorového  počítače.  Postupným  zvyšováním integrace se mohl počítač
+zmenšit  až  na  velikost  stolního  počítače.  Vývoj  se však nezastavil a
+zvyšování  integrace  neustále  pokračuje.  Hlavními  důvody  ke  zvyšování
+integrace  je  především  zvyšování  rychlosti  zpracování  dat  počítačem,
+snižování eneretických nároků a zvyšování spolehlivosti.
+
+Počítače  postupně  pronikly  do všech oblastí našeho života. Nejsou to již
+jenom  výpočty,  jak  by  napovídal původní název počítače. Pronikly též do
+oblasti  hromadného  zpracování  velkých  objemů  dat,  jsou  schopny řídit
+složité  výrobní procesy a též kosmickou loď, setkáme se s nimi ve školách,
+v  lékařství,  ale  i v oblasti umění jako je například animovaný film nebo
+hudební tvorba.
+
+Hlavní  důvod  všeobecného  rozšíření  počítačů  spočívá především v jejich
+rychlosti.   Počítač   je  oproti  člověku  v  mnoha  aplikacích  podstatně
+rychlejší. Není to dáno tím, že by probíhaly děje v počítači rychleji než v
+lidském  mozku - v tomto směru je počítač oproti člověku velmi pomalý - ale
+je to způsobeno tím, že zpracování dat v počítači je mnohem jednodušší a je
+zaměřeno pouze k danému problému. Děje v lidském mozku jsou velmi složité a
+spletité a zatím je ani nejdokonalejší počítače neumějí nahradit.
+
+Další  výhodou  počítače  je  jeho  prakticky nulová omylnost. Ne že by při
+činnosti  počítače  nevznikaly  chyby,  tyto  chyby  však  většinou  nejsou
+způsobeny  počítačem  ale  chybou  programu, který tuto činnost počítače má
+řídit.   Chyby  počítače  způsobené  jeho  technickým  vybavením  (tedy  ne
+programem)  většinou  počítač buď odhalí sám pomocí vnitřních testů nebo se
+program  v počítači úplně zhroutí a počítač potom neposkytuje ani dobré ani
+špatné výsledky.
+
+Výhodou  člověka  oproti  počítači  je schopnost deduktivně uvažovat. Pokud
+počítači  chybí  některé  informace,  které  ke své činnosti potřebuje nebo
+pokud  nemá zadána všechna pravidla postupu pro vykonávanou činnost, pak se
+není s touto skutečností schopen vyrovnat a selhává. Počítač je tedy vhodné
+použít  ke zrychlení duševní práce a ke zvýšení její spolehlivosti, ale jen
+v  takových  případech,  kdy  se  jedná  o  práci  stereotypní, bez potřeby
+deduktivního uvažování.
+
+                          +---------------------+
+                          | 2. Co je to počítač |
+                          +---------------------+
+
+Pro  objasnění  otázky "co je to počítač" je nutno si nejdříve uvědomit, že
+samotný  počítač,  jako  holý  stroj,  je  velmi málo. Neumí nic jiného než
+několik základních instrukcí jako "přesuň", "sečti", "odečti" a jiné. Je to
+zařízení  obsahující  prostředky  pro  komunikaci  s  uživatelem  (jako  je
+displej,  klávesnice, myš a tiskárna) a prostředky pro úschovu dat (paměť a
+disky).
+
+To,  co  dělá  z počítače tak mocný nástroj, je program, jenž řídí veškerou
+činnost  počítače. Tuto skutečnost si mnoho lidí ještě neuvědomuje a tak je
+často slyšíme se vyjadřovat o počítači jako o nějaké napřirozené osobnosti,
+která   dokáže  vyřešit  všechny  problémy.  Neuvědomují  si  při  tom,  že
+prostředky  k  řešení  těchto  problémů  - tedy programy - museli do těchto
+počítačů  vložit lidé a že vlastně tedy nekomunikují s počítačem ale jakoby
+nepřímo  s těmi lidmi, co programy vytvářeli. Jejich případná nespokojenost
+s  prací počítače by se tedy neměla obracet proti počítači, ale proti lidem
+vytvářejícím příslušný program.
+
+Program  je  v podstatě souhrn informací popisující činnost počítače. Je to
+soubor instrukcí, pomocí nichž je možné počítač ovládat. Instrukce programu
+způsobují,  že  počítač  v  určitém  okamžiku  způsobí určitou vstupní nebo
+výstupní činnost, např. zobrazí něco na displeji, přečte znak z klávesnice,
+vyšle  znak  na tiskárnu, uloží data na disk. Program tedy není nic fyzicky
+hmatatelného,  je  to  pouhý  předpis  činnosti  a  proto se též tak snadno
+přenáší pouhým kopírováním, tj. jakoby opisováním tohoto předpisu.
+
+Program  je  předpis  pro  počítač,  jaké operace má provést s požadovanými
+daty. Například má počítač setřídit seznam žáků ve třídě. Tato operace musí
+být  v  programu  rozepsána  až  na elementární úkony, které je již počítač
+schopen  provést.  Například  si  načte ze seznamu na disku jméno prvního a
+druhého  žáka,  postupným  porovnáním po znacích zjistí, zda je pořadí žáků
+správné.  Pokud  není,  zapíše  jména  žáků do seznamu na disku v obráceném
+pořadí. Tuto operaci provede pro všechna jména. Pokud má být rozlišeno, zda
+se  bude  seznam  třídit  podle  jména  nebo  příjmení, dá program počítači
+příkaz k zobrazení textu výzvy k uživateli na obrazovce. Potom čeká na znak
+z klávesnice, který zadá uživatel jako odpověď na výzvu.
+
+Programy  se souhrně nazývají SOFTWARE (čti "softver" - z anglického "měkké
+zboží"  -  může  být  proměnlivé  a lze je v počítači snadno měnit, počítač
+naplňuje až v případě potřeby).
+
+Naproti  tomu  vlastní výkonný prvek, tedy počítač, se nazývá HARDWARE (čti
+"hádver"  -  z  anglického  "tvrdé  zboží"  -  je  to něco, co je napevno u
+uživatele a s čím nemůže nic moc dělat, jedině prodat nebo si koupit jiné).
+Hardware je všechno to hmatatelné, co leží obvykle před uživatelem na stole
+a co vykonává příkazy, které dostává od programu.
+
+Zvláštní  oblastí  programů  je  FIRMWARE  (čti  "firmver"  - od anglického
+"firemní  zboží").  Jsou  to  programy,  které  jsou  napevno instalovány v
+počítači  v  tzv.  pevných  pamětech. Tyto programy zprostředkovávají jiným
+programům   komunikaci  s  technickým  vybavením  počítačů,  je  to  jakýsi
+spojovací  článek  mezi  hardware  a software. Používá se z toho důvodu, že
+technické  vybavení  počítačů  může být různé a je proto nutné vytvořit pro
+aplikační  programy  jednotné  prostředí, aby byly snadno přenositelné mezi
+různými  typy  počítačů.  Firmware  se  instaluje  do počítače již při jeho
+výrobě a obvykle se proto spojuje nesprávně s pojmem hardware.
+
+
+                      +-----------------------------+
+                      | 3. Z čeho se skládá počítač |
+                      +-----------------------------+
+
+Mozkem  počítače  je centrální jednotka. Je to skupina obvodů, která pomocí
+elektrických  signálů  ovládá  zařízení  připojená  k  centrální  jednotce.
+Zařízením může být např. klávesnice, displej, paměť. Data mezi jednotlivými
+částmi  počítače  se  přenášejí  též  jako  elektrické  signály.  Např. při
+požadavku  vstupu  znaku  z  klávesnice vyšle centrální jednotka klávesnici
+signál  k sejmutí znaku z klávesnice, klávesnice otestuje, která klávesa je
+stisknuta  a  navrátí  opět  jako  signály kód stisknuté klávesy. Centrální
+jednotka  provádí  interpretaci  programu.  Program čte jako data z paměti,
+podle  kódu  programu potom provádí požadovanou operaci. Základem centrální
+jednotky  je  procesor.  Procesor  je  obvykle  technicky  vytvořen jediným
+integrovaným obvodem - tzv. mikroprocesorem. Vedle procesoru může centrální
+jednotka  obsahovat též spolupracující procesor - tzv. koprocesor. Typickým
+příkladem je matematický koprocesor.
+
+Nezbytnou  částí počítače je operační (vnitřní) paměť. Do ní se ukládají ty
+informace,  které  se  právě  zpracovávají (znaky, čísla a podobně), a dále
+programy, které zpracování těchto dat řídí. Operační paměť se také označuje
+zkratkou  RAM  (Random  Access  Memory  -  paměť  s přímým přístupem). Její
+základní  kapacita  bývá obvykle 640 KB. Paměť RAM se vyznačuje tím, že při
+vypnutí proudu (nebo při znovuzavedení operačního systému) se veškerý obsah
+této  paměti  ztrácí, a proto se používá pouze pro dočasné uložení dat nebo
+programů;  data totiž nelze zpracovávat přímo na disku nebo disketě. Druhým
+základním  typem  paměti je pevná paměť ROM (Read Only Memory - paměť pouze
+pro  čtení).  Tato  paměť  je  obvykle součástí počítače a obsahuje firemní
+řídicí programy pro obsluhu zařízení počítače. Hlavní vlastností paměti ROM
+je  to,  že  data  si  uchovává i po vypnutí napájení, do paměti nelze však
+zapisovat.
+
+K centrální jednotce se dále připojují různá vnější přídavná zařízení, tzv.
+periférie. Ty umožňují komunikaci jádra počítače s okolím, tedy například s
+uživatelem, tiskárnou, jiným počítačem a tak dále.
+
+Pro uživatele je nejdůležitější monitor a klávesnice. Na monitoru zobrazuje
+počítač, nebo vlastně programy, které právě pracují, důležité informace pro
+uživatele,  a  na klávesnici naopak uživatel zadává příkazy či odpovědi pro
+program.  Pro  počítače  typu PC rozlišujeme dva standardy klávesnice, a to
+klávesnici  typu XT a tak zvanou rozšířenou (enhanced) klávesnici, která se
+používá  u počítačů AT, ale dnes se dodává obvykle i s počítači XT. Střední
+čast  všech  klávesnic  je  takřka  shodná  s klávesnicí počítače (obsahuje
+písmena  a  běžné znaky ASCII). Rozlišují se (stejně jako u psacích strojů)
+dva  typy - klávesnice typu QWERTY (tzv. americká klávesnice - písmeno Z je
+v  levém  dolním  rohu a písmeno Y je nahoře uprostřed) a klávesnice QWERTZ
+(tzv. evropská klávesnice - písmeno Y je v levém dolním rohu a písmeno Z je
+nahoře  uprostřed).  Dnes  se  již u počítačů používají výhradně klávesnice
+QWERTY  a  klávesnice  QWERTZ  je  simulovaná  programově. Ve střední části
+klávesnice jsou dále rozmístěny další klávesy používané jako řídící klávesy
+-  přesmykače  SHIFT, CTRL a ALT, ENTER a pod. Nad střední částí klávesnice
+(u  klávesnic  typu  XT  nalevo  od  střední  části)  jsou umístěny funkční
+klávesy;  význam  těchto kláves je definován až programem. Zcela napravo je
+umístěna  numerická  klávesnice, která slouží k zadávání číslic, ale také k
+ovládání  kurzoru.  Rozšířená  klávesnice  má  ještě  speciální klávesy pro
+ovládání polohy kurzoru.
+
+Velmi  důležitou  periférií je disketová jednotka, která slouží k zápisu či
+čtení  dat  z  disket.  Disketa  je médium pro uchovávání informací metodou
+magnetického  záznamu,  je  proto  nutno  s tímto médiem zacházet obzvláště
+šetrně,  aby  nedošlo  ke  zničení  dat  na disketě nebo ke zničení samotné
+diskety.
+
+Diskety  se  vyrábějí v několika rozměrech (8 palců, 5 1/4 palce nebo 3ú1/2
+palce).
+
+- Diskety  o  rozměru  8 palců se dnes již příliš nepoužívají. Tyto diskety
+  mají  77  stop  a  způsob  záznamu  je buď s jednoduchou hustotou záznamu
+  (označení  SD)  nebo s dvojnásobnou hustotou záznamu (označení DD). Počet
+  sektorů  na  stopu může být buď 26 sektorů po 128 bajtech (standardní IBM
+  formát),  15  sektorů  po  256  bajtech,  8 sektorů po 512 bajtech nebo 4
+  sektory  po 1024 bajtech. Při použití dvojnásobné hustoty záznamu to bývá
+  zpravidla  formát  8  sektorů po 1024 bajtech. Tyto diskety používají buď
+  jednu  (označení  SS)  nebo  dvě  (označení DS) strany, mechanika má vždy
+  jednu  hlavu  a  disketu je nutno v mechanice otáčet, pokud chcete využít
+  druhou  stranu.  Kapacita  těchto disket se pohybovala podle počtu stran,
+  způsoby  záznamu  a  podle  formátu  stop  v rozmezí 256 KB (1 strana, 26
+  sektorů po 128 bajtech) až 1.2 MB (2 strany, 8 sektorů po 1024 bajtech).
+
+- Diskety  o  rozměru  5  1/4  palce patří stále ještě mezi nejrozšířenější
+  diskety  počítačů  PC. Mají buď 40 stop nebo 80 stop. Disketové mechaniky
+  pro  40  stop  se  používaly u původních počítačů PC a ještě donedávna se
+  instalovaly  do  počítačů  jako  druhá  mechanika,  která  měla  zajistit
+  slučitelnost  s původními počítači PC. Formát 40 stop však lze použít i u
+  mechanik  pro  80  stop s tím, že v těchto mechanikách lze číst diskety s
+  formátem  40  stop,  pokud  však  bude v nich na tyto diskety zapisováno,
+  nejsou  tato data již přenositelná zpět na mechaniky používající 40 stop.
+  Je  to z toho důvodu, že u mechanik pro 80 stop se používá užší záznamová
+  stopa  a  při  zápisu  tedy  zůstávají kolem záznamu stopy zbytková data,
+  která znemožňují čtení záznamu hlavou se širokou stopou. Formát disket 40
+  stop  se však často používá i pro přenos dat mezi počítači XT a AT, neboť
+  tyto  počítači nemají společné všechny formáty pro záznam dat. U počítačů
+  standardu  PC  se  používají  výhradně  sektory s délkou 512 bajtů. Počet
+  sektorů na stopu může být různý. Původní formát disket umožňoval záznam 8
+  sektorů  po 512 bajtech na stopu. Později byl zaveden formát 9 sektorů na
+  stopu  po  512  bajtech.  Oba  tyto  formáty  používaly  formát záznamu s
+  dvojnásobnou  hustotou  (DD  - dvojitá hostota záznamu). U počítačů AT se
+  objevil  formát  záznamu  s  označením HD - vysoká hustota záznamu. Tento
+  formát  umožňuje zaznamenávat 15 sektorů po 512 bajtech na stopu, je však
+  nutno  používat  speciální diskety s označením HD. Diskety s označením HD
+  není  obvykle  možné  použít  pro  nižší  formát  vůbec - nelze zpravidla
+  zformátovat ani první stopu. Diskety s označením DD lze s jistým omezením
+  použít i pro formát HD - obvykle lze disketu naformátovat na tento formát
+  s  tím,  že  po  naformátování  zůstane asi 10 až 60 procent diskety jako
+  vadné  (obvykle  nelze naformátovat posledních několi stop). Tento formát
+  se  však  pro  tyto  diskety  nedoporučuje  používat, neboť již po nějaké
+  chvíli  po záznamu dat se začnou objevovat chyby v záznamu a často se tak
+  nenávratně  ztratí  data  uchovaných  souborů.  Obzvláště  přenos na jiné
+  počítače  pomocí  takto  naformátovaných  disket  je  obtížný  a někdy až
+  nemožný.  Proto  platí  všeobecná  zásada  používat  diskety  vždy na ten
+  formát, pro který jsou určeny. Diskety 5 1/4 palce mohou být jednostranné
+  nebo  oboustranné  s tím, že u oboustranných disket je potřeba mechaniku,
+  která  má  dvě  hlavy.  Prostor  diskety  se  používá  vcelku, disketa se
+  neotáčí.  Jak  již  bylo  řečeno,  u  původních  počítačů PC se používaly
+  mechaniky  pro  formát  40  stop  a  8 sektorů po 512 bajtech (160 KB). U
+  počítačů XT jsou obvyklé formáty 80 stop po 9 sektorech nebo 40 stop po 9
+  sektorech  (kapacity  720  KB  nebo  360  KB). U počítačů AT jsou obvyklé
+  formáty  pro diskety DD 40 stop po 9 sektorech (kapacita 360 KB) nebo pro
+  diskety  HD  formát  80 stop po 15 sektorech. Formát 360 KB (40 stop po 9
+  sektorech  oboustraně) se používá jako formát pro přenos dat mezi AT a XT
+  a  také  jako jediný formát pro diskety DD počítačů AT. Formát 720 KB (80
+  stop  po  9  sektorech)  byl  u počítačů AT z komerčních důvodů potlačen.
+  Tento  formát  je  však  možné běžně používat po nainstalování zvláštního
+  ovladače. Obvyklé formáty disket 5 1/4 palce jsou:
+
+     +--------------------+--------+--------+------+---------+----------+
+     | jmenovitá kapacita | stran  | záznam | stop | sektorů | počítač  |
+     +--------------------+--------+--------+------+---------+----------+
+     |       160 KB       | 1 (SS) |   DD   |  40  |    8    | PC,XT,AT |
+     |       180 KB       | 1 (SS) |   DD   |  40  |    9    | PC,XT,AT |
+     |       320 KB       | 2 (DS) |   DD   |  40  |    8    | PC,XT,AT |
+     |       360 KB       | 2 (DS) |   DD   |  40  |    9    | PC,XT,AT |
+     |       720 KB       | 2 (DS) |   DD   |  80  |    9    |    XT    |
+     |       1,2 MB       | 2 (DS) |   HD   |  80  |   15    |    AT    |
+     +--------------------+--------+--------+------+---------+----------+
+
+- Diskety  3  1/2 palce jsou perspektivní diskety používané u počítačů AT a
+  začínají  dnes  již vytlačovat diskety 5 1/4 palce. Tyto diskety mají již
+  pevný obal z umělé hmoty a mají kryté okénko k paměťovému médiu, které se
+  odkrývá  automaticky  až po zasunutí diskety do mechaniky. Disketa je již
+  vybavena  přepínačem  pro nastavení ochrany proti zápisu (pokud je okénko
+  zakryto,  lze  na diskety zapisovat). Diskety mají 80 stop po 9 sektorech
+  (formát  disket  DD) nebo po 15 sektorech (formát disket HD). Pro použití
+  disket  platí  stejné  zásady  jak  bylo  popsáno  u disket 5 1/4 palce -
+  diskety  HD  a DD nelze navzájem zaměňovat, diskety HD lze provozovat jen
+  na   mechanikách   umožňujících  tento  formát  (resp.  s  řadiči  disket
+  umožňujícím  tento  formát). Kapacity disket jsou buď 720 KB (diskety DD)
+  nebo  1,44  MB  (diskety  HD).  Diskety  na počítačích PC/XT/AT používají
+  sektory  512  bajtů.  Mezi nevýhody těchto disket patří stále ještě vyšší
+  cena než disket 5 1/4 palce.
+
+Zajímavým paměťovým médiem počítače je pevný disk (nazývá se též WINCHESTER
+-  čti  "vinčestr").  Ten  má  nevýhodu  v  tom, že je na rozdíl od diskety
+obvykle  nevýměnný, ale zato má mnohem vyšší kapacitu a rychlost (přístup k
+informaci  na  něm  uložené je mnohem rychlejší). Kapacita pevného disku se
+pohybuje  v rozmezí od 20 MB do desítek až stovek MB. Jako vnější paměti se
+používají  i  jiná  paměťová  média,  jako  jsou  CD  disky (obsahují velké
+množství  informací  ale  lze  z  nich  pouze  číst), optické disky (jejich
+kapacita  dosahuje řádově gigabajtů, lze na ně zapisovat a lze z nich číst,
+informaci  -  alespoň  tomu  tak  bylo  donedávna  -  není možné vymazat) a
+kazetopáskové   jednotky   (STREAMER   -   čti  "strímr",  používají  se  k
+dlouhodobému zálohování dat).
+
+
+                  +-------------------------------------+
+                  | 4. Doplňující připojitelná zařízení |
+                  +-------------------------------------+
+
+Zařízení  uvedena  v  předchozí kapitole jsou standardní součástí počítače.
+Někdy  mohou  být  i  mechanicky  spojena  do  jednoho celku (počítače typu
+LAPTOP).  K  počítači  je  však možné pomocí zvláštních připojitelných míst
+(tzv. rozhraní) připojit mnoho dalších periferních zařízení, díky kterým se
+využití počítače mnohanásobně zvyšuje.
+
+Rozhraní  (port)  jsou  elektronické  obvody,  které  tvoří mezičlánek mezi
+vnějším  zařízením a počítačem. V počítačích typu PC je většinou zabudováno
+alespoň jedno sériové a jedno paralelní rozhraní. Prvním z nich se většinou
+k  počítači  připojuje myš nebo modem (pro spojení s jinými počítači). Toto
+rozhraní  se také označuje RS232. Paralelní rozhraní, často označované jako
+Centronics,  se  používá  pro  připojení  tiskárny.  Z  každého rozhraní je
+vyveden  na  zadní  stěnu  základní  jednotky  počítače příslušný konektor.
+Používají  se  různé  typy  konektorů, nejčastěji s pětadvaceti nebo devíti
+póly  (tzv.  konektory  Canon).  Často je součástí počítače též herní port,
+umožňující  připojení  Joysticku. Tento port se však velmi často používá ke
+snímání  analogových  údajů,  neboť je vybaven poměrně kvalitními snímacími
+obvody.
+
+Pro  většinu  oblastí  využití  osobních  počítačů  je  nezbytnou periferií
+tiskárna.  Nejrozšířenější  jsou tiskárny jehličkové (9 nebo 24 jehel, jiné
+označení  též  mozaikové,  bodové, maticové tiskárny), které tisknou pomocí
+úderu  tupé jehly na papír přes barvicí pásku. Používají se však i tiskárny
+tryskové  (tisknou vystřikováním kapek inkoustu z miniaturní trysky) a také
+tiskárny  laserové,  které  pracují  na podobném principu jako xerografický
+stroj   (pomocí   dopadu  paprsku  světla  se  mění  elektrostatický  náboj
+podkladové  vrstvy  a tím lze ovlivňovat množství barviva, které se na této
+vrstvě  zachytí).  Laserové  tiskárny poskytují zatím nejkvalitnější výstup
+tisku,  jejich cena je však podstatně vyšší než cena jehličkových tiskáren.
+Tiskárny  připojené  přes paralelní port Centronics se někdy i v zahraniční
+literatuře  nesprávně  označují  jako paralelní tiskárny. Ve skutečnosti se
+používá  označení paralelní tiskárny pro tiskárny používající rotační buben
+se sadou znaků, které tisknou celý řádek textu současně (tedy paralelně).
+
+Důležité  zařízení  je  modem (MOdulátor - DEModulátor). Tímto zařízením je
+možné  propojit počítač typu PC s prakticky kterýmkoliv počítačem, který je
+také  vybaven  modemem  a  to  pouze  pomocí  telefonní sítě. Modem převádí
+digitální  signály  na zvuk (slyšitelný lidským uchem), který je možno dále
+přenést  obyčejným telefonem na libovolnou vzdálenost k druhému modemu. Ten
+převede  zvuk  zpět na digitální signály a předá je druhému počítači. Tímto
+způsobem  je  možné  mezi  počítači přenášet libovolná data. Modem umožňuje
+propojení počítačů do velkých sítí (např. mezi městy).
+
+Dalším  rozšířeným  zařízením  je  síťový adaptér, který umožňuje propojení
+počítačů   do   lokálních   (tj.  místních)  počítačových  sítí  (na  malou
+vzdálenost,  obvykle  v  rámci  jedné  budovy). Do sítě mohou být připojeny
+různé  typy  počítačů,  včetně minipočítačů nebo velkých sálových počítačů.
+Jednotliví uživatelé mohou navzájem sdílet data na různých počítačích, čímž
+odpadá  nutnost  data  mezi  jednotlivými  počítači  přenášet. Na rozdíl od
+spojení  pomocí  modemu  je spojení do lokální sítě velmi rychlé. K provozu
+sítě  je ovšem potřebné (kromě vybudování kabelových rozvodů mezi počítači)
+příslušné programové vybavení (tzv. síťový software).
+
+Počítače  je  možné  propojovat  až  na úrovni národních nebo mezinárodních
+datových  sítí,  které umožňují snadný přístup do velkých databank kdekoliv
+na  světě. Tím bohužel vzniká nebezpečí vnikání do těchto sítí nepovolanými
+osobami a zneužívání sítí.
+
+Velmi  používaným zařízením je myš. Pomocí myši lze snadno ovládat programy
+pracující  především  s  grafikou, ale též výběr z nabídek (menu) programů.
+Základem myši je kulička umístěná na spodní straně myši. Posouváním myši po
+podložce  se  kulička  otáčí,  snímače pohyb kuličky snímají a předávají do
+počítače. Tím je možné rozeznat směr pohybu s myší a posouvat odpovídajícím
+směrem  i  kurzor  na  obrazovce.  Časem vzniklo již mnoho obměn základního
+principu  myši.  Jednou  obměnou  je  otočení  myši  jakoby "vzůru nohama".
+Uživatel  v  tomto  případě  neposouvá myší ale kuličkou, která je patřičně
+zvětšena.  To má výhodu ve snadnější a přesnější manipulaci s kurzorem, myš
+stále  "neutíká za roh", odpadá manipulace s kabelem a myš se neposouvá při
+stisku  tlačítka. Mnoho uživatelům se však zdá tento způsob méně přirozený.
+Jednou  z  modifikací  myši  byla  též  její  integrace  do klávesnice jako
+posouvatelné  pole.  Pro  práci  s  trojrozměrnou  grafikou se též objevily
+speciální  myši doplněné dalším ovládacím prvkem, umožňujícím pohybování se
+v třetím rozměru.
+
+V dřívější době bylo velmi rozšířeným ovládacím zařízením počítačů světelné
+pero.  Mělo  tvar  tužky  a používalo se tak, že se jím ukázalo na místo na
+obrazovce  a  stisklo  se aktivační tlačítko. Pro světelné pero jsou řídicí
+obvody  obvykle  na každé desce řadiče displeje, stačí je pouze připojit do
+konektoru  videokarty.  Výhodou  světelného  pera  bylo jednoduché určování
+místa  na  obrazovce,  nevýhodou  obtížnější  manipulace  .  Postupně  bylo
+světelné pero vytlačeno myší.
+
+V  mnoha  oblastech se dnes již nelze obejít bez zařízení nazývaného SCANER
+(čti "skenr"). Jedná se o snímač obrazu z předlohy na papíře. Sejmutý obraz
+se  převede do digitální formy jako bodová matice. S tímto obrazem je možné
+dále   pracovat   buď  v  grafickém  tvaru,  nebo  lze  pomocí  speciálních
+konverzních  programů  převést např. sejmutou textovou stránku do textového
+formátu.
+
+Existuje  mnoho  dalších  speciálních  zařízení  -  snímač  čárového  kódu,
+převodníky pro zvukový vstup a výstup, moduly televizního vstupu a výstupu,
+elektronický  osciloskop  atd.  Díky  všem  těmto  zařízením  mohl  počítač
+proniknout  do všech oblastí lidského života, i kde bylo jeho použití dříve
+nemyslitelné.
+
+
+                           +--------------------+
+                           | 5. Programy a data |
+                           +--------------------+
+
+Jak již bylo řečeno, je počítač stroj na zpracování informací. Informace je
+zjednodušeně sdělení informující o tom, zda něco je či není nebo kolik toho
+je.
+
+Základní jednotkou informace je BIT (čti 'bit' - z anglického "útržek"). Je
+to informace typu ANO či NE, resp. také PRAVDA či NEPRAVDA. Bit je nejmenší
+možné  množství  informace.  Pomocí  jednoho  bitu  lze  vyjádřit například
+skutečnost,  zda nějaký děj probíhá či neprobíhá (žárovka svítí či nesvítí,
+motor  se točí či netočí), nebo stav nějakého objektu (dlažba je suchá nebo
+mokrá).
+
+Jeden  bit  ve  většině případů nestačí. Proto se používají větší jednotky;
+nejdůležitější  je  bajt  (z  anglického slova "BYTE" = "slabika", často se
+píše  v  původním anglickém tvaru jako byte - čti "bajt"), který se původně
+udával s různou délkou, v současnosti se však již stalo pravidlem, že jeden
+bajt  se  skládá  z  osmi  bitů.  Všechny možné kombinace těchto bitů mohou
+zachytit  celkem  2^8  = 256 různých stavů (hodnot) nějaké veličiny. Pomocí
+jednoho  bajtu  lze  například  vyjádřit  jeden  alfanumerický  znak  (tedy
+písmeno,  číslici,  vykřičník a podobně), instrukci pro počítač, barvu bodu
+na obrazovce počítače a pod.
+
+Používají  se však i další jednotky. Například kapacita diskety nebo paměti
+se  udává  v kilobajtech (zkratka KB), což je asi 1000 bajtů, přesně 2^10 =
+1024 bajtů (proto se používá znak velkého písmene "K", aby došlo k odlišení
+od údaje kB, který udává množství přesně v 1000 bajtech). Například paměť o
+kapacitě  10 KB  má ve skutečnosti přesnou kapacitu 10240 bajtů (dalo by se
+říct,  že  10  KB  =  10,24  kB,  ale označení kB se obvykle nepoužívá, aby
+nedocházelo k záměně).
+
+Kapacita  pevného  disku  se  udává  v  megabajtech (MB), to je přibližně 1
+milion  bajtů,  přesně 1024 krát 1024 = 1 048 576. Pevný disk o kapacitě 40
+MB  má proto skutečnou kapacitu 41 943 040 bajtů. Kapacita optických pamětí
+se udává v gigabajtech (GB), což je 1024 * 1024 * 1024 = 1 073 741 824.
+
+Počítač  je  tedy  stroj na zpracování informace, která je v něm uložena po
+jednotlivých  bitech,  které se sdružují do bajtů. Tyto informace dělíme na
+data  a programy. Programy představují posloupnost operací nad danými daty,
+tedy  jakýmsi  předpisem,  co  má počítač dělat. Daty může být např. seznam
+zboží  ve  skladě.  Program  tento seznam obsluhuje, umožňuje uživateli aby
+zapisoval  do  tohoto  seznamu změny při pohybu zboží a aby mu program tato
+data  umožňoval setřiďovat a například sečíst, kolik kterého zboží ještě ve
+skladě je.
+
+Každý počítač rozumí pouze svému vnitřnímu jazyku, kterému se říká strojový
+kód.  Strojový kód je posloupnost bajtů, které představují instrukci, co má
+počítač  v  které chvíli provést za operaci. Jeden bajt například informuje
+počítač o tom, že má přemístit obsah jedné adresy v paměti na jinou adresu,
+jiný zase že má sečíst určité dva bajty.
+
+Konkrétní  tvar  instrukcí  strojového  kódu  závisí na procesoru počítače.
+Procesory  mohou  být  u  různých  počítačů různé, což způsobuje potíže při
+přenášení  programů mezi různými počítači. Je sice možné použít k přenášení
+programů  vyšší  porgramovací  jazyk,  ale  program  ve  zdrojovém tvaru je
+málokdy  přístupný  pro  běžného  uživatele, neboť po vytvoření programu je
+tento  program obvykle překládán do vnitřního strojového tvaru počítače pro
+konkrétní počítač, na kterém bude program provozován (aby byl tento program
+na  počítači  vůbec  provozovatelný)  a  potom  se šíří již tento přeložený
+program.   Tuto   problematiku   řeší   operační   systém  UNIX  používáním
+programovacího   jazyku   C  s  definovatelným  programátorským  rozhraním.
+Programy  se  přenáší  mezi  počítači  buď  přímo ve zdrojovém tvaru nebo v
+pseudokódu, který dostává konkrétní tvar až v případě spuštění na počítači.
+
+U   počítačů   řady  IBM  PC  je  přenositelnost  zajištěna  kompatibilitou
+procesorů. Všechny klony počítačů IBM PC jsou vlastně vždy různě vylepšenou
+verzí  původního  počítače IBM PC. Používá se především řada mikroprocesorů
+8086,  80286, 80386, 80486. Nový vývojový typ počítače IBM PC vždy dodržuje
+kompatibilitu směrem dolů ke starším verzím (to platí i o procesorech).
+
+
+                +-----------------------------------------+
+                | 6. Historie vzniku počítačů řady IBM PC |
+                +-----------------------------------------+
+
+Vznik  počítačů  typu  IBM  PC  (PC = Personal Computer, osobní počítač) se
+datuje na podzim roku 1981. Tehdy uvedla firma IBM na trh svůj první osobní
+počítač  -  IBM PC. V té době již existovala řada osobních počítačů různých
+typů  různých  firem a různých jmen, což s sebou přinášelo jisté problémy s
+přenositelností  programů  i  dat.  Nikdo v té době nemohl tušit, že zrovna
+počítač  IBM  PC  ovlivní  vývoj výpočetní techniky natolik, že se stane de
+facto  standardem.  Hlavním  důvodem  k úspěchu těchto počítačů bylo to, že
+byly  jakýmsi  zlatým středem ve výpočetní technice co do schopností, ceny,
+obsluhy a podobně.
+
+Přestože  dnes patří mezi nejrozšířenější, zdaleka nejsou ty nejlepší. Jsou
+však  nenáročné  na  uživatelskou  obsluhu a jsou levné. Rozšiřování těchto
+počítačů vedlo ke zvyšování tvorby programového vybavení pro tyto počítače.
+To  je  jeden z dalších předpokladů k rozšíření počítačů IBM PC. Vzhledem k
+dnes  již  rozsáhlému programovému vybavení těchto počítačů (udává se až 30
+tisíc  programů)  roste  neustále  zájem  o  tyto počítače - neboť uživatel
+nepožaduje,  aby  měl  "nejlepší"  počítač,  ale  aby  mu tento počítač byl
+skutečně   užitečný,   čehož  lze  dosáhnout  právě  kvalitním  programovým
+vybavením.  Zvyšováním zájmu o počítače vzniká soustředění programátorských
+kapacit  právě  na  tyto  počítače  a tak vzniká uzavřená smyčka upevňující
+pozice  těchto  počítačů  natolik,  že  se nedaří prosadit nové a výkonější
+počítače  ani  samotné  autorské  firmě.  Jediné změny, které v současnosti
+vznikají,  jsou  stále  nové  a  nové  modifikace  těchto počítačů a jejich
+programového  vybavení,  které  však  vždy  zajistí,  aby  byly  schopny se
+přizpůsobit  již  existujícimu  programovému  a technickému vybavení, neboť
+programové  i technické vybavení nelze rázem přebudovat současně přes noc a
+nahradit tak plně vše co již bylo mezitím vybudováno.
+
+Mluvíme-li  o  typu  PC,  není  to  zcela správné označení. Rozlišujeme tři
+základní  typy  počítačů  IBM  PC:  IBM  PC (Personal Computer) , IBM PC/XT
+(Extend Technology) a IBM PC/AT (Advanced Technology). Původní typ počítače
+IBM  PC  dnes již prakticky nenajdeme. Počítače IBM PC/XT se dnes vyskytují
+již jen v zemích východního bloku. Prakticky dnes existuje již jen řada IBM
+PC/AT.  Tuto  řadu  počítačů  můžeme  dále dělit podle typu mikroprocesoru,
+který  obsahují.  Původní typ procesoru u počítačů IBM PC/AT je 80286. Dnes
+jsou tyto mikroprocesory vytlačovány vyššími vývojovými typy 80386 a 80486.
+Tyto  typy můžeme ještě dále rozlišit podle typu sběrnice na SX (jednoduchá
+sběrnice 16 bitů) a DX (dvojnásobná sběrnice 32 bitů - je o několik desítek
+procent rychlejší než SX).
+
+Jak  již  bylo  řečeno,  patří  počítače  řady IBM PC mezi nejrozšířenější.
+Nikoli však originální počítače IBM PC, ale jejich kopie, které se vyrábějí
+po  celém světě a pod různými jmény. Tyto kopie se označují za kompatibilní
+neboli  slučitelné  s  původním  počítačem  IBM  PC. Také se používá termín
+"klony".  Nejedná  se  totiž  o věrné kopie - tím by ostatní firmy porušily
+autorská  práva firmy IBM, ale o počítače funkčně shodné s originálními IBM
+PC, PC/XT nebo PC/AT. Hlavní odlišností originálního počítače IBM PC je to,
+že  obsahuje  v  paměti  ROM  interpreter  jazyka  BASIC, který se spustí v
+případě  nenalezení operačního systému na disketě ani na pevném disku. Tuto
+vlastnost se žádný z klonů nesnažil zachovat.
+
+Dosažení  kompatibility  je  pro  většinu  výrobců  osobních počítačů velmi
+důložité. Vezmeme-li totiž v úvahu výše uvedené množství programů, je zcela
+pochopitelné,  že  zákazník  dá  většinou  přednost  počítači  typu PC před
+počítačem možná technicky lepším a výkonnějším, pro nějž je ale k dispozici
+jen několik stovek programů. Jinými slovy, zásluhu na světovém rozšíření ne
+zrovna nejdokonalejších počítačů PC mají právě programy, které jsou pro něj
+k  dispozici  a  mezi nimiž určitě zákazník najde ten, který pro svou práci
+potřebuje.  Z  toho  je  také  zřejmá  snaha  výrobců o slučitelnost, která
+zaručuje  odbyt  počítače.  Důležitým  faktem  je  též  to, že kompatibilní
+počítače  jsou  většinou  levnější (nebo dokonce výkonnější) než originální
+řada  IBM,  takže  se  nelze  divit  ani  tomu,  že u nás se s originálními
+počítači firmy IBM těméř nesetkáme.
+
+
+                           +--------------------+
+                           | 7. Operační systém |
+                           +--------------------+
+
+Počítač jako holý nástroj umí jen velmi málo a bez vhodného programu by byl
+prakticky  nepoužitelný. Proto mezi počítač a uživatele, resp. mezi počítač
+a  aplikační  program,  je  vložen  mezičlánek  -  operační systém. Je to v
+podstatě  program, který ovládá řízení prostředků výpočetního systému, tedy
+procesor,  operační  paměť,  jednotlivé  periferie,  soubory dat zapsané na
+disketách  a pevném disku atd. Jinými slovy, operační systém vytváří vhodné
+podmínky  pro využívání těchto prostředků v uživatelských programech. To je
+velmi   výhodné,   neboť  uživatelské  programy  nemusí  obsahovat  složité
+procedury  například  pro  obsluhu  souborů  na  disku,  postačí jednoduché
+vyvolávání   služeb  operačního  systému  a  tím  se  tyto  programy  velmi
+zjednoduší.  Dobrý  operační  systém  přebírá  na sebe co největší množství
+často  se  opakujících  funkcí  uživatelských  programů.  Funkce operačního
+systému tvoří v současné době tak podstatnou složku výpočetního systému, že
+většina uživatelů jej ani nerozlišuje od technického vybavení.
+
+Operační systém můžeme rozdělit do dvou základních částí: základ operačního
+systému a rozšiřující komponenty.
+
+Základ operačního systému tvoří programy pro zavedení operačního systému do
+operační  paměti  počítače,  programy pro obsluhu periferních zařízení, pro
+obsluhu  souborů  dat, dále pro zavedení uživatelských programů do operační
+paměti  a  jejich  spuštění  apod.  Tato  část systému se obvykle zavede do
+paměti při startu počítače a tam setrvává po celou dobu práce s počítačem.
+
+Rozšiřující  komponenty  jsou  programy,  které  jsou  na  stejné  úrovni s
+programy  uživatelskými  (tj.  jako  programy  na disku), ale jsou dodávány
+výrobcem  operačního  systému  k  zajištění  některých důležitých pomocných
+funkcí.  Patří  sem  např.  program  pro  formátování  diskety, program pro
+kopírování disket, program pro archivaci souborů a řada dalších.
+
+
+                       +---------------------------+
+                       | 8. Operační systém MS-DOS |
+                       +---------------------------+
+
+Operační    systém    MS-DOS   (MicroSoft   Disk   Operating   System)   je
+nejrozšířenějším  operačním  systémem,  používaným  na  počítačích typu PC.
+Tvoří  základní plamové vybavení dodávané spolu s počítačem. Svému masovému
+rozšíření  nevděčí  však  své  kvalitě  (podobně jako počítače IBM PC), ale
+včasnému  uvedení  na trh a správné obchodní politice firmy (především díky
+vzájemné podpoře systému MS-DOS a počítačů IBM PC).
+
+Když  se  v  roce  1981  na  firmu MicroSoft obrátili zástupci firmy IBM se
+žádostí  vytvořit  operační systém pro připravovaný osobní počítač, netušil
+nikdo  z  MicroSoftu,  o  jak významný okamžik jde. Firma IBM měla sice již
+rozpracovaný  svůj vlastní operační systém, TopView, kterým měl být počítač
+IBM PC původně vybaven, ale s uvedením nového počítače již nemohla otálet a
+proto   se   obrátila   na   firmu   MicroSoft,  aby  co  nejdříve  získali
+provozuschopný  operační  systém  a mohli co nejrychleji uvést na trh svoji
+novou "bombu", osobní počítač IBM PC.
+
+Poté,   co   firma   MicroSoft   nabídku  přijala,  navrhla  použití  tehdy
+nejrozšířenějšího  operačního  systému  CP/M  (CP/M  =  Control Program for
+Microcomputers - řídicí program pro mikropočítače; nejrozšířenější operační
+systém pro osmibitové počítače), přesněji jeho variantu CP/M-86. To se však
+nezdařilo  pro  neshody s firmou Digital Research ohledně vlastnických práv
+(jako  autoři  operačního  systému CP/M). Proto se firma MicroSoft rozhodla
+vyvinout  vlastní  operační  systém a koupila od malé firmy Seatle Computer
+Products  (SCP)  licenci operačního systému QDOS (Quick and Dirty Operating
+System).  QDOS  byl základem nového operačního systému MS-DOS, který se tak
+stal prvním operačním systémem pro IBM PC. Ideovým vzorem pro QDOS byl také
+operační  systém  CP/M  a  proto  první  verze  operačního  systému MS-DOS,
+označovaná jako 1.00, systém CP/M v mnohém připomíná.
+
+První  verze  MS-DOSu  byla  ještě  téhož  roku nahrazena verzí 1.10, která
+umožňovala  oboustranný  zápis na diskety (ovšem pouze s kapacitou 320 KB).
+Verze  1.00  totiž, stejně jako operační systém CP/M, zapisovala na diskety
+pouze jednostranně. Ani tato nová verze však nenabízela o mnoho víc funkcí,
+než  operační  systém  CP/M,  což u výkonnějších šestnáctibitových počítačů
+začalo  být brzy zřejmé. Přesto se počítače IBM PC s operačním systémem MS-
+DOS velmi rychle rozšířily a začaly vytlačovat jiné typy.
+
+Když  později  u  firmy  IBM  dokončili  původně  plánovaný operační systém
+TopView,  který  byl  v  mnohém  dokonalejší než MS-DOS, bylo již pozdě; ve
+světě  počítačů  IBM  PC  kraloval  systém  MS-DOS. IBM se této skutečnosti
+podřídila  natolik,  že  vybavila  operačním  systémem  MS-DOS i další typy
+osobních  počítačů, které uváděla na trh, včetně celé dnešní nové řady PS/2
+(Personal  System;  dnes  jsou již počítače PS/2 vybavovány jiným operačním
+systémem,  OS/2). Důvod pro tento krok byl zřejmě týž jako při premiéře PC,
+totiž být co nejrychlejší.
+
+V roce 1983 uvedla firma IBM na trh novou variantu počítače PC obohacenou o
+pevný  disk,  která  byla  pojmenována  IBM  PC/XT.  Nový  typ počítače byl
+provázen  i  novou  verzí  systému MS-DOS, verzí 2.00, která je obohacena o
+obsluhu   pevného  disku  a  přebírá  některé  charakteristické  vlastnosti
+věhlasného  operačního  systému  UNIX,  například stromové adresáře souborů
+nebo  možnost  přesměrování  standardního  vstupu  a  výstupu z programu, a
+některé další.
+
+Přes  řadu  nových funkcí, obsažených v této verzi operačního systému, bylo
+zvýšení  výkonnosti  hardware samotného počítače IBM PC/XT natolik výrazné,
+že  se  počal objevovat jistý rozpor mezi schopnostmi počítače a operačního
+systému. Tato propast se ještě více prohloubila o rok později, v roce 1984,
+kdy  příchází  firma  IBM  opět  s  novým typem počítače, IBM PC/AT. Ten je
+vybaven novým typem mikroprocesoru, který po technické stránce dovoluje jak
+tzv. multitasking (souběžnou práci více programů najednou), tak i vestavění
+mnohem větší operační paměti s maximem až 32 MB.
+
+Přes  tyto nové schopnosti počítače PC/AT nová verze operačního systému MS-
+DOS, která jej provází (verze 3.00; je rozšířena mj. o možnost zapisovat na
+diskety  typu  High  Density,  jejichž jednotky jsou v počítačích IBM PC/AT
+vestavěny),  s  multiprogramováním nepočítá a umožňuje využít pouze paměť o
+maximální  velikosti  640  KB  (tedy  totéž,  co  na  starším  typu PC/XT);
+zbývající  paměť  lze  využít  pouze  pro tzv. RAM disk nebo ji nechat leže
+ladem.  Přestože  následující  verze,  3.10  a  3.20, nabízejí některé nové
+funkce,  jako  je  například  práce v síti, výše zmíněné slabiny operačního
+systému přetrvávají a jsou stále zřetelnější.
+
+Při  uvedených nedostatcích systému MS-DOS bylo tedy velmi překvapující, že
+zcela  novou  řadu  osobních  počítačů  firmy  IBM,  označovanou jako PS/2,
+provází  nová  verze systému MS-DOS, označená 3.30, která stále nepodporuje
+paralelní  zpracování  více  úloh ani rozšířenou paměť; to už je u počítačů
+úrovně  PS/2  na pováženou. Opět zde zvítězila snaha či spíše nutnost uvést
+nový  typ co nejdříve na trh. Počítač PS/2 se však roku 1988 dočkal lepšího
+partnera, operačního systému OS/2, který již samozřejmě nabízí multitasking
+a  celou  řadu  dalších  funkcí. Jeho nevýhodou je malé zázemí programového
+vybavení. Přestože umožňuje emulaci operačního systému MS-DOS, programy pro
+MS-DOS pracují pod ním špatně a pomalu.
+
+Multiprogramování  neumožnil ani operační systém verze 4.00. V podstatě byl
+doplněn  pouze o možnost používání disků s kapacitou větší než 32 MB. Navíc
+tento  systém  byl  vytvořen  "horkou  jehlou"  a  tak sebou přinášel mnoho
+programátorských   chyb.   Brzy  na  to  přišla  proto  verze  4.01,  která
+odstraňovala  chyby  verze 4.00. Přesto se stále ještě jednalo o nedokonalý
+operační systém a mnoho uživatelů raději zůstalo u starší verze systému.
+
+Za  úspěšnou  lze  považovat  až verzi systému 5.00. Tato verze systému již
+umožňuje  efektivnější  využívání  paměti. Samotný operační systém může být
+provozován  v  rozšířené  paměti  počítačů  AT (díky adresaci programu přes
+přelom  1MB  režimem  s povoleným adresovým bitem A20, čímž je možné zvýšit
+základní  adresový  prostor  1MB  o 64 KB). U počítačů s procesorem 80386 a
+80486,  které  umožňují  mapování  paměti,  je  umožněn i provoz programů v
+rozšířené  paměti  přemapováním  bloků  operační  paměti do volného místa v
+základním  rozsahu  1 MB (obvykle např. mezi adresy C800h až E000h). Tím je
+možné zvýšit základní paměť 640 KB o asi 180 KB.
+
+Zvláštní  pozornost  si  zaslouží  známá  nastavba operačního systému firmy
+MicroSoft  WINDOWS.  Jedná se o nadstavbu, jejíž hlavním cílem je sjednotit
+prostředí pro všechny programy. Komunikace s uživatelem probíhá na grafické
+úrovni,  čímž  je  umožněno  přenášení mnohem většího objemu informací mezi
+uživatelem a počítačem. Jednou z hlavních výhod je vzájemná kompatibilita
+programů  pracujících  pod  Windows.  Data  je  možné  mezi programy snadno
+přenášet.  Díky  využívání služeb Windows se nainstalováním např. fontů pro
+tiskárnu tyto fonty stávají nainstalovány i pro všechny programy.
+
+Velmi vyzvedávanou vlastností Windows je možnost provozu programů v časovém
+multitasku (pouze procesory 80386 a vyšší). Nejde o úplný multitask. Čas se
+programům  přiděluje  v  určeném  poměru.  Při  režimu  multitasku má každý
+program  přidělenu pro sebe celou oblast 640 KB, ve které běží nezávisle na
+ostatních programech. Při aktivitě programu se přepne jeho blok 640 KB jako
+hlavní  paměťový  blok.  Program  v  této chvíli běží jako v běžném reálném
+režimu.
+
+Hlavní nevýhodou Windows je jejich težkopádnost a velké nároky na technické
+vybavení  počítače.  Jejich  provoz na počítači AT 80286 je sice možný, ale
+prakticky  nepoužitelný.  Praktické  využití  je  až  s využitím vlastností
+procesoru  80386  a  80486.  I  tak  je  však jakákoliv operace s počítačem
+provázena zdlouhavým zaváděním modulů do paměti a ukládáním bufferů na disk
+nebo  do  rozšířené  paměti.  Počítač  se stává použitelný až při velikosti
+paměti jednotky až desítky MB. Lze říci, že WINDOWS posouvají počítače řady
+80386 rychlostí obsluhy na úroveň lepšího počítače XT. Firma MicroSoft se k
+tomu staví tak, že "pohřbívá" počítače AT 80286 a za počítač považuje až AT
+s  procesorem  80386,  pamětí nekolik MB a pevným diskem s kapacitou stovek
+MB.
+
+Jako je obvyklé, opět nezvítězila kvalita programu, ale obchodní politika a
+jméno  firmy.  Vzniklo již několik systémů kvalitou a rychlostí převyšující
+Windows.  Bohužel  se  příliš neprosadily díky silné konkurenční schopnosti
+firmy  Microsoft. Firma MicroSoft již od počátku vzniku Windows podporovala
+tvorbu  programů  pro Windows, ať již zveřejňováním podkladů k programování
+pro  Windows  nebo  i přímou podporou vývoje systémů pro Wondows. Existence
+kvalitních  programů  pro  Windows  potom  podmínila  požadování  Windows i
+samotnými uživateli.
+
+Ač  by  se  z předcházejícího textu mohlo zdát, že MS-DOS není příliš dobrý
+operační  systém,  není to úplná pravda. Pro první model firmy IBM, počítač
+typu PC, byl vhodný i dostačující, což ostatně dokazuje jeho rozšíření. Pro
+počítače  PC/XT existují dokonalejší operační systémy; například XENIX, QNX
+či  AIX  (vyvinutý  roku 1985 pro IBM PC/RT, notně propagovaný firmou IBM);
+pro  počítače  typu  PC/AT  nebo  pro  novou řadu PS/2 se nabízí legendární
+operační  systém  UNIX  (ostatně  XENIX, AIX i QNX jsou ve skutečnosti více
+nebo  méně  upravený UNIX), celosvětově rozšířený na minipočítačích. Přesto
+však u počítačů řady PC zvítězil MS-DOS. Stalo se tak proto, že byl první a
+velmi  rychle  se  rozšířil  po  celém  světě.  Pak  již  nešlo tuto lavinu
+zastavit. Bohužel v jeho stínu zanikly i dokonalejší operační systémy, jako
+byl  například DR-DOS firmy Digital Research. Jejich operační systém vznikl
+o  něco  později než MS-DOS, byl však v mnohém dokonalejší a spolehlivější.
+Opožděným  zaváděním  svého  systému  byla  firma  Digital  Research nucena
+dodržovat  kompatibilitu  s  operačním systémem MS-DOS. K většímu rozšíření
+systému  DR-DOS nepřispěl ani příchod verze 6.00, která v mnohém předčí MS-
+DOS verze 5.00.
+
+               +-------------------------------------------+
+               | 9. Architektura operačního systému MS-DOS |
+               +-------------------------------------------+
+
+Celý  operačmí  systém  lze  rozdělit  do několika vrstev. Nejnižší vrstvou
+operačního systému jsou ovladače zařízení. Tato vrstva zajišťuje přímý styk
+s technickým vybavením, tj. hardware. Můžeme ji dále rozdělit na tři části:
+
+a) První  část je tzv. firmware, který je výrobcem počítače uložen v paměti
+   typu  ROM  (Read  Only  Memory  -  paměť  pouze pro čtení; tato paměť je
+   naprogramována výrobcem a uchovává si svůj obsah i po vypnutí napájecího
+   napětí počítače, její obsah nelze měnit); proto se nazývá ROM-BIOS. Tato
+   část  obsahuje  například  technické  testy.  Nejde tedy přímo o součást
+   operačního   systému,   protože  tato  část  není  dodávána  dodavatelem
+   operačního systému, ale dodavatelem počítače.
+
+b) Druhá  část  je uložena na disketě nebo pevném disku, odkud se do paměti
+   zavede  při  startu  systému.  Tato  část  je  uložena v souboru IO.SYS.
+   Zajišťuje  zavedení  operačního  systému  a  obsahuje  sadu programů pro
+   ovládání  standardních periferií. Sjednocuje všechna zařízení na stejnou
+   úroveň,  aby  bylo  možno jakékoliv zařízení ovládat obecnými jednotnými
+   službami.
+
+c) Třetí  část  nejnižší  vrstvy systému je volitelná a je vytvořena pomocí
+   příkazů,  zapsaných  na disketě nebo disku (v souboru CONFIG.SYS), odkud
+   se  systém  zavádí do operační paměti. Pomocí tohoto prostředku je možno
+   začlenit  jakýkoliv  nově  vytvořený  řídicí  program  pro  nestandardní
+   přídavné  zařízení.  Zavedením  ovladače zařízení se tento ovladač stává
+   stejně  součástí  operačního  systému  jako ovladače instalované modulem
+   IO.SYS.
+
+Další  vrstva  operačního  systému, jádro DOS, je již naprosto nezávislá na
+technickém  prostředí.  Tato  vrstva  zajišťuje  logický  vstup  a  výstup,
+ovládání  souborů  a služby, poskytované programům. Jádro DOS je uloženo na
+disketě  nebo  pevném  disku, odkud se systém zavádí do paměti, jako soubor
+MSDOS.SYS.  Na  služby  této  vrstvy DOS se odvolávají všechny programy při
+požadavku  libovolné  akce  podporované systémem - např. načtení souboru do
+paměti, vstup znaku z klávesnice a pod.
+
+Ostatní  programy  operačního  systému jsou již vybudovány na stejné úrovni
+jako  aplikační  programy, tedy nad jádrem DOS. Velice důležitým programem,
+pro uživatele tím nejdůležitějším, je interpreter příkazů, uložený na disku
+jako  soubor  COMMAND.COM. Tento program je základním monitorem, přes který
+se  uživatel  setkává  s  operačním  systémem.  Styk  uživatele s operačním
+systémem  se  zprostředkovává  pomocí  příkazů,  zadávaných  z  klávesnice.
+Příkazy, jejichž provedení zajišťuje program COMMAND.COM, jsou tzv. interní
+(vnitřní) příkazy.
+
+Kromě  interních  příkazů  je  možné  zadávat  i  příkazy  externí. To jsou
+příkazy,  které  interpreter  příkazů COMMAND.COM neprovádí přímo, ale před
+jejich  provedením  načte  odpovídající  program  do operační paměti. Tento
+program  je  uložen  na  disku nebo na disketě. Není přitom žádný technický
+rozdíl  mezi  externím  příkazem  a  programem; jakýkoliv program, který je
+zapsán  na  disku  nebo  na  disketě a který lze zavést do operační paměti,
+rozšiřuje  repertoár  příkazů.  Jinými  slovy,  externí příkaz je totéž, co
+program.  Pojem externí příkaz se používá pouze k vyjádření té skutečnosti,
+že příslušné programy se dodávají současně s operačním systémem.
+
+
+                              +-------------+
+                              | 10. Soubory |
+                              +-------------+
+
+Na  disketách  či  pevném disku (dále pouze médium) jsou uloženy informace,
+které  nejsou  právě určeny ke zpracování, přesněji informace neoperativní.
+Tyto  informace  mohou  být  buď data (texty, databáze, obrázky, kalkulační
+tabulky), nebo programy, kterými se tato data zpracovávají. Data i programy
+jsou  na  médiu  uloženy v tak zvaných souborech. Soubor je libovolně velký
+souhrn  informací,  které k sobě logicky patří a s nimiž je vhodné pracovat
+jako  s celkem. Soubor může obsahovat databázi zaměstnanců podniku, přehled
+docházky,  měsíční  uzávěrku,  text  dopisu obchodnímu partnerovi, grafické
+zobrazení  růstu  cen  nebo  plnění  plánu, ale také může obsahovat program
+(tedy  předpis  pro  počítač).  Soubory  je možno na disk přidávat a to tak
+dlouho, až se kapacita disku zaplní. Soubory lze též z disku vymazávat.
+
+Každý soubor na disku má svoje jméno. To se skládá z maximálně osmi znaků -
+písmen,  číslic  a  případně  dalších  znaků.  Nesmí se ale použít znaky se
+speciálním významem, jako jsou tečka, dvojtečka, rovnítko, znaky < a > nebo
+|  (svislá  čára)  a lomítka \ a /. Mezera se ve jménu souboru nedoporučuje
+používat,  protože  v řádkovém režimu COMMAND.COM se používá jako oddělovač
+jmen  a  nebyla by proto správně interpretována. Mezeru lze použít pouze ve
+vyjímečných případech za použití programů nepracujících se jménem souboru v
+řádkovém  režimu  jako  COMMAND.COM.  Mezera se ovšem nesmí vyskytnout jako
+první   znak  jména.  Doporučuje  se  nepoužívat  písmena  s  diakritickými
+znaménky,  neboť  národní  verze  operačního  systému i jednotlivé programy
+chápou  tyto  znaky  nejednotně.  Jméno  souboru  je možné volit libovolně,
+nejlépe   takové,  které  výstižně  charakterizuje  informaci  obsaženou  v
+souboru.
+
+Jednotlivé  soubory  vždy  obsahují  informaci nějakého typu a proto se pro
+označení  souboru  kromě  jména  používá  ještě přípona neboli typ souboru.
+Přípona  je  maximálně tříznaková; jinak pro ni platí stejná pravidla, jako
+pro  samotné jméno souboru. Soubor příponu může mít, ale nemusí. Jméno musí
+mít  (nesmí  být  pouze  přípona  bez  jména).  V následujícím seznamu jsou
+uvedeny nejpoužívanější přípony a jejich význam.
+
+    Zcela závazné přípony v rámci celého systému:
+
+    COM  - v souboru je zapsán program určený ke spuštění (COMmand=příkaz)
+    EXE  - podobně jako předchozí, pouze jiný vnitřní tvar (EXEcute=proveď)
+    BAT  - soubor obsahuje dávku povelů operačního systému (BATch=dávka)
+
+    Přípony používané ve spojitosti s konkrétním programem:
+
+    DBF  - soubor  dat,  vytvořený systémem DBASE (DataBase File=databázový
+           soubor)
+    WK   - kalkulační     tabulka     programového     systému     LOTUS123
+           (WorK sheet=pracovní arch)
+    PIC  - soubor s grafickou informací (PICture=obraz)
+    PAS  - zdrojový text programu v jazyku PAScal
+    C    - zdrojový text programu v jazyku C
+    BAS  - zdrojový text programu v jazyku BASic
+    ASM  - zdrojový text programu v jazyku ASseMbler (strojový kód)
+
+    Vžité nebo doporučené přípony:
+
+    DOC  - soubor  obsahující  nějaký  text,  většinou informaci o programu
+           (DOCument)
+    SYS  - SYStémové souboru
+    TXT  - TeXTový soubor v běžném formátu ASCII
+    BAK  - záložní  kopie,  která se může použít k obnově původního souboru
+           po  nějaké  chybě,  nejčastěji  po  nechtěném  vymazání  souboru
+           (BAcKup=záloha)
+    PRN  - soubor určený k tisku (PRiNt-tisk)
+    $$$  - přechodný soubor, ukončením programu se automaticky ruší
+
+Soubory  s  příponou COM a EXE jsou programy, které spustíme tak, že zadáme
+jejich  jméno  (tedy  jméno  souboru,  ve  kterém jsou uloženy) jako příkaz
+(příponu  není  třeba  uvádět).  Rozdíl  těchto  dvou  typů  souborů  je  z
+uživatelského  hlediska  nepodstatný. Soubory s příponou BAT obsahují dávku
+příkazů  (označují se též jako povelové soubory). Tyto uvedené přípony jsou
+povinné.  Soubory s příponou SYS jsou systémové soubory, tedy takové, které
+operační  systém  potřebuje  ke  své  činnosti  (např.  pro  obsluhu nějaké
+nestandardní  periférie). Jsou to zpravidla soubory, které se použijí pouze
+jednou  při zavádění operačního systému do paměti (nainstalují se do paměti
+jako součást operačního systému).
+
+Ostatní  přípony  nejsou  většinou  povinné,  ale  jsou  výsledkem určitých
+konvencí,  které  je  dobré  dodržovat.  Ty se většinou váží ke konkrétnímu
+programu a nemohou zde ani být uvedeny všechny.
+
+V operačním systému MS-DOS i v programech, které pod ním pracují, je zvykem
+uvádět jméno souboru spolu s příponou. Jméno od přípony se odděluje tečkou.
+Operační  systém nerozlišuje ve jménech souborů ani v příkazech mezi malými
+a velkými písmeny. Jména COMMAND.COM, command.com nebo ComMand.COM označují
+tentýž soubor.
+
+V  operačním  systému  MS-DOS  nelze  použít  libovolně jakákoliv jména pro
+označení  souborů.  Některá jména jsou vyhrazena (rezervována) pro označení
+přídavných zařízení. Těmito jmény nemůže být pojmenován soubor, lze je však
+ovšem  kdykoliv použít místo jména souboru; potom se v daném kontextu místo
+souboru  použije  specifikované  zařízení.  Vyhrazená  jména jsou uvedena v
+následujícím seznamu:
+
+CON          - (CONsole) při vstupu značí klávesnici, při výstupu monitor
+AUX          - (AUXiliary)   =   pomocné   zařízení,   obvykle   standardní
+               komunikační zařízení
+PRN          - (PRiNter) = standardní tiskárna
+NUL          - prázdné zařízení
+COM1 - COM4  - (COMmunication) = komunikační zařízení, sériové rozhraní
+LPT1 - LPT3  - (Line   PrinTer)  =  řádková  tiskárna,  paralelní  rozhraní
+               tiskárny
+
+Jméno  CON  označuje standardní vstupně-výstupní zařízení. Pokud je použito
+jméno  CON místo jména souboru, do kterého mělo být zapisováno, vypisuje se
+text  na  obrazovku.  Je-li  použito  jméno  CON  namísto jména souboru, ze
+kterého  měla  být čtena data, probíhá čtení znaků z klávesnice (až po znak
+konce souboru Ctrl-Z).
+
+Standardní  rozhraní  PRN  označuje  standardní  tiskárnu,  což je většinou
+paralelní rozhraní LPT1.
+
+Standardní  rozhraní  AUX  označuje  standardní  sériové  rozhraní,  což je
+většinou sériový port COM1.
+
+Zařízení  s  označením  NUL  je pouze fiktivní zařízení. Při výstupu dat na
+toto  zařízení  se data nikam neukládají ani nezobrazují - výstup se jakoby
+ztratí (používá se k odstranění nežádoucích hlášení programu).
+
+
+                              +--------------+
+                              | 11. Adresáře |
+                              +--------------+
+
+Na  jednom  médiu  může  být  uloženo  více souborů. Aby bylo možno soubory
+rozlišit,  je  na  médiu  vyhrazena  oblast  pro  adresář souborů. Zde jsou
+uloženy  (mimo  jiné)  informace  o jednotlivých souborech, jako je jméno a
+přípona  souboru,  jeho délka a datum jeho vytvoření či poslední modifikace
+souboru,  ale  především  informace  o  uložení souboru na disku. Při velké
+kapacitě  médií  by  se však při této jednoduché koncepci mohl stát adresář
+nepřehledným.  Proto  byla  zavedena hierarchická či též stromová struktura
+adresářů.
+
+Při  použití  stromové  struktury  mohou  být soubory na disku rozděleny do
+skupin.  Tyto skupiny se většinou zřizují pro soubory stejného typu, či pro
+soubory  jednoho  uživatele,  pro  jednu  zpracovávanou  úlohu  a  podobně.
+Jednotlivé   oddíly  libovolného  řádu  odpovídají  adresářům;  vzhledem  k
+adresářům nižší úrovně jim můžeme také říkat podadresář. Výsledná struktura
+podadresářů  se nazývá strom. Adresář na nejnižší úrovni se nazývá základní
+nebo též kořenový adresář (ROOT DIR).
+
+Každý  adresář je označen jménem, které se vytváří podle stejných pravidel,
+jako  jméno  souboru.  Přípona  se  často  nevyužívá.  Každý  adresář  může
+obsahovat   jednak  soubory  a  jednak  další  podadresáře.  Při  grafickém
+znázornění  stromové  struktury  disku se obvykle znázorňuje kořen stromové
+struktury (tedy základní adresář) v levém horním rohu jako obrácené lomítko
+\,  z  tohoto  adresáře  vycházejí  směrem dolů větve podřazených adresářů,
+směrem  doprava  se tyto podadresáře rozšiřují do dalších podadresářů až na
+nejvyšší úroveň. Příklad stromové struktury pevného disku:
+
+ C:\
+    +----ASSEMB
+    |    +----EXEC
+    |    +----SOURCE
+    |    +----TD
+    +----C
+    |    +----EXEC
+    |    +----INCLUDE
+    |    +----LIBRARY
+    |    +----SOURCE
+    +----RELAX
+    |    +----3DTETRIS
+    |    +----ARKANOID
+    |    +----GP
+    |    +----TETRIS
+    +----SYSTEM
+         +----PCSHELL
+         +----SYSTEM
+         +----UTILITY
+
+Pro  přehlednost  se  často používají pro označení adresářů velká písmena a
+pro  označení  souborů  malá  písmena. Operační systém velká a malá písmena
+nerozlišuje.
+
+                         +------------------------+
+                         | 12. Označování souborů |
+                         +------------------------+
+
+Při  odkazu  na  soubor  (ať již datový soubor nebo program) je nutno zadat
+jméno  souboru.  Díky  stromové struktuře disku se může na disky vyskytovat
+více  souborů  stejného  jména. Proto je nutno zadat, ve kterém adresáři se
+soubor  nachází  (tzv.  přístupová  cesta  k souboru). Dále může být stejná
+stromová  struktura  na  více  discích. Proto je nutno zadat ve specifikaci
+souboru i disk, na kterém se tento soubor nachází.
+
+Plná specifikace označení souboru má tvar
+
+      Disk:\adresář_1\adresář_2\...\adresář_n\jméno_souboru.přípona
+
+"Disk:"  je  označení  disku.  Disk  se značí písmenem A až Z. Za označením
+disku se uvádí znak dvojtečky.
+
+"adresář_n"  je označení jednoho podadresáře. Podadresáře se uvádí postupně
+tak,  jak  by  je  bylo  nutno  projít,  pokud  bychom  se chtěli dostat ze
+základního  adresáře  k  požadovanému  souboru.  Jednotlivé  podadresáře se
+navzájem oddělují znakem obráceného lomítka.
+
+"jméno_souboru.přípona"  je  označení  souboru  podle  konvencí uvedených v
+předešlých kapitolách.
+
+Příklady  správně  označených souborů (na rozlišení velkých a malých písmen
+nezáleží):
+
+    C:\ASSEMB\EXEC\pokus.exe
+    A:\DOS\msdos.txt
+    F:\io.sys
+
+Protože  by  bylo  plné značení souborů zdlouhavé, používá se pojem aktivní
+disk  a aktivní adresář. Aktivní disk je disk, který je implicitně dosazen,
+pokud  se neuvede ve specifikaci souboru žádný disk. V příkazovém řádku DOS
+se  zobrazuje obvykle aktivní disk jako prompt. Např. pokud je aktivní disk
+C:,  je  možné  první  řádek  příkladu zkrátit na "\ASSEMB\EXEC\pokus.exe".
+Ostatní řádky musí zůstat zachované.
+
+Podobně  v  případě  aktivního  adresáře.  Aktivním adresářem je adresářová
+cesta,  která se implicitně dosadí, není-li cesta vůbec uvedena. Každý disk
+má  nastaven  svůj  aktivní  adresář.  Je-li  pro  disk C: nastaven aktivní
+adresář  \ASSEMB\EXEC  a  pro disk A: adresář \DOS (a stále je aktivní disk
+C:),   lze  první  dva  řádky  příkladu  zkrátit  na  zápis  "pokus.exe"  a
+"A:msdos.txt".
+
+Adresářová  cesta  může být zadána pouze částečně. Za částečné zadání cesty
+se považuje zápis, kdy není uveden na začátku cesty (tj. za označením disku
+s  dvojtečkou) znak obráceného lomítka (např. "C:ASSEMB\EXEC\pokus.exe"). V
+tomto  případě  se  při  sestavení  cesty  k  souboru  vychází  z aktivního
+adresáře.  Sestavení probíhá tím způsobem, že jednotlivé zadané podadresáře
+se  postupně přidávají k aktivnímu adresáři. Například je-li aktivní disk a
+adresář   C:\ASSEMB,   odpovídá  zápis  "EXEC\pokus.exe"  plné  specifikaci
+"C:\ASSEMB\EXEC\pokus.exe".
+
+Zvláštním  případem  jména  adresáře  je jméno ".." (dvě tečky). Toto jméno
+označuje odkaz na nadřazený (předchozí) adresář. Tímto způsobem se můžeme v
+řetězci  adresářové  cesty i navracet zpět. Například je-li aktivní adresář
+C:\ASSEMB\SOURCE     odpovídá     zápis     "C:..\EXEC\pokus.exe"    zápisu
+"C:\ASSEMB\EXEC\pokus.exe).
+
+Při označování souborů je možné v mnoha případech využívat tzv. hvězdičkové
+konvence.  Uvedeme-li  na  některé  pozici znaku ve jméně (příponě) souboru
+znak  otazníku  "?"  znamená to, že na této pozici může být libovolný znak.
+Uvedeme-li  znak  hvězdičky  "*"  znamená to, že od této pozice až po konec
+jména  souboru  mohou  být  libovolné  znaky. Např. zápis A?B*.PAS označuje
+všechny  soubory,  které  mají  na  první pozici písmeno A, na druhé pozici
+písmeno B a příponu PAS. Ostatní znaky mohou být libovolné.
+
+
+                         +-----------------------+
+                         | 13 Spouštění programů |
+                         +-----------------------+
+
+Programy  pod  operačním  systémem DOS lze jednoduše spustit zápisem jejich
+jména  a stiskem klávesy ENTER. Program musí mít příponu COM nebo EXE, nebo
+se  musí  jednat  o  povelový soubor s příponou BAT. Není-li zadána přípona
+jména  programu  (u  verzí  systému  3.30  a  starších  se  zadaná  přípona
+ignorovala),  hledá  se nejdříve odpovídající program s příponou jména COM.
+Nenalezne-li  se, hledá se program s příponou EXE. Při neúspěchu se nakonec
+hledá povelový soubor s příponou BAT.
+
+Při  zápisu  jména  programu  ke spuštění lze uvést též přístupovou cestu k
+programu  (podle pravidel v předešlé kapitole). Ve jménu programu nesmí být
+použita hvězdičková konvence.
+
+Pro   snadnější  spouštění  programů  je  v  operačním  systému  definována
+systémová  proměnná  PATH  (její nastavení se zobrazí zadáním příkazu PATH,
+proměnnou lze měnit zadáním příkazu PATH s novým parametrem). Tato proměnná
+obsahuje odkazy na adresáře, ve kterých bude program vyhledáván, nenalezne-
+li  se  v  aktivním  adresáři  (a nebude-li zadána jeho úplná specifikace).
+Jednotlivé odkazy na adresáře jsou navzájem odděleny znakem středníku.
+
+Za  jménem programu lze při jeho spuštění zadat parametry. Obvyklá konvence
+je  použití  znaku  "/" (někdy též "-") jako oddělovač parametrů. Konkrétní
+zápis   parametrů  však  závisí  na  spouštěném  programu.  Syntaxi  zápisu
+parametrů je proto potřeba zjistit z manuálu programu.
+
+Většina  programů  nebo  příkazů operačního systému vypisují nějaký text na
+standardní  výstupní  zařízení  CON,  tedy na obrazovku, nebo čtou vstup ze
+standardního  vstupního  zařízení  CON,  tedy z klávesnice. Toto lze změnit
+využitím přesměrování vstupu a výstupu programu.
+
+Ve všech příkazech operačního systému je možno použít symboly >, < nebo >>,
+které  toto  přesměrování  zajistí.  Symbol  > (případně >>) se používá pro
+přesměrování  výstupu a symbol < pro přesměrování vstupu. Za těmito symboly
+je třeba uvést jméno souboru, do něhož se má zapisovat či odkud se má číst.
+Jako  jméno  souboru  lze  samozřejmě  použít  i  jméno zařízení. Zadáme-li
+například  příkaz,  který  standardně  vypisuje  na  obrazovku  monitoru  a
+přesměrujeme jej na tiskárnu, výstup se vytiskne.
+
+Jednoduchý  příklad  je např. DIR > PRN, který způsobí výpis obsahu běžného
+adresáře  na  tiskárnu.  Při přesměrování do souboru je mezi symboly > a >>
+rozdíl;  symbol  >  znamená,  že  se  výstupní  soubor nejprve smaže (pokud
+existuje)  a  potom do něj začne probíhat výstup od začátku souboru. Symbol
+>> udává, že nový výstup se připojí na konec stávajícího souboru, soubor se
+tedy nemaže, pokračuje se ve výstupu do tohoto souboru.
+
+Znaky pro přesměrování je nutno uvést až za případnými parametry programu.
+
+Příkazy  nebo  programy, které používají standardní vstupy a výstupy, lze v
+některých případech zřetězit, přesněji řečeno spojit tak, že výstup jednoho
+programu  se stane vstupem programu druhého. Vznikne tím tzv. pipeline (čti
+"paiplain"  = roura, kanál). Programům, které čtou ze standardního vstupu a
+vypisují  na  standardní  výstup,  se  říká filtr. Samotné řetězení příkazů
+zajistí  znak | (čára), kterým se jednotlivé příkazy na příkazovém řádku od
+sebe  oddělí.  Například  příkaz  DIR  | FIND "04.90 " | SORT způsobí výpis
+souborů  z  adresáře,  které mají datum vytvoření xx.04.1990 a tyto soubory
+setřídí podle abecedy.
+
+                        +-------------------------+
+                        | 14. Klávesnice počítače |
+                        +-------------------------+
+
+Všimněme si nyní blíže jednotlivých kláves na klávesnici.
+
+Po  levé  straně  vnitřního  pole  klávesnice vidíme větší klávesu s názvem
+ENTER  (někdy  též  CR).  Často  mívá  tvar obráceného "L". Tato klávesa je
+základní ovládací klávesou. Používá se ve všech programech jako potvrzovací
+klávesa,  například  když  chceme  odeslat  řádek se zapsaným příkazem nebo
+potvrdit nějakou volbu.
+
+Opakem  klávesy ENTER je klávesa ESC. Tato klávesa se používá k předčasnému
+opuštění  nějaké  volby a návratu k předešlému stavu počítače. Někdy slouží
+též k přerušení právě prováděné operace.
+
+Všimněme si na klávesnici speciálních kláves, označených jako SHIFT, CTRL a
+ALT.  Tyto  klávesy  se  obvykle  nazývají  přesmykače,  neboť  mění význam
+ostatních  kláves  ve  spojení s nimi. Tyto klávesy jsou zdvojeny po levé i
+pravé  straně  klávesnice  a  obvykle  nezáleží  na  tom,  na  které straně
+klávesnice je stiskneme. Při použití přesmykače je nutno stisknout nejdříve
+klávesu   přesmykače   a   za  neustálého  držení  této  klávesy  stisknout
+požadovanou významovou klávesu. Na pořadí uvolnění kláves již nezáleží.
+
+Přesmykač  SHIFT  se  nejčastěji  používá ke změně velkých písmen na malá a
+obráceně. Trvalý výběr velkých nebo malých písmen dosáhneme stiskem klávesy
+CAPS LOCK.
+
+Přesmykač  CTRL  je klávesa pro zvláštní řídicí funkce programů. Při běžném
+zápisu  kláves  se  tento přesmykač zobrazuje obvykle jako znak stříšky "^"
+(např.  zápis  ^F1 odpovídá stisku kláves CTRL-F1). Častým případem použití
+přesmykače  CTRL je ve spojení s písmeny. V tomto případě se generuje ASCII
+kód klávesy menší než 32 (např. při stisku CTRL-Z se generuje kód 26, tento
+kód se obvykle používá pro označení konce souboru).
+
+Přesmykač  ALT  se  používá  pro  zvláštní  funkce programu. Velmi často se
+používá  k vyvolávání voleb menu. Např. stiskem ALT-S můžeme vyvolat menu s
+názvem "Soubory" (první písmeno zde označuje tzv. "horkou klávesu").
+
+Důležitou  systémovou  klávesou  je  klávesa  označena  PAUSE (úplně vpravo
+nahoře).  Stiskem této klávesy lze zastavit činnost počítače, například pro
+zastavení  výpisu  na obrazovku, aby výpis "neutekl" ven z obrazovky. Často
+lze  stejnou  funkci  zastavení  výpisu  vyvolat i stiskem kombinace kláves
+CTRL-S. Uvolnění zastaveného počítače je možné stiskem libovolné klávesy.
+
+Zvláštní  význam má kombinace kláves CTRL a BREAK (BREAK je zdvojená funkce
+klávesy  PAUSE).  Stiskem  této  kombinace  kláves  lze  ve většině případů
+přerušit  činnost  programu  nebo  prováděnou  činnost  programu. U většiny
+programů  nastane stiskem těchto kláves úplně přerušení činnosti programu a
+návrat  do operačního systému. V mnoha případech se pouze přeruší prováděná
+činnost programu.
+
+Zmiňme  se  zde  o způsobu generování zvláštních znaků pomocí klávesy ALT a
+numerické  klávesnice.  Tuto  funkci  můžeme  použít  v případech, kdy není
+některý  znak  na klávesnici k dispozici (např. grafické znaky nebo znaky s
+diakritikou).  V  tomto  případě  se  doporučuje  mít  u počítače umístěnou
+tabulku  znaků  s jejich dekadickými kódy. Postup zadávání zvláštních znaků
+je  následující:  Nejdříve  stiskneme přesmykač ALT (a držíme ho během celé
+doby  zadávání  znaku).  Potom  na  numerické klávesnici zapíšeme dekadické
+číslo 1 až 255 odpovídající hodnotě požadovaného znaku. V okamžiku uvolnění
+přesmykače  ALT  se  zadaný znak vygeneruje (objeví se na řádku). Například
+zápisem  ALT  173  můžeme  zadat  znak  paragrafu. Bohužel není možné tímto
+způsobem  zadat  znak  s kódem 0. U některých programů lze tento znak zadat
+kombinací kláves CTRL-@.
+
+Neméně zajímavá je klávesa označená jako PRINT-SCREEN. Stiskem této klávesy
+si  můžeme  pořídit kopii obrazovky na připojenou tiskárnu (tzv. hardcopy).
+Nevýhodou  této  funkce  je  to,  že ji nelze přerušit. Je proto třeba před
+jejím  použitím zajistit, aby byla tiskárna připravena a schopna vytisknout
+obsah  celé  obrazovky.  Není-li  tiskárna  připravena  nebo  není-li vůbec
+připojena,  závisí  další  chování na typu počítače. Některé počítače ihned
+nebo  během  krátké doby přejdou opět do běžného stavu, jiné počítače tvrdě
+vyžadují  dokončení  operace  a je nutno je v některých případech resetovat
+(tváří  se  jako  "zamrzlé").  Funkce  tisku obsahu obrazovky je standardně
+zajištěna  pouze  pro  textový videorežim obrazovky. Má-li být tištěn obsah
+obrazovky  i  v  grafickém  režimu,  je  nutno  před  použitím  této funkce
+nainstalovat program GRAPHICS (je součástí operačního systému).
+
+Úplně  napravo  na  klávesnici je umístěno pole numerické klávesnice. Běžně
+toto  pole slouží k zadávání numerických údajů. Je ji však možné použít též
+jako  kurzorové  klávesy. Funkci numerické klávesnice lze přepínat klávesou
+NUM  LOCK.  Je-li  funkce NUM LOCK zapnuta (tj. svítí indikační kontrolka),
+generuje  numerická  klávesnice číslice. V opačném případě se generují kódy
+řídicích  kurzorových  kláves  (jak jsou uvedeny na klávesách jako zdvojená
+funkce).  Tuto  funkci  je možné přepínat též dočasně stiskem klávesy SHIFT
+spolu s klávesou numerické klávesnice.
+
+Mezi  numerickou  klávesnicí  a  základním  polem  klávesnice jsou umístěny
+zvláštní  ovládací klávesy (pouze u rozšířené klávesnice AT, u klávesnic PC
+jsou  tyto  klávesy  jako  zdvojená funkce numerické klávesnice). Ve spodní
+části  jsou čtyři klávesy sloužící k ovládání kurzoru ve čtyřech směrech. V
+horní  části  je umístěno šest kláves: INSERT, DELETE, HOME, END, PAGE UP a
+PAGE DOWN.
+
+Klávesa  INSERT  slouží  k  přepínání režimu vkládání při editaci textového
+řádku.  Je-li  režim vkládání zapnutý, vkládá se zapisovaný text do starého
+textu,  tj.  část  textu  vpravo  se  odsouvá  doprava. Při vypnutém režimu
+vkládání  se  text napravo od kurzoru přepisuje. Tato klávesa je však často
+používána též ke zvláštním ovládacím funkcem. Používá se k vyvolání menu, k
+vložení nové položky do seznamu, k označení položky na řádku.
+
+Klávesa  DELETE  při  editaci  textového  řádku  umožňuje zrušení znaku nad
+kurzorem.  Část  textu  po  pravé  straně  se přitom přisune o jednu pozici
+doleva.  Někdy  se  tato klávesa používá též ke speciálním funkcím, jako je
+zrušení položky na řádku.
+
+Klávesa  HOME  při  editaci  řádku  nastaví kurzor na první pozici v řádku.
+Nepracuje-li  se  s  textovým  kurzorem,  slouží  též  k nastavení na první
+položku  v  seznamu nebo v menu. V kombinaci s přesmykačem CTRL slouží tato
+klávesa při editaci textu k nastavení kurzoru na první řádek na obrazovce.
+
+Klávesa  END  při editaci řádku nastaví kurzor na poslední pozici na řádku.
+Není-li  textový  kurzor,  slouží  též  k  nastavení  na poslední položku v
+seznamu  nebo  v  menu.  V  kombinaci s přesmykačem CTRL slouží k nastavení
+kurzoru na poslední řádek na obrazovce.
+
+Klávesa  PAGE UP znamená posun v textu o stránku nahoru (tj. zpět k začátku
+textu).  Stránkou  je  přitom  myšlena stránka na obrazovce. Obvykle se při
+posunu o stránku nahoru stane první řádek na obrazovce posledním řádkem. Ve
+spojení  této  klávesy  s přesmykačem CTRL má tato klávesa význam přesun na
+úplný začátek textu nebo seznamu.
+
+Klávesa  PAGE  DOWN  znamená  posun  textu  o  stránku dolů. Vše o ní platí
+analogicky  podobně jako o klávese PAGE UP (CTRL-PAGE DOWN slouží k přesunu
+na konec textu).
+
+K  editaci textového řádku slouží ještě klávesa BACK SPACE (označuje se též
+jako  šipka doleva a je umístěna po pravé straně základního pole klávesnice
+nahoře).  Tato  klávesa  slouží k vymazání znaku před kurzorem (tj. po jeho
+levé  straně). Část textu napravo od kurzoru (včetně znaku nad kurzorem) se
+přitom posune o jednu pozici vlevo.
+
+Poslední významnou klávesou je klávesa TAB (tabelátor, označuje se též jako
+"-->|").  Při  editaci  textu  slouží  tato  klávesa  k  posunu  kurzoru po
+tabelačních  pozicích  (není-li  jinak  definováno,  jsou  tabelační pozice
+násobkem  8). Kombinace klávesy tabelátoru s přesmykačem SHIFT (tzv. zpětný
+tabelátor)  je  určena  k posunu kurzoru po tabelačních pozicích ve zpětném
+směru  (tj. doleva). Není-li editován text, slouží tato klávesa k přepínání
+voleb menu a k přepínání pracovních oken. Kombinace SHIFT-TAB přitom slouží
+k přepínání zpětným směrem.
+
+
+                           +--------------------+
+                           | 15. Start počítače |
+                           +--------------------+
+
+Usedněme  nyní  k  počítači a zapněme hlavní vypínač. První činnost, kterou
+počítač  udělá,  je zavedení operačního systému z disku do paměti. Operační
+systém  se zavádí buď z vestavěného pevného disku (popř. ze síťového disku)
+nebo  je-li v disketové mechanice zasunuta disketa, zavádí se systém z této
+diskety.
+
+Při  zavádění  operačního systému zavede počítač z disku do paměti nejdříve
+tzv.  BOOT  (čti "bůt" = zaváděcí) sektor a předá mu řízení. BOOT sektor je
+úplně  první  sektor  na  disku.  Tento  sektor je ve skutečnosti zaváděcím
+programem, který pokračuje v zavádění systémového souboru IO.SYS do paměti.
+U  pevného disku je před BOOT sektorem ještě jeden mezičlánek - tzv. MASTER
+BOOT  sektor  (=  hlavní  BOOT  sektor).  Tento  sektor  je prvním sektorem
+fyzického  pevného disku a jeho funkcí je zavedení BOOT sektoru z logického
+disku.
+
+Po  zavedení souboru IO.SYS do paměti převezme soubor IO.SYS řízení. Po své
+inicializaci  pokračuje  v  zavádění systémového souboru MSDOS.SYS. Po jeho
+zavedení  mu předá řízení. Modul MSDOS.SYS se inicializuje a navrátí řízení
+zpět modulu IO.SYS. Ten nyní nalezne v základním adresáři systémového disku
+soubor  CONFIG.SYS  a postupně interpretuje příkazy uvedené v tomto souboru
+(jako je např. instalace rozšiřujících driverů).
+
+Po  provedení všech příkazů souboru CONFIG.SYS načte modul IO.SYS do paměti
+program COMMAND.COM ze základního adresáře disku (pokud není příkazem SHELL
+určeno  jinak)  a  předá  mu  řízení  s  povelem  provést  povelový  soubor
+AUTOEXEC.BAT ze základního adresáře disku. COMMAND.COM se spustí jako běžný
+program  a  začne  vykonávat příkazy souboru AUTOEXEC.BAT. Tím je možné při
+startu  počítače spouštět různé programy. Program COMMAND.COM nainstalovaný
+poprvé  při  startu  systému  se  označuje  též  jako primární COMMAND.COM,
+protože  je  v paměti nainstalován trvale po celou dobu práce s počítačem a
+nelze jej opustit.
+
+Je-li spuštěn program nadstavby operačního systému (typu NORTON COMMANDER),
+vykonávají   se  příkazy  zadávané  operačnímu  systému  tím  způsobem,  že
+nadstavbový  program  spustí  program  COMMAND.COM a předá mu jako parametr
+zadaný  příkaz.  Tento  COMMAND.COM se nazývá jako sekundární, protože je v
+paměti  spuštěn pouze dočasně po dobu provádění zadaného příkazu a je možné
+jeho  ukončení.  Tato  metoda  vykonávání  příkazů  systému z nadstavbového
+programu  má  nevýhodu  v  tom,  že  každý  spuštěný COMMAND.COM si vytvoří
+vlastní  systémové  prostředí  (tj.  oblast,  kde  jsou uschovány systémové
+přepínače  a proměnné). Příkaz pro změnu systémové proměnné se odrazí pouze
+v  kopii  aktivního  COMMAND.COM,  po jeho ukončení toto nastavení přestává
+platit. Proto se zdá, jakoby se příkazy typu SET při zadání z nadstavbového
+programu vůbec neprovedly.
+
+
+                     +--------------------------------+
+                     | 16. Základní ovládání počítače |
+                     +--------------------------------+
+
+Předpokládejme,  že po startu počítače se nespouští žádný obslužný program,
+ale počítač zůstane v základním stavu s příkazovým řádkem. V tomto stavu se
+na  začátku  řádku  zobrazuje  tzv.  prompt.  Prompt  představuje výzvu pro
+uživatele   indikující,   že  počítač  čeká  na  zadání  nějakého  příkazu.
+Standardně  se  prompt  skládá z označení aktivního disku a znaku ">" (tedy
+např.  "A>"). Nejčastěji se ale prompt nastavuje příkazem PROMPT $P$G (může
+být  v  AUTOEXEC.BAT)  tak,  aby se zobrazil též aktivní adresář (například
+"C:\DOS>").  Zapišme  proto  hned  v  úvodu  jako první příkaz PROMPT $P$G,
+abychom byly informováni o nastaveném aktivním adresáři.
+
+Po zobrazení promptu můžeme zapsat na příkazový řádek systémový příkaz nebo
+spustit  libovolný  program  zápisem  jeho  jména  a stiskem klávesy ENTER.
+Vyzkoušejme si základní příkazy operačního systému.
+
+Nejdříve  nás  asi  bude  zajímat,  co  vlastně  je  na disku, zda tam jsou
+programy  které  bychom  mohli  spustit. Obsah aktivního adresáře si můžeme
+zobrazit  příkazem  DIR.  Zápisem tohoto příkazu a stiskem klávesy ENTER se
+zobrazí jména všech souborů, které obsahuje aktivní adresář.
+
+Příklad použití příkazu DIR:
+
+C:\>DIR
+
+ Volume in drive C is SUNTAC
+ Volume Serial Number is 2568-1EDF
+ Directory of C:\
+
+DBASE        <DIR>     22.08.91   23:43
+DOS          <DIR>     22.08.91   23:26
+EDIT         <DIR>     22.08.91   23:58
+HELP         <DIR>     23.08.91    0:20
+AUTOEXEC BAT       699 21.08.92    3:31
+COMMAND  COM     47845 09.04.91    5:00
+CONFIG   SYS       269 20.06.92   23:15
+       7 file(s)       49705 bytes
+                     3276800 bytes free
+
+Z výpisu operačního systému můžeme zjistit následující informace:
+
+1. řádek: disk C: má jméno SUNTAC (jméno lze měnit příkazem LABEL)
+2. řádek: jeho sériové číslo je 2568-1EDF (vzniká při formátování disku)
+3. řádek: je vypsán základní adresář (ROOT) C:\
+
+Na  řádcích  výpisu  souborů se zobrazuje vždy nejdříve jméno souboru (nebo
+adresáře)  a  jeho  přípona. V dalším sloupci se u souborů zobrazí velikost
+souboru  v  bajtech,  u  adresářů se zobrazuje text "<DIR>". Dále následuje
+datum  a  čas  vzniku  souboru  nebo  adresáře  (popř. datum a čas poslední
+modifikace  souboru). Formát data času může být též např. v anglickém tvaru
+(pořadí  data MĚSÍC:DEN:ROK) - v závislosti na nastavení příkazu COUNTRY. Z
+výpisu  je  tedy  zřejmé,  že  základní  adresář disku obsahuje podadresáře
+DBASE, DOS, EDIT, HELP a soubory AUTOEXEC.BAT, COMMAND.COM a CONFIG.SYS.
+
+předposlední řádek: počet souborů a podadresářů a zabraná kapacita na disku
+poslední řádek: volné místo na disku (v bajtech)
+
+Ve  výpisu  základního  adresáře  nejsou  vidět  systémové soubory IO.SYS a
+MSDOS.SYS.  To  je  způsobeno  tím,  že  tyto  souboru  jsou  označeny jako
+systémové a skryté, aby nemohly být uživatelem nechtěně modifikovány.
+
+Dále  se  budeme  chtít  "pohybovat"  po  adresářích a discích, tedy změnit
+aktivní  adresář  a  disk.  Změnu  aktivního disku provedeme snadno zápisem
+označení disku (písmeno A až Z) se znakem dvojtečky (např. zápis D: nastaví
+aktivní  disk  D:). Ke změně aktivního adresáře slouží příkaz CD, za kterým
+uvedeme  buď  plnou  specifikaci  nového adresáře nebo pouze část adresáře,
+která se má změnit. Nastavme nyní jako nový aktivní adresář podadresář HELP
+z předchozího příkladu a opět si zobrazme obsah adresáře příkazem DIR:
+
+C:\>CD HELP
+
+C:\>DIR
+
+.            <DIR>     23.08.91    0:20
+..           <DIR>     23.08.91    0:20
+MANUALY      <DIR>     23.08.91    0:32
+TECHHELP     <DIR>     23.08.91    0:34
+PRIRUCKA     <DIR>     29.08.92    4:21
+PRIRUCKA TXT     81225 30.08.92    0:08
+D                    0 30.08.92    0:09
+
+Všimněme  si,  že  se změnil text promptu na "C:\HELP>". Všimněme si výpisu
+souborů  v  aktivním adresáři (úvodních řádků se nebudeme dále všímat). Jak
+vidíme,  obsahuje  adresář  kromě  běžných  podadresářů a souborů ještě dvě
+adresářové položky označené jednou a dvěma tečkami. Adresář označený jednou
+tečkou  označuje  aktivní  adresář a je určen především pro interní potřeby
+operačního  systému.  Zadáme-li  příkaz  "CD  ."  nic se vlastně neprovede,
+protože se nastaví opět stejný adresář jako předtím. Druhá položka označená
+dvěma  tečkami  označuje  nadadresář,  tedy adresář ležící blíže základnímu
+(kořennému)  adresáři  než  je aktivní adresář. Zapíšeme-li příkaz "CD ..",
+navrátíme  se  o  jednu  úroveň  v  adresářovém  stromu  blíže k základnímu
+adresáři (v použitém příkladě se navrátíme do základního adresáře).
+
+Zapíšeme-li  příkaz CD bez parametrů, zobrazí se aktivní adresář. Začíná-li
+parametr  příkazu CD znakem lomítka "\" nebo tečky ".", není třeba dělat za
+příkazem  CD oddělovací mezeru. Uvedeme-li v zadané cestě příkazu CD úvodní
+znak  lomítka  (např.  "CD\DBASE"),  vychází se v určení nového adresáře ze
+základního adresáře. Jinak se vychází z aktivního adresáře. Nový adresář se
+určuje  postupně  podle částí podadresářů v parametru příkazu CD, takže lze
+zadat nový adresář kombinovaně. Například zápisem "CD ..\..\ASSEMB\EXEC" se
+ukazatel   aktivního  adresáře  posune  nejdříve  o  dvě  úrovně  směrem  k
+základnímu  adresáři  a  potom  postupně nastaví podadresáře ASSEMB a EXEC.
+Příkazem "CD\" se přepneme do základního adresáře disku.
+
+Každý  disk  má  svůj  ukazatel  aktivního adresáře. Uvedeme-li v parametru
+příkazu  CD též disk, změníme aktivní adresář pro zadaný disk. Aktivní disk
+přitom  však  zůstává  stejný (disk se musí změnit zadáním označení disku s
+dvojtečkou).
+
+
+Dále  budeme  potřebovat  prohlédnout  si  obsah  textového souboru. K tomu
+slouží  příkaz TYPE, za kterým uvedeme jméno souboru, jehož obsah si chceme
+zobrazit.   Například  obsah  povelového  souboru  AUTOEXEC.BAT  si  můžeme
+zobrazit  zadáním  příkazu TYPE \AUTOEXEC.BAT (úvodní znak zpětného lomítka
+informuje  o  tom,  že  soubor je v základním adresáři disku). Výpis obsahu
+souboru  probíhá na displej. Výpis si můžeme pozastavit klávesou PAUSE nebo
+CTRL-S.
+
+Nový  adresář  vytvoříme  příkazem  MD,  za  kterým uvedeme jméno adresáře.
+Adresář  můžeme  opět  zrušit  příkazem  RD,  za  kterým opět uvedeme jméno
+adresáře. Rušený adresář přitom nesmí obsahovat žádné soubory.
+
+Soubory  můžeme  zrušit příkazem DEL, za kterým uvedeme specifikaci souborů
+ke zrušení. Ve specifikaci souborů můžeme použít hvězdičkové konvence (tedy
+znaky  "*"  a  "?").  Například  zápis  DEL a*.asm udává, že se mají zrušit
+všechny soubory s příponou ASM a začínající písmenem A.
+
+Často  potřebujeme  si soubory zálohovat na disketu nebo je zkopírovat mezi
+různými adresáři. Pro účely kopírování je určen příkaz COPY. Příkaz COPY se
+používá se dvěma parametry. Prvním parametrem je specifikace souborů, které
+se  mají  kopírovat,  druhým parametrem je specifikace, kam se tyto soubory
+mají  zkopírovat.  Parametry  se navzájem oddělují mezerami. Ve specifikaci
+souborů  určených  ke kopírování můžeme opět používat hvězdičkové konvence.
+Ve  specifikace cíle operace kopírování lze uvést pouze adresář, do kterého
+se soubory mají zkopírovat. Nebude-li druhý parametr zadán vůbec, zkopírují
+se  soubory  do  aktivního  adresáře.  V  druhém  parametru  lze  též zadat
+specifikaci  souborů  pomocí  hvězdičkové konvence. Zde má však význam jako
+filtr  jména  souboru.  Je-li na některé pozici jména souboru uveden platný
+znak, nahradí se původní znak ve jménu souboru tímto znakem.
+
+Podobnou  syntaxi  jako  příkaz COPY má i příkaz REN. Tento příkaz slouží k
+přejmenování  souborů. Má opět dva parametry. Prvním je zpecifikace souborů
+určených k přejmenování. Druhým parametrem je maska nového jména souborů.
+
