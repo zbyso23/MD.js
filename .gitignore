@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+zx/roms/*.rom
+zx/vendor/*.js
+zx/vendor/LICENSE
+.DS_Store
+zx/roms/*.json
