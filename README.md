@@ -24,7 +24,7 @@ No build required. Node.js is needed **only to run automated tests** (`npm test`
 
 ## Licensing and redistribution
 
-Project-authored code is intended for **GPL-3.0-only**; see [`LICENSE`](LICENSE), [`LICENSING.md`](LICENSING.md), and [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md). KaTeX is MIT licensed, bundled with its own license and fonts. **This PERSONAL archive includes ROM/DOS/DEBUG/media material whose public redistribution rights have not been established. Do not publish the entire ZIP as a redistributable source release** without removing or clearing those files and auditing remaining dependencies. Source-only and third-party/reference provenance distinctions are important.
+Project-authored code is intended for the **MIT License**; see [`LICENSE`](LICENSE), [`LICENSING.md`](LICENSING.md), and [`THIRD-PARTY-NOTICES.md`](THIRD-PARTY-NOTICES.md). KaTeX is MIT licensed, bundled with its own license and fonts. **This PERSONAL archive includes ROM/DOS/DEBUG/media material whose public redistribution rights have not been established. Do not publish the entire ZIP as a redistributable source release** without removing or clearing those files and auditing remaining dependencies. Source-only and third-party/reference provenance distinctions are important.
 
 ---
 
