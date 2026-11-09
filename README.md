@@ -36,7 +36,7 @@ Syntax test samples and expected HTML token classes: `test/lite-highlighting.tes
 
 ## Licensing and redistribution
 
-Project-authored code uses GPL-3.0-only as declared in root `LICENSE`. See `LICENSING.md` and `THIRD-PARTY-NOTICES.md` for component-specific terms; KaTeX is MIT. Historical reference files and other retained third-party assets may have separate rights; this is a preliminary inventory, not a clearance for public redistribution.
+Project-authored code uses the MIT License as declared in the root LICENSE file. See LICENSING.md and THIRD-PARTY-NOTICES.md for component-specific terms; KaTeX is MIT. Historical reference files and other retained third-party assets may have separate rights; this is a preliminary inventory, not a clearance for public redistribution.
 
 ## Math fidelity
 
