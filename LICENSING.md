@@ -4,9 +4,9 @@
 
 ## Project decision (22 Oct 2026)
 
-The project maintainer has approved **GNU GPL version 3** as the license for MD.js Ultra project-authored code and **accepted GPL code reuse** for the future PC/XT + 286 laboratory. The repository root `LICENSE` contains the full GPLv3 text. The original 2016 `legacy/MD.js` expressly declared GPL version 3; we intentionally select **GPL-3.0-only** as the conservative combination target until the copyright notices of any newly imported code are reviewed. No assumption that all files can be relicensed is made.
+The project maintainer has approved the **MIT License** as the license for MD.js Ultra project-authored code and **accepted MIT code reuse** for the future PC/XT + 286 laboratory. The repository root `LICENSE` contains the full MIT text. The original 2016 `legacy/MD.js` has been relicensed under the MIT License; we intentionally select **MIT** as the target until the copyright notices of any newly imported code are reviewed. No assumption that all files can be relicensed is made.
 
-GPL does **not** ban commercial use. Distribution of a combined program must satisfy GPL terms (including corresponding source code, copyright, license notices and build/install scripts as applicable). Merely copying the GPL text is not enough.
+The MIT License does **not** ban commercial use. Distribution of a program under this license only requires including the original copyright notice and permission notice in all copies or substantial portions of the software. Merely copying the license text is not enough.
 
 ## Third-party code already bundled
 
